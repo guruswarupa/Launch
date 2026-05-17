@@ -34,6 +34,7 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -65,6 +66,7 @@ import com.guruswarupa.launch.services.ScreenLockAccessibilityService
 import com.guruswarupa.launch.services.WalkDetectionService
 import com.guruswarupa.launch.ui.views.SafeHorizontalScrollView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
+import com.guruswarupa.launch.utils.IconPackManager
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -407,6 +409,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         val typoArrow = findViewById<TextView>(R.id.typography_arrow)
         setupSectionToggle(typoHeader, typoContent, typoArrow)
         setupTypographySettings()
+        setupIconPackSettings()
 
         findViewById<SwitchCompat>(R.id.clock_24_hour_switch).apply {
             fun applyClockSwitchColors(isEnabled: Boolean) {
@@ -1732,6 +1735,79 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                 }
             }
             cont.addView(view)
+        }
+    }
+
+    private fun setupIconPackSettings() {
+        val header = findViewById<LinearLayout>(R.id.icon_pack_header)
+        val content = findViewById<LinearLayout>(R.id.icon_pack_content)
+        val arrow = findViewById<TextView>(R.id.icon_pack_arrow)
+        val toggleSwitch = findViewById<SwitchCompat>(R.id.icon_pack_toggle_switch)
+        val listContainer = findViewById<LinearLayout>(R.id.icon_pack_list_container)
+        val emptyState = findViewById<TextView>(R.id.icon_pack_empty_state)
+        val browseButton = findViewById<Button>(R.id.browse_icon_packs_button)
+        
+        setupSectionToggle(header, content, arrow)
+        
+        val iconPacks = IconPackManager.getInstalledIconPacks(this)
+        val selectedPack = IconPackManager.getSelectedIconPack(prefs)
+        val isEnabled = IconPackManager.isIconPackEnabled(prefs)
+        
+        toggleSwitch.isChecked = isEnabled
+        
+        fun applySwitchColors(isEnabled: Boolean) {
+            val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+            toggleSwitch.thumbTintList = ColorStateList.valueOf(color)
+            toggleSwitch.trackTintList = ColorStateList.valueOf(color)
+        }
+        
+        applySwitchColors(isEnabled)
+        listContainer.visibility = if (isEnabled && iconPacks.isNotEmpty()) View.VISIBLE else View.GONE
+        emptyState.visibility = if (isEnabled && iconPacks.isEmpty()) View.VISIBLE else View.GONE
+        
+        toggleSwitch.setOnCheckedChangeListener { _, isChecked ->
+            applySwitchColors(isChecked)
+            if (isChecked) {
+                IconPackManager.setIconPack(prefs, iconPacks.firstOrNull()?.packageName)
+            } else {
+                IconPackManager.clearIconPack(prefs)
+            }
+            listContainer.visibility = if (isChecked && iconPacks.isNotEmpty()) View.VISIBLE else View.GONE
+            emptyState.visibility = if (isChecked && iconPacks.isEmpty()) View.VISIBLE else View.GONE
+            notifySettingsChanged()
+        }
+        
+        if (iconPacks.isNotEmpty()) {
+            listContainer.removeAllViews()
+            iconPacks.forEach { pack ->
+                val view = layoutInflater.inflate(R.layout.item_icon_pack, listContainer, false)
+                val icon = view.findViewById<ImageView>(R.id.icon_pack_icon)
+                val name = view.findViewById<TextView>(R.id.icon_pack_name)
+                val status = view.findViewById<TextView>(R.id.icon_pack_status)
+                val radio = view.findViewById<RadioButton>(R.id.icon_pack_radio)
+                
+                icon.setImageDrawable(pack.icon)
+                name.text = pack.name
+                status.text = pack.packageName
+                radio.isChecked = selectedPack == pack.packageName
+                
+                view.setOnClickListener {
+                    IconPackManager.setIconPack(prefs, pack.packageName)
+                    toggleSwitch.isChecked = true
+                    listContainer.forEach { child ->
+                        child.findViewById<RadioButton>(R.id.icon_pack_radio)?.isChecked = false
+                    }
+                    radio.isChecked = true
+                    notifySettingsChanged()
+                    Toast.makeText(this, "Icon pack applied: ${pack.name}\nIcons will update when you return to home screen", Toast.LENGTH_LONG).show()
+                }
+                
+                listContainer.addView(view)
+            }
+        }
+        
+        browseButton.setOnClickListener {
+            IconPackManager.browseIconPacks(this)
         }
     }
 
