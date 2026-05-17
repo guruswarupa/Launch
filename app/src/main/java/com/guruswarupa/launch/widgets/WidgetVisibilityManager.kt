@@ -63,7 +63,8 @@ class WidgetVisibilityManager(
             "network_stats_widget_container" to com.guruswarupa.launch.R.id.network_stats_widget_container,
             "device_info_widget_container" to com.guruswarupa.launch.R.id.device_info_widget_container,
             "weekly_usage_widget" to com.guruswarupa.launch.R.id.weekly_usage_widget,
-            "github_contributions_widget_container" to com.guruswarupa.launch.R.id.github_contributions_widget_container
+            "github_contributions_widget_container" to com.guruswarupa.launch.R.id.github_contributions_widget_container,
+            "habit_tracker_widget_container" to com.guruswarupa.launch.R.id.habit_tracker_widget_container
         )
 
         simpleWidgets.forEach { (widgetId, resId) ->
@@ -102,6 +103,7 @@ class WidgetVisibilityManager(
         val failedWidgets = mutableListOf<String>()
         val contentLayout = activity.findViewById<LinearLayout>(com.guruswarupa.launch.R.id.drawer_content_layout)
         contentLayout?.let { layout ->
+            // Collect all widget views first
             val viewMap = mutableMapOf<String, View>()
             widgets.forEach { widget ->
                 val view = if (widget.isSystemWidget) {
@@ -120,6 +122,7 @@ class WidgetVisibilityManager(
                 }
             }
 
+            // Identify non-widget views (like empty state, spacers, etc.)
             val nonWidgetViews = mutableListOf<View>()
             for (i in 0 until layout.childCount) {
                 val child = layout.getChildAt(i)
@@ -128,16 +131,44 @@ class WidgetVisibilityManager(
                 }
             }
 
+            // Temporarily disable layout transitions to prevent visual glitches
+            val animateLayoutChanges = layout.layoutTransition
+            layout.layoutTransition = null
+
+            // Remove all views
             layout.removeAllViews()
-            nonWidgetViews.forEach { layout.addView(it) }
+
+            // Add non-widget views first (empty state, etc.)
+            val hasEnabledWidgets = widgets.any { it.enabled }
+            nonWidgetViews.forEach { 
+                // Don't add empty state if we have enabled widgets
+                val isEmptyState = it.id == com.guruswarupa.launch.R.id.widgets_empty_state
+                if (!(isEmptyState && hasEnabledWidgets)) {
+                    layout.addView(it) 
+                }
+            }
+
+            // Add widget views in order, only if enabled
             widgets.forEach { widget ->
                 viewMap[widget.id]?.let { view ->
-                    view.visibility = if (widget.enabled) View.VISIBLE else View.GONE
-                    if (view.parent == null) {
-                        layout.addView(view)
+                    // Only add to layout if enabled
+                    if (widget.enabled) {
+                        view.visibility = View.VISIBLE
+                        if (view.parent == null) {
+                            layout.addView(view)
+                        }
+                    } else {
+                        // Remove from parent if disabled to prevent empty backgrounds
+                        view.visibility = View.GONE
+                        if (view.parent != null) {
+                            (view.parent as? ViewGroup)?.removeView(view)
+                        }
                     }
                 }
             }
+
+            // Restore layout transition
+            layout.layoutTransition = animateLayoutChanges
         } ?: run {
             Log.e(TAG, "drawer_content_layout not found!")
         }
@@ -168,6 +199,7 @@ class WidgetVisibilityManager(
             "network_stats_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.network_stats_widget_container)
             "device_info_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.device_info_widget_container)
             "year_progress_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.year_progress_widget_container)
+            "habit_tracker_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.habit_tracker_widget_container)
             else -> {
                 Log.w(TAG, "Unknown widget ID: $widgetId")
                 null
