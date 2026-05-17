@@ -25,6 +25,7 @@ import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.RelativeCornerSize
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.utils.IconPackManager
 import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -38,7 +39,8 @@ class IconLoader(
     private val activity: MainActivity,
     private val context: Context,
     private val separatorPackage: String,
-    private val specialPackageNames: Set<String>
+    private val specialPackageNames: Set<String>,
+    private val sharedPreferences: android.content.SharedPreferences
 ) {
     companion object {
         const val PRIORITY_HIGH = 100
@@ -85,6 +87,41 @@ class IconLoader(
 
     var currentIconSize: Int = 40
         private set
+
+    private fun loadIconFromPack(packageName: String, activityName: String? = null): Drawable? {
+        val iconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
+        val isIconPackEnabled = IconPackManager.isIconPackEnabled(sharedPreferences)
+        
+        if (!isIconPackEnabled || iconPackPackage == null) return null
+        
+        return try {
+            val pm = context.packageManager
+            val iconPackResources = pm.getResourcesForApplication(iconPackPackage)
+            
+            val drawableName = IconPackManager.getDrawableName(context, packageName, activityName, sharedPreferences)
+            var resourceId = 0
+            if (drawableName != null) {
+                resourceId = iconPackResources.getIdentifier(drawableName, "drawable", iconPackPackage)
+            }
+            
+            if (resourceId == 0) {
+                resourceId = iconPackResources.getIdentifier(
+                    packageName.replace(".", "_").lowercase(),
+                    "drawable",
+                    iconPackPackage
+                )
+            }
+            
+            if (resourceId != 0) {
+                iconPackResources.getDrawable(resourceId, context.theme)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("IconLoader", "Failed to load icon from pack for $packageName", e)
+            null
+        }
+    }
 
     private fun recycleDrawableBitmap(drawable: Drawable?) {
         // Don't manually recycle bitmaps from cache eviction.
@@ -280,7 +317,14 @@ class IconLoader(
         val priorityRunnable = PriorityRunnable(priority) {
             try {
                 if (iconCache.get(cacheKey) == null) {
-                    var icon = app.loadIcon(activity.packageManager)
+                    // Try to load from icon pack first
+                    var icon = loadIconFromPack(packageName, app.activityInfo.name)
+                    
+                    // Fallback to default icon if pack doesn't have it
+                    if (icon == null) {
+                        icon = app.loadIcon(activity.packageManager)
+                    }
+                    
                     if (app.preferredOrder != mainUserSerial) {
                         val userHandle = userManager.getUserForSerialNumber(app.preferredOrder.toLong())
                         if (userHandle != null) {
@@ -418,16 +462,12 @@ class IconLoader(
         val size = (currentIconSize * density).roundToInt().coerceAtLeast(1)
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        val bounds = RectF(0f, 0f, size.toFloat(), size.toFloat())
-        val path = createIconMaskPath(bounds)
-        val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-            style = Paint.Style.FILL
-        }
 
-        canvas.save()
-        canvas.clipPath(path)
         if (drawable is AdaptiveIconDrawable) {
+            val bounds = RectF(0f, 0f, size.toFloat(), size.toFloat())
+            val path = createIconMaskPath(bounds)
+            canvas.save()
+            canvas.clipPath(path)
             val background = drawable.background?.constantState?.newDrawable(context.resources)?.mutate()
                 ?: drawable.background?.mutate()
             val foreground = drawable.foreground?.constantState?.newDrawable(context.resources)?.mutate()
@@ -436,16 +476,12 @@ class IconLoader(
             foreground?.setBounds(0, 0, size, size)
             background?.draw(canvas)
             foreground?.draw(canvas)
+            canvas.restore()
         } else {
             val copy = drawable.constantState?.newDrawable(context.resources)?.mutate() ?: drawable.mutate()
-            if (useLegacyIconPlate) {
-                canvas.drawPath(path, fillPaint)
-            }
-            val inset = if (useLegacyIconPlate) (size * 0.18f).roundToInt() else 0
-            copy.setBounds(inset, inset, size - inset, size - inset)
+            copy.setBounds(0, 0, size, size)
             copy.draw(canvas)
         }
-        canvas.restore()
 
         return BitmapDrawable(context.resources, bitmap)
     }
