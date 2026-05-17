@@ -51,6 +51,7 @@ class WidgetThemeManager(
         activity.findViewById<View>(R.id.todo_widget_main_container)?.setBackgroundResource(widgetBackground)
         activity.findViewById<View>(R.id.finance_widget)?.setBackgroundResource(widgetBackground)
         activity.findViewById<View>(R.id.weekly_usage_widget)?.setBackgroundResource(widgetBackground)
+        activity.findViewById<View>(R.id.habit_tracker_widget_container)?.setBackgroundResource(widgetBackground)
 
         activity.findViewById<View>(R.id.widget_settings_header)?.setBackgroundResource(widgetBackground)
         activity.findViewById<View>(R.id.widget_config_button)?.setBackgroundResource(widgetBackground)
