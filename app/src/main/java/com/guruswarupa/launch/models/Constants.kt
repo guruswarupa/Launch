@@ -64,6 +64,8 @@ object Constants {
         const val SHOW_APP_NAME_IN_GRID = "show_app_name_in_grid"
         const val ICON_STYLE = "icon_style"
         const val ICON_SIZE = "icon_size"
+        const val ICON_PACK_PACKAGE = "icon_pack_package"
+        const val ICON_PACK_ENABLED = "icon_pack_enabled"
         const val BACKGROUND_TRANSLUCENCY = "background_translucency"
         const val DEFAULT_HOME_PAGE_INDEX = "default_home_page_index"
         const val DEFAULT_HOME_PAGE_TARGET = "default_home_page_target"

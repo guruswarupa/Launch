@@ -23,6 +23,15 @@ class SettingsChangeCoordinator(
     private val widgetThemeManagerProvider: () -> WidgetThemeManager?
 ) {
 
+    private var lastIconPackPackage: String? = null
+    private var lastIconPackEnabled: Boolean = false
+
+    init {
+        val sharedPreferences = activity.sharedPreferences
+        lastIconPackPackage = sharedPreferences.getString(Constants.Prefs.ICON_PACK_PACKAGE, null)
+        lastIconPackEnabled = sharedPreferences.getBoolean(Constants.Prefs.ICON_PACK_ENABLED, false)
+    }
+
 
 
     fun applyThemeBasedWidgetBackgrounds() {
@@ -64,6 +73,14 @@ class SettingsChangeCoordinator(
         val views = activity.views
         val adapter = adapterProvider()
         val use24HourClock = sharedPreferences.getBoolean(Constants.Prefs.CLOCK_24_HOUR_FORMAT, false)
+
+        val iconPackPackage = sharedPreferences.getString(Constants.Prefs.ICON_PACK_PACKAGE, null)
+        val iconPackEnabled = sharedPreferences.getBoolean(Constants.Prefs.ICON_PACK_ENABLED, false)
+        if (iconPackPackage != lastIconPackPackage || iconPackEnabled != lastIconPackEnabled) {
+            lastIconPackPackage = iconPackPackage
+            lastIconPackEnabled = iconPackEnabled
+            adapter?.refreshIcons()
+        }
 
         applyThemeBasedWidgetBackgrounds()
         applyBackgroundTranslucency()
