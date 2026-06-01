@@ -139,8 +139,8 @@ class AppListManager @Inject constructor(
         if (!showOnlyFavorites && !focusMode && !workspaceMode && !isWorkProfileEnabled) {
             val favorites = favoriteAppManager.getFavoriteApps()
             if (favorites.isNotEmpty()) {
-
-                for (i in 0 until 4) {
+                // Add enough spacers to ensure scrollability back to favorites
+                for (i in 0 until 10) {
                     result.add(createSeparatorInfo("all_apps_top_spacer_$i"))
                 }
             }
@@ -187,14 +187,14 @@ class AppListManager @Inject constructor(
 
             if (isGridMode) {
                 // Grid mode: add more spacers when top widget is hidden
-                val spacerCount = if (isTopWidgetVisible) 7 else 13
+                val spacerCount = if (isTopWidgetVisible) 15 else 20
                 for (i in 0 until spacerCount) {
                     result.add(createSeparatorInfo("favorites_bottom_spacer_$i"))
                 }
             } else {
                 // List mode: dynamic spacer count
-                val baseCount = if (isTopWidgetVisible) 10 else 13
-                val spacerCount = maxOf(4, baseCount - (favoriteCount - 1).coerceAtLeast(0))
+                val baseCount = if (isTopWidgetVisible) 20 else 25
+                val spacerCount = maxOf(8, baseCount - (favoriteCount - 1).coerceAtLeast(0))
 
                 for (i in 0 until spacerCount) {
                     result.add(createSeparatorInfo("favorites_bottom_spacer_$i"))
