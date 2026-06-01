@@ -409,7 +409,15 @@ class MainActivity : FragmentActivity() {
     }
 
     internal fun initializeDeferredWidgets() {
-        if (!sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true) || deferredWidgetsInitialized) {
+        if (!sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)) {
+            return
+        }
+
+        if (deferredWidgetsInitialized) {
+            widgetVisibilityManager.update(
+                if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
+                if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
+            )
             return
         }
 
