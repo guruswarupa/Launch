@@ -17,6 +17,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.managers.ScreenPagerManager
 import com.guruswarupa.launch.ui.activities.SettingsActivity
 import kotlin.math.abs
@@ -151,8 +152,13 @@ class FeatureTutorialManager(
             return
         }
 
-        removeTutorialOverlay()
         val step = TutorialStep.entries[currentStep]
+        if (shouldSkipStep(step)) {
+            nextStep()
+            return
+        }
+
+        removeTutorialOverlay()
         val token = ++renderToken
         if (step.waitForUserSwipe && !isTutorialPageOpen(step.page)) {
             showSwipeHint(step, token)
@@ -233,6 +239,15 @@ class FeatureTutorialManager(
                 waitForUserScrollTarget(step, token)
             }
         }, RETRY_DELAY_MS)
+    }
+
+    private fun shouldSkipStep(step: TutorialStep): Boolean {
+        return when (step) {
+            TutorialStep.WORKSPACE_TOGGLE -> sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORKSPACES, false)
+            TutorialStep.FOCUS_MODE -> sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_FOCUS_MODE, false)
+            TutorialStep.WORK_PROFILE -> sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORK_PROFILE, false)
+            else -> false
+        }
     }
 
     private fun isStepTargetVisible(step: TutorialStep): Boolean {
