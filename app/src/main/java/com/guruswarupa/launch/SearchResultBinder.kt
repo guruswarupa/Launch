@@ -37,6 +37,7 @@ class ContactSearchResultBinder(
     override val packageName: String = "contact_unified"
 
     override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
+        holder.itemView.tag = packageName
         val contactName = appInfo.activityInfo.name
         val cacheKey = "${packageName}|${appInfo.preferredOrder}"
         iconLoader.loadContactPhoto(
@@ -69,6 +70,7 @@ class PackageIconSearchResultBinder(
     private val applyIconVisualState: (String, AppAdapter.ViewHolder) -> Unit
 ) : SearchResultBinder {
     override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
+        holder.itemView.tag = packageName
         val cacheKey = "${packageName}|${appInfo.preferredOrder}"
         iconLoader.loadSpecialAppIcon(
             holder = holder,
@@ -98,6 +100,7 @@ class ResourceIconSearchResultBinder(
     private val applyIconVisualState: (String, AppAdapter.ViewHolder) -> Unit
 ) : SearchResultBinder {
     override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
+        holder.itemView.tag = packageName
         iconLoader.setIconResource(holder.appIcon, iconResId)
         holder.appName?.text = labelProvider(appInfo)
         applyIconVisualState(packageName, holder)
@@ -117,6 +120,7 @@ class FileSearchResultBinder(
     override val packageName: String = "file_result"
 
     override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
+        holder.itemView.tag = packageName
         val fileName = appInfo.activityInfo.name
         val ext = fileName.substringAfterLast('.', "").lowercase()
         val fileIconRes = when {
