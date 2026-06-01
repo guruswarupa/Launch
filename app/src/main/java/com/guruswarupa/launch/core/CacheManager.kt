@@ -36,6 +36,9 @@ class CacheManager @Inject constructor(
     private val appMetadataCacheFile: File = File(context.cacheDir, "app_metadata_cache.dat")
     private val appListVersionFile: File = File(context.cacheDir, "app_list_version.txt")
     private val packageManager: PackageManager = context.packageManager
+    
+    private val iconCacheDir: File = File(context.cacheDir, "icon_cache").apply { mkdirs() }
+    private val iconCacheVersionFile: File = File(iconCacheDir, "icon_cache_version.txt")
 
     private val appMetadataCache = mutableMapOf<String, AppMetadata>()
     private var cachedAppListVersion: String? = null
@@ -255,6 +258,7 @@ class CacheManager @Inject constructor(
             if (appListVersionFile.exists()) appListVersionFile.delete()
             appMetadataCache.clear()
             cachedAppListVersion = null
+            clearIconCache()
         } catch (_: Exception) {
         }
     }
@@ -267,5 +271,88 @@ class CacheManager @Inject constructor(
 
     fun removeMetadata(packageName: String) {
         appMetadataCache.remove(packageName)
+    }
+    
+    fun getIconCacheKey(iconStyle: String, iconSize: Int): String {
+        return "${iconStyle}_${iconSize}"
+    }
+    
+    fun getIconCacheVersion(): String {
+        return try {
+            if (iconCacheVersionFile.exists()) {
+                iconCacheVersionFile.readText().trim()
+            } else {
+                ""
+            }
+        } catch (_: Exception) {
+            ""
+        }
+    }
+    
+    fun setIconCacheVersion(version: String) {
+        backgroundExecutor.execute {
+            try {
+                iconCacheVersionFile.writeText(version)
+            } catch (_: Exception) {
+            }
+        }
+    }
+    
+    fun getCachedIcon(cacheKey: String): android.graphics.drawable.Drawable? {
+        return try {
+            val iconFile = File(iconCacheDir, "${cacheKey.replace("/", "_")}.png")
+            if (!iconFile.exists()) return null
+            
+            val bitmap = android.graphics.BitmapFactory.decodeFile(iconFile.absolutePath)
+            if (bitmap != null) {
+                android.graphics.drawable.BitmapDrawable(context.resources, bitmap)
+            } else {
+                null
+            }
+        } catch (_: Exception) {
+            null
+        }
+    }
+    
+    fun cacheIcon(cacheKey: String, drawable: android.graphics.drawable.Drawable) {
+        backgroundExecutor.execute {
+            try {
+                val iconFile = File(iconCacheDir, "${cacheKey.replace("/", "_")}.png")
+                
+                val bitmap = when (drawable) {
+                    is android.graphics.drawable.BitmapDrawable -> drawable.bitmap
+                    else -> {
+                        val width = drawable.intrinsicWidth.coerceAtLeast(1)
+                        val height = drawable.intrinsicHeight.coerceAtLeast(1)
+                        val tempBitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+                        val canvas = android.graphics.Canvas(tempBitmap)
+                        drawable.setBounds(0, 0, width, height)
+                        drawable.draw(canvas)
+                        tempBitmap
+                    }
+                }
+                
+                val outputStream = java.io.FileOutputStream(iconFile)
+                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, outputStream)
+                outputStream.close()
+            } catch (_: Exception) {
+            }
+        }
+    }
+    
+    fun clearIconCache() {
+        backgroundExecutor.execute {
+            try {
+                iconCacheDir.listFiles()?.forEach { it.delete() }
+                iconCacheVersionFile.delete()
+            } catch (_: Exception) {
+            }
+        }
+    }
+    
+    fun isIconCacheValid(currentIconStyle: String, currentIconSize: Int): Boolean {
+        val currentVersion = getIconCacheKey(currentIconStyle, currentIconSize)
+        val cachedVersion = getIconCacheVersion()
+        return currentVersion == cachedVersion && iconCacheDir.exists() && iconCacheDir.listFiles()?.isNotEmpty() == true
     }
 }
