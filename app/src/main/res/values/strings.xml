@@ -496,4 +496,12 @@
     <string name="ideas_date">Mar 18, 2025 4:45 PM</string>
     <string name="add_note_button_text">+ Add Note</string>
     <string name="status_not_charging">Not charging</string>
+
+    <string name="system_monitor_title">System Monitor</string>
+    <string name="view_system_diagnostics">View System Diagnostics</string>
+    <string name="performance_category">PERFORMANCE</string>
+    <string name="hardware_category">HARDWARE INFO</string>
+    <string name="battery_category">BATTERY &amp; POWER</string>
+    <string name="network_category">NETWORK &amp; CONNECTIVITY</string>
+    <string name="camera_sensors_category">CAMERA &amp; SENSORS</string>
 </resources>
