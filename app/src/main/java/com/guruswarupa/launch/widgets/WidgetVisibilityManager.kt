@@ -14,6 +14,9 @@ class WidgetVisibilityManager(
     companion object {
         private const val TAG = "WidgetVisibilityManager"
     }
+
+    private val widgetViewCache = mutableMapOf<String, View>()
+
     fun update(
         yearProgressWidget: YearProgressWidget? = null,
         githubContributionWidget: GithubContributionWidget? = null
@@ -67,28 +70,27 @@ class WidgetVisibilityManager(
             "habit_tracker_widget_container" to com.guruswarupa.launch.R.id.habit_tracker_widget_container
         )
 
-        simpleWidgets.forEach { (widgetId, resId) ->
-            val view = activity.findViewById<View>(resId)
+        simpleWidgets.forEach { (widgetId, _) ->
+            val view = getWidgetViewById(widgetId)
             if (view != null) {
                 view.visibility = if (widgetMap[widgetId]?.enabled == true) View.VISIBLE else View.GONE
             } else if (widgetMap.containsKey(widgetId)) {
-                Log.w(TAG, "Widget container not found: $widgetId (R.id.$resId)")
+                Log.w(TAG, "Widget container not found: $widgetId")
                 failedWidgets.add(widgetId)
             }
         }
 
 
         listOf(
-            "workout_widget_container" to com.guruswarupa.launch.R.id.workout_widget_container,
-            "calculator_widget_container" to com.guruswarupa.launch.R.id.calculator_widget_container,
-            "todo_recycler_view" to com.guruswarupa.launch.R.id.todo_recycler_view
-        ).forEach { (widgetId, resId) ->
-            val container = activity.findViewById<View>(resId)
-            val targetView = container?.parent as? View
-            if (targetView != null) {
-                targetView.visibility = if (widgetMap[widgetId]?.enabled == true) View.VISIBLE else View.GONE
+            "workout_widget_container",
+            "calculator_widget_container",
+            "todo_recycler_view"
+        ).forEach { widgetId ->
+            val view = getWidgetViewById(widgetId)
+            if (view != null) {
+                view.visibility = if (widgetMap[widgetId]?.enabled == true) View.VISIBLE else View.GONE
             } else if (widgetMap.containsKey(widgetId)) {
-                Log.w(TAG, "Widget parent not found: $widgetId")
+                Log.w(TAG, "Widget view not found: $widgetId")
                 failedWidgets.add(widgetId)
             }
         }
@@ -103,19 +105,30 @@ class WidgetVisibilityManager(
         val failedWidgets = mutableListOf<String>()
         val contentLayout = activity.findViewById<LinearLayout>(com.guruswarupa.launch.R.id.drawer_content_layout)
         contentLayout?.let { layout ->
+            // Pre-cache: find any system widgets currently in layout before we clear it
+            for (i in 0 until layout.childCount) {
+                val child = layout.getChildAt(i)
+                val tag = child.tag
+                if (tag is Int) {
+                    widgetViewCache["system_widget_$tag"] = child
+                }
+            }
+
             // Collect all widget views first
             val viewMap = mutableMapOf<String, View>()
             widgets.forEach { widget ->
                 val view = if (widget.isSystemWidget) {
-                    val widgetId = widget.id.removePrefix("system_widget_").toIntOrNull()
-                    if (widgetId != null) {
-                        layout.findViewWithTag<View>(widgetId)
-                    } else null
+                    widgetViewCache[widget.id] ?: run {
+                        val widgetIdNum = widget.id.removePrefix("system_widget_").toIntOrNull()
+                        if (widgetIdNum != null) layout.findViewWithTag<View>(widgetIdNum) else null
+                    }
                 } else {
                     getWidgetViewById(widget.id)
                 }
+
                 if (view != null) {
                     viewMap[widget.id] = view
+                    widgetViewCache[widget.id] = view
                 } else if (!widget.isSystemWidget) {
                     Log.w(TAG, "Widget view not found for reordering: ${widget.id}")
                     failedWidgets.add(widget.id)
@@ -177,7 +190,9 @@ class WidgetVisibilityManager(
     }
 
     private fun getWidgetViewById(widgetId: String): View? {
-        return when (widgetId) {
+        widgetViewCache[widgetId]?.let { return it }
+
+        val view = when (widgetId) {
             "media_controller_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.media_controller_widget_container)
             "calendar_events_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.calendar_events_widget_container)
             "countdown_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.countdown_widget_container)
@@ -205,6 +220,11 @@ class WidgetVisibilityManager(
                 null
             }
         }
+
+        if (view != null) {
+            widgetViewCache[widgetId] = view
+        }
+        return view
     }
 
     private fun scheduleRetry(
