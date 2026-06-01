@@ -26,6 +26,7 @@ import com.google.android.material.shape.RelativeCornerSize
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.IconPackManager
+import com.guruswarupa.launch.core.CacheManager
 import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -40,7 +41,8 @@ class IconLoader(
     private val context: Context,
     private val separatorPackage: String,
     private val specialPackageNames: Set<String>,
-    private val sharedPreferences: android.content.SharedPreferences
+    private val sharedPreferences: android.content.SharedPreferences,
+    private val cacheManager: CacheManager
 ) {
     companion object {
         const val PRIORITY_HIGH = 100
@@ -87,6 +89,18 @@ class IconLoader(
 
     var currentIconSize: Int = 40
         private set
+    
+    private var currentIconPackPackage: String? = null
+
+    init {
+        // Initialize current icon pack package
+        currentIconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
+        
+        // Set icon cache version if not already set
+        if (!cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
+            cacheManager.setIconCacheVersion(cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
+        }
+    }
 
     private fun loadIconFromPack(packageName: String, activityName: String? = null): Drawable? {
         val iconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
@@ -164,18 +178,54 @@ class IconLoader(
     }
 
     fun updateIconStyle(style: String) {
+        val oldStyle = currentIconStyle
         currentIconStyle = style
-        clearIconCaches()
+        
+        // Only clear disk cache if style actually changed
+        if (oldStyle != style) {
+            clearIconCaches(clearDiskCache = true)
+        } else {
+            clearIconCaches(clearDiskCache = false)
+        }
+        
+        // Update disk cache version
+        cacheManager.setIconCacheVersion(cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
     }
 
     fun updateIconSize(size: Int) {
+        val oldSize = currentIconSize
         currentIconSize = size
-        clearIconCaches()
+        
+        // Only clear disk cache if size actually changed
+        if (oldSize != size) {
+            clearIconCaches(clearDiskCache = true)
+        } else {
+            clearIconCaches(clearDiskCache = false)
+        }
+        
+        // Update disk cache version
+        cacheManager.setIconCacheVersion(cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
     }
 
-    fun clearIconCaches() {
+    fun clearIconCaches(clearDiskCache: Boolean = false) {
         iconCache.evictAll()
         specialAppIconCache.evictAll()
+        if (clearDiskCache) {
+            cacheManager.clearIconCache()
+        }
+    }
+    
+    fun onIconPackChanged() {
+        val iconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
+        val isIconPackEnabled = IconPackManager.isIconPackEnabled(sharedPreferences)
+        
+        // Clear disk cache if icon pack changed or icon pack enabled/disabled
+        if (currentIconPackPackage != iconPackPackage || 
+            (currentIconPackPackage == null && isIconPackEnabled) ||
+            (currentIconPackPackage != null && !isIconPackEnabled)) {
+            clearIconCaches(clearDiskCache = true)
+            currentIconPackPackage = iconPackPackage
+        }
     }
 
     fun clearContactPhotoCache() {
@@ -200,7 +250,25 @@ class IconLoader(
         contactPhotoCache.evictAll()
     }
 
-    fun getCachedIcon(cacheKey: String): Drawable? = iconCache.get(cacheKey)
+    fun getCachedIcon(cacheKey: String): Drawable? {
+        // Check in-memory cache first
+        val memCached = iconCache.get(cacheKey)
+        if (memCached != null) {
+            return memCached
+        }
+        
+        // Check disk cache if in-memory cache miss
+        if (cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
+            val diskCached = cacheManager.getCachedIcon(cacheKey)
+            if (diskCached != null) {
+                // Put into in-memory cache for faster access next time
+                iconCache.put(cacheKey, diskCached)
+                return diskCached
+            }
+        }
+        
+        return null
+    }
 
     fun getShapeAppearanceModel(): ShapeAppearanceModel {
         val density = context.resources.displayMetrics.density
@@ -333,6 +401,9 @@ class IconLoader(
                     }
                     val shapedIcon = shapeIconDrawable(icon, useLegacyIconPlate = true)
                     iconCache.put(cacheKey, shapedIcon)
+                    
+                    // Save to disk cache for persistence
+                    cacheManager.cacheIcon(cacheKey, shapedIcon)
                 }
 
                 val readyIcon = iconCache.get(cacheKey) ?: return@PriorityRunnable
