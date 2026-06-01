@@ -108,8 +108,7 @@
             android:name=".ui.activities.SettingsActivity"
             android:exported="true"
             android:theme="@style/Theme.Launch.Settings"
-            android:label="@string/settings_app_name"
-            android:excludeFromRecents="true">
+            android:label="@string/settings_app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -145,14 +144,12 @@
         <activity
             android:name=".ui.activities.WebAppSettingsActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <activity
             android:name=".ui.activities.RssFeedSettingsActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <service
             android:name=".managers.AppUsageMonitor"
@@ -234,15 +231,13 @@
             android:name=".ui.activities.ControlCenterConfigActivity"
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings"
-            android:label="@string/control_center_config_title"
-            android:excludeFromRecents="true" />
+            android:label="@string/control_center_config_title" />
 
         <activity
             android:name=".ui.activities.EdgePanelConfigActivity"
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings"
-            android:label="@string/edge_panel_config_title"
-            android:excludeFromRecents="true" />
+            android:label="@string/edge_panel_config_title" />
 
         <receiver
             android:name=".utils.TodoAlarmReceiver"
@@ -334,26 +329,22 @@
         <activity
             android:name=".ui.activities.AppLockSettingsActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <activity
             android:name=".ui.activities.HiddenAppsSettingsActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <activity
             android:name=".ui.activities.PrivacyDashboardActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <activity
             android:name=".ui.activities.PermissionsActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <activity
             android:name=".ui.activities.AppDataDisclosureActivity"
@@ -364,14 +355,18 @@
         <activity
             android:name=".ui.activities.WidgetConfigurationActivity"
             android:exported="false"
-            android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:theme="@style/Theme.Launch.Settings" />
 
         <activity
             android:name=".ui.activities.AppTimerManagementActivity"
             android:exported="false"
+            android:theme="@style/Theme.Launch.Settings" />
+
+        <activity
+            android:name=".ui.activities.SystemMonitorActivity"
+            android:exported="false"
             android:theme="@style/Theme.Launch.Settings"
-            android:excludeFromRecents="true" />
+            android:label="System Monitor" />
 
         <activity
             android:name=".ui.activities.DocumentViewerActivity"
