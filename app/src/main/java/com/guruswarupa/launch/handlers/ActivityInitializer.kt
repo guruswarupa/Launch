@@ -121,6 +121,10 @@ class ActivityInitializer(
                 val params = searchContainer.layoutParams as MarginLayoutParams
                 params.topMargin = extraMargin
                 searchContainer.layoutParams = params
+            } else {
+                val params = searchContainer.layoutParams as MarginLayoutParams
+                params.topMargin = 0
+                searchContainer.layoutParams = params
             }
         }
     }
@@ -374,7 +378,7 @@ class ActivityInitializer(
 
                 activity.resources.getDimensionPixelSize(R.dimen.search_top_margin_when_widget_hidden)
             }
-            visible -> defaultSearchTopMargin
+            visible -> 0
             else -> pinnedSearchTopMargin
         }
         val params = views.searchContainer.layoutParams as MarginLayoutParams

@@ -100,7 +100,7 @@ class SettingsChangeCoordinator(
                 params.topMargin = extraMargin
             } else {
 
-                params.topMargin = activity.resources.getDimensionPixelSize(com.guruswarupa.launch.R.dimen.widget_status_bar_clearance)
+                params.topMargin = 0
             }
             views.searchContainer.layoutParams = params
         }
