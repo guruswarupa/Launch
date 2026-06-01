@@ -308,14 +308,17 @@ class AppAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        if (item.activityInfo.packageName == SEPARATOR_PACKAGE) {
+        val packageName = item.activityInfo.packageName
+
+        if (packageName == SEPARATOR_PACKAGE) {
             val separatorId = item.activityInfo.name ?: ""
-            return if (separatorId.startsWith("letter_separator_") || separatorId.startsWith("small_separator_")) {
+            return if (separatorId.startsWith("letter_separator_") || separatorId.startsWith("small_separator_") || separatorId == "launcher_shortcuts_separator") {
                 VIEW_TYPE_SEPARATOR_SMALL
             } else {
                 VIEW_TYPE_SEPARATOR
             }
         }
+
         return if (isGridMode) VIEW_TYPE_GRID else VIEW_TYPE_LIST
     }
 
