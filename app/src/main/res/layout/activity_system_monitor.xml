@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/wallpaper_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="Background"/>
+
+    <View
+        android:id="@+id/settings_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="24dp">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                app:tint="@color/white"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="System Monitor"
+                android:textSize="28sp"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/white"
+                android:layout_marginStart="12dp"
+                android:shadowColor="#80000000"
+                android:shadowDx="0"
+                android:shadowDy="2"
+                android:shadowRadius="6"/>
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:clipToPadding="false"
+            android:paddingBottom="40dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- CPU Section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CPU PERFORMANCE"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/nord8"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="24dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outlineColor">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/cpu_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="CPU: Loading..."
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/cpu_temp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="CPU Temp: --°C"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
+
+                        <com.guruswarupa.launch.ui.views.UsageGraphView
+                            android:id="@+id/cpu_graph"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_marginTop="12dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Individual Cores"
+                            android:textSize="11sp"
+                            android:textColor="@color/white"
+                            android:alpha="0.5"
+                            android:layout_marginTop="16dp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.1"/>
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/cpu_cores_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:chipSpacingVertical="4dp"
+                            app:chipSpacingHorizontal="4dp">
+                            <!-- Core chips added dynamically -->
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- GPU Section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="GPU PERFORMANCE"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/nord8"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="24dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outlineColor">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/gpu_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="GPU: Loading..."
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/gpu_temp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="GPU Temp: --°C"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
+
+                        <com.guruswarupa.launch.ui.views.UsageGraphView
+                            android:id="@+id/gpu_graph"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_marginTop="12dp" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/gpu_cores_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            app:chipSpacingVertical="4dp"
+                            app:chipSpacingHorizontal="4dp">
+                            <!-- GPU details added dynamically -->
+                        </com.google.android.material.chip.ChipGroup>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Hardware Info Section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="HARDWARE INFO"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/nord8"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="24dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outlineColor">
+
+                    <LinearLayout
+                        android:id="@+id/hardware_info_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Battery Section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BATTERY &amp; POWER"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/nord8"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="24dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outlineColor">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/battery_health"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Health: Loading..."
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/battery_capacity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Capacity: Loading..."
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
+
+                        <TextView
+                            android:id="@+id/battery_calculated_health"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Calculated Health: --"
+                            android:textColor="@color/nord8"
+                            android:textSize="13sp"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Network Section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NETWORK &amp; CONNECTIVITY"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/nord8"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="24dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outlineColor">
+
+                    <LinearLayout
+                        android:id="@+id/network_info_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Camera & Sensors Section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CAMERA &amp; SENSORS"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/nord8"
+                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="12dp"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="24dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/outlineColor">
+
+                    <LinearLayout
+                        android:id="@+id/sensors_info_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</FrameLayout>
