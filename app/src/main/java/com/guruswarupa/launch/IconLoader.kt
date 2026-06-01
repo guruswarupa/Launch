@@ -84,10 +84,10 @@ class IconLoader(
     private val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
     private val mainUserSerial = userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
 
-    var currentIconStyle: String = "squircle"
+    var currentIconStyle: String = sharedPreferences.getString(Constants.Prefs.ICON_STYLE, "squircle") ?: "round"
         private set
 
-    var currentIconSize: Int = 40
+    var currentIconSize: Int = sharedPreferences.getInt(Constants.Prefs.ICON_SIZE, 40)
         private set
     
     private var currentIconPackPackage: String? = null
