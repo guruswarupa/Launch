@@ -107,7 +107,8 @@ class AppAdapter(
         context = context,
         separatorPackage = SEPARATOR_PACKAGE,
         specialPackageNames = SPECIAL_PACKAGE_NAMES,
-        sharedPreferences = prefs
+        sharedPreferences = prefs,
+        cacheManager = activity.cacheManager
     ).apply {
         updateIconStyle(currentIconStyle)
         updateIconSize(currentIconSize)
@@ -196,7 +197,8 @@ class AppAdapter(
     }
 
     fun refreshIcons() {
-        iconLoader.clearIconCaches()
+        iconLoader.onIconPackChanged()
+        iconLoader.clearIconCaches(clearDiskCache = false) // Let onIconPackChanged handle disk cache
         (context as? Activity)?.runOnUiThread {
             notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE)
         }
