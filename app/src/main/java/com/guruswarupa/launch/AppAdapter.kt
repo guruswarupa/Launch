@@ -21,7 +21,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
@@ -85,7 +84,6 @@ class AppAdapter(
         var lastClickTime = 0L
     }
 
-    private var lastAnimatedPosition = -1
     private val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
     private val mainUserSerial = userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
     private val usageStatsManager = AppUsageStatsManager(activity)
@@ -101,7 +99,6 @@ class AppAdapter(
     private var currentIconSize = prefs.getInt(Constants.Prefs.ICON_SIZE, 40)
     private var currentShowAppNamesInGrid = prefs.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
 
-    private val itemFadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.item_fade_in)
     private val iconLoader = IconLoader(
         activity = activity,
         context = context,
@@ -148,7 +145,6 @@ class AppAdapter(
     fun updateViewMode(isGrid: Boolean) {
         if (this.isGridMode != isGrid) {
             this.isGridMode = isGrid
-            lastAnimatedPosition = -1
             notifyItemRangeChanged(0, currentList.size, PAYLOAD_VIEW_MODE)
         }
     }
@@ -258,7 +254,6 @@ class AppAdapter(
     fun updateAppList(newAppList: List<ResolveInfo>) {
         val newItems = ArrayList(newAppList)
         val isFirstLoad = itemsRendered == 0
-        lastAnimatedPosition = -1
 
         try {
             val metadataCache = activity.cacheManager.getMetadataCache()
@@ -383,13 +378,6 @@ class AppAdapter(
             }
         }
 
-
-        if (position > lastAnimatedPosition) {
-
-            holder.itemView.clearAnimation()
-            holder.itemView.startAnimation(itemFadeInAnimation)
-            lastAnimatedPosition = position
-        }
 
         if (WebAppManager.isWebAppPackage(packageName)) {
             bindWebApp(holder, appInfo, packageName)
