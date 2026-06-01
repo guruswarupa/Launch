@@ -208,7 +208,7 @@ class AppListManager @Inject constructor(
 
 
         if (!showOnlyFavorites || focusMode || workspaceMode || isWorkProfileEnabled) {
-            result.add(createSeparatorInfo("system_separator"))
+            result.add(createSeparatorInfo("launcher_shortcuts_separator"))
             result.add(createLauncherShortcut("launcher_settings_shortcut"))
             result.add(createLauncherShortcut("launcher_vault_shortcut"))
         }
