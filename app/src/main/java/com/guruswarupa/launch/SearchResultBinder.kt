@@ -42,7 +42,6 @@ class ContactSearchResultBinder(
         val cacheKey = "${packageName}|${appInfo.preferredOrder}"
         iconLoader.loadContactPhoto(
             holder = holder,
-            position = position,
             cacheKey = cacheKey,
             contactName = contactName,
             fallbackResId = R.drawable.ic_person,
@@ -74,7 +73,6 @@ class PackageIconSearchResultBinder(
         val cacheKey = "${packageName}|${appInfo.preferredOrder}"
         iconLoader.loadSpecialAppIcon(
             holder = holder,
-            position = position,
             cacheKey = cacheKey,
             cacheId = iconCacheId,
             fallbackResId = R.drawable.ic_default_app_icon,

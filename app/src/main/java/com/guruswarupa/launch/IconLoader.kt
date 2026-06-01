@@ -366,7 +366,6 @@ class IconLoader(
         app: ResolveInfo,
         priority: Int,
         holder: AppAdapter.ViewHolder? = null,
-        position: Int = -1,
         onIconReady: ((String, AppAdapter.ViewHolder) -> Unit)? = null
     ) {
         val packageName = app.activityInfo.packageName
@@ -376,7 +375,7 @@ class IconLoader(
         val cachedIcon = iconCache.get(cacheKey)
         if (packageName in specialPackageNames || cachedIcon != null) {
             if (cachedIcon != null && holder?.appIcon != null) {
-                updateHolderIcon(holder, position, cacheKey, cachedIcon, onIconReady)
+                updateHolderIcon(holder, cacheKey, cachedIcon, onIconReady)
             }
             return
         }
@@ -408,7 +407,7 @@ class IconLoader(
 
                 val readyIcon = iconCache.get(cacheKey) ?: return@PriorityRunnable
                 if (holder != null) {
-                    updateHolderIcon(holder, position, cacheKey, readyIcon, onIconReady)
+                    updateHolderIcon(holder, cacheKey, readyIcon, onIconReady)
                 }
             } catch (e: Exception) {
                 android.util.Log.w("IconLoader", "Error loading icon for $packageName", e)
@@ -425,7 +424,6 @@ class IconLoader(
 
     fun loadSpecialAppIcon(
         holder: AppAdapter.ViewHolder,
-        position: Int,
         cacheKey: String,
         cacheId: String,
         fallbackResId: Int,
@@ -449,7 +447,7 @@ class IconLoader(
                     val icon = shapeIconDrawable(activity.packageManager.getApplicationIcon(candidatePackage))
                     specialAppIconCache.put(cacheId, icon)
                     (context as? Activity)?.runOnUiThread {
-                        if (holder.bindingAdapterPosition == position && holder.itemView.tag == cacheKey) {
+                        if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
 
                             if (!(icon is BitmapDrawable && icon.bitmap.isRecycled)) {
                                 holder.appIcon?.setImageDrawable(icon)
@@ -467,7 +465,6 @@ class IconLoader(
 
     fun loadContactPhoto(
         holder: AppAdapter.ViewHolder,
-        position: Int,
         cacheKey: String,
         contactName: String,
         fallbackResId: Int,
@@ -493,7 +490,7 @@ class IconLoader(
                 } ?: return@execute
                 contactPhotoCache.put(contactName, drawable)
                 (context as? Activity)?.runOnUiThread {
-                    if (holder.bindingAdapterPosition == position && holder.itemView.tag == cacheKey) {
+                    if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
 
                         if (!(drawable is BitmapDrawable && drawable.bitmap.isRecycled)) {
                             setIconDrawable(holder.appIcon, drawable)
@@ -509,7 +506,6 @@ class IconLoader(
 
     private fun updateHolderIcon(
         holder: AppAdapter.ViewHolder,
-        position: Int,
         cacheKey: String,
         drawable: Drawable,
         onIconReady: ((String, AppAdapter.ViewHolder) -> Unit)?
@@ -517,8 +513,7 @@ class IconLoader(
         (context as? Activity)?.runOnUiThread {
             val currentPosition = holder.bindingAdapterPosition
             val currentTag = holder.itemView.tag
-            if (currentPosition != RecyclerView.NO_POSITION && currentPosition == position && currentTag == cacheKey) {
-
+            if (currentPosition != RecyclerView.NO_POSITION && currentTag == cacheKey) {
                 if (drawable is BitmapDrawable && drawable.bitmap.isRecycled) {
                     return@runOnUiThread
                 }

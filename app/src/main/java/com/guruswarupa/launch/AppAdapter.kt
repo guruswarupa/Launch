@@ -359,13 +359,13 @@ class AppAdapter(
 
                         iconLoader.applyShapeAppearance(holder.appIcon)
                         holder.appIcon?.setImageDrawable(null)
-                        bindCachedOrAsyncIcon(holder, appInfo, position, cacheKey)
+                        bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
                     }
                     PAYLOAD_ICON_SIZE -> {
 
                         iconLoader.updateIconSize(holder.appIcon)
                         holder.appIcon?.setImageDrawable(null)
-                        bindCachedOrAsyncIcon(holder, appInfo, position, cacheKey)
+                        bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
                     }
                     PAYLOAD_VIEW_MODE -> {
 
@@ -448,12 +448,12 @@ class AppAdapter(
                 else -> {
 
                     holder.appName?.text = labelCache[cacheKey] ?: packageName
-                    bindCachedOrAsyncIcon(holder, appInfo, position, cacheKey)
+                    bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
                 }
             }
         } else {
-            bindAppLabel(holder, position, appInfo, packageName, cacheKey)
-            bindCachedOrAsyncIcon(holder, appInfo, position, cacheKey)
+            bindAppLabel(holder, appInfo, packageName, cacheKey)
+            bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
         }
 
         applyIconVisualState(packageName, holder.appIcon)
@@ -473,7 +473,6 @@ class AppAdapter(
 
     private fun bindAppLabel(
         holder: ViewHolder,
-        position: Int,
         appInfo: ResolveInfo,
         packageName: String,
         cacheKey: String
@@ -486,13 +485,12 @@ class AppAdapter(
 
 
         holder.appName?.text = packageName
-        loadLabelAsync(holder, position, appInfo, packageName, cacheKey)
+        loadLabelAsync(holder, appInfo, packageName, cacheKey)
     }
 
     private fun bindCachedOrAsyncIcon(
         holder: ViewHolder,
         appInfo: ResolveInfo,
-        position: Int,
         cacheKey: String
     ) {
         val packageName = appInfo.activityInfo.packageName
@@ -506,7 +504,7 @@ class AppAdapter(
 
                 iconLoader.setIconResource(holder.appIcon, R.drawable.ic_default_app_icon)
                 val priority = if (isFastScrolling) IconLoader.PRIORITY_HIGH else IconLoader.PRIORITY_MEDIUM
-                iconLoader.submitIconLoadTask(appInfo, priority, holder, position) { readyPackageName, readyHolder ->
+                iconLoader.submitIconLoadTask(appInfo, priority, holder) { readyPackageName, readyHolder ->
                     applyIconVisualState(readyPackageName, readyHolder.appIcon)
                 }
             }
@@ -515,14 +513,14 @@ class AppAdapter(
 
         iconLoader.setIconResource(holder.appIcon, R.drawable.ic_default_app_icon)
         val priority = if (isFastScrolling) IconLoader.PRIORITY_HIGH else IconLoader.PRIORITY_MEDIUM
-        iconLoader.submitIconLoadTask(appInfo, priority, holder, position) { readyPackageName, readyHolder ->
+        iconLoader.submitIconLoadTask(appInfo, priority, holder) { readyPackageName, readyHolder ->
             applyIconVisualState(readyPackageName, readyHolder.appIcon)
         }
     }
 
     override fun getItemCount(): Int = currentList.size
 
-    private fun loadLabelAsync(holder: ViewHolder, position: Int, appInfo: ResolveInfo, packageName: String, cacheKey: String) {
+    private fun loadLabelAsync(holder: ViewHolder, appInfo: ResolveInfo, packageName: String, cacheKey: String) {
         if (labelCache.containsKey(cacheKey)) return
         pendingLabelTasks[cacheKey]?.cancel(true)
 
@@ -543,12 +541,18 @@ class AppAdapter(
                     }
 
                     (context as? Activity)?.runOnUiThread {
-                        if (holder.bindingAdapterPosition == position) holder.appName?.text = label else notifyItemChanged(position)
+                        val currentPosition = holder.bindingAdapterPosition
+                        if (currentPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
+                            holder.appName?.text = label
+                        }
                     }
                 } catch (_: Exception) {
                     labelCache[cacheKey] = packageName
                     (context as? Activity)?.runOnUiThread {
-                        if (holder.bindingAdapterPosition == position) holder.appName?.text = packageName else notifyItemChanged(position)
+                        val currentPosition = holder.bindingAdapterPosition
+                        if (currentPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
+                            holder.appName?.text = packageName
+                        }
                     }
                 } finally {
                     isDone = true
