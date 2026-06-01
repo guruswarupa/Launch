@@ -64,7 +64,7 @@ class AppListUIUpdater(
             if (adapter != null) {
                 adapter?.updateViewMode(isGrid)
             } else {
-                val newAdapter = AppAdapter(activity, appList, searchBox, isGrid, activity)
+                val newAdapter = AppAdapter(activity, appList, searchBox, isGrid, activity, activity.sharedPreferences)
                 adapter = newAdapter
                 activity.adapter = newAdapter
                 recyclerView.adapter = newAdapter

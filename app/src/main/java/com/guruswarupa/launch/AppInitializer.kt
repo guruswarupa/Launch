@@ -94,7 +94,7 @@ class AppInitializer(private val activity: MainActivity) {
                 Constants.Prefs.VIEW_PREFERENCE_LIST
             )
             val isGridMode = viewPreference == Constants.Prefs.VIEW_PREFERENCE_GRID
-            adapter = AppAdapter(activity, appList, views.searchBox, isGridMode, activity)
+            adapter = AppAdapter(activity, appList, views.searchBox, isGridMode, activity, sharedPreferences)
 
 
             if (isGridMode) {

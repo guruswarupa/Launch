@@ -53,7 +53,8 @@ class AppAdapter(
     appList: MutableList<ResolveInfo>,
     private val searchBox: AutoCompleteTextView,
     private var isGridMode: Boolean,
-    private val context: Context
+    private val context: Context,
+    private val prefs: android.content.SharedPreferences
 ) : ListAdapter<ResolveInfo, AppAdapter.ViewHolder>(AppListDiffCallback()) {
 
     companion object {
@@ -96,7 +97,6 @@ class AppAdapter(
     private var isFastScrolling = false
     private val fastScrollDebounceHandler = Handler(Looper.getMainLooper())
     private var fastScrollDebounceRunnable: Runnable? = null
-    private val prefs = context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
     private var currentIconStyle = prefs.getString(Constants.Prefs.ICON_STYLE, "squircle") ?: "round"
     private var currentIconSize = prefs.getInt(Constants.Prefs.ICON_SIZE, 40)
     private var currentShowAppNamesInGrid = prefs.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
