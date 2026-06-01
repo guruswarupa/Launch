@@ -368,6 +368,8 @@ class IconLoader(
         holder: AppAdapter.ViewHolder? = null,
         onIconReady: ((String, AppAdapter.ViewHolder) -> Unit)? = null
     ) {
+        if (iconPreloadExecutor.isShutdown || iconPreloadExecutor.isTerminated) return
+        
         val packageName = app.activityInfo.packageName
         if (packageName == separatorPackage) return
 
@@ -415,8 +417,13 @@ class IconLoader(
         }
 
         val trackedTask = TrackedTask(priorityRunnable)
-        iconPreloadExecutor.execute(trackedTask)
-        pendingIconTasks[cacheKey] = trackedTask
+        try {
+            iconPreloadExecutor.execute(trackedTask)
+            pendingIconTasks[cacheKey] = trackedTask
+        } catch (e: java.util.concurrent.RejectedExecutionException) {
+            android.util.Log.e("IconLoader", "Failed to submit icon task", e)
+        }
+        
         if (pendingIconTasks.size > Constants.Dimensions.PENDING_TASKS_CLEANUP_THRESHOLD) {
             pendingIconTasks.entries.removeIf { it.value.isDone }
         }
@@ -430,6 +437,8 @@ class IconLoader(
         candidatePackages: List<String>,
         onLoaded: (() -> Unit)? = null
     ) {
+        if (iconLoadExecutor.isShutdown || iconLoadExecutor.isTerminated) return
+        
         val cachedIcon = specialAppIconCache.get(cacheId)
         if (cachedIcon != null) {
 
@@ -441,25 +450,29 @@ class IconLoader(
         }
 
         setIconResource(holder.appIcon, fallbackResId)
-        iconLoadExecutor.execute {
-            for (candidatePackage in candidatePackages) {
-                try {
-                    val icon = shapeIconDrawable(activity.packageManager.getApplicationIcon(candidatePackage))
-                    specialAppIconCache.put(cacheId, icon)
-                    (context as? Activity)?.runOnUiThread {
-                        if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
+        try {
+            iconLoadExecutor.execute {
+                for (candidatePackage in candidatePackages) {
+                    try {
+                        val icon = shapeIconDrawable(activity.packageManager.getApplicationIcon(candidatePackage))
+                        specialAppIconCache.put(cacheId, icon)
+                        (context as? Activity)?.runOnUiThread {
+                            if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
 
-                            if (!(icon is BitmapDrawable && icon.bitmap.isRecycled)) {
-                                holder.appIcon?.setImageDrawable(icon)
-                                onLoaded?.invoke()
+                                if (!(icon is BitmapDrawable && icon.bitmap.isRecycled)) {
+                                    holder.appIcon?.setImageDrawable(icon)
+                                    onLoaded?.invoke()
+                                }
                             }
                         }
+                        return@execute
+                    } catch (e: Exception) {
+                        android.util.Log.w("IconLoader", "Error loading special app icon for $candidatePackage", e)
                     }
-                    return@execute
-                } catch (e: Exception) {
-                    android.util.Log.w("IconLoader", "Error loading special app icon for $candidatePackage", e)
                 }
             }
+        } catch (e: java.util.concurrent.RejectedExecutionException) {
+            android.util.Log.e("IconLoader", "Failed to submit special icon task", e)
         }
     }
 
@@ -471,6 +484,8 @@ class IconLoader(
         getPhotoUriForContact: (String) -> String?,
         onLoaded: (() -> Unit)? = null
     ) {
+        if (iconLoadExecutor.isShutdown || iconLoadExecutor.isTerminated) return
+
         val cachedPhoto = contactPhotoCache.get(contactName)
         if (cachedPhoto != null) {
 
@@ -482,25 +497,29 @@ class IconLoader(
         }
 
         setIconResource(holder.appIcon, fallbackResId)
-        iconLoadExecutor.execute {
-            try {
-                val photoUri = getPhotoUriForContact(contactName) ?: return@execute
-                val drawable = activity.contentResolver.openInputStream(photoUri.toUri())?.use { inputStream ->
-                    Drawable.createFromStream(inputStream, photoUri)
-                } ?: return@execute
-                contactPhotoCache.put(contactName, drawable)
-                (context as? Activity)?.runOnUiThread {
-                    if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
+        try {
+            iconLoadExecutor.execute {
+                try {
+                    val photoUri = getPhotoUriForContact(contactName) ?: return@execute
+                    val drawable = activity.contentResolver.openInputStream(photoUri.toUri())?.use { inputStream ->
+                        Drawable.createFromStream(inputStream, photoUri)
+                    } ?: return@execute
+                    contactPhotoCache.put(contactName, drawable)
+                    (context as? Activity)?.runOnUiThread {
+                        if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
 
-                        if (!(drawable is BitmapDrawable && drawable.bitmap.isRecycled)) {
-                            setIconDrawable(holder.appIcon, drawable)
-                            onLoaded?.invoke()
+                            if (!(drawable is BitmapDrawable && drawable.bitmap.isRecycled)) {
+                                setIconDrawable(holder.appIcon, drawable)
+                                onLoaded?.invoke()
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    android.util.Log.w("IconLoader", "Error loading contact photo for $contactName", e)
                 }
-            } catch (e: Exception) {
-                android.util.Log.w("IconLoader", "Error loading contact photo for $contactName", e)
             }
+        } catch (e: java.util.concurrent.RejectedExecutionException) {
+            android.util.Log.e("IconLoader", "Failed to submit contact photo task", e)
         }
     }
 
