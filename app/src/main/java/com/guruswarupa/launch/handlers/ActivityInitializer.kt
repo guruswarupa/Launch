@@ -244,7 +244,8 @@ class ActivityInitializer(
         if (isGridMode) {
             val columns = (activity as? MainActivity)?.getPreferredGridColumns()
                 ?: activity.resources.getInteger(R.integer.app_grid_columns)
-            recyclerView.layoutManager = GridLayoutManager(activity, columns)
+            val gridLayoutManager = GridLayoutManager(activity, columns)
+            recyclerView.layoutManager = gridLayoutManager
         } else {
             recyclerView.layoutManager = LinearLayoutManager(activity)
         }
