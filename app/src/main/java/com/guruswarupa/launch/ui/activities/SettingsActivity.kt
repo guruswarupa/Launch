@@ -81,6 +81,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         const val EXTRA_OPEN_SUPPORT_SECTION = "open_support_section"
         private const val STATE_WIDGETS_SECTION_EXPANDED = "state_widgets_section_expanded"
         private const val STATE_NEWS_SECTION_EXPANDED = "state_news_section_expanded"
+        private const val STATE_SYSTEM_MONITOR_SECTION_EXPANDED = "state_system_monitor_section_expanded"
         private const val PHYSICAL_ACTIVITY_PREFS_NAME = "physical_activity_prefs"
     }
 
@@ -93,6 +94,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
     private var hasUnsavedThemeChanges = false
     private var widgetsSectionExpanded = false
     private var newsSectionExpanded = false
+    private var systemMonitorSectionExpanded = false
     private var billingClient: BillingClient? = null
     private val supportProducts = linkedMapOf(
         "support_49" to R.id.support_49,
@@ -144,6 +146,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         applyBackgroundTranslucency()
         widgetsSectionExpanded = savedInstanceState?.getBoolean(STATE_WIDGETS_SECTION_EXPANDED, false) ?: false
         newsSectionExpanded = savedInstanceState?.getBoolean(STATE_NEWS_SECTION_EXPANDED, false) ?: false
+        systemMonitorSectionExpanded = savedInstanceState?.getBoolean(STATE_SYSTEM_MONITOR_SECTION_EXPANDED, false) ?: false
 
         selectedThemeId = prefs.getString(Constants.Prefs.SELECTED_THEME, "stardust") ?: "stardust"
 
@@ -157,6 +160,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         setupAppTimerSection()
         setupSecuritySection()
         setupWebAppsSection()
+        setupSystemMonitorSection()
         setupMaintenanceSection()
         setupSupportSection()
         setupVersionInfo()
@@ -185,6 +189,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         super.onSaveInstanceState(outState)
         outState.putBoolean(STATE_WIDGETS_SECTION_EXPANDED, widgetsSectionExpanded)
         outState.putBoolean(STATE_NEWS_SECTION_EXPANDED, newsSectionExpanded)
+        outState.putBoolean(STATE_SYSTEM_MONITOR_SECTION_EXPANDED, systemMonitorSectionExpanded)
     }
 
     private fun triggerWallpaperPicker(themeId: String) {
@@ -787,6 +792,22 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.app_lock_button).setOnClickListener { startActivity(Intent(this, AppLockSettingsActivity::class.java)) }
         findViewById<View>(R.id.hidden_apps_button).setOnClickListener { startActivity(Intent(this, HiddenAppsSettingsActivity::class.java)) }
         findViewById<View>(R.id.privacy_dashboard_button).setOnClickListener { startActivity(Intent(this, PrivacyDashboardActivity::class.java)) }
+    }
+
+    private fun setupSystemMonitorSection() {
+        val header = findViewById<View>(R.id.system_monitor_header)
+        val content = findViewById<View>(R.id.system_monitor_content)
+        val arrow = findViewById<TextView>(R.id.system_monitor_arrow)
+        val button = findViewById<Button>(R.id.system_monitor_button)
+
+        setupSectionToggle(header, content, arrow) { expanded ->
+            systemMonitorSectionExpanded = expanded
+        }
+        applySectionExpandedState(content, arrow, systemMonitorSectionExpanded)
+
+        button.setOnClickListener {
+            startActivity(Intent(this, SystemMonitorActivity::class.java))
+        }
     }
 
     private fun setupWebAppsSection() {
