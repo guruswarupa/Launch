@@ -24,9 +24,13 @@ class BatteryHealthWidget(
     private lateinit var voltageText: TextView
     private lateinit var temperatureText: TextView
     private lateinit var healthStatusText: TextView
+    private lateinit var designCapacityText: TextView
+    private lateinit var currentFullCapacityText: TextView
+    private lateinit var calculatedHealthPercentageText: TextView
 
     private val batteryManager = BatteryManager(context)
     private val handler = Handler(Looper.getMainLooper())
+    private val prefs by lazy { context.getSharedPreferences("system_monitor_prefs", Context.MODE_PRIVATE) }
 
     private val updateRunnable = object : Runnable {
         override fun run() {
@@ -50,6 +54,9 @@ class BatteryHealthWidget(
         voltageText = widgetView.findViewById(R.id.voltage_text)
         temperatureText = widgetView.findViewById(R.id.temperature_text)
         healthStatusText = widgetView.findViewById(R.id.health_status_text)
+        designCapacityText = widgetView.findViewById(R.id.design_capacity_text)
+        currentFullCapacityText = widgetView.findViewById(R.id.current_full_capacity_text)
+        calculatedHealthPercentageText = widgetView.findViewById(R.id.calculated_health_percentage_text)
 
         updateDisplay()
 
@@ -85,6 +92,24 @@ class BatteryHealthWidget(
                 else -> context.getColor(R.color.widget_text)
             }
         )
+
+        designCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.designCapacity)
+        currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.currentFullCapacity)
+
+        // Health Calculation and Persistence (Calibrated at 100%)
+        val KEY_LAST_CALCULATED_HEALTH = "last_calculated_health"
+        if (batteryInfo.isFull && batteryInfo.designCapacity > 0 && batteryInfo.currentFullCapacity > 0) {
+            val healthPct = (batteryInfo.currentFullCapacity.toFloat() / batteryInfo.designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
+            prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).apply()
+            calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", healthPct)
+        } else {
+            val lastHealth = prefs.getInt(KEY_LAST_CALCULATED_HEALTH, -1)
+            if (lastHealth != -1) {
+                calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", lastHealth)
+            } else {
+                calculatedHealthPercentageText.text = "--"
+            }
+        }
     }
 
     fun onResume() {

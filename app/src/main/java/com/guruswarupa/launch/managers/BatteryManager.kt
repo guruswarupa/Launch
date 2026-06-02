@@ -15,7 +15,10 @@ data class BatteryHealthInfo(
     val voltage: Int,
     val temperature: Float,
     val health: String,
-    val timeRemaining: String?
+    val timeRemaining: String?,
+    val designCapacity: Int,
+    val currentFullCapacity: Int,
+    val isFull: Boolean
 )
 
 class BatteryManager(private val context: Context) {
@@ -50,6 +53,7 @@ class BatteryManager(private val context: Context) {
         var temperature = 30.0f
         var health = "Good"
         var timeRemaining: String? = null
+        var isFull = false
 
         if (batteryIntent != null) {
             val level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
@@ -63,6 +67,8 @@ class BatteryManager(private val context: Context) {
 
             isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                     status == BatteryManager.BATTERY_STATUS_FULL
+            
+            isFull = status == BatteryManager.BATTERY_STATUS_FULL || percentage == 100
 
             if (isCharging) {
                 chargingSpeed = estimateChargingSpeed(batteryIntent)
@@ -87,6 +93,11 @@ class BatteryManager(private val context: Context) {
             }
         }
 
+        val designCapacity = getBatteryDesignCapacity()
+        val bm = context.getSystemService(Context.BATTERY_SERVICE) as android.os.BatteryManager
+        val currentCapacityMicroAh = bm.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+        val currentFullCapacity = Math.abs(currentCapacityMicroAh / 1000)
+
         return BatteryHealthInfo(
             percentage = percentage,
             isCharging = isCharging,
@@ -94,8 +105,22 @@ class BatteryManager(private val context: Context) {
             voltage = voltage,
             temperature = temperature,
             health = health,
-            timeRemaining = timeRemaining
+            timeRemaining = timeRemaining,
+            designCapacity = designCapacity,
+            currentFullCapacity = currentFullCapacity,
+            isFull = isFull
         )
+    }
+
+    private fun getBatteryDesignCapacity(): Int {
+        val powerProfileClass = "com.android.internal.os.PowerProfile"
+        return try {
+            val mPowerProfile = Class.forName(powerProfileClass).getConstructor(Context::class.java).newInstance(context)
+            val batteryCapacity = Class.forName(powerProfileClass).getMethod("getBatteryCapacity").invoke(mPowerProfile) as Double
+            batteryCapacity.toInt()
+        } catch (_: Exception) {
+            4000
+        }
     }
 
     private fun estimateChargingSpeed(batteryIntent: android.content.Intent): Int {
