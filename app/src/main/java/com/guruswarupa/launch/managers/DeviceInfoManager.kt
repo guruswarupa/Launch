@@ -6,6 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.net.ConnectivityManager
+import android.net.LinkProperties
+import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Environment
@@ -13,6 +19,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.InputStreamReader
+import java.net.Inet4Address
 import java.util.Locale
 
 class DeviceInfoManager(private val context: Context) {
@@ -489,6 +496,25 @@ class DeviceInfoManager(private val context: Context) {
         return usedRam to totalRam
     }
 
+    fun getRamType(): String {
+        val paths = listOf(
+            "/sys/class/memory/ram/ram_type",
+            "/sys/devices/system/cpu/cpu0/cpufreq/ram_type"
+        )
+        for (path in paths) {
+            val type = readStringFile(path)
+            if (!type.isNullOrEmpty()) return type.trim()
+        }
+        
+        // Fallback: guess based on SOC
+        val hw = Build.HARDWARE.lowercase()
+        return when {
+            hw.contains("9810") || hw.contains("961") -> "LPDDR4X"
+            hw.contains("8150") || hw.contains("8250") -> "LPDDR5"
+            else -> "LPDDRx"
+        }
+    }
+
     fun getStorageUsage(): Pair<Long, Long> {
         return try {
             val path = Environment.getDataDirectory()
@@ -505,6 +531,26 @@ class DeviceInfoManager(private val context: Context) {
         } catch (_: Exception) {
             0L to 0L
         }
+    }
+
+    fun getStorageType(): String {
+        val paths = listOf(
+            "/sys/class/block/sda/device/model",
+            "/sys/block/sda/device/model",
+            "/sys/class/block/mmcblk0/device/name"
+        )
+        for (path in paths) {
+            val model = readStringFile(path)
+            if (!model.isNullOrEmpty()) {
+                val m = model.lowercase()
+                return when {
+                    m.contains("ufs") -> "UFS"
+                    m.contains("mmc") -> "eMMC"
+                    else -> if (path.contains("sda")) "UFS" else "eMMC"
+                }
+            }
+        }
+        return "UFS / eMMC"
     }
 
     fun formatBytes(bytes: Long): String {
@@ -542,5 +588,128 @@ class DeviceInfoManager(private val context: Context) {
         } else {
             String.format(Locale.getDefault(), "%dm %ds", minutes, seconds)
         }
+    }
+
+    fun getDetailedNetworkInfo(): Map<String, String> {
+        val info = mutableMapOf<String, String>()
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        
+        val activeNetwork = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        val linkProperties = connectivityManager.getLinkProperties(activeNetwork)
+
+        if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            val wifiInfo = wifiManager.connectionInfo
+            info["Type"] = "Wi-Fi"
+            info["Link Speed"] = "${wifiInfo.linkSpeed} Mbps"
+            info["Signal"] = "${wifiInfo.rssi} dBm"
+            info["Frequency"] = "${wifiInfo.frequency} MHz"
+            
+            // Standard detection
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val standard = when (wifiInfo.wifiStandard) {
+                    4 -> "Wi-Fi 4 (802.11n)"
+                    5 -> "Wi-Fi 5 (802.11ac)"
+                    6 -> "Wi-Fi 6 (802.11ax)"
+                    7 -> "Wi-Fi 7 (802.11be)"
+                    else -> "Unknown"
+                }
+                info["Standard"] = standard
+            }
+
+            // Frequency to Channel
+            val channel = if (wifiInfo.frequency >= 2412 && wifiInfo.frequency <= 2484) {
+                (wifiInfo.frequency - 2412) / 5 + 1
+            } else if (wifiInfo.frequency >= 5170 && wifiInfo.frequency <= 5825) {
+                (wifiInfo.frequency - 5170) / 5 + 34
+            } else -1
+            if (channel > 0) info["Channel"] = channel.toString()
+        } else if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            info["Type"] = "Cellular"
+            info["Bandwidth"] = "${capabilities.linkDownstreamBandwidthKbps / 1000} Mbps Down"
+        }
+
+        linkProperties?.let { lp ->
+            val ipAddresses = lp.linkAddresses.filter { it.address is Inet4Address }
+            if (ipAddresses.isNotEmpty()) {
+                val addr = ipAddresses[0]
+                info["IP Address"] = addr.address.hostAddress ?: ""
+                info["Subnet Mask"] = prefixToMask(addr.prefixLength)
+            }
+            
+            val gateways = lp.routes.filter { it.isDefaultRoute && it.gateway is Inet4Address }
+            if (gateways.isNotEmpty()) {
+                info["Gateway"] = gateways[0].gateway?.hostAddress ?: ""
+            }
+
+            val dnsServers = lp.dnsServers.filterIsInstance<Inet4Address>()
+            dnsServers.forEachIndexed { index, inetAddress ->
+                info["DNS ${index + 1}"] = inetAddress.hostAddress ?: ""
+            }
+
+            if (wifiManager.dhcpInfo != null) {
+                info["DHCP Server"] = intToIp(wifiManager.dhcpInfo.serverAddress)
+            }
+        }
+
+        return info
+    }
+
+    private fun prefixToMask(prefix: Int): String {
+        var mask = 0xffffffff.toInt() shl (32 - prefix)
+        return String.format(Locale.getDefault(), "%d.%d.%d.%d",
+            (mask shr 24) and 0xff, (mask shr 16) and 0xff, (mask shr 8) and 0xff, mask and 0xff)
+    }
+
+    private fun intToIp(i: Int): String {
+        return (i and 0xFF).toString() + "." +
+                (i shr 8 and 0xFF) + "." +
+                (i shr 16 and 0xFF) + "." +
+                (i shr 24 and 0xFF)
+    }
+
+    fun getDetailedCameraInfo(): List<Map<String, String>> {
+        val cameras = mutableListOf<Map<String, String>>()
+        val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        try {
+            for (id in manager.cameraIdList) {
+                val char = manager.getCameraCharacteristics(id)
+                val info = mutableMapOf<String, String>()
+                info["ID"] = id
+                
+                val facing = char.get(CameraCharacteristics.LENS_FACING)
+                info["Facing"] = when(facing) {
+                    CameraCharacteristics.LENS_FACING_FRONT -> "Front"
+                    CameraCharacteristics.LENS_FACING_BACK -> "Back"
+                    CameraCharacteristics.LENS_FACING_EXTERNAL -> "External"
+                    else -> "Unknown"
+                }
+
+                val sensorSize = char.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
+                if (sensorSize != null) {
+                    info["Sensor Size"] = String.format(Locale.getDefault(), "%.2f x %.2f mm", sensorSize.width, sensorSize.height)
+                }
+
+                val pixelArray = char.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)
+                if (pixelArray != null) {
+                    val mp = (pixelArray.width * pixelArray.height) / 1000000f
+                    info["Resolution"] = String.format(Locale.getDefault(), "%d x %d (%.1f MP)", pixelArray.width, pixelArray.height, mp)
+                }
+
+                val apertures = char.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)
+                if (apertures != null && apertures.isNotEmpty()) {
+                    info["Aperture"] = "f/${apertures[0]}"
+                }
+
+                val focalLengths = char.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
+                if (focalLengths != null && focalLengths.isNotEmpty()) {
+                    info["Focal Length"] = "${focalLengths[0]} mm"
+                }
+
+                cameras.add(info)
+            }
+        } catch (_: Exception) {}
+        return cameras
     }
 }
