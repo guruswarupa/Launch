@@ -203,16 +203,16 @@ class SystemMonitorActivity : AppCompatActivity() {
             val healthPct = (currentChargeCounter.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
             prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, currentChargeCounter).apply()
             
-            capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: %dmAh", designCapacity, currentChargeCounter)
+            capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Full: %dmAh | Charge: %dmAh", designCapacity, currentChargeCounter, currentChargeCounter)
             calculatedHealthText.text = String.format(Locale.getDefault(), "Calculated Health: %d%% (Updated at 100%%)", healthPct)
         } else {
             val lastFullCapacity = prefs.getInt(KEY_LAST_FULL_CAPACITY, -1)
             val lastHealth = prefs.getInt(KEY_LAST_CALCULATED_HEALTH, -1)
             
             if (lastFullCapacity != -1) {
-                capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: %dmAh", designCapacity, lastFullCapacity)
+                capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Full: %dmAh | Charge: %dmAh", designCapacity, lastFullCapacity, currentChargeCounter)
             } else {
-                capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: Calibrating...", designCapacity)
+                capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Full: Calibrating... | Charge: %dmAh", designCapacity, currentChargeCounter)
             }
 
             if (lastHealth != -1) {
