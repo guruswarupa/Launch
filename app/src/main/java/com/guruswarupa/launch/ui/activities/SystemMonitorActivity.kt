@@ -197,17 +197,24 @@ class SystemMonitorActivity : AppCompatActivity() {
         }
 
         val designCapacity = getBatteryDesignCapacity()
-        val currentCapacityMicroAh = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
-        val currentCapacity = Math.abs(currentCapacityMicroAh / 1000)
+        val currentChargeCounter = Math.abs(bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) / 1000)
         
-        capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: %dmAh", designCapacity, currentCapacity)
-        
-        if (isFull && designCapacity > 0 && currentCapacity > 0) {
-            val healthPct = (currentCapacity.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
-            prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, currentCapacity).apply()
+        if (isFull && designCapacity > 0 && currentChargeCounter > 0) {
+            val healthPct = (currentChargeCounter.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
+            prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, currentChargeCounter).apply()
+            
+            capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: %dmAh", designCapacity, currentChargeCounter)
             calculatedHealthText.text = String.format(Locale.getDefault(), "Calculated Health: %d%% (Updated at 100%%)", healthPct)
         } else {
+            val lastFullCapacity = prefs.getInt(KEY_LAST_FULL_CAPACITY, -1)
             val lastHealth = prefs.getInt(KEY_LAST_CALCULATED_HEALTH, -1)
+            
+            if (lastFullCapacity != -1) {
+                capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: %dmAh", designCapacity, lastFullCapacity)
+            } else {
+                capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: Calibrating...", designCapacity)
+            }
+
             if (lastHealth != -1) {
                 calculatedHealthText.text = String.format(Locale.getDefault(), "Calculated Health: %d%% (Last full charge)", lastHealth)
             } else {

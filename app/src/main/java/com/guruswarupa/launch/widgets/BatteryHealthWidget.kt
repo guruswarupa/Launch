@@ -94,20 +94,33 @@ class BatteryHealthWidget(
         )
 
         designCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.designCapacity)
-        currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.currentFullCapacity)
-
+        
         // Health Calculation and Persistence (Calibrated at 100%)
         val KEY_LAST_CALCULATED_HEALTH = "last_calculated_health"
-        if (batteryInfo.isFull && batteryInfo.designCapacity > 0 && batteryInfo.currentFullCapacity > 0) {
-            val healthPct = (batteryInfo.currentFullCapacity.toFloat() / batteryInfo.designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
-            prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).apply()
+        val KEY_LAST_FULL_CAPACITY = "last_full_capacity"
+        
+        val liveChargeCounter = batteryInfo.currentFullCapacity // This is actually the live charge mAh from BatteryManager
+
+        if (batteryInfo.isFull && batteryInfo.designCapacity > 0 && liveChargeCounter > 0) {
+            val healthPct = (liveChargeCounter.toFloat() / batteryInfo.designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
+            prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, liveChargeCounter).apply()
+            
             calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", healthPct)
+            currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", liveChargeCounter)
         } else {
             val lastHealth = prefs.getInt(KEY_LAST_CALCULATED_HEALTH, -1)
+            val lastFullCapacity = prefs.getInt(KEY_LAST_FULL_CAPACITY, -1)
+            
             if (lastHealth != -1) {
                 calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", lastHealth)
             } else {
                 calculatedHealthPercentageText.text = "--"
+            }
+            
+            if (lastFullCapacity != -1) {
+                currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", lastFullCapacity)
+            } else {
+                currentFullCapacityText.text = "Calibrating..."
             }
         }
     }
