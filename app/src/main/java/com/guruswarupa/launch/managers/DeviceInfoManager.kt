@@ -294,6 +294,8 @@ class DeviceInfoManager(private val context: Context) {
             "/sys/class/misc/mali0/device/gpuinfo",
             "/sys/devices/platform/soc/soc:mali/gpuinfo",
             "/proc/mali/info",
+            "/sys/module/mali/version",
+            "/sys/module/mali_kbase/version",
             "/sys/kernel/gpu/gpu_model"
         )
         for (path in paths) {
@@ -302,14 +304,18 @@ class DeviceInfoManager(private val context: Context) {
                 if (file.exists() && file.canRead()) {
                     val content = BufferedReader(FileReader(file)).use { it.readText() }
                     
-                    // Look for Mali patterns with numbers (e.g. Mali-G72, Mali-T880)
+                    // Specific Mali extraction from gpuinfo or version
+                    val maliMatch = Regex("(Mali-[GT]\\d+)", RegexOption.IGNORE_CASE).find(content)
+                    if (maliMatch != null) return maliMatch.value.trim().uppercase()
+
+                    // Look for any Mali or Adreno pattern
                     val patterns = listOf("Mali-G\\d+", "Mali-T\\d+", "Adreno\\s*\\d+")
                     for (p in patterns) {
                         val match = Regex(p, RegexOption.IGNORE_CASE).find(content)
                         if (match != null) return match.value.trim().uppercase().replace("ADRENO", "Adreno ")
                     }
 
-                    if (path.contains("kgsl") || path.contains("gpu_model")) {
+                    if (path.contains("gpu_model") || path.contains("kgsl")) {
                         val trimmed = content.trim()
                         if (trimmed.isNotEmpty() && trimmed.length > 3) return trimmed.uppercase()
                     }
@@ -317,27 +323,26 @@ class DeviceInfoManager(private val context: Context) {
             } catch (_: Exception) {}
         }
 
-        // Check system properties with fallback logic
-        val props = listOf("ro.hardware.egl", "ro.hardware.gpu", "ro.board.platform", "ro.chipname")
+        val props = listOf("ro.hardware.egl", "ro.hardware.gpu", "ro.board.platform", "ro.chipname", "ro.product.board")
         for (prop in props) {
             try {
                 val process = Runtime.getRuntime().exec("getprop $prop")
                 val value = BufferedReader(InputStreamReader(process.inputStream)).use { it.readLine() }
                 if (!value.isNullOrEmpty() && value != "emulation") {
-                    // Check if it's a specific Mali/Adreno name
-                    if (value.contains("mali", true) && value.length > 4) return value.uppercase()
+                    if (value.contains("mali", true)) {
+                        val m = Regex("(Mali-[GT]\\d+)", RegexOption.IGNORE_CASE).find(value)
+                        if (m != null) return m.value.uppercase()
+                        if (value.length > 4) return value.uppercase()
+                    }
                     if (value.contains("adreno", true)) return value.uppercase().replace("ADRENO", "Adreno ")
-                    
-                    // If it's just "mali", try to combine with chipname if available later
                 }
             } catch (_: Exception) {}
         }
 
-        // Last resort: check build hardware and provide a better generic name
         val hw = Build.HARDWARE.lowercase()
         return when {
-            hw.contains("qcom") || hw.contains("adreno") -> "Adreno GPU"
-            hw.contains("exynos") || hw.contains("mali") || hw.contains("mt") -> "Mali GPU"
+            hw.contains("qcom") -> "Adreno GPU"
+            hw.contains("exynos") || hw.contains("mali") || hw.contains("mt") -> "Mali-G Series"
             else -> "System GPU"
         }
     }
@@ -385,18 +390,66 @@ class DeviceInfoManager(private val context: Context) {
     }
 
     fun getGpuCoreCount(): Int {
-        // Mali specific core detection
-        val maliCorePaths = listOf(
+        val paths = listOf(
             "/sys/class/misc/mali0/device/num_cores",
-            "/sys/devices/platform/soc/soc:mali/num_cores"
+            "/sys/devices/platform/soc/soc:mali/num_cores",
+            "/sys/class/misc/mali0/device/gpuinfo",
+            "/proc/mali/info",
+            "/sys/devices/platform/soc/5000000.gpu/num_cores",
+            "/sys/class/misc/mali0/device/as_num_cores",
+            "/sys/class/misc/mali0/device/js_num_cores"
         )
-        for (path in maliCorePaths) {
-            val count = readLongFile(path).toInt()
-            if (count > 0) return count
+        
+        for (path in paths) {
+            try {
+                val file = File(path)
+                if (file.exists() && file.canRead()) {
+                    if (path.contains("num_cores")) {
+                        val count = readLongFile(path).toInt()
+                        if (count > 0) return count
+                    } else {
+                        val content = BufferedReader(FileReader(file)).use { it.readText() }
+                        val patterns = listOf(
+                            "cores:?\\s*(\\d+)",
+                            "shader_cores:?\\s*(\\d+)",
+                            "present_cores:?\\s*(\\d+)",
+                            "core_mask:?\\s*0x([0-9a-fA-F]+)"
+                        )
+                        for (p in patterns) {
+                            val match = Regex(p, RegexOption.IGNORE_CASE).find(content)
+                            if (match != null) {
+                                return if (p.contains("mask")) {
+                                    Integer.bitCount(match.groupValues[1].toInt(16))
+                                } else {
+                                    match.groupValues[1].toInt()
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
         }
         
-        // Adreno usually reports as one unit, but we can try to guess from model or just default to 1 if unreadable
-        return 1
+        // Comprehensive Fallback for common Mali chipsets (Exynos, Helio, Kirin)
+        val hw = (Build.HARDWARE + " " + Build.BOARD).lowercase()
+        
+        // Match specific Mali core count based on detected model if possible
+        val model = getGpuModel().uppercase()
+        if (model.contains("G72") && (hw.contains("961") || hw.contains("9810"))) {
+            return if (hw.contains("9810")) 18 else 3
+        }
+
+        return when {
+            hw.contains("exynos9810") || hw.contains("universal9810") -> 18 // G72 MP18
+            hw.contains("exynos961") || hw.contains("universal961") -> 3 // G72 MP3
+            hw.contains("exynos7885") || hw.contains("universal7885") -> 2 // G71 MP2
+            hw.contains("exynos7904") || hw.contains("universal7904") -> 2 // G71 MP2
+            hw.contains("mt6768") || hw.contains("g80") || hw.contains("p65") -> 2 // G52 MC2
+            hw.contains("mt6769") || hw.contains("g85") -> 2 // G52 MC2
+            hw.contains("kirin970") -> 12 // G72 MP12
+            hw.contains("kirin980") -> 10 // G76 MP10
+            else -> 1
+        }
     }
 
     fun getGpuTemperature(): Float {
