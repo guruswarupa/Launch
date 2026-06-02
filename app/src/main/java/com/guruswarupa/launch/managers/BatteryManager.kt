@@ -18,6 +18,7 @@ data class BatteryHealthInfo(
     val timeRemaining: String?,
     val designCapacity: Int,
     val currentFullCapacity: Int,
+    val liveCapacity: Int,
     val isFull: Boolean
 )
 
@@ -96,7 +97,7 @@ class BatteryManager(private val context: Context) {
         val designCapacity = getBatteryDesignCapacity()
         val bm = context.getSystemService(Context.BATTERY_SERVICE) as android.os.BatteryManager
         val currentCapacityMicroAh = bm.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
-        val currentFullCapacity = Math.abs(currentCapacityMicroAh / 1000)
+        val liveCapacity = Math.abs(currentCapacityMicroAh / 1000)
 
         return BatteryHealthInfo(
             percentage = percentage,
@@ -107,7 +108,8 @@ class BatteryManager(private val context: Context) {
             health = health,
             timeRemaining = timeRemaining,
             designCapacity = designCapacity,
-            currentFullCapacity = currentFullCapacity,
+            currentFullCapacity = liveCapacity, // This was original behavior, will fix in widget/activity
+            liveCapacity = liveCapacity,
             isFull = isFull
         )
     }
