@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorManager
-import android.hardware.camera2.CameraManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.BatteryManager
@@ -201,7 +200,7 @@ class SystemMonitorActivity : AppCompatActivity() {
         val currentCapacityMicroAh = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
         val currentCapacity = Math.abs(currentCapacityMicroAh / 1000)
         
-        capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current: %dmAh", designCapacity, currentCapacity)
+        capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Current Full Capacity: %dmAh", designCapacity, currentCapacity)
         
         if (isFull && designCapacity > 0 && currentCapacity > 0) {
             val healthPct = (currentCapacity.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
@@ -237,10 +236,10 @@ class SystemMonitorActivity : AppCompatActivity() {
         addInfoItem(container, "Kernel", deviceInfoManager.getKernelVersion())
         
         val ram = deviceInfoManager.getRamUsage()
-        addInfoItem(container, "Memory (RAM)", String.format(Locale.getDefault(), "%sGB / %sGB used", deviceInfoManager.formatBytes(ram.first), deviceInfoManager.formatBytes(ram.second)))
+        addInfoItem(container, "Memory (RAM)", String.format(Locale.getDefault(), "%sGB / %sGB used (%s)", deviceInfoManager.formatBytes(ram.first), deviceInfoManager.formatBytes(ram.second), deviceInfoManager.getRamType()))
         
         val storage = deviceInfoManager.getStorageUsage()
-        addInfoItem(container, "Storage", String.format(Locale.getDefault(), "%sGB / %sGB used", deviceInfoManager.formatBytes(storage.first), deviceInfoManager.formatBytes(storage.second)))
+        addInfoItem(container, "Storage", String.format(Locale.getDefault(), "%sGB / %sGB used (%s)", deviceInfoManager.formatBytes(storage.first), deviceInfoManager.formatBytes(storage.second), deviceInfoManager.getStorageType()))
         
         val displayMetrics = resources.displayMetrics
         addInfoItem(container, "Display", String.format(Locale.getDefault(), "%dx%d (%d dpi)", displayMetrics.widthPixels, displayMetrics.heightPixels, displayMetrics.densityDpi))
@@ -255,17 +254,12 @@ class SystemMonitorActivity : AppCompatActivity() {
     private fun setupNetworkInfo() {
         val container = findViewById<LinearLayout>(R.id.network_info_container)
         container.removeAllViews()
-        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetwork
-        val capabilities = cm.getNetworkCapabilities(activeNetwork)
-
-        if (capabilities != null) {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                addInfoItem(container, "Network Type", "Wi-Fi")
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                addInfoItem(container, "Network Type", "Cellular")
+        
+        val networkInfo = deviceInfoManager.getDetailedNetworkInfo()
+        if (networkInfo.isNotEmpty()) {
+            for ((label, value) in networkInfo) {
+                addInfoItem(container, label, value)
             }
-            addInfoItem(container, "Bandwidth", String.format(Locale.getDefault(), "%d Mbps Down", capabilities.linkDownstreamBandwidthKbps / 1000))
         } else {
             addInfoItem(container, "Network", "Disconnected")
         }
@@ -275,10 +269,16 @@ class SystemMonitorActivity : AppCompatActivity() {
         val container = findViewById<LinearLayout>(R.id.sensors_info_container)
         container.removeAllViews()
         
-        val cameraManager = getSystemService(CAMERA_SERVICE) as CameraManager
-        val cameras = cameraManager.cameraIdList
-        addInfoItem(container, "Cameras", String.format(Locale.getDefault(), "%d detected", cameras.size))
+        // Cameras Detailed
+        val cameraInfo = deviceInfoManager.getDetailedCameraInfo()
+        addInfoItem(container, "Cameras", "${cameraInfo.size} detected")
+        for (cam in cameraInfo) {
+            val label = "Camera ${cam["ID"]} (${cam["Facing"]})"
+            val value = "Res: ${cam["Resolution"]} | Aperture: ${cam["Aperture"]} | Focal: ${cam["Focal Length"]}"
+            addInfoItem(container, label, value)
+        }
 
+        // Sensors
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val sensors = sensorManager.getSensorList(Sensor.TYPE_ALL)
         
