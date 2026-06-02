@@ -185,6 +185,29 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Current Charge"
+                    android:textColor="@color/widget_text_secondary"
+                    android:textSize="10sp"/>
+
+                <TextView
+                    android:id="@+id/live_capacity_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- mAh"
+                    android:textColor="@color/widget_text"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:gravity="end">
 
                 <TextView

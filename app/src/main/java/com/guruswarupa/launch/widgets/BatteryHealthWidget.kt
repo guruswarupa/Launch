@@ -25,6 +25,7 @@ class BatteryHealthWidget(
     private lateinit var temperatureText: TextView
     private lateinit var healthStatusText: TextView
     private lateinit var designCapacityText: TextView
+    private lateinit var liveCapacityText: TextView
     private lateinit var currentFullCapacityText: TextView
     private lateinit var calculatedHealthPercentageText: TextView
 
@@ -55,6 +56,7 @@ class BatteryHealthWidget(
         temperatureText = widgetView.findViewById(R.id.temperature_text)
         healthStatusText = widgetView.findViewById(R.id.health_status_text)
         designCapacityText = widgetView.findViewById(R.id.design_capacity_text)
+        liveCapacityText = widgetView.findViewById(R.id.live_capacity_text)
         currentFullCapacityText = widgetView.findViewById(R.id.current_full_capacity_text)
         calculatedHealthPercentageText = widgetView.findViewById(R.id.calculated_health_percentage_text)
 
@@ -94,12 +96,13 @@ class BatteryHealthWidget(
         )
 
         designCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.designCapacity)
+        liveCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.liveCapacity)
         
         // Health Calculation and Persistence (Calibrated at 100%)
         val KEY_LAST_CALCULATED_HEALTH = "last_calculated_health"
         val KEY_LAST_FULL_CAPACITY = "last_full_capacity"
         
-        val liveChargeCounter = batteryInfo.currentFullCapacity // This is actually the live charge mAh from BatteryManager
+        val liveChargeCounter = batteryInfo.liveCapacity
 
         if (batteryInfo.isFull && batteryInfo.designCapacity > 0 && liveChargeCounter > 0) {
             val healthPct = (liveChargeCounter.toFloat() / batteryInfo.designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
