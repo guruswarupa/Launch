@@ -198,6 +198,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun loadWidgets() {
+        widgetConfigManager.invalidateCache()
         previewManager.clearCache()
         allWidgets = widgetConfigManager.getWidgetConfiguration().toMutableList()
         filteredWidgets = allWidgets.toMutableList()
