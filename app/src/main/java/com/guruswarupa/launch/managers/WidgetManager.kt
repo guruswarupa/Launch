@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.handlers.ActivityResultHandler
 import com.guruswarupa.launch.ui.activities.WidgetConfigurationActivity
@@ -299,6 +300,11 @@ class WidgetManager(private val context: Context, private val widgetContainer: L
 
             saveWidgets()
             (context as? WidgetConfigurationActivity)?.loadWidgets()
+            (context as? MainActivity)?.let { main ->
+                if (main.deferredWidgetsInitialized) {
+                    main.initializeDeferredWidgets()
+                }
+            }
 
             Toast.makeText(context, "Widget added successfully", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {

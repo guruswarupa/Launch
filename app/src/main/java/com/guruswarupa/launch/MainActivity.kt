@@ -814,8 +814,18 @@ class MainActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
         if (!::sharedPreferences.isInitialized) return
+        
+        val widgetsChanged = sharedPreferences.getBoolean("saved_widgets_changed", false)
+        
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onResume()
+        }
+
+        // If widgets were changed in configuration, ensure they are reordered correctly
+        if (widgetsChanged) {
+            if (deferredWidgetsInitialized) {
+                initializeDeferredWidgets()
+            }
         }
         
         // Force refresh fastscroller typography on resume to pick up any settings changes
