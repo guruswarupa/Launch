@@ -354,8 +354,7 @@
                 android:paddingStart="0dp"
                 android:paddingTop="14dp"
                 android:paddingEnd="0dp"
-                android:paddingBottom="16dp"
-                android:animateLayoutChanges="true">
+                android:paddingBottom="16dp">
 
             
             <LinearLayout
