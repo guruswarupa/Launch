@@ -638,6 +638,11 @@ class WidgetManager(private val context: Context, private val widgetContainer: L
 
 
             saveWidgets()
+            
+            // Explicitly notify the system that widgets have changed to trigger drawer refresh
+            prefs.edit { 
+                putBoolean(PREFS_WIDGETS_CHANGED_KEY, true)
+            }
 
             Toast.makeText(context, "Widget removed", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
