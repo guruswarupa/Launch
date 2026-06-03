@@ -347,18 +347,26 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     private fun calculateWidgetPosition(widget: WidgetConfigurationManager.WidgetInfo): Int {
         return when {
-
             widget.enabled -> {
+                // When enabled, always place at the end of the enabled section
+                val lastEnabledIndex = allWidgets.indexOfLast { it.enabled }
+                if (lastEnabledIndex >= 0) {
+                    lastEnabledIndex + 1
+                } else {
+                    0
+                }
+            }
+
+            widget.isSystemWidget -> {
+                // For disabled system widgets, group them at the start of the disabled section
                 val firstDisabledIndex = allWidgets.indexOfFirst { !it.enabled }
                 if (firstDisabledIndex >= 0) firstDisabledIndex else allWidgets.size
             }
 
-            widget.isSystemWidget -> {
-                val firstDisabledCustomIndex = allWidgets.indexOfFirst { !it.enabled && !it.isSystemWidget }
-                if (firstDisabledCustomIndex >= 0) firstDisabledCustomIndex else allWidgets.size
+            else -> {
+                // For disabled custom widgets, put them at the very end
+                allWidgets.size
             }
-
-            else -> allWidgets.size
         }
     }
 
