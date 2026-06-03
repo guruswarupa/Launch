@@ -366,14 +366,8 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                 }
             }
 
-            widget.isSystemWidget -> {
-                // For disabled system widgets, group them at the start of the disabled section
-                val firstDisabledIndex = allWidgets.indexOfFirst { !it.enabled }
-                if (firstDisabledIndex >= 0) firstDisabledIndex else allWidgets.size
-            }
-
             else -> {
-                // For disabled custom widgets, put them at the very end
+                // For all disabled widgets, put them at the very end
                 allWidgets.size
             }
         }
@@ -450,8 +444,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         filteredWidgets.forEachIndexed { index, widget ->
             val category = when {
                 widget.enabled -> WidgetSectionCategory.ENABLED
-                widget.isSystemWidget -> WidgetSectionCategory.SYSTEM_DISABLED
-                else -> WidgetSectionCategory.CUSTOM_DISABLED
+                else -> WidgetSectionCategory.DISABLED
             }
 
             if (seenCategories.add(category)) {
@@ -518,8 +511,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     private enum class WidgetSectionCategory(@StringRes val titleRes: Int) {
         ENABLED(R.string.widget_section_enabled),
-        CUSTOM_DISABLED(R.string.widget_section_custom_disabled),
-        SYSTEM_DISABLED(R.string.widget_section_system_disabled)
+        DISABLED(R.string.widget_section_custom_disabled)
     }
 
     private class WidgetSectionDecoration(private val context: Context) : RecyclerView.ItemDecoration() {

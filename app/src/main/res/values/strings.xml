@@ -181,7 +181,7 @@
     
     <string name="screen_time_format">Screen Time: %1$s</string>
     <string name="widget_section_enabled">Enabled widgets</string>
-    <string name="widget_section_custom_disabled">Custom widgets (disabled)</string>
+    <string name="widget_section_custom_disabled">Available widgets</string>
     <string name="widget_section_system_disabled">System widgets (disabled)</string>
 
     

@@ -191,24 +191,15 @@ class WidgetConfigurationManager(
         }
 
         val enabledWidgets = result.filter { it.enabled }
-
-        val customDisabled = result.filter { !it.enabled && !it.isSystemWidget }.sortedBy { it.name }
-
-
-        val systemDisabled = result.filter { !it.enabled && it.isSystemWidget && !it.isProvider }
+        
+        val allDisabled = result.filter { !it.enabled }
             .sortedWith(
-                compareBy<WidgetInfo> { it.appName ?: "" }
+                compareBy<WidgetInfo> { it.isProvider } // Put actual disabled widgets before "TAP TO ADD" providers
+                    .thenBy { it.appName ?: "" }
                     .thenBy { it.name }
             )
 
-
-        val providers = result.filter { it.isProvider }
-            .sortedWith(
-                compareBy<WidgetInfo> { it.appName ?: "" }
-                    .thenBy { it.name }
-            )
-
-        val finalResult = enabledWidgets + customDisabled + systemDisabled + providers
+        val finalResult = enabledWidgets + allDisabled
 
 
         cachedWidgetConfiguration = finalResult
