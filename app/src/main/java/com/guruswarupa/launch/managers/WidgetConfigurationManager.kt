@@ -81,7 +81,7 @@ class WidgetConfigurationManager(
                     val id = jsonObject.getString("id")
                     val name = jsonObject.getString("name")
                     val enabled = jsonObject.getBoolean("enabled")
-                    val isSystem = jsonObject.optBoolean("isSystemWidget", false)
+                    val isSystem = jsonObject.optBoolean("isSystemWidget", id.startsWith("system_widget_"))
                     val pkg = jsonObject.optString("providerPackage").takeIf { it.isNotEmpty() }
                     val cls = jsonObject.optString("providerClass").takeIf { it.isNotEmpty() }
                     val widgetId = if (jsonObject.has("appWidgetId")) jsonObject.getInt("appWidgetId") else null
@@ -127,9 +127,25 @@ class WidgetConfigurationManager(
 
         val result = deduplicatedSaved.filter { !it.isSystemWidget || boundIds.contains(it.id) }.toMutableList()
 
+        // Sync relative order of existing system widgets with the drawer order (boundSystemWidgets)
+        val existingSystemIds = result.filter { it.isSystemWidget }.map { it.id }.toSet()
+        val orderedSystemWidgets = boundSystemWidgets.filter { it.id in existingSystemIds }
+        
+        var systemInsertionIdx = 0
+        for (i in result.indices) {
+            if (result[i].isSystemWidget) {
+                if (systemInsertionIdx < orderedSystemWidgets.size) {
+                    result[i] = orderedSystemWidgets[systemInsertionIdx++]
+                }
+            }
+        }
+
+        // Add new bound system widgets that weren't in the saved order yet
         val currentIds = result.map { it.id }.toSet()
+        
         boundSystemWidgets.forEach { systemWidget ->
             if (!currentIds.contains(systemWidget.id)) {
+                // Add new system widgets to the end of the list.
                 result.add(systemWidget)
             }
         }
@@ -167,6 +183,7 @@ class WidgetConfigurationManager(
         }
 
         val enabledWidgets = result.filter { it.enabled }
+
         val customDisabled = result.filter { !it.enabled && !it.isSystemWidget }.sortedBy { it.name }
 
 
