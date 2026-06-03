@@ -17,6 +17,10 @@ class WidgetVisibilityManager(
 
     private val widgetViewCache = mutableMapOf<String, View>()
 
+    fun clearCache() {
+        widgetViewCache.clear()
+    }
+
     fun update(
         yearProgressWidget: YearProgressWidget? = null,
         githubContributionWidget: GithubContributionWidget? = null
@@ -190,7 +194,7 @@ class WidgetVisibilityManager(
     }
 
     private fun getWidgetViewById(widgetId: String): View? {
-        widgetViewCache[widgetId]?.let { return it }
+        val contentLayout = activity.findViewById<LinearLayout>(com.guruswarupa.launch.R.id.drawer_content_layout) ?: return null
 
         val view = when (widgetId) {
             "media_controller_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.media_controller_widget_container)
@@ -205,9 +209,9 @@ class WidgetVisibilityManager(
             "temperature_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.temperature_widget_container)
             "weather_forecast_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.weather_forecast_widget_container)
             "noise_decibel_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.noise_decibel_widget_container)
-            "workout_widget_container" -> activity.findViewById<ViewGroup>(com.guruswarupa.launch.R.id.workout_widget_container)?.parent as? View
-            "calculator_widget_container" -> activity.findViewById<ViewGroup>(com.guruswarupa.launch.R.id.calculator_widget_container)?.parent as? View
-            "todo_recycler_view" -> activity.findViewById<ViewGroup>(com.guruswarupa.launch.R.id.todo_recycler_view)?.parent as? View
+            "workout_widget_container" -> activity.findViewById<View>(com.guruswarupa.launch.R.id.workout_widget_main_container)
+            "calculator_widget_container" -> activity.findViewById<View>(com.guruswarupa.launch.R.id.calculator_widget_main_container)
+            "todo_recycler_view" -> activity.findViewById<View>(com.guruswarupa.launch.R.id.todo_widget_main_container)
             "finance_widget" -> activity.findViewById(com.guruswarupa.launch.R.id.finance_widget)
             "weekly_usage_widget" -> activity.findViewById(com.guruswarupa.launch.R.id.weekly_usage_widget)
             "github_contributions_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.github_contributions_widget_container)
@@ -221,10 +225,24 @@ class WidgetVisibilityManager(
             }
         }
 
-        if (view != null) {
-            widgetViewCache[widgetId] = view
+        // If the view is already a direct child, return it
+        if (view != null && view.parent == contentLayout) {
+            return view
         }
-        return view
+
+        // If the view is not a direct child but we found it, search up the tree
+        if (view != null) {
+            var current: View? = view
+            while (current?.parent != null) {
+                if (current.parent == contentLayout) {
+                    return current
+                }
+                current = current.parent as? View
+            }
+        }
+
+        // If not found in hierarchy, check our cache (might be detached)
+        return widgetViewCache[widgetId]
     }
 
     private fun scheduleRetry(
