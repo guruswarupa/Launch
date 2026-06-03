@@ -296,7 +296,15 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         }
 
         if (originalPosition >= 0) {
-            allWidgets[originalPosition] = allWidgets[originalPosition].copy(enabled = enabled)
+            val widget = allWidgets[originalPosition]
+            allWidgets[originalPosition] = widget.copy(enabled = enabled)
+            
+            // If it's a system widget being disabled, we must destroy the widget ID to properly remove it from the system
+            if (widget.isSystemWidget && !enabled && widget.appWidgetId != null) {
+                widgetManager.removeWidget(widget.appWidgetId)
+                // Update the item in list to remove the appWidgetId so it shows as "TAP TO ADD" again
+                allWidgets[originalPosition] = allWidgets[originalPosition].copy(appWidgetId = null)
+            }
         }
 
         persistWidgetConfiguration()
