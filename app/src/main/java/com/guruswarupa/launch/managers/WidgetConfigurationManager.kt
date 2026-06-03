@@ -127,6 +127,14 @@ class WidgetConfigurationManager(
 
         val result = deduplicatedSaved.filter { !it.isSystemWidget || boundIds.contains(it.id) }.toMutableList()
 
+        // Sync IDs and states: if a saved widget has an appWidgetId but that ID is no longer bound, clear it.
+        for (i in result.indices) {
+            val widget = result[i]
+            if (widget.isSystemWidget && widget.appWidgetId != null && !boundIds.contains(widget.id)) {
+                result[i] = widget.copy(appWidgetId = null, enabled = false)
+            }
+        }
+
         // Sync relative order of existing system widgets with the drawer order (boundSystemWidgets)
         val existingSystemIds = result.filter { it.isSystemWidget }.map { it.id }.toSet()
         val orderedSystemWidgets = boundSystemWidgets.filter { it.id in existingSystemIds }
