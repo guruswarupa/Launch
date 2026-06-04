@@ -131,29 +131,38 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                if (currentQuery.isNotBlank()) {
-                    Toast.makeText(
-                        this@WidgetConfigurationActivity,
-                        "Clear search to reorder widgets",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return false
-                }
-
                 val fromPos = viewHolder.bindingAdapterPosition
                 val toPos = target.bindingAdapterPosition
                 if (fromPos == RecyclerView.NO_POSITION || toPos == RecyclerView.NO_POSITION) {
                     return false
                 }
 
+                // If searching, we need to map filtered positions back to the original list
                 val movedItem = filteredWidgets.removeAt(fromPos)
                 filteredWidgets.add(toPos, movedItem)
 
-                val movedId = movedItem.id
-                val originalFrom = allWidgets.indexOfFirst { it.id == movedId }
-                if (originalFrom >= 0) {
-                    allWidgets.removeAt(originalFrom)
+                if (currentQuery.isEmpty()) {
+                    allWidgets.removeAt(fromPos)
                     allWidgets.add(toPos, movedItem)
+                } else {
+                    // Re-calculate the whole order based on filtered list changes
+                    val originalDisabled = allWidgets.filter { !it.enabled }
+                    val newEnabledOrder = allWidgets.filter { it.enabled }.toMutableList()
+                    
+                    // Find the items in newEnabledOrder that correspond to filteredWidgets
+                    // This is complex, simpler way: find the anchor item
+                    val anchorItem = if (toPos < filteredWidgets.size - 1) filteredWidgets[toPos + 1] else null
+                    
+                    val originalFrom = allWidgets.indexOfFirst { it.id == movedItem.id }
+                    if (originalFrom != -1) {
+                        allWidgets.removeAt(originalFrom)
+                        val newIndex = if (anchorItem != null) {
+                            allWidgets.indexOfFirst { it.id == anchorItem.id }.coerceAtLeast(0)
+                        } else {
+                            allWidgets.indexOfLast { it.enabled }.coerceAtLeast(0) + 1
+                        }
+                        allWidgets.add(newIndex.coerceIn(0, allWidgets.size), movedItem)
+                    }
                 }
 
                 persistWidgetConfiguration()
