@@ -2,11 +2,13 @@ package com.guruswarupa.launch.ui.activities
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.ValueCallback
@@ -40,6 +42,7 @@ class WebAppActivity : AppCompatActivity() {
         const val EXTRA_WEB_APP_NAME = "web_app_name"
         const val EXTRA_WEB_APP_URL = "web_app_url"
         const val EXTRA_BLOCK_REDIRECTS = "block_redirects"
+        private const val TAG = "WebAppActivity"
     }
 
     private lateinit var webView: WebView
@@ -50,6 +53,7 @@ class WebAppActivity : AppCompatActivity() {
 
     private var allowedDomain: String? = null
     private var blockRedirects: Boolean = true
+    private var trustedDomains = mutableSetOf<String>()
 
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
@@ -120,7 +124,26 @@ class WebAppActivity : AppCompatActivity() {
         }
 
         titleView = findViewById<TextView>(R.id.web_app_title).apply { text = appName }
-        addressView = findViewById<TextView>(R.id.web_app_address).apply { text = url }
+        addressView = findViewById<TextView>(R.id.web_app_address).apply { 
+            text = url
+            setOnLongClickListener {
+                if (trustedDomains.isNotEmpty()) {
+                    android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
+                        .setTitle("Clear Trusted Domains")
+                        .setMessage("Clear ${trustedDomains.size} trusted domain(s) for this session?")
+                        .setPositiveButton("Clear") { _, _ ->
+                            trustedDomains.clear()
+                            Toast.makeText(this@WebAppActivity, "Trusted domains cleared", Toast.LENGTH_SHORT).show()
+                            Log.i(TAG, "Manually cleared trusted domains")
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                    true
+                } else {
+                    false
+                }
+            }
+        }
         progressBar = findViewById(R.id.web_app_progress)
         webView = findViewById(R.id.web_app_webview)
         fullscreenContainer = findViewById(R.id.web_app_fullscreen_container)
@@ -273,11 +296,52 @@ class WebAppActivity : AppCompatActivity() {
 
 
                 if (!blockRedirects && !isSameDomain) {
-                    Toast.makeText(
-                        this@WebAppActivity,
-                        "Warning: Navigating to external domain: $targetDomain",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val targetDomainSafe = targetDomain ?: "unknown domain"
+                    
+                    // Skip dialog if domain is already trusted
+                    if (targetDomainSafe in trustedDomains) {
+                        Log.d(TAG, "Navigating to trusted external domain: $targetDomainSafe")
+                        return false
+                    }
+                    
+                    Log.w(TAG, "External domain navigation attempt: $targetDomainSafe (from: $allowedDomain)")
+                    
+                    val shouldProceed = try {
+                        val dialogView = layoutInflater.inflate(R.layout.dialog_security_warning, null)
+                        val trustCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.trust_domain_checkbox)
+                        
+                        android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
+                            .setTitle("Security Warning")
+                            .setView(dialogView)
+                            .setMessage("You are about to navigate to an external domain:\n\n$targetDomainSafe\n\nThis is different from the original domain: $allowedDomain\n\nContinue only if you trust this destination.")
+                            .setPositiveButton("Continue") { _, _ ->
+                                if (trustCheckbox.isChecked) {
+                                    trustedDomains.add(targetDomainSafe)
+                                    Log.i(TAG, "User trusted external domain: $targetDomainSafe")
+                                }
+                                Log.i(TAG, "User allowed navigation to: $targetDomainSafe")
+                            }
+                            .setNegativeButton("Cancel") { _, _ ->
+                                Log.i(TAG, "User cancelled navigation to: $targetDomainSafe")
+                            }
+                            .show()
+                        false
+                    } catch (e: Exception) {
+                        // Fallback to simple dialog if custom view fails
+                        android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
+                            .setTitle("Security Warning")
+                            .setMessage("You are about to navigate to an external domain:\n\n$targetDomainSafe\n\nThis is different from the original domain: $allowedDomain\n\nContinue only if you trust this destination.")
+                            .setPositiveButton("Continue") { _, _ ->
+                                trustedDomains.add(targetDomainSafe)
+                                Log.i(TAG, "User trusted external domain: $targetDomainSafe (fallback dialog)")
+                            }
+                            .setNegativeButton("Cancel") { _, _ ->
+                                Log.i(TAG, "User cancelled navigation to: $targetDomainSafe (fallback dialog)")
+                            }
+                            .show()
+                        false
+                    }
+                    return shouldProceed
                 }
 
 
@@ -286,6 +350,16 @@ class WebAppActivity : AppCompatActivity() {
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 addressView.text = url ?: intent.getStringExtra(EXTRA_WEB_APP_URL).orEmpty()
+                
+                // Show visual indicator for external trusted domains
+                val currentDomain = extractDomain(url ?: "")
+                val isExternalTrusted = currentDomain != null && currentDomain != allowedDomain && currentDomain in trustedDomains
+                if (isExternalTrusted) {
+                    addressView.alpha = 0.7f
+                    Log.d(TAG, "Showing external trusted domain indicator: $currentDomain")
+                } else {
+                    addressView.alpha = 1.0f
+                }
             }
 
             override fun onReceivedError(
@@ -346,6 +420,11 @@ class WebAppActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         exitFullscreen()
+        
+        // Clear trusted domains for security
+        trustedDomains.clear()
+        Log.d(TAG, "Cleared trusted domains on activity destroy")
+        
         releaseWebView()
         fileUploadCallback = null
         super.onDestroy()
@@ -376,6 +455,7 @@ class WebAppActivity : AppCompatActivity() {
     private fun isDomainAllowed(domain: String): Boolean {
         val allowed = allowedDomain ?: return false
 
+        if (domain in trustedDomains) return true
 
         if (domain == allowed) return true
 
