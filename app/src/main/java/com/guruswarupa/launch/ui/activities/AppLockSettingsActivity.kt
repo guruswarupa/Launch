@@ -171,11 +171,21 @@ class AppLockSettingsActivity : ComponentActivity() {
     }
 
     private fun applyContentInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            findViewById<View>(R.id.settings_scroll_view).setPadding(0, bars.top, 0, bars.bottom)
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 16.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 16.toPx()
+            )
             insets
         }
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
     data class AppInfo(val packageName: String, val appName: String, val icon: android.graphics.drawable.Drawable)
