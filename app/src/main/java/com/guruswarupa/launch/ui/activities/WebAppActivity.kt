@@ -54,6 +54,7 @@ class WebAppActivity : AppCompatActivity() {
     private var allowedDomain: String? = null
     private var blockRedirects: Boolean = true
     private var trustedDomains = mutableSetOf<String>()
+    private var subResourceErrorCount = 0
 
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
@@ -351,6 +352,9 @@ class WebAppActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 addressView.text = url ?: intent.getStringExtra(EXTRA_WEB_APP_URL).orEmpty()
                 
+                // Reset error counter on page navigation
+                subResourceErrorCount = 0
+                
                 // Show visual indicator for external trusted domains
                 val currentDomain = extractDomain(url ?: "")
                 val isExternalTrusted = currentDomain != null && currentDomain != allowedDomain && currentDomain in trustedDomains
@@ -367,8 +371,25 @@ class WebAppActivity : AppCompatActivity() {
                 request: WebResourceRequest?,
                 error: android.webkit.WebResourceError?
             ) {
-                if (request?.isForMainFrame == true) {
+                val url = request?.url?.toString() ?: "unknown"
+                val isMainFrame = request?.isForMainFrame == true
+
+                if (isMainFrame) {
+                    Log.e(TAG, "Main frame load error: ${error?.description} ($url)")
                     Toast.makeText(this@WebAppActivity, R.string.web_app_load_failed, Toast.LENGTH_SHORT).show()
+                } else {
+                    // Log sub-resource errors
+                    subResourceErrorCount++
+                    Log.w(TAG, "Sub-resource error #$subResourceErrorCount: ${error?.description} ($url)")
+
+                    // Show toast after multiple sub-resource errors to avoid spam
+                    if (subResourceErrorCount == 5) {
+                        Toast.makeText(
+                            this@WebAppActivity,
+                            "$subResourceErrorCount resource loading errors occurred. Some page content may be missing.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }
@@ -423,7 +444,8 @@ class WebAppActivity : AppCompatActivity() {
         
         // Clear trusted domains for security
         trustedDomains.clear()
-        Log.d(TAG, "Cleared trusted domains on activity destroy")
+        subResourceErrorCount = 0
+        Log.d(TAG, "Cleared trusted domains and reset error counters on activity destroy")
         
         releaseWebView()
         fileUploadCallback = null
