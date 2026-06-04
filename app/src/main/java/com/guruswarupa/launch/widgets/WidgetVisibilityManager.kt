@@ -3,6 +3,7 @@ package com.guruswarupa.launch.widgets
 import android.app.Activity
 import android.appwidget.AppWidgetHostView
 import android.util.Log
+import android.animation.LayoutTransition
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ class WidgetVisibilityManager(
     }
 
     private val widgetViewCache = mutableMapOf<String, View>()
+    private var originalLayoutTransition: LayoutTransition? = null
 
     fun clearCache() {
         widgetViewCache.clear()
@@ -212,34 +214,66 @@ class WidgetVisibilityManager(
                 when (event.action) {
                     DragEvent.ACTION_DRAG_STARTED -> {
                         val draggedId = event.localState as? String
-                        viewMap[draggedId]?.visibility = View.INVISIBLE
+                        val draggedView = viewMap[draggedId]
+                        draggedView?.visibility = View.INVISIBLE
+                        
+                        // Restore previous transitions if any, but don't use them during drag 
+                        // to avoid conflicts with manual translations
+                        originalLayoutTransition = layout.layoutTransition
+                        layout.layoutTransition = null
                         true
                     }
                     DragEvent.ACTION_DRAG_LOCATION -> {
                         val draggedId = event.localState as? String
                         if (draggedId != null) {
                             val draggedView = viewMap[draggedId] ?: return@setOnDragListener true
+                            val currentIndex = layout.indexOfChild(draggedView)
+                            val targetIndex = findTargetIndex(layout, event.y, draggedView)
+                            
+                            if (targetIndex != -1) {
+                                // Visually shift other widgets using translationY instead of reordering
+                                // This prevents AppWidgetHostView from flickering due to re-attachment
+                                val draggedHeight = draggedView.height.toFloat()
+                                
+                                for (i in 0 until layout.childCount) {
+                                    val child = layout.getChildAt(i)
+                                    if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) {
+                                        if (child.translationY != 0f) child.translationY = 0f
+                                        continue
+                                    }
+                                    
+                                    val childIndex = i
+                                    val targetTranslation = when {
+                                        // If we're dragging down: items between current and target move UP
+                                        currentIndex < targetIndex && childIndex > currentIndex && childIndex < targetIndex -> -draggedHeight
+                                        // If we're dragging up: items between target and current move DOWN
+                                        currentIndex > targetIndex && childIndex >= targetIndex && childIndex < currentIndex -> draggedHeight
+                                        else -> 0f
+                                    }
+                                    
+                                    if (child.translationY != targetTranslation) {
+                                        child.animate()
+                                            .translationY(targetTranslation)
+                                            .setDuration(150)
+                                            .setInterpolator(android.view.animation.DecelerateInterpolator())
+                                            .start()
+                                    }
+                                }
+                            }
                             
                             // Handle auto-scroll
                             val scrollView = layout.parent as? NestedScrollView
                             scrollView?.let { scroll ->
                                 val scrollY = scroll.scrollY
-                                val scrollHeight = scroll.height
+                                val viewportHeight = scroll.height
+                                val edgeThreshold = 180
+                                val scrollAmount = 30
                                 
-                                val edgeThreshold = 150
                                 if (event.y < scrollY + edgeThreshold) {
-                                    scroll.smoothScrollBy(0, -25)
-                                } else if (event.y > scrollY + scrollHeight - edgeThreshold) {
-                                    scroll.smoothScrollBy(0, 25)
+                                    scroll.scrollBy(0, -scrollAmount)
+                                } else if (event.y > scrollY + viewportHeight - edgeThreshold) {
+                                    scroll.scrollBy(0, scrollAmount)
                                 }
-                            }
-
-                            // Interactive reordering
-                            val targetIndex = findTargetIndex(layout, event.y, draggedView)
-                            val currentIndex = layout.indexOfChild(draggedView)
-                            if (targetIndex != -1 && targetIndex != currentIndex) {
-                                layout.removeView(draggedView)
-                                layout.addView(draggedView, targetIndex)
                             }
                         }
                         true
@@ -247,6 +281,22 @@ class WidgetVisibilityManager(
                     DragEvent.ACTION_DROP -> {
                         val draggedId = event.localState as? String
                         if (draggedId != null) {
+                            val draggedView = viewMap[draggedId]
+                            if (draggedView != null) {
+                                // Reset all translations before final reorder
+                                for (i in 0 until layout.childCount) {
+                                    layout.getChildAt(i).translationY = 0f
+                                }
+                                
+                                val targetIndex = findTargetIndex(layout, event.y, draggedView)
+                                val currentIndex = layout.indexOfChild(draggedView)
+                                if (targetIndex != -1 && targetIndex != currentIndex) {
+                                    layout.removeView(draggedView)
+                                    // Adjust target index because removal might have shifted it
+                                    val adjustedTarget = if (targetIndex > currentIndex) targetIndex - 1 else targetIndex
+                                    layout.addView(draggedView, adjustedTarget.coerceIn(0, layout.childCount))
+                                }
+                            }
                             finalizeOrderFromLayout(layout, viewMap)
                         }
                         true
@@ -255,11 +305,18 @@ class WidgetVisibilityManager(
                         val draggedId = event.localState as? String
                         val view = viewMap[draggedId]
                         view?.visibility = View.VISIBLE
+                        
+                        // Clean up all translations
+                        for (i in 0 until layout.childCount) {
+                            layout.getChildAt(i).translationY = 0f
+                        }
+                        
+                        // Restore original transitions
+                        layout.layoutTransition = originalLayoutTransition
+                        
                         if (event.result) {
-                            // Show resize handle if it was a system widget
                             showResizeHandleIfSystemWidget(view)
                         } else {
-                            // If drag failed or cancelled, refresh to restore original state
                             update()
                         }
                         true
@@ -278,12 +335,22 @@ class WidgetVisibilityManager(
     }
 
     private fun findTargetIndex(layout: LinearLayout, y: Float, draggedView: View): Int {
+        val currentIndex = layout.indexOfChild(draggedView)
+        val draggedHeight = draggedView.height
+        
         for (i in 0 until layout.childCount) {
             val child = layout.getChildAt(i)
             if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) continue
             
-            val childCenterY = child.y + child.height / 2
-            if (y < childCenterY) {
+            // Determine the "virtual" center of the child as if the draggedView wasn't in the layout
+            val childTop = child.y
+            val virtualChildCenter = if (currentIndex != -1 && currentIndex < i) {
+                childTop - draggedHeight + child.height / 2
+            } else {
+                childTop + child.height / 2
+            }
+            
+            if (y < virtualChildCenter) {
                 return i
             }
         }
