@@ -61,13 +61,17 @@ class WebAppSettingsActivity : ComponentActivity() {
         )
         setContentView(R.layout.activity_web_app_settings)
 
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            findViewById<View>(R.id.web_apps_scroll_view).setPadding(0, bars.top, 0, bars.bottom)
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 16.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 16.toPx()
+            )
             insets
         }
-
 
         WallpaperDisplayHelper.applySystemWallpaper(findViewById(R.id.web_apps_wallpaper))
 
@@ -76,14 +80,7 @@ class WebAppSettingsActivity : ComponentActivity() {
         scrollView = findViewById(R.id.web_apps_scroll_view)
         overlayView = findViewById(R.id.web_apps_overlay)
 
-
         applyBackgroundTranslucency()
-
-
-        findViewById<ImageButton>(R.id.web_apps_back_button).setOnClickListener {
-            animateFinish()
-        }
-
 
         findViewById<Button>(R.id.add_web_app_button).setOnClickListener {
             animateButtonClick(it)
@@ -91,6 +88,10 @@ class WebAppSettingsActivity : ComponentActivity() {
         }
 
         renderWebApps()
+    }
+
+    override fun onBackPressed() {
+        animateFinish()
     }
 
     private fun renderWebApps() {
@@ -513,6 +514,10 @@ class WebAppSettingsActivity : ComponentActivity() {
                 packageName
             )
         })
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
     override fun onDestroy() {

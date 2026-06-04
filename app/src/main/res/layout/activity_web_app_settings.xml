@@ -18,46 +18,45 @@
         android:background="#88000000" />
 
     <LinearLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="16dp">
-
-            <ImageButton
-                android:id="@+id/web_apps_back_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/back_button"
-                android:paddingTop="32dp"
-                android:paddingHorizontal="8dp"
-                android:paddingBottom="8dp"
-                android:src="@drawable/ic_back"
-                android:tint="@color/white" />
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingStart="8dp"
-                android:paddingTop="32dp"
                 android:text="@string/web_apps_title"
+                android:textSize="32sp"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+                android:letterSpacing="-0.01"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Add and manage your web applications"
+                android:textColor="@color/white"
+                android:alpha="0.5"
+                android:textSize="14sp" />
+
         </LinearLayout>
 
         <Button
             android:id="@+id/add_web_app_button"
             android:layout_width="match_parent"
             android:layout_height="52dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/settings_card_background"
             android:text="@string/add_web_app"
             android:textAllCaps="false"
@@ -78,7 +77,7 @@
             android:id="@+id/web_apps_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:overScrollMode="never"
             android:scrollbars="none">
