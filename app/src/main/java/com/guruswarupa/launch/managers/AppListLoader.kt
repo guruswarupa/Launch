@@ -49,6 +49,7 @@ class AppListLoader(
     private var lastCacheTime = 0L
     private val cacheDuration = Constants.Timeouts.APP_LIST_CACHE_DURATION_MS
     private var workProfileEmptyRetryCount = 0
+    private var generalEmptyRetryCount = 0
     private val currentUserSerial by lazy {
         val userManager = activity.getSystemService(Context.USER_SERVICE) as UserManager
         userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
@@ -114,6 +115,7 @@ class AppListLoader(
                     }
 
                     if (cachedFinalList.isNotEmpty() && adapter != null) {
+                        generalEmptyRetryCount = 0
                         val sorted = appListManager.sortAppsAlphabetically(cachedFinalList, activity.showOnlyFavoritesInitially)
                         handler.post {
                             onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
@@ -149,6 +151,7 @@ class AppListLoader(
                 val cachedFinalList = appListManager.filterAndPrepareApps(cachedAppsWithWebApps, focusMode, workspaceMode)
 
                 if (cachedFinalList.isNotEmpty() && adapter != null) {
+                    generalEmptyRetryCount = 0
                     val sorted = appListManager.sortAppsAlphabetically(cachedFinalList, activity.showOnlyFavoritesInitially)
                     handler.post {
                         onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
@@ -237,6 +240,7 @@ class AppListLoader(
                         }
                     }
                 } else {
+                    generalEmptyRetryCount = 0
                     val focusMode = appDockManager.getCurrentMode()
                     val workspaceMode = appDockManager.isWorkspaceModeActive()
                     val finalAppList = appListManager.filterAndPrepareApps(fullList, focusMode, workspaceMode)
@@ -247,6 +251,7 @@ class AppListLoader(
 
                     if (finalAppList.isNotEmpty()) {
                         workProfileEmptyRetryCount = 0
+                        generalEmptyRetryCount = 0
                     }
 
 
@@ -314,7 +319,19 @@ class AppListLoader(
                 handler.post {
                     if (activity.isFinishing || activity.isDestroyed) return@post
                     if (appList.isEmpty() && !forceRefresh) {
-                        handler.postDelayed({ loadApps(forceRefresh = true, fullAppList, appList, adapter) }, 500)
+                        if (generalEmptyRetryCount < Constants.Timeouts.MAX_GENERAL_EMPTY_RETRIES) {
+                            generalEmptyRetryCount++
+                            Log.d(
+                                TAG,
+                                "App list empty after error; retrying load (${generalEmptyRetryCount}/${Constants.Timeouts.MAX_GENERAL_EMPTY_RETRIES})"
+                            )
+                            handler.postDelayed(
+                                { loadApps(forceRefresh = true, fullAppList, appList, adapter) },
+                                Constants.Timeouts.GENERAL_EMPTY_RETRY_DELAY_MS
+                            )
+                        } else {
+                            Log.w(TAG, "App list still empty after max retries; showing error state")
+                        }
                     }
                     if (appList.isEmpty()) {
                         Toast.makeText(
@@ -388,6 +405,8 @@ class AppListLoader(
     fun clearCache() {
         cachedUnsortedList = null
         lastCacheTime = 0L
+        generalEmptyRetryCount = 0
+        workProfileEmptyRetryCount = 0
     }
 
     private fun appendWebApps(installedApps: List<ResolveInfo>): List<ResolveInfo> {
