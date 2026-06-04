@@ -77,6 +77,10 @@ class AppTimerManagementActivity : ComponentActivity() {
         loadAppsList()
     }
 
+    override fun onBackPressed() {
+        finish()
+    }
+
     private fun setupViews() {
         WallpaperDisplayHelper.applySystemWallpaper(findViewById(R.id.wallpaper_background))
 
@@ -102,7 +106,6 @@ class AppTimerManagementActivity : ComponentActivity() {
             override fun afterTextChanged(s: Editable?) = Unit
         })
 
-        findViewById<ImageButton>(R.id.app_timers_back_button).setOnClickListener { finish() }
         doneButton.setOnClickListener { finish() }
         clearSearchButton.setOnClickListener { searchBox.text?.clear() }
     }
@@ -149,9 +152,15 @@ class AppTimerManagementActivity : ComponentActivity() {
     }
 
     private fun applyContentInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            findViewById<View>(R.id.apps_recycler_view).setPadding(0, 0, 0, bars.bottom)
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 16.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 16.toPx()
+            )
             insets
         }
     }
@@ -351,5 +360,9 @@ class AppTimerManagementActivity : ComponentActivity() {
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition] == newList[newItemPosition]
         }
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 }

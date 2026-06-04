@@ -21,42 +21,39 @@
 
     
     <LinearLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:paddingBottom="16dp">
-
-            <ImageButton
-                android:id="@+id/app_timers_back_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/back_button"
-                android:paddingTop="32dp"
-                android:paddingHorizontal="8dp"
-                android:paddingBottom="8dp"
-                android:src="@drawable/ic_back"
-                android:tint="@color/white" />
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
 
             <TextView
                 android:id="@+id/title_text"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingStart="8dp"
-                android:paddingTop="32dp"
                 android:text="App Timers"
+                android:textSize="32sp"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+                android:letterSpacing="-0.01"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Set daily time limits for your apps"
+                android:textColor="@color/white"
+                android:alpha="0.5"
+                android:textSize="14sp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -64,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical"
             android:background="@drawable/widget_background"
             android:padding="16dp">
