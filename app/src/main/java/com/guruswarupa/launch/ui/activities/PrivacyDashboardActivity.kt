@@ -10,12 +10,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
@@ -69,6 +70,7 @@ class PrivacyDashboardActivity : ComponentActivity() {
 
         setContentView(R.layout.activity_privacy_dashboard)
         applyBackgroundTranslucency()
+        applyContentInsets()
 
         setupTheme()
 
@@ -102,9 +104,11 @@ class PrivacyDashboardActivity : ComponentActivity() {
             applyFilters()
         }
 
-        findViewById<ImageButton>(R.id.privacy_dashboard_back_button).setOnClickListener { finish() }
-
         loadApps()
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 
     private fun setupTheme() {
@@ -123,6 +127,24 @@ class PrivacyDashboardActivity : ComponentActivity() {
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
         val color = Color.argb(alpha, 0, 0, 0)
         findViewById<View>(R.id.settings_overlay)?.setBackgroundColor(color)
+    }
+
+    private fun applyContentInsets() {
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 16.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 16.toPx()
+            )
+            insets
+        }
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
     private fun loadApps() {

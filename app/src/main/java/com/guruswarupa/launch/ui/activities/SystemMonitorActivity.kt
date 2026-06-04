@@ -15,13 +15,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.guruswarupa.launch.R
@@ -50,30 +51,33 @@ class SystemMonitorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
-        
+
         setContentView(R.layout.activity_system_monitor)
         TypographyManager.applyToView(findViewById(android.R.id.content))
+        applyContentInsets()
 
         deviceInfoManager = DeviceInfoManager(this)
-        
+
         cpuGraph = findViewById(R.id.cpu_graph)
         gpuGraph = findViewById(R.id.gpu_graph)
         cpuCoresContainer = findViewById(R.id.cpu_cores_container)
         gpuCoresContainer = findViewById(R.id.gpu_cores_container)
 
-        findViewById<ImageButton>(R.id.back_button).setOnClickListener { finish() }
-
         setupWallpaper()
         setupHardwareInfo()
         setupNetworkInfo()
         setupSensorsAndCameraInfo()
-        
+
         startRealtimeUpdates()
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 
     private fun setupWallpaper() {
@@ -301,5 +305,23 @@ class SystemMonitorActivity : AppCompatActivity() {
         view.findViewById<TextView>(R.id.info_label).text = label
         view.findViewById<TextView>(R.id.info_value).text = value
         container.addView(view)
+    }
+
+    private fun applyContentInsets() {
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 16.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 16.toPx()
+            )
+            insets
+        }
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 }
