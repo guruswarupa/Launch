@@ -1,10 +1,15 @@
 package com.guruswarupa.launch.widgets
 
 import android.app.Activity
+import android.appwidget.AppWidgetHostView
 import android.util.Log
+import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.widget.NestedScrollView
+import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.managers.WidgetConfigurationManager
 
 class WidgetVisibilityManager(
@@ -174,6 +179,24 @@ class WidgetVisibilityManager(
                         if (view.parent == null) {
                             layout.addView(view)
                         }
+                        
+                        // Enable drag start
+                        val dragStartListener = View.OnLongClickListener {
+                            val shadow = View.DragShadowBuilder(view)
+                            it.startDragAndDrop(null, shadow, widget.id, 0)
+                            true
+                        }
+                        view.setOnLongClickListener(dragStartListener)
+                        
+                        // If it's a system widget, also set on the host view to override WidgetManager's listener
+                        if (widget.isSystemWidget && view is ViewGroup) {
+                            for (i in 0 until view.childCount) {
+                                val child = view.getChildAt(i)
+                                if (child is AppWidgetHostView) {
+                                    child.setOnLongClickListener(dragStartListener)
+                                }
+                            }
+                        }
                     } else {
                         // Remove from parent if disabled to prevent empty backgrounds
                         view.visibility = View.GONE
@@ -184,6 +207,67 @@ class WidgetVisibilityManager(
                 }
             }
 
+            // Setup container drag listener
+            layout.setOnDragListener { _, event ->
+                when (event.action) {
+                    DragEvent.ACTION_DRAG_STARTED -> {
+                        val draggedId = event.localState as? String
+                        viewMap[draggedId]?.visibility = View.INVISIBLE
+                        true
+                    }
+                    DragEvent.ACTION_DRAG_LOCATION -> {
+                        val draggedId = event.localState as? String
+                        if (draggedId != null) {
+                            val draggedView = viewMap[draggedId] ?: return@setOnDragListener true
+                            
+                            // Handle auto-scroll
+                            val scrollView = layout.parent as? NestedScrollView
+                            scrollView?.let { scroll ->
+                                val scrollY = scroll.scrollY
+                                val scrollHeight = scroll.height
+                                
+                                val edgeThreshold = 150
+                                if (event.y < scrollY + edgeThreshold) {
+                                    scroll.smoothScrollBy(0, -25)
+                                } else if (event.y > scrollY + scrollHeight - edgeThreshold) {
+                                    scroll.smoothScrollBy(0, 25)
+                                }
+                            }
+
+                            // Interactive reordering
+                            val targetIndex = findTargetIndex(layout, event.y, draggedView)
+                            val currentIndex = layout.indexOfChild(draggedView)
+                            if (targetIndex != -1 && targetIndex != currentIndex) {
+                                layout.removeView(draggedView)
+                                layout.addView(draggedView, targetIndex)
+                            }
+                        }
+                        true
+                    }
+                    DragEvent.ACTION_DROP -> {
+                        val draggedId = event.localState as? String
+                        if (draggedId != null) {
+                            finalizeOrderFromLayout(layout, viewMap)
+                        }
+                        true
+                    }
+                    DragEvent.ACTION_DRAG_ENDED -> {
+                        val draggedId = event.localState as? String
+                        val view = viewMap[draggedId]
+                        view?.visibility = View.VISIBLE
+                        if (event.result) {
+                            // Show resize handle if it was a system widget
+                            showResizeHandleIfSystemWidget(view)
+                        } else {
+                            // If drag failed or cancelled, refresh to restore original state
+                            update()
+                        }
+                        true
+                    }
+                    else -> true
+                }
+            }
+
             // Restore layout transition
             layout.layoutTransition = animateLayoutChanges
         } ?: run {
@@ -191,6 +275,74 @@ class WidgetVisibilityManager(
         }
 
         return failedWidgets
+    }
+
+    private fun findTargetIndex(layout: LinearLayout, y: Float, draggedView: View): Int {
+        for (i in 0 until layout.childCount) {
+            val child = layout.getChildAt(i)
+            if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) continue
+            
+            val childCenterY = child.y + child.height / 2
+            if (y < childCenterY) {
+                return i
+            }
+        }
+        return layout.childCount
+    }
+
+    private fun finalizeOrderFromLayout(layout: LinearLayout, viewMap: Map<String, View>) {
+        val allWidgets = widgetConfigurationManager.getWidgetOrder().toMutableList()
+        val enabledWidgetsInOrder = mutableListOf<String>()
+        
+        // Reverse mapping of views to widget IDs
+        val viewToIdMap = viewMap.entries.associate { it.value to it.key }
+        
+        // Get the new order of enabled widgets from the layout
+        for (i in 0 until layout.childCount) {
+            val child = layout.getChildAt(i)
+            viewToIdMap[child]?.let { enabledWidgetsInOrder.add(it) }
+        }
+        
+        // Rebuild allWidgets list maintaining the new order for enabled ones
+        // and keeping disabled ones at the end (or where they were)
+        val disabledWidgets = allWidgets.filter { !it.enabled }
+        val newOrder = mutableListOf<WidgetConfigurationManager.WidgetInfo>()
+        
+        enabledWidgetsInOrder.forEach { id ->
+            allWidgets.find { it.id == id }?.let { newOrder.add(it) }
+        }
+        newOrder.addAll(disabledWidgets)
+        
+        widgetConfigurationManager.saveWidgetOrder(newOrder)
+
+        // Also sync system widgets back to WidgetManager
+        (activity as? MainActivity)?.let { main ->
+            val systemWidgetIds = enabledWidgetsInOrder
+                .filter { it.startsWith("system_widget_") }
+                .mapNotNull { it.removePrefix("system_widget_").toIntOrNull() }
+            
+            if (systemWidgetIds.isNotEmpty()) {
+                main.widgetManager.syncWidgetOrder(systemWidgetIds)
+            }
+        }
+
+        // Final refresh to ensure all caches and state are perfectly in sync
+        update()
+    }
+
+    private fun showResizeHandleIfSystemWidget(view: View?) {
+        if (view is ViewGroup) {
+            // Search for the resize handle in the system widget container
+            for (i in 0 until view.childCount) {
+                val child = view.getChildAt(i)
+                if (child is ImageView && child.contentDescription == "Resize widget") {
+                    child.visibility = View.VISIBLE
+                    // Auto-hide after 4 seconds to match WidgetManager behavior
+                    child.postDelayed({ child.visibility = View.GONE }, 4000L)
+                    break
+                }
+            }
+        }
     }
 
     private fun getWidgetViewById(widgetId: String): View? {
