@@ -145,6 +145,7 @@ object Constants {
         const val APP_LIST_CACHE_DURATION_MS = 300000L // 5 minutes
         const val WORK_PROFILE_EMPTY_RETRY_DELAY_MS = 350L
         const val MAX_WORK_PROFILE_EMPTY_RETRIES = 2
+        const val WORK_PROFILE_RETRY_RESET_TIMEOUT_MS = 30000L // 30 seconds
         const val GENERAL_EMPTY_RETRY_DELAY_MS = 500L
         const val MAX_GENERAL_EMPTY_RETRIES = 3
         const val ICON_PRELOAD_DELAY_MS = 50L
