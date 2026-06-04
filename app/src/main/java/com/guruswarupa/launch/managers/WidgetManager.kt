@@ -579,7 +579,7 @@ class WidgetManager(private val context: Context, private val widgetContainer: L
             widgetContainer.removeView(viewToMove)
             widgetContainer.removeView(viewToSwapWith)
 
-            widgetContainer.addView(viewToSwapWith, currentIndex - 1)
+            widgetContainer.addView(viewToSwapWith, currentIndex)
             widgetContainer.addView(viewToMove, currentIndex - 1)
 
             saveWidgets()
@@ -597,8 +597,8 @@ class WidgetManager(private val context: Context, private val widgetContainer: L
             val viewToMove = widgetContainer.getChildAt(currentIndex)
             val viewToSwapWith = widgetContainer.getChildAt(currentIndex + 1)
 
-            widgetContainer.removeView(viewToSwapWith)
             widgetContainer.removeView(viewToMove)
+            widgetContainer.removeView(viewToSwapWith)
 
             widgetContainer.addView(viewToSwapWith, currentIndex)
             widgetContainer.addView(viewToMove, currentIndex + 1)
@@ -648,6 +648,19 @@ class WidgetManager(private val context: Context, private val widgetContainer: L
         } catch (e: Exception) {
             Toast.makeText(context, "Error removing widget: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun syncWidgetOrder(appWidgetIds: List<Int>) {
+        val newOrder = mutableListOf<WidgetInfo>()
+        appWidgetIds.forEach { id ->
+            widgets.find { it.appWidgetId == id }?.let { newOrder.add(it) }
+        }
+        // Add any missing ones
+        widgets.forEach { w -> if (newOrder.none { it.appWidgetId == w.appWidgetId }) newOrder.add(w) }
+        
+        widgets.clear()
+        widgets.addAll(newOrder)
+        saveWidgets()
     }
 
     private fun saveWidgets() {
