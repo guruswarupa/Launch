@@ -129,4 +129,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/web_app_allow_http_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Allow HTTP (unencrypted connection)"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:buttonTint="@color/white"
+        android:alpha="0.7" />
 </LinearLayout>

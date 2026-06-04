@@ -15,6 +15,7 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -236,10 +237,14 @@ class WebAppSettingsActivity : ComponentActivity() {
         val suggestionsList = dialogView.findViewById<LinearLayout>(R.id.web_app_suggestions_list)
         val searchProgress = dialogView.findViewById<ProgressBar>(R.id.web_app_search_progress)
         val blockRedirectsSwitch = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.web_app_block_redirects_switch)
+        val allowHttpCheckbox = dialogView.findViewById<CheckBox>(R.id.web_app_allow_http_checkbox)
 
         nameInput.setText(existing?.name.orEmpty())
         urlInput.setText(existing?.url.orEmpty())
         urlInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+
+        // Set checkbox based on existing URL
+        allowHttpCheckbox.isChecked = existing?.url?.startsWith("http://", ignoreCase = true) == true
 
 
         blockRedirectsSwitch.isChecked = existing?.blockRedirects ?: true
@@ -279,8 +284,12 @@ class WebAppSettingsActivity : ComponentActivity() {
                 val url = urlInput.text.toString().trim()
                 if (url.isBlank()) {
                     urlInput.error = getString(R.string.web_app_url_required)
-                } else if (!isSupportedWebUrl(url)) {
-                    urlInput.error = getString(R.string.web_app_https_required)
+                } else if (!isSupportedWebUrl(url, allowHttpCheckbox.isChecked)) {
+                    urlInput.error = if (allowHttpCheckbox.isChecked) {
+                        "Invalid URL format"
+                    } else {
+                        getString(R.string.web_app_https_required)
+                    }
                 }
             }
         }
@@ -299,12 +308,13 @@ class WebAppSettingsActivity : ComponentActivity() {
             val name = nameInput.text.toString().trim()
             val url = urlInput.text.toString().trim()
             val blockRedirects = blockRedirectsSwitch.isChecked
+            val allowHttp = allowHttpCheckbox.isChecked
 
             when {
                 name.isBlank() -> {
                     nameInput.requestFocus()
                     Toast.makeText(
-                        this,
+                        this@WebAppSettingsActivity,
                         R.string.web_app_name_required,
                         Toast.LENGTH_SHORT
                     ).show()
@@ -314,39 +324,41 @@ class WebAppSettingsActivity : ComponentActivity() {
                 url.isBlank() -> {
                     urlInput.requestFocus()
                     Toast.makeText(
-                        this,
+                        this@WebAppSettingsActivity,
                         R.string.web_app_url_required,
                         Toast.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener
                 }
 
-                !isSupportedWebUrl(url) -> {
+                !isSupportedWebUrl(url, allowHttp) -> {
                     urlInput.requestFocus()
                     Toast.makeText(
-                        this,
-                        R.string.web_app_https_required,
+                        this@WebAppSettingsActivity,
+                        if (allowHttp) "Invalid URL format" else getString(R.string.web_app_https_required),
                         Toast.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener
                 }
 
                 else -> {
-                    if (existing == null) {
-                        webAppManager.addWebApp(name, url, blockRedirects)
+                    // Show warning for HTTP URLs
+                    val normalizedUrl = webAppManager.normalizeUrl(url)
+                    if (normalizedUrl.startsWith("http://", ignoreCase = true) &&
+                        !isLocalhostOrPrivateIp(normalizedUrl)) {
+                        AlertDialog.Builder(this@WebAppSettingsActivity, R.style.CustomDialogTheme)
+                            .setTitle("Security Warning")
+                            .setMessage("This web app uses HTTP (unencrypted connection). Your data will not be encrypted during transmission.\n\nThis may be acceptable for local development or trusted intranet environments, but is not recommended for public internet use.\n\nDo you want to continue?")
+                            .setPositiveButton("Add Anyway") { _, _ ->
+                                saveWebApp(existing, name, url, blockRedirects)
+                                dialog.dismiss()
+                            }
+                            .setNegativeButton("Cancel", null)
+                            .show()
                     } else {
-                        webAppManager.updateWebApp(existing.id, name, url, blockRedirects)
+                        saveWebApp(existing, name, url, blockRedirects)
+                        dialog.dismiss()
                     }
-                    notifySettingsChanged()
-                    renderWebApps()
-                    dialog.dismiss()
-
-
-                    Toast.makeText(
-                        this,
-                        if (existing == null) R.string.web_app_added else R.string.web_app_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }
         }
@@ -503,9 +515,91 @@ class WebAppSettingsActivity : ComponentActivity() {
             .show()
     }
 
-    private fun isSupportedWebUrl(rawUrl: String): Boolean {
+    private fun isSupportedWebUrl(rawUrl: String, allowHttp: Boolean = false): Boolean {
         val normalized = webAppManager.normalizeUrl(rawUrl)
-        return normalized.startsWith("https://", ignoreCase = true)
+
+        // Always allow HTTPS
+        if (normalized.startsWith("https://", ignoreCase = true)) {
+            return true
+        }
+
+        // Allow HTTP if explicitly allowed or if it's localhost/intranet
+        if (normalized.startsWith("http://", ignoreCase = true)) {
+            if (allowHttp) {
+                return true
+            }
+
+            // Automatically allow for localhost and private IPs
+            val host = try {
+                android.net.Uri.parse(normalized).host
+            } catch (e: Exception) {
+                null
+            }
+
+            if (host != null) {
+                // Allow localhost variants
+                if (host.equals("localhost", ignoreCase = true) ||
+                    host.equals("127.0.0.1") ||
+                    host.equals("::1") ||
+                    host.startsWith("127.") ||
+                    host.endsWith(".local")) {
+                    return true
+                }
+
+                // Allow private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+                if (host.matches(Regex("^10\\..+")) ||
+                    host.matches(Regex("^172\\.(1[6-9]|2[0-9]|3[0-1])\\..+")) ||
+                    host.matches(Regex("^192\\.168\\..+"))) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun isLocalhostOrPrivateIp(url: String): Boolean {
+        val host = try {
+            android.net.Uri.parse(url).host
+        } catch (e: Exception) {
+            return false
+        }
+
+        if (host == null) return false
+
+        // Check for localhost variants
+        if (host.equals("localhost", ignoreCase = true) ||
+            host.equals("127.0.0.1") ||
+            host.equals("::1") ||
+            host.startsWith("127.") ||
+            host.endsWith(".local")) {
+            return true
+        }
+
+        // Check for private IP ranges
+        if (host.matches(Regex("^10\\..+")) ||
+            host.matches(Regex("^172\\.(1[6-9]|2[0-9]|3[0-1])\\..+")) ||
+            host.matches(Regex("^192\\.168\\..+"))) {
+            return true
+        }
+
+        return false
+    }
+
+    private fun saveWebApp(existing: WebAppEntry?, name: String, url: String, blockRedirects: Boolean) {
+        if (existing == null) {
+            webAppManager.addWebApp(name, url, blockRedirects)
+        } else {
+            webAppManager.updateWebApp(existing.id, name, url, blockRedirects)
+        }
+        notifySettingsChanged()
+        renderWebApps()
+
+        Toast.makeText(
+            this,
+            if (existing == null) R.string.web_app_added else R.string.web_app_updated,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun notifySettingsChanged() {
