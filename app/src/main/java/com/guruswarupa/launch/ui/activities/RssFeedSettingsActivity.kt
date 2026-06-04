@@ -46,9 +46,15 @@ class RssFeedSettingsActivity : ComponentActivity() {
         )
         setContentView(R.layout.activity_rss_feed_settings)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            findViewById<View>(R.id.rss_sources_scroll_view).setPadding(0, bars.top, 0, bars.bottom)
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 16.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 16.toPx()
+            )
             insets
         }
 
@@ -61,7 +67,6 @@ class RssFeedSettingsActivity : ComponentActivity() {
 
         applyBackgroundTranslucency()
 
-        findViewById<ImageButton>(R.id.rss_sources_back_button).setOnClickListener { finish() }
         findViewById<Button>(R.id.add_rss_source_button).setOnClickListener { showSourceEditor() }
 
         renderSources()
@@ -283,6 +288,10 @@ class RssFeedSettingsActivity : ComponentActivity() {
 
     private fun dp(value: Int): Int {
         return (value * resources.displayMetrics.density).toInt()
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
     private fun showSourceEditor(existingUrl: String? = null) {
