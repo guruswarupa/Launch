@@ -50,6 +50,8 @@ class AppListLoader(
     private val cacheDuration = Constants.Timeouts.APP_LIST_CACHE_DURATION_MS
     private var workProfileEmptyRetryCount = 0
     private var generalEmptyRetryCount = 0
+    private var lastWorkProfileEnabledState = false
+    private var lastWorkProfileRetryTime = 0L
     private val currentUserSerial by lazy {
         val userManager = activity.getSystemService(Context.USER_SERVICE) as UserManager
         userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
@@ -352,6 +354,22 @@ class AppListLoader(
         finalAppList: List<ResolveInfo>
     ): Boolean {
         val isWorkProfileModeEnabled = sharedPreferences.getBoolean("work_profile_enabled", false)
+        val currentTime = System.currentTimeMillis()
+
+        // Reset retry counter if work profile state changed since last check
+        if (lastWorkProfileEnabledState != isWorkProfileModeEnabled) {
+            workProfileEmptyRetryCount = 0
+            lastWorkProfileEnabledState = isWorkProfileModeEnabled
+            Log.d(TAG, "Work profile state changed to $isWorkProfileModeEnabled, resetting retry counter")
+        }
+
+        // Reset retry counter if enough time has passed since last retry attempt
+        if (lastWorkProfileRetryTime > 0 &&
+            (currentTime - lastWorkProfileRetryTime) > Constants.Timeouts.WORK_PROFILE_RETRY_RESET_TIMEOUT_MS) {
+            workProfileEmptyRetryCount = 0
+            Log.d(TAG, "Work profile retry timeout exceeded, resetting retry counter")
+        }
+
         if (!isWorkProfileModeEnabled || finalAppList.isNotEmpty()) {
             if (!isWorkProfileModeEnabled) {
                 workProfileEmptyRetryCount = 0
@@ -371,6 +389,7 @@ class AppListLoader(
         }
 
         workProfileEmptyRetryCount += 1
+        lastWorkProfileRetryTime = currentTime
         Log.d(
             TAG,
             "Work profile apps not available yet; retrying load (${workProfileEmptyRetryCount}/${Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES})"
@@ -407,6 +426,8 @@ class AppListLoader(
         lastCacheTime = 0L
         generalEmptyRetryCount = 0
         workProfileEmptyRetryCount = 0
+        lastWorkProfileEnabledState = false
+        lastWorkProfileRetryTime = 0L
     }
 
     private fun appendWebApps(installedApps: List<ResolveInfo>): List<ResolveInfo> {
