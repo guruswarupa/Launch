@@ -204,7 +204,8 @@
                     android:text="Open with another app"
                     android:textColor="@color/nord7"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </FrameLayout>
