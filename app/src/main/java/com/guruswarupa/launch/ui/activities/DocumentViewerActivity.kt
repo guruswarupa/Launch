@@ -112,7 +112,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
             documentTitle.text = displayName
             loadExternalDocument(externalUri!!, displayName)
         } else {
-            showError("No document provided")
+            showError("No document provided", showOpenWithButton = false)
         }
 
         setupClickListeners()
@@ -338,7 +338,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 tempFile = decryptedFile
                 openDocument(decryptedFile, fileName)
             } catch (e: Exception) {
-                showError("Failed to decrypt: ${e.message}")
+                showError("Unable to decrypt file. Use the button below to open in another app.", showOpenWithButton = true)
             }
         }
     }
@@ -353,7 +353,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 tempFile = cachedFile
                 openDocument(cachedFile, displayName)
             } catch (e: Exception) {
-                showError("Failed to load: ${e.message}")
+                showError("Unable to load document. Use the button below to open in another app.", showOpenWithButton = true)
             }
         }
     }
@@ -401,12 +401,12 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 try {
                     val content = file.readText(Charsets.UTF_8)
                     if (content.any { it.isISOControl() && it != '\n' && it != '\r' && it != '\t' }) {
-                        showError("Unsupported document format: .$extension")
+                        showError("Unsupported document format. Use the button below to open in another app.", showOpenWithButton = true)
                     } else {
                         openTextFile(file)
                     }
                 } catch (e: Exception) {
-                    showError("Unsupported document format: .$extension")
+                    showError("Unsupported document format. Use the button below to open in another app.", showOpenWithButton = true)
                 }
             }
         }
@@ -452,7 +452,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 })
 
             } catch (e: OutOfMemoryError) {
-                showError("PDF is too large to preview. Please use 'Open with' to view in another app.")
+                showError("PDF is too large to preview. Use the button below to open in another app.", showOpenWithButton = true)
             } catch (e: Exception) {
                 showError("Failed to render PDF: ${e.message}")
             }
@@ -515,7 +515,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 hideLoading()
                 showWebViewContent(html)
             } catch (e: Exception) {
-                showError("Failed to read file: ${e.message}")
+                showError("Unable to read file. Use the button below to open in another app.", showOpenWithButton = true)
             }
         }
     }
@@ -548,7 +548,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
             override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
                 @Suppress("DEPRECATION")
                 super.onReceivedError(view, errorCode, description, failingUrl)
-                showError("Failed to load document content")
+                showError("Unable to display document. Use the button below to open in another app.", showOpenWithButton = true)
             }
         }
         documentWebView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
@@ -577,13 +577,14 @@ class DocumentViewerActivity : VaultBaseActivity() {
         loadingContainer.visibility = View.GONE
     }
 
-    private fun showError(message: String) {
+    private fun showError(message: String, showOpenWithButton: Boolean = false) {
         loadingContainer.visibility = View.GONE
         pdfRecyclerView.visibility = View.GONE
         documentWebView.visibility = View.GONE
         pdfNavBar.visibility = View.GONE
         errorContainer.visibility = View.VISIBLE
         errorText.text = message
+        openExternalButton.visibility = if (showOpenWithButton) View.VISIBLE else View.GONE
     }
 
     private fun shareDocument() {
@@ -610,7 +611,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private fun openWithExternalApp() {
         val file = tempFile
         if (file == null || !file.exists()) {
-            Toast.makeText(this, "No document available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No document available to open externally", Toast.LENGTH_SHORT).show()
             return
         }
         try {
@@ -623,7 +624,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
             }
             startActivity(Intent.createChooser(intent, "Open with…"))
         } catch (e: Exception) {
-            Toast.makeText(this, "No app available to open this file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No app available to open this file type", Toast.LENGTH_SHORT).show()
         }
     }
 
