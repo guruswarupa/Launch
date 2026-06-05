@@ -129,6 +129,22 @@ class AppListUIUpdater(
             }
 
             adapter?.updateAppList(newAppList)
+
+            if (activity.pendingScrollToTop) {
+                activity.pendingScrollToTop = false
+                recyclerView.post {
+                    // Position 3 skips the top spacers if they exist (added when favorites are present)
+                    // If no spacers, 0 is the top. scrollToPositionWithOffset ensures it's at the top.
+                    val hasSpacers = newAppList.any { 
+                        it.activityInfo.packageName == AppAdapter.SEPARATOR_PACKAGE && 
+                        it.activityInfo.name?.startsWith("all_apps_top_spacer_") == true 
+                    }
+                    val targetPos = if (hasSpacers) 3 else 0
+                    (recyclerView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(targetPos, 0)
+                        ?: recyclerView.scrollToPosition(targetPos)
+                }
+            }
+
             val isEmpty = newAppList.isEmpty()
             recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
             activity.views.appListEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE

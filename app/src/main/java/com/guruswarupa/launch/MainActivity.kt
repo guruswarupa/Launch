@@ -177,6 +177,7 @@ class MainActivity : FragmentActivity() {
 
 
     var showOnlyFavoritesInitially = true
+    var pendingScrollToTop = false
 
 
     private var lastToggleTime = 0L
@@ -205,14 +206,10 @@ class MainActivity : FragmentActivity() {
 
         lastToggleTime = currentTime
         showOnlyFavoritesInitially = false
+        pendingScrollToTop = true
 
 
         appListLoader.loadApps(forceRefresh = false)
-
-
-        handler.postDelayed({
-            views.recyclerView.scrollToPosition(4)
-        }, 100)
     }
 
     fun showFavoritesFromAllApps() {
@@ -231,6 +228,7 @@ class MainActivity : FragmentActivity() {
 
         lastToggleTime = currentTime
         showOnlyFavoritesInitially = true
+        pendingScrollToTop = true
 
 
         appListLoader.loadApps(forceRefresh = false)
