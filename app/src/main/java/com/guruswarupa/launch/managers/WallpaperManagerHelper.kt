@@ -3,6 +3,7 @@ package com.guruswarupa.launch.managers
 import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Handler
@@ -11,6 +12,7 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.models.Constants
 import java.util.concurrent.RejectedExecutionException
 
 
@@ -31,6 +33,16 @@ class WallpaperManagerHelper(
 
 
     fun setWallpaperBackground(forceReload: Boolean = false) {
+        val prefs = activity.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(Constants.Prefs.MINIMAL_MODE_ENABLED, false)) {
+            wallpaperBackground.setImageDrawable(null)
+            wallpaperBackground.setBackgroundColor(Color.BLACK)
+            drawerWallpaperBackground?.setImageDrawable(null)
+            drawerWallpaperBackground?.setBackgroundColor(Color.BLACK)
+            rssWallpaperBackground?.setImageDrawable(null)
+            rssWallpaperBackground?.setBackgroundColor(Color.BLACK)
+            return
+        }
 
         applyBlurToViews()
 
@@ -116,35 +128,37 @@ class WallpaperManagerHelper(
     private fun updateWallpaperViews(newBitmap: Bitmap) {
         val oldBitmap = currentWallpaperBitmap
 
-
-
         currentWallpaperBitmap = newBitmap
         if (!newBitmap.isRecycled) {
+            wallpaperBackground.setBackgroundColor(Color.TRANSPARENT)
             wallpaperBackground.setImageBitmap(newBitmap)
+            drawerWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
             drawerWallpaperBackground?.setImageBitmap(newBitmap)
+            rssWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
             rssWallpaperBackground?.setImageBitmap(newBitmap)
-        }
-
-
-
-
-        if (oldBitmap != null && oldBitmap != newBitmap) {
-
-
         }
     }
 
     private fun setDefaultWallpaper() {
+        val prefs = activity.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(Constants.Prefs.MINIMAL_MODE_ENABLED, false)) {
+            wallpaperBackground.setImageDrawable(null)
+            wallpaperBackground.setBackgroundColor(Color.BLACK)
+            drawerWallpaperBackground?.setImageDrawable(null)
+            drawerWallpaperBackground?.setBackgroundColor(Color.BLACK)
+            rssWallpaperBackground?.setImageDrawable(null)
+            rssWallpaperBackground?.setBackgroundColor(Color.BLACK)
+            return
+        }
 
         currentWallpaperBitmap = null
 
-
+        wallpaperBackground.setBackgroundColor(Color.TRANSPARENT)
         wallpaperBackground.setImageResource(R.drawable.wallpaper_background)
+        drawerWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
         drawerWallpaperBackground?.setImageResource(R.drawable.wallpaper_background)
+        rssWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
         rssWallpaperBackground?.setImageResource(R.drawable.wallpaper_background)
-
-
-
     }
 
 
