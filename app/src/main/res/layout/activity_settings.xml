@@ -360,6 +360,43 @@
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Minimal Mode"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pitch black background everywhere"
+                                    android:textColor="@color/white"
+                                    android:alpha="0.5"
+                                    android:textSize="11sp"/>
+                            </LinearLayout>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/minimal_mode_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="@color/nord8"
+                                app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
                         
                         <LinearLayout
                             android:id="@+id/default_home_page_section"

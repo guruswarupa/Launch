@@ -465,6 +465,23 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             }
         }
 
+        findViewById<SwitchCompat>(R.id.minimal_mode_switch).apply {
+            fun applyMinimalModeSwitchColors(isEnabled: Boolean) {
+                val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+                thumbTintList = ColorStateList.valueOf(color)
+                trackTintList = ColorStateList.valueOf(color)
+            }
+
+            isChecked = prefs.getBoolean(Constants.Prefs.MINIMAL_MODE_ENABLED, false)
+            applyMinimalModeSwitchColors(isChecked)
+            setOnCheckedChangeListener { _, isChecked ->
+                applyMinimalModeSwitchColors(isChecked)
+                prefs.edit { putBoolean(Constants.Prefs.MINIMAL_MODE_ENABLED, isChecked) }
+                setupWallpaper(null)
+                notifySettingsChanged()
+            }
+        }
+
 
         val translucencySeek = findViewById<SeekBar>(R.id.background_translucency_seekbar)
         val translucencyValue = findViewById<TextView>(R.id.background_translucency_value)
