@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.ui.activities
 
 import android.app.ActivityManager
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -28,6 +27,7 @@ import com.google.android.material.chip.ChipGroup
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.DeviceInfoManager
 import com.guruswarupa.launch.managers.TypographyManager
+import com.guruswarupa.launch.managers.BatteryManager as AppBatteryManager
 import com.guruswarupa.launch.ui.views.UsageGraphView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import java.util.Locale
@@ -35,6 +35,7 @@ import java.util.Locale
 class SystemMonitorActivity : AppCompatActivity() {
 
     private lateinit var deviceInfoManager: DeviceInfoManager
+    private lateinit var appBatteryManager: AppBatteryManager
     private val handler = Handler(Looper.getMainLooper())
     private var updateRunnable: Runnable? = null
     private val prefs by lazy { getSharedPreferences("system_monitor_prefs", MODE_PRIVATE) }
@@ -62,6 +63,7 @@ class SystemMonitorActivity : AppCompatActivity() {
         applyContentInsets()
 
         deviceInfoManager = DeviceInfoManager(this)
+        appBatteryManager = AppBatteryManager(this)
 
         cpuGraph = findViewById(R.id.cpu_graph)
         gpuGraph = findViewById(R.id.gpu_graph)
@@ -125,9 +127,8 @@ class SystemMonitorActivity : AppCompatActivity() {
 
         val gpuUsage = deviceInfoManager.getGpuUsage()
         val gpuModel = deviceInfoManager.getGpuModel()
-        val gpuCoreCount = deviceInfoManager.getGpuCoreCount()
         
-        gpuStatus.text = String.format(Locale.getDefault(), "GPU: %s (%d Cores) - %d%%", gpuModel, gpuCoreCount, gpuUsage)
+        gpuStatus.text = String.format(Locale.getDefault(), "GPU: %s - %d%%", gpuModel, gpuUsage)
         gpuGraph.addDataPoint(gpuUsage.toFloat())
         gpuCoresContainer.visibility = View.GONE
         
@@ -171,48 +172,42 @@ class SystemMonitorActivity : AppCompatActivity() {
     }
 
     private fun updateBatteryInfo() {
-        val batteryStatus = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-        val bm = getSystemService(BATTERY_SERVICE) as BatteryManager
+        val batteryInfo = appBatteryManager.getBatteryHealthInfo()
 
         val healthText = findViewById<TextView>(R.id.battery_health)
         val capacityText = findViewById<TextView>(R.id.battery_capacity)
         val calculatedHealthText = findViewById<TextView>(R.id.battery_calculated_health)
+        val voltageText = findViewById<TextView>(R.id.battery_voltage)
+        val batteryTempText = findViewById<TextView>(R.id.battery_temp)
+        val chargingSpeedText = findViewById<TextView>(R.id.battery_charging_speed)
+        val timeRemainingText = findViewById<TextView>(R.id.battery_time_remaining)
 
-        var isFull = false
+        healthText.text = String.format(Locale.getDefault(), "Battery: %d%% (%s)", batteryInfo.percentage, batteryInfo.health)
 
-        batteryStatus?.let {
-            val level = it.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-            val scale = it.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-            val health = it.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)
-            val status = it.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
-            val pct = (level * 100 / scale.toFloat()).toInt()
+        voltageText.text = String.format(Locale.getDefault(), "Voltage: %d mV", batteryInfo.voltage)
+        batteryTempText.text = String.format(Locale.getDefault(), "Temperature: %.1f°C", batteryInfo.temperature)
 
-            isFull = status == BatteryManager.BATTERY_STATUS_FULL || pct == 100
-
-            val healthStr = when (health) {
-                BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-                BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
-                BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
-                else -> "Unknown"
-            }
-
-            healthText.text = String.format(Locale.getDefault(), "Battery: %d%% (%s)", pct, healthStr)
+        if (batteryInfo.isCharging) {
+            chargingSpeedText.text = String.format(Locale.getDefault(), "Charging Speed: %d mA", batteryInfo.chargingSpeed)
+            timeRemainingText.text = String.format(Locale.getDefault(), "Time to Full: %s", batteryInfo.timeRemaining ?: "--")
+        } else {
+            chargingSpeedText.text = "Status: Discharging"
+            timeRemainingText.text = String.format(Locale.getDefault(), "Time Remaining: %s", batteryInfo.timeRemaining ?: "--")
         }
 
-        val designCapacity = getBatteryDesignCapacity()
-        val currentChargeCounter = Math.abs(bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) / 1000)
-        
-        if (isFull && designCapacity > 0 && currentChargeCounter > 0) {
+        val designCapacity = batteryInfo.designCapacity
+        val currentChargeCounter = batteryInfo.liveCapacity
+
+        if (batteryInfo.isFull && designCapacity > 0 && currentChargeCounter > 0) {
             val healthPct = (currentChargeCounter.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
             prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, currentChargeCounter).apply()
-            
+
             capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Full: %dmAh | Charge: %dmAh", designCapacity, currentChargeCounter, currentChargeCounter)
             calculatedHealthText.text = String.format(Locale.getDefault(), "Calculated Health: %d%% (Updated at 100%%)", healthPct)
         } else {
             val lastFullCapacity = prefs.getInt(KEY_LAST_FULL_CAPACITY, -1)
             val lastHealth = prefs.getInt(KEY_LAST_CALCULATED_HEALTH, -1)
-            
+
             if (lastFullCapacity != -1) {
                 capacityText.text = String.format(Locale.getDefault(), "Design: %dmAh | Full: %dmAh | Charge: %dmAh", designCapacity, lastFullCapacity, currentChargeCounter)
             } else {
@@ -224,17 +219,6 @@ class SystemMonitorActivity : AppCompatActivity() {
             } else {
                 calculatedHealthText.text = "Calculated Health: Waiting for 100% charge to calibrate..."
             }
-        }
-    }
-
-    private fun getBatteryDesignCapacity(): Int {
-        val powerProfileClass = "com.android.internal.os.PowerProfile"
-        return try {
-            val mPowerProfile = Class.forName(powerProfileClass).getConstructor(Context::class.java).newInstance(this)
-            val batteryCapacity = Class.forName(powerProfileClass).getMethod("getBatteryCapacity").invoke(mPowerProfile) as Double
-            batteryCapacity.toInt()
-        } catch (_: Exception) {
-            4000
         }
     }
 
@@ -254,9 +238,6 @@ class SystemMonitorActivity : AppCompatActivity() {
         
         val displayMetrics = resources.displayMetrics
         addInfoItem(container, "Display", String.format(Locale.getDefault(), "%dx%d (%d dpi)", displayMetrics.widthPixels, displayMetrics.heightPixels, displayMetrics.densityDpi))
-
-        val bluetoothAdapter = (getSystemService(BLUETOOTH_SERVICE) as BluetoothManager).adapter
-        addInfoItem(container, "Bluetooth", if (bluetoothAdapter != null) "Available" else "N/A")
 
         val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         addInfoItem(container, "Low RAM Device", activityManager.isLowRamDevice.toString())
@@ -282,22 +263,36 @@ class SystemMonitorActivity : AppCompatActivity() {
         
         // Cameras Detailed
         val cameraInfo = deviceInfoManager.getDetailedCameraInfo()
-        addInfoItem(container, "Cameras", "${cameraInfo.size} detected")
+        addInfoItem(container, "Camera Modules", "${cameraInfo.size} detected")
+        addVerticalSpacer(container, 8)
+        
         for (cam in cameraInfo) {
             val label = "Camera ${cam["ID"]} (${cam["Facing"]})"
             val value = "Res: ${cam["Resolution"]} | Aperture: ${cam["Aperture"]} | Focal: ${cam["Focal Length"]}"
             addInfoItem(container, label, value)
         }
 
+        addVerticalSpacer(container, 16)
+
         // Sensors
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val sensors = sensorManager.getSensorList(Sensor.TYPE_ALL)
         
         addInfoItem(container, "Total Sensors", String.format(Locale.getDefault(), "%d available", sensors.size))
+        addVerticalSpacer(container, 8)
         
         for (s in sensors) {
             addInfoItem(container, s.name, String.format(Locale.getDefault(), "Vendor: %s | Power: %.2fmA", s.vendor, s.power))
         }
+    }
+
+    private fun addVerticalSpacer(container: LinearLayout, dp: Int) {
+        val spacer = View(this)
+        spacer.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            dp.toPx()
+        )
+        container.addView(spacer)
     }
 
     private fun addInfoItem(container: LinearLayout, label: String, value: String) {

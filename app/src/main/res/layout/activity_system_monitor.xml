@@ -292,6 +292,46 @@
                             android:textColor="@color/nord8"
                             android:textSize="13sp"
                             android:layout_marginTop="8dp"/>
+
+                        <TextView
+                            android:id="@+id/battery_voltage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Voltage: --"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="8dp"/>
+
+                        <TextView
+                            android:id="@+id/battery_temp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Temperature: --"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
+
+                        <TextView
+                            android:id="@+id/battery_charging_speed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Charging Speed: --"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
+
+                        <TextView
+                            android:id="@+id/battery_time_remaining"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Time Remaining: --"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
