@@ -140,7 +140,7 @@ class AppListManager @Inject constructor(
             val favorites = favoriteAppManager.getFavoriteApps()
             if (favorites.isNotEmpty()) {
                 // Add enough spacers to ensure scrollability back to favorites
-                for (i in 0 until 10) {
+                for (i in 0 until 3) {
                     result.add(createSeparatorInfo("all_apps_top_spacer_$i"))
                 }
             }
