@@ -91,6 +91,7 @@ object Constants {
         const val CONTACTS_PERMISSION_DENIED = "contacts_permission_denied"
         const val USAGE_STATS_PERMISSION_DENIED = "usage_stats_permission_denied"
         const val POWER_SAVER_MODE = "power_saver_mode"
+        const val MINIMAL_MODE_ENABLED = "minimal_mode_enabled"
 
 
         const val VAULT_TIMEOUT_ENABLED = "vault_timeout_enabled"
