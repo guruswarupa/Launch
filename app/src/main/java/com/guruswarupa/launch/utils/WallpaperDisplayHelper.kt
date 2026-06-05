@@ -2,6 +2,7 @@ package com.guruswarupa.launch.utils
 
 import android.app.WallpaperManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -16,11 +17,18 @@ import com.guruswarupa.launch.models.ThemeOption
 
 object WallpaperDisplayHelper {
 
-
-
+    private fun isMinimalMode(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(Constants.Prefs.MINIMAL_MODE_ENABLED, false)
+    }
 
     fun applySystemWallpaper(target: ImageView, fallbackRes: Int = R.drawable.wallpaper_background) {
         val context = target.context
+        if (isMinimalMode(context)) {
+            target.setImageDrawable(null)
+            target.setBackgroundColor(Color.BLACK)
+            return
+        }
 
         val wallpaperDrawable = try {
             WallpaperManager.getInstance(context).drawable
@@ -35,12 +43,14 @@ object WallpaperDisplayHelper {
         }
     }
 
-
-
-
-
     fun applyThemeWallpaper(target: ImageView, themeId: String, fallbackRes: Int = R.drawable.wallpaper_background) {
         val context = target.context
+        if (isMinimalMode(context)) {
+            target.setImageDrawable(null)
+            target.setBackgroundColor(Color.BLACK)
+            return
+        }
+
         val theme = ThemeOption.PREDEFINED_THEMES.find { it.id == themeId }
 
         if (theme != null) {
@@ -65,6 +75,12 @@ object WallpaperDisplayHelper {
 
     fun applyThemePreview(target: ImageView, themeId: String) {
         val context = target.context
+        if (isMinimalMode(context)) {
+            target.setImageDrawable(null)
+            target.setBackgroundColor(Color.BLACK)
+            return
+        }
+
         if (themeId == "system_default") {
             applySystemWallpaper(target)
         } else {
