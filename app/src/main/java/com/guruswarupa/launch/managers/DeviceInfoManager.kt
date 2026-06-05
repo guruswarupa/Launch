@@ -396,69 +396,6 @@ class DeviceInfoManager(private val context: Context) {
         return ""
     }
 
-    fun getGpuCoreCount(): Int {
-        val paths = listOf(
-            "/sys/class/misc/mali0/device/num_cores",
-            "/sys/devices/platform/soc/soc:mali/num_cores",
-            "/sys/class/misc/mali0/device/gpuinfo",
-            "/proc/mali/info",
-            "/sys/devices/platform/soc/5000000.gpu/num_cores",
-            "/sys/class/misc/mali0/device/as_num_cores",
-            "/sys/class/misc/mali0/device/js_num_cores"
-        )
-        
-        for (path in paths) {
-            try {
-                val file = File(path)
-                if (file.exists() && file.canRead()) {
-                    if (path.contains("num_cores")) {
-                        val count = readLongFile(path).toInt()
-                        if (count > 0) return count
-                    } else {
-                        val content = BufferedReader(FileReader(file)).use { it.readText() }
-                        val patterns = listOf(
-                            "cores:?\\s*(\\d+)",
-                            "shader_cores:?\\s*(\\d+)",
-                            "present_cores:?\\s*(\\d+)",
-                            "core_mask:?\\s*0x([0-9a-fA-F]+)"
-                        )
-                        for (p in patterns) {
-                            val match = Regex(p, RegexOption.IGNORE_CASE).find(content)
-                            if (match != null) {
-                                return if (p.contains("mask")) {
-                                    Integer.bitCount(match.groupValues[1].toInt(16))
-                                } else {
-                                    match.groupValues[1].toInt()
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-        
-        // Comprehensive Fallback for common Mali chipsets (Exynos, Helio, Kirin)
-        val hw = (Build.HARDWARE + " " + Build.BOARD).lowercase()
-        
-        // Match specific Mali core count based on detected model if possible
-        val model = getGpuModel().uppercase()
-        if (model.contains("G72") && (hw.contains("961") || hw.contains("9810"))) {
-            return if (hw.contains("9810")) 18 else 3
-        }
-
-        return when {
-            hw.contains("exynos9810") || hw.contains("universal9810") -> 18 // G72 MP18
-            hw.contains("exynos961") || hw.contains("universal961") -> 3 // G72 MP3
-            hw.contains("exynos7885") || hw.contains("universal7885") -> 2 // G71 MP2
-            hw.contains("exynos7904") || hw.contains("universal7904") -> 2 // G71 MP2
-            hw.contains("mt6768") || hw.contains("g80") || hw.contains("p65") -> 2 // G52 MC2
-            hw.contains("mt6769") || hw.contains("g85") -> 2 // G52 MC2
-            hw.contains("kirin970") -> 12 // G72 MP12
-            hw.contains("kirin980") -> 10 // G76 MP10
-            else -> 1
-        }
-    }
-
     fun getGpuTemperature(): Float {
         val gpuPaths = listOf(
             "/sys/class/kgsl/kgsl-3d0/temp",
@@ -534,23 +471,67 @@ class DeviceInfoManager(private val context: Context) {
     }
 
     fun getStorageType(): String {
-        val paths = listOf(
-            "/sys/class/block/sda/device/model",
-            "/sys/block/sda/device/model",
-            "/sys/class/block/mmcblk0/device/name"
+        val ufsVersionPaths = listOf(
+            "/sys/class/scsi_host/host0/device/ufs_version",
+            "/sys/devices/soc/1d84000.ufshc/ufs_version",
+            "/sys/devices/platform/soc/1d84000.ufshc/ufs_version",
+            "/sys/class/scsi_host/host0/ufs_version"
         )
-        for (path in paths) {
+        
+        var ufsVer = ""
+        for (path in ufsVersionPaths) {
+            val version = readStringFile(path)
+            if (!version.isNullOrEmpty()) {
+                val trimmed = version.trim().removePrefix("0x")
+                ufsVer = if (trimmed.length >= 2 && trimmed.all { it.isDigit() || (it in 'a'..'f') || (it in 'A'..'F') }) {
+                    try {
+                        val hex = trimmed.toInt(16)
+                        val major = (hex shr 8) and 0xFF
+                        val minor = (hex shr 4) and 0x0F
+                        if (major > 0) "$major.$minor" else trimmed
+                    } catch (_: Exception) { trimmed }
+                } else {
+                    trimmed
+                }
+                break
+            }
+        }
+
+        val ufsPaths = listOf(
+            "/sys/class/scsi_host/host0/model",
+            "/sys/block/sda/device/model",
+            "/sys/class/block/sda/device/model"
+        )
+        for (path in ufsPaths) {
             val model = readStringFile(path)
             if (!model.isNullOrEmpty()) {
-                val m = model.lowercase()
-                return when {
-                    m.contains("ufs") -> "UFS"
-                    m.contains("mmc") -> "eMMC"
-                    else -> if (path.contains("sda")) "UFS" else "eMMC"
+                if (model.contains("UFS", ignoreCase = true)) {
+                    return if (ufsVer.isNotEmpty()) "UFS $ufsVer" else "UFS"
+                }
+                if (File(path).exists()) {
+                    return if (ufsVer.isNotEmpty()) "UFS $ufsVer" else "UFS"
                 }
             }
         }
-        return "UFS / eMMC"
+
+        val emmcPaths = listOf(
+            "/sys/class/block/mmcblk0/device/name",
+            "/sys/block/mmcblk0/device/name",
+            "/sys/class/block/mmcblk0/device/type"
+        )
+        for (path in emmcPaths) {
+            val name = readStringFile(path)
+            if (!name.isNullOrEmpty()) return "eMMC"
+        }
+
+        try {
+            val scsiDevices = File("/sys/class/scsi_device").listFiles()
+            if (scsiDevices != null && scsiDevices.isNotEmpty()) {
+                return if (ufsVer.isNotEmpty()) "UFS $ufsVer" else "UFS"
+            }
+        } catch (_: Exception) {}
+
+        return "Flash Storage"
     }
 
     fun formatBytes(bytes: Long): String {
