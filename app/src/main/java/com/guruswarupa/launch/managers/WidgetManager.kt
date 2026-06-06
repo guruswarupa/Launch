@@ -31,7 +31,11 @@ import com.guruswarupa.launch.ui.activities.WidgetConfigurationActivity
 import org.json.JSONArray
 import org.json.JSONObject
 
-class WidgetManager(private val context: Context, private val widgetContainer: LinearLayout) {
+class WidgetManager(
+    private val context: Context,
+    private val widgetContainer: LinearLayout,
+    private val shouldLoadWidgets: Boolean = true
+) {
 
     private val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
     private val appWidgetHost: AppWidgetHost = AppWidgetHost(context, APPWIDGET_HOST_ID)
@@ -66,7 +70,9 @@ class WidgetManager(private val context: Context, private val widgetContainer: L
     init {
 
         appWidgetHost.startListening()
-        loadWidgets()
+        if (shouldLoadWidgets) {
+            loadWidgets()
+        }
     }
 
     fun requestPickWidget(activity: Activity, requestCode: Int) {

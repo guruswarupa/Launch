@@ -25,6 +25,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.guruswarupa.launch.core.SystemBarManager
 import com.guruswarupa.launch.managers.WallpaperManagerHelper
 import com.guruswarupa.launch.managers.WidgetConfigurationManager
@@ -95,7 +99,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         previewManager = WidgetPreviewManager(this)
 
 
-        widgetManager = WidgetManager(this, android.widget.LinearLayout(this))
+        widgetManager = WidgetManager(this, android.widget.LinearLayout(this), shouldLoadWidgets = false)
 
         val wallpaperBackground = findViewById<ImageView>(R.id.wallpaper_background)
         wallpaperManagerHelper = WallpaperManagerHelper(this, wallpaperBackground, null, backgroundExecutor)
@@ -207,34 +211,48 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun loadWidgets() {
-        widgetConfigManager.invalidateCache()
-        previewManager.clearCache()
-        allWidgets = widgetConfigManager.getWidgetConfiguration().toMutableList()
-        filteredWidgets = allWidgets.toMutableList()
+        lifecycleScope.launch {
+            val widgets = withContext(Dispatchers.IO) {
+                widgetConfigManager.invalidateCache()
+                previewManager.clearCache()
+                widgetConfigManager.getWidgetConfiguration()
+            }
+            
+            allWidgets = widgets.toMutableList()
+            
+            if (currentQuery.isEmpty()) {
+                filteredWidgets = allWidgets.toMutableList()
+            } else {
+                filteredWidgets = allWidgets.filter {
+                    it.name.contains(currentQuery, ignoreCase = true) ||
+                    getWidgetDescription(it).contains(currentQuery, ignoreCase = true)
+                }.toMutableList()
+            }
 
-        if (adapter == null) {
-            adapter = WidgetConfigAdapter(
-                widgets = filteredWidgets,
-                previewManager = previewManager,
-                onWidgetTapped = { widget ->
-                    if (widget.isProvider) {
-                        addSystemWidgetProvider(widget)
-                    } else {
-                        updateWidgetState(widget.id, !widget.enabled)
+            if (adapter == null) {
+                adapter = WidgetConfigAdapter(
+                    widgets = filteredWidgets,
+                    previewManager = previewManager,
+                    onWidgetTapped = { widget ->
+                        if (widget.isProvider) {
+                            addSystemWidgetProvider(widget)
+                        } else {
+                            updateWidgetState(widget.id, !widget.enabled)
+                        }
+                    },
+                    onWidgetResized = { widget, heightDp ->
+                        updateWidgetPreviewHeight(widget, heightDp)
                     }
-                },
-                onWidgetResized = { widget, heightDp ->
-                    updateWidgetPreviewHeight(widget, heightDp)
-                }
-            )
-            widgetsRecyclerView.adapter = adapter
-        } else {
-            adapter?.updateWidgets(filteredWidgets)
-            adapter?.notifyDataSetChanged()
-        }
+                )
+                widgetsRecyclerView.adapter = adapter
+            } else {
+                adapter?.updateWidgets(filteredWidgets)
+                adapter?.notifyDataSetChanged()
+            }
 
-        refreshSectionHeaders()
-        updateListChrome()
+            refreshSectionHeaders()
+            updateListChrome()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
@@ -278,9 +296,6 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         super.onResume()
         if (::widgetConfigManager.isInitialized) {
             loadWidgets()
-            if (currentQuery.isNotBlank()) {
-                filterWidgets(currentQuery)
-            }
         }
     }
 

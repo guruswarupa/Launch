@@ -47,6 +47,7 @@ class WidgetConfigurationManager(
     private var cachedWidgetConfiguration: List<WidgetInfo>? = null
     private var cacheTimestamp: Long = 0
     private val CACHE_VALID_DURATION = 60 * 1000L
+    private val appNameCache = mutableMapOf<String, String>()
 
     data class WidgetInfo(
         val id: String,
@@ -210,10 +211,14 @@ class WidgetConfigurationManager(
 
     private fun getAppName(packageName: String?): String? {
         if (packageName == null) return null
+        appNameCache[packageName]?.let { return it }
+
         return try {
             val pm = context.packageManager
             val ai = pm.getApplicationInfo(packageName, 0)
-            pm.getApplicationLabel(ai).toString()
+            val label = pm.getApplicationLabel(ai).toString()
+            appNameCache[packageName] = label
+            label
         } catch (e: PackageManager.NameNotFoundException) {
             packageName
         }
