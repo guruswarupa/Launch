@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="120" alt="Launch App Icon" src="https://github.com/user-attachments/assets/bf4cc306-6966-4290-9e2a-36debd605df2" />
+  <img width="120" height="120" alt="ChatGPT Image Jun 6, 2026, 03_23_56 PM" src="https://github.com/user-attachments/assets/257d7e4c-491f-4213-ae4a-601f0dde9166" />
 </p>
 
 <h1 align="center">Launch</h1>
