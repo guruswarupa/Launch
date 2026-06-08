@@ -231,23 +231,22 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val importRoot = findViewById<LinearLayout>(R.id.import_root)
-                val featureRoot = findViewById<LinearLayout>(R.id.feature_onboarding_root)
+                val viewModeRoot = findViewById<LinearLayout>(R.id.view_mode_selection_root)
                 val disclosureRoot = findViewById<LinearLayout>(R.id.disclosure_root)
-                if (importRoot.visibility == View.VISIBLE) {
-                    importRoot.visibility = View.GONE
-                    featureRoot.visibility = View.VISIBLE
-                    featureRoot.alpha = 1f
-                    featureRoot.scaleX = 1f
-                    featureRoot.scaleY = 1f
-                } else if (featureRoot.visibility == View.VISIBLE) {
-                    if (currentFeaturePageIndex > 0) {
-                        showFeaturePage(currentFeaturePageIndex - 1, animate = true)
-                    } else {
-                        featureRoot.visibility = View.GONE
-                        disclosureRoot.visibility = View.VISIBLE
-                    }
-                }
 
+                if (viewModeRoot.visibility == View.VISIBLE) {
+                    viewModeRoot.visibility = View.GONE
+                    importRoot.visibility = View.VISIBLE
+                    importRoot.alpha = 1f
+                    importRoot.scaleX = 1f
+                    importRoot.scaleY = 1f
+                } else if (importRoot.visibility == View.VISIBLE) {
+                    importRoot.visibility = View.GONE
+                    disclosureRoot.visibility = View.VISIBLE
+                    disclosureRoot.alpha = 1f
+                    disclosureRoot.scaleX = 1f
+                    disclosureRoot.scaleY = 1f
+                }
             }
         })
     }
@@ -260,13 +259,9 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         val declineButton = findViewById<Button>(R.id.decline_button)
 
         val importRoot = findViewById<LinearLayout>(R.id.import_root)
-        val featureRoot = findViewById<LinearLayout>(R.id.feature_onboarding_root)
         val disclosureRoot = findViewById<LinearLayout>(R.id.disclosure_root)
         val importDataButton = findViewById<Button>(R.id.import_data_button)
         val skipImportButton = findViewById<Button>(R.id.skip_import_button)
-        val featureBackButton = findViewById<Button>(R.id.feature_onboarding_back_button)
-        val featureNextButton = findViewById<Button>(R.id.feature_onboarding_next_button)
-        val featureSkipButton = findViewById<Button>(R.id.feature_onboarding_skip_button)
 
         titleText.text = getString(R.string.app_data_disclosure_title)
 
@@ -289,16 +284,15 @@ class AppDataDisclosureActivity : AppCompatActivity() {
                 .setDuration(400)
                 .withEndAction {
                     disclosureRoot.visibility = View.GONE
-                    featureRoot.visibility = View.VISIBLE
-                    featureRoot.alpha = 0f
-                    featureRoot.scaleX = 1.04f
-                    featureRoot.scaleY = 1.04f
-                    showFeaturePage(0, animate = false)
-                    featureRoot.animate()
+                    importRoot.visibility = View.VISIBLE
+                    importRoot.alpha = 0f
+                    importRoot.scaleX = 1.05f
+                    importRoot.scaleY = 1.05f
+                    importRoot.animate()
                         .alpha(1f)
                         .scaleX(1f)
                         .scaleY(1f)
-                        .setDuration(500)
+                        .setDuration(450)
                         .setInterpolator(OvershootInterpolator())
                         .start()
                 }
@@ -318,37 +312,10 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         }
 
         skipImportButton.setOnClickListener {
-            startMainActivity(requestPermissions = true)
+            showViewModeSelection()
         }
 
-        featureBackButton.setOnClickListener {
-            if (currentFeaturePageIndex > 0) {
-                showFeaturePage(currentFeaturePageIndex - 1, animate = true)
-            } else {
-                featureRoot.visibility = View.GONE
-                disclosureRoot.visibility = View.VISIBLE
-                disclosureRoot.alpha = 1f
-                disclosureRoot.scaleX = 1f
-                disclosureRoot.scaleY = 1f
-                featureRoot.alpha = 1f
-                featureRoot.scaleX = 1f
-                featureRoot.scaleY = 1f
-            }
-        }
-
-        featureNextButton.setOnClickListener {
-            if (currentFeaturePageIndex < featurePages.lastIndex) {
-                showFeaturePage(currentFeaturePageIndex + 1, animate = true)
-            } else {
-                completeFeatureOnboarding(featureRoot, importRoot)
-            }
-        }
-
-        featureSkipButton.setOnClickListener {
-            completeFeatureOnboarding(featureRoot, importRoot)
-        }
-
-        initializeFeatureIndicators()
+        setupViewModeSelection()
     }
 
     private fun importSettingsFromFile(uri: Uri) {
@@ -593,6 +560,81 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         }
         startActivity(intent)
         finish()
+    }
+
+    private fun setupViewModeSelection() {
+        val listModeOption = findViewById<LinearLayout>(R.id.list_mode_option)
+        val gridModeOption = findViewById<LinearLayout>(R.id.grid_mode_option)
+
+        listModeOption.setOnClickListener {
+            selectViewMode(Constants.Prefs.VIEW_PREFERENCE_LIST)
+        }
+
+        gridModeOption.setOnClickListener {
+            selectViewMode(Constants.Prefs.VIEW_PREFERENCE_GRID)
+        }
+    }
+
+    private fun showViewModeSelection() {
+        val importRoot = findViewById<LinearLayout>(R.id.import_root)
+        val viewModeRoot = findViewById<LinearLayout>(R.id.view_mode_selection_root)
+
+        importRoot.animate()
+            .alpha(0f)
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .setDuration(300)
+            .withEndAction {
+                importRoot.visibility = View.GONE
+                viewModeRoot.visibility = View.VISIBLE
+                viewModeRoot.alpha = 0f
+                viewModeRoot.scaleX = 1.05f
+                viewModeRoot.scaleY = 1.05f
+                viewModeRoot.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(400)
+                    .setInterpolator(OvershootInterpolator())
+                    .start()
+            }
+            .start()
+    }
+
+    private fun selectViewMode(mode: String) {
+        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
+        prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, mode) }
+
+        val viewModeRoot = findViewById<LinearLayout>(R.id.view_mode_selection_root)
+        val selectedOption = if (mode == Constants.Prefs.VIEW_PREFERENCE_LIST) {
+            findViewById<LinearLayout>(R.id.list_mode_option)
+        } else {
+            findViewById<LinearLayout>(R.id.grid_mode_option)
+        }
+
+        selectedOption.animate()
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .setDuration(150)
+            .withEndAction {
+                selectedOption.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(150)
+                    .withEndAction {
+                        viewModeRoot.animate()
+                            .alpha(0f)
+                            .scaleX(0.97f)
+                            .scaleY(0.97f)
+                            .setDuration(300)
+                            .withEndAction {
+                                startMainActivity(requestPermissions = true)
+                            }
+                            .start()
+                    }
+                    .start()
+            }
+            .start()
     }
 
     override fun onDestroy() {
