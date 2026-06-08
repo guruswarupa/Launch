@@ -2650,15 +2650,6 @@
                             android:textColor="@color/white"
                             android:layout_marginBottom="12dp"/>
 
-                        <Button
-                            android:id="@+id/show_tutorial_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="Show Tutorial"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
-
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

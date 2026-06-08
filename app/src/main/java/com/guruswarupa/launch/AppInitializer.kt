@@ -47,7 +47,7 @@ class AppInitializer(private val activity: MainActivity) {
             val requestPermissionsAfterDisclosure = activity.intent.getBooleanExtra("request_permissions_after_disclosure", false)
             if (requestPermissionsAfterDisclosure) {
                 activity.handler.post {
-                    activity.startFeatureTutorialAndRequestPermissions()
+                    activity.requestInitialPermissions()
                 }
             }
 

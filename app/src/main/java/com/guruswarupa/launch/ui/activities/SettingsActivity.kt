@@ -77,7 +77,6 @@ import java.util.zip.ZipOutputStream
 
 class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
     companion object {
-        const val EXTRA_START_SETTINGS_TUTORIAL = "start_settings_tutorial"
         const val EXTRA_OPEN_SUPPORT_SECTION = "open_support_section"
         private const val STATE_WIDGETS_SECTION_EXPANDED = "state_widgets_section_expanded"
         private const val STATE_NEWS_SECTION_EXPANDED = "state_news_section_expanded"
@@ -87,8 +86,6 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
     private val prefs by lazy { getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE) }
     private val handler = Handler(Looper.getMainLooper())
-    private var settingsTutorialStepIndex = 0
-    private var settingsTutorialActive = false
     private var selectedThemeId: String = "stardust"
     private var selectedThemeCategory: String? = null
     private var hasUnsavedThemeChanges = false
@@ -103,21 +100,6 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         "support_299" to R.id.support_299
     )
     private val supportProductDetails = LinkedHashMap<String, ProductDetails>()
-
-    private data class SettingsTutorialStep(
-        val title: String,
-        val description: String,
-        val targetViewId: Int
-    )
-
-    private val settingsTutorialSteps = listOf(
-        SettingsTutorialStep("Interface", "Customize layouts, grid sizes, and icon shapes.", R.id.display_style_header),
-        SettingsTutorialStep("Wallpaper", "Adjust background blur for a modern look.", R.id.wallpaper_header),
-        SettingsTutorialStep("Typography", "Change fonts and text styling.", R.id.typography_header),
-        SettingsTutorialStep("Gestures", "Enable Back Tap and Shake shortcuts.", R.id.quick_actions_header),
-        SettingsTutorialStep("Security", "Manage App Lock and your Encrypted Vault.", R.id.app_lock_header),
-        SettingsTutorialStep("System", "Backup, Restore, and Launcher maintenance.", R.id.backup_restore_header)
-    )
 
     private val exportLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) result.data?.data?.let { exportSettingsToFile(it) }
@@ -165,10 +147,6 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         setupSupportSection()
         setupVersionInfo()
         openSupportSectionIfRequested()
-
-        if (intent.getBooleanExtra(EXTRA_START_SETTINGS_TUTORIAL, false)) {
-            window.decorView.post { startSettingsTutorial() }
-        }
     }
 
     override fun onResume() {
@@ -860,7 +838,6 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
         findViewById<View>(R.id.check_permissions_button).setOnClickListener { startActivity(Intent(this, PermissionsActivity::class.java)) }
         findViewById<View>(R.id.app_info_button).setOnClickListener { openAppInfo() }
-        findViewById<View>(R.id.show_tutorial_button).setOnClickListener { showTutorial() }
     }
 
     private fun openAppInfo() {
@@ -1892,12 +1869,6 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
     private fun chooseWallpaper() { wallpaperLauncher.launch(Intent(Intent.ACTION_SET_WALLPAPER)) }
 
-    private fun showTutorial() {
-        prefs.edit { putBoolean("feature_tutorial_shown", false); putInt("feature_tutorial_current_step", 0) }
-        startActivity(Intent(this, MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP; putExtra("start_tutorial", true) })
-        finish()
-    }
-
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
@@ -2153,13 +2124,6 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                 }
             }
         }
-    }
-
-    private fun startSettingsTutorial() { settingsTutorialStepIndex = 0; settingsTutorialActive = true; showCurrentSettingsTutorialStep() }
-    private fun showCurrentSettingsTutorialStep() {
-        if (settingsTutorialStepIndex >= settingsTutorialSteps.size) { settingsTutorialActive = false; return }
-        val step = settingsTutorialSteps[settingsTutorialStepIndex]
-        AlertDialog.Builder(this, R.style.CustomDialogTheme).setTitle(step.title).setMessage(step.description).setPositiveButton(if (settingsTutorialStepIndex == settingsTutorialSteps.size - 1) "Finish" else "Next") { _, _ -> settingsTutorialStepIndex++; showCurrentSettingsTutorialStep() }.setNegativeButton("Skip") { _, _ -> settingsTutorialActive = false }.show()
     }
 
     private fun showUnsavedChangesDialog(onConfirm: () -> Unit) {

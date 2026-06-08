@@ -92,15 +92,6 @@
     <color name="grid_item_background_dark">#80000000</color>
 
     
-    <color name="tutorial_background">#E0000000</color>
-    <color name="tutorial_title">@color/white</color>
-    <color name="tutorial_description">@color/text_secondary</color>
-    <color name="tutorial_accent">#4FC3F7</color>
-    <color name="tutorial_button_background">#33FFFFFF</color>
-    <color name="tutorial_button_stroke">#4DFFFFFF</color>
-    <color name="tutorial_ripple">#40FFFFFF</color>
-    
-    
     <color name="note_editor_gradient_start">#0F1119</color>
     <color name="note_editor_gradient_end">#161A24</color>
     <color name="note_editor_title_text">#F5F6FF</color>

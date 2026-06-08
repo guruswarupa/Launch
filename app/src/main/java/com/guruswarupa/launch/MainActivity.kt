@@ -39,7 +39,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     companion object {
-        private const val EXTRA_START_TUTORIAL = "start_tutorial"
     }
 
     @Inject
@@ -380,25 +379,6 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    fun startFeatureTutorialAndRequestPermissions() {
-        val tutorialManager = FeatureTutorialManager(this, sharedPreferences)
-        if (tutorialManager.shouldShowTutorial()) {
-            clearSearchBoxFocus()
-            tutorialManager.startTutorial {
-                requestInitialPermissions()
-            }
-        } else {
-            requestInitialPermissions()
-        }
-    }
-
-    private fun clearSearchBoxFocus() {
-        if (views.isSearchBoxInitialized()) {
-            views.searchBox.clearFocus()
-            views.searchBox.text?.clear()
-        }
-    }
-
     internal fun initializeTimeDateAndWeather() {
         val use24HourClock = sharedPreferences.getBoolean(Constants.Prefs.CLOCK_24_HOUR_FORMAT, false)
         timeDateManager = TimeDateManager(
@@ -539,7 +519,6 @@ class MainActivity : FragmentActivity() {
             systemBarManager.makeSystemBarsTransparent()
         }
 
-        handleStartTutorialIntent(intent)
         scheduleDeferredWidgetPrewarm()
         scheduleDeferredContactsLoad()
     }
@@ -557,36 +536,12 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        handleStartTutorialIntent(intent)
-
         if (intent.getBooleanExtra("request_permissions_after_disclosure", false)) {
             if (!sharedPreferences.getBoolean(Constants.Prefs.INITIAL_PERMISSIONS_ASKED, false)) {
                 requestInitialPermissions {
                     sharedPreferences.edit { putBoolean(Constants.Prefs.INITIAL_PERMISSIONS_ASKED, true) }
                 }
             }
-        }
-    }
-
-    private fun handleStartTutorialIntent(intent: Intent?) {
-        if (intent?.getBooleanExtra(EXTRA_START_TUTORIAL, false) != true) return
-
-        handler.post {
-            if (isFinishing || isDestroyed) {
-                return@post
-            }
-
-            openHomePage(animated = false)
-            activityInitializer.setHeaderVisibility(true)
-            clearSearchBoxFocus()
-
-            if (views.isRecyclerViewInitialized()) {
-                views.recyclerView.stopScroll()
-                views.recyclerView.scrollToPosition(0)
-            }
-
-            FeatureTutorialManager(this, sharedPreferences).startTutorial()
-            setIntent(Intent(intent).apply { removeExtra(EXTRA_START_TUTORIAL) })
         }
     }
 
