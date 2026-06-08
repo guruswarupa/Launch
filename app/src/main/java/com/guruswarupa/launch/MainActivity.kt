@@ -383,11 +383,19 @@ class MainActivity : FragmentActivity() {
     fun startFeatureTutorialAndRequestPermissions() {
         val tutorialManager = FeatureTutorialManager(this, sharedPreferences)
         if (tutorialManager.shouldShowTutorial()) {
+            clearSearchBoxFocus()
             tutorialManager.startTutorial {
                 requestInitialPermissions()
             }
         } else {
             requestInitialPermissions()
+        }
+    }
+
+    private fun clearSearchBoxFocus() {
+        if (views.isSearchBoxInitialized()) {
+            views.searchBox.clearFocus()
+            views.searchBox.text?.clear()
         }
     }
 
@@ -570,6 +578,7 @@ class MainActivity : FragmentActivity() {
 
             openHomePage(animated = false)
             activityInitializer.setHeaderVisibility(true)
+            clearSearchBoxFocus()
 
             if (views.isRecyclerViewInitialized()) {
                 views.recyclerView.stopScroll()
