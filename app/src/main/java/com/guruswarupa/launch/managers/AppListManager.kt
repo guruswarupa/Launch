@@ -266,11 +266,14 @@ class AppListManager @Inject constructor(
         }
 
         val activityName = app.activityInfo.name
-        return when {
-            activityName.isNotBlank() && packageName.startsWith("launcher_") -> activityName
+        if (activityName.isNotBlank() && packageName.startsWith("launcher_")) {
+            return activityName
+        }
 
-
-            else -> packageName
+        return try {
+            app.loadLabel(context.packageManager).toString()
+        } catch (e: Exception) {
+            packageName
         }
     }
 }
