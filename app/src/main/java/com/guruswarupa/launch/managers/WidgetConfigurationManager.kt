@@ -46,6 +46,7 @@ class WidgetConfigurationManager(
     @Volatile
     private var cachedWidgetConfiguration: List<WidgetInfo>? = null
     private var cacheTimestamp: Long = 0
+    private var cacheIncludesProviders = false
     private val CACHE_VALID_DURATION = 60 * 1000L
     private val appNameCache = mutableMapOf<String, String>()
 
@@ -62,12 +63,17 @@ class WidgetConfigurationManager(
         val customHeightDp: Int? = null
     )
 
-    fun getWidgetConfiguration(): List<WidgetInfo> {
+    fun getWidgetConfiguration(includeProviders: Boolean = true): List<WidgetInfo> {
 
         val currentTime = System.currentTimeMillis()
         cachedWidgetConfiguration?.let { cached ->
             if (currentTime - cacheTimestamp < CACHE_VALID_DURATION) {
-                return cached
+                if (!includeProviders) {
+                    return cached.filter { !it.isProvider }
+                }
+                if (cacheIncludesProviders) {
+                    return cached
+                }
             }
         }
 
@@ -166,7 +172,11 @@ class WidgetConfigurationManager(
         }
 
         val appWidgetManager = AppWidgetManager.getInstance(context)
-        val installedProviders = try { appWidgetManager.installedProviders } catch (_: Exception) { emptyList() }
+        val installedProviders = if (includeProviders) {
+            try { appWidgetManager.installedProviders } catch (_: Exception) { emptyList() }
+        } else {
+            emptyList()
+        }
 
         val boundProviders = boundSystemWidgets.map { "${it.providerPackage}/${it.providerClass}" }.toSet()
 
@@ -205,6 +215,7 @@ class WidgetConfigurationManager(
 
         cachedWidgetConfiguration = finalResult
         cacheTimestamp = System.currentTimeMillis()
+        cacheIncludesProviders = includeProviders
 
         return finalResult
     }
@@ -225,7 +236,7 @@ class WidgetConfigurationManager(
     }
 
     fun getWidgetOrder(): List<WidgetInfo> {
-        return getWidgetConfiguration().filter { !it.isProvider }
+        return getWidgetConfiguration(includeProviders = false)
     }
 
 
