@@ -54,6 +54,8 @@ class GithubApiService(private val context: Context) {
         try {
             val url = URL(apiUrl)
             connection = url.openConnection() as HttpsURLConnection
+            connection.connectTimeout = 10000
+            connection.readTimeout = 10000
             connection.requestMethod = "POST"
             connection.setRequestProperty("Authorization", "Bearer $token")
             connection.setRequestProperty("Content-Type", "application/json")
@@ -187,6 +189,8 @@ class GithubApiService(private val context: Context) {
         try {
             val url = URL(apiUrl)
             connection = url.openConnection() as HttpsURLConnection
+            connection.connectTimeout = 10000
+            connection.readTimeout = 10000
             connection.requestMethod = "POST"
             connection.setRequestProperty("Authorization", "Bearer $token")
             connection.setRequestProperty("Content-Type", "application/json")

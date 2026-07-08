@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.net.URL
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -191,7 +190,7 @@ class WeatherManager @Inject constructor(@ActivityContext private val context: a
                     val lon = String.format(Locale.US, "%.5f", geocodingResult.longitude)
                     val url =
                         "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=5&temperature_unit=$unitParam&timezone=auto"
-                    val response = URL(url).readText()
+                    val response = NetworkUtils.readTextFromUrl(url)
                     parseForecastResponse(JSONObject(response), geocodingResult.displayName.ifBlank { location })
                 }
                 saveLocation(forecast.location)
@@ -218,7 +217,7 @@ class WeatherManager @Inject constructor(@ActivityContext private val context: a
                     val lon = String.format(Locale.US, "%.5f", geocodingResult.longitude)
                     val url =
                         "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&temperature_unit=$unitParam&timezone=auto"
-                    val response = URL(url).readText()
+                    val response = NetworkUtils.readTextFromUrl(url)
                     val jsonObject = JSONObject(response)
                     val currentWeather = jsonObject.getJSONObject("current_weather")
                     val temperature = currentWeather.getDouble("temperature").roundToInt()
@@ -256,7 +255,7 @@ class WeatherManager @Inject constructor(@ActivityContext private val context: a
             location
         }
         val url = "https://geocoding-api.open-meteo.com/v1/search?name=$encodedLocation&count=1"
-        val response = URL(url).readText()
+        val response = NetworkUtils.readTextFromUrl(url)
         val jsonObject = JSONObject(response)
         val results = jsonObject.optJSONArray("results") ?: return null
         if (results.length() == 0) return null

@@ -7,7 +7,6 @@ import androidx.core.content.edit
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.net.URL
 import java.util.concurrent.Executors
 
 object CurrencyConverter {
@@ -56,7 +55,7 @@ object CurrencyConverter {
     }
 
     private fun fetchRates(baseCurrency: String): Map<String, BigDecimal> {
-        val response = URL("https://open.er-api.com/v6/latest/$baseCurrency").readText()
+        val response = NetworkUtils.readTextFromUrl("https://open.er-api.com/v6/latest/$baseCurrency")
         val json = JSONObject(response)
         if (json.optString("result") != "success") {
             throw IllegalStateException("Currency rate fetch failed")
