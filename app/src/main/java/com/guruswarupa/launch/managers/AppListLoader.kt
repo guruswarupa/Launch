@@ -34,6 +34,7 @@ class AppListLoader(
     private val cacheManager: CacheManager?,
     private val webAppManager: WebAppManager,
     private val backgroundExecutor: Executor,
+    private val resourceLoader: Executor,
     private val handler: Handler,
     private val recyclerView: RecyclerView,
     private val searchBox: EditText,
@@ -258,7 +259,7 @@ class AppListLoader(
 
 
 
-                    safeExecute {
+                    resourceLoader.execute {
                         try {
                             val metadataCacheInner = cacheManager?.getMetadataCache() ?: emptyMap()
                             finalAppList.forEach { app ->

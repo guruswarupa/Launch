@@ -95,12 +95,8 @@ class AppDockManager(
             updateDndState(false)
         }
 
-        pomodoroManager.resumeIfNeeded()
-
-
         val focusEndTime = sharedPreferences.getLong(focusModeEndTimeKey, 0)
         if (isFocusMode && focusEndTime > 0 && System.currentTimeMillis() > focusEndTime) {
-
             isFocusMode = false
             sharedPreferences.edit {
                 putBoolean(focusModeKey, false)
@@ -108,9 +104,9 @@ class AppDockManager(
             }
         }
 
-
         refreshDock()
 
+        pomodoroManager.resumeIfNeeded()
 
         ensureWorkspaceToggle()
 
@@ -1076,6 +1072,7 @@ class AppDockManager(
     }
 
     private fun updateFocusModeIcon() {
+        if (!::focusModeToggle.isInitialized) return
         focusModeToggle.setImageResource(if (isFocusMode) R.drawable.ic_focus_mode else R.drawable.ic_normal_mode)
 
         val container = appDock.findViewWithTag<LinearLayout>("focus_mode_container")
