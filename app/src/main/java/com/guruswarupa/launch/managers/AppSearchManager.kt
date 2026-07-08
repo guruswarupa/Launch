@@ -112,8 +112,11 @@ class AppSearchManager @Inject constructor(
 
     private fun getAppLabel(info: ResolveInfo): String {
         val packageName = info.activityInfo.packageName
-        return appMetadataCache?.get(packageName)?.label?.lowercase()
-            ?: appLabelCache.getOrPut(packageName) {
+        val serial = info.preferredOrder
+        val cacheKey = "${packageName}|$serial"
+        
+        return appMetadataCache?.get(cacheKey)?.label?.lowercase()
+            ?: appLabelCache.getOrPut(cacheKey) {
                 try {
                     info.loadLabel(packageManager).toString().lowercase()
                 } catch (_: Exception) {
@@ -125,7 +128,7 @@ class AppSearchManager @Inject constructor(
     private fun getSortKey(label: String): String {
         if (label.isEmpty()) return label
         val firstChar = label[0]
-        return if (firstChar.isDigit() || firstChar == '#') {
+        return if (!firstChar.isLetter()) {
             "\uFFFF$label"
         } else {
             label
