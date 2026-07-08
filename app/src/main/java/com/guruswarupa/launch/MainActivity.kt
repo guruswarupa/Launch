@@ -21,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.guruswarupa.launch.di.BackgroundExecutor
+import com.guruswarupa.launch.di.ResourceLoader
 import com.guruswarupa.launch.core.*
 import com.guruswarupa.launch.managers.*
 import com.guruswarupa.launch.handlers.*
@@ -47,6 +48,10 @@ class MainActivity : FragmentActivity() {
     @Inject
     @BackgroundExecutor
     lateinit var backgroundExecutor: ExecutorService
+
+    @Inject
+    @ResourceLoader
+    lateinit var resourceLoader: ExecutorService
 
     @Inject
     lateinit var cacheManager: CacheManager
@@ -648,7 +653,9 @@ class MainActivity : FragmentActivity() {
     }
 
     fun refreshAppsForFocusMode() {
-        appListUIUpdater.refreshAppsForFocusMode()
+        if (::appListUIUpdater.isInitialized) {
+            appListUIUpdater.refreshAppsForFocusMode()
+        }
     }
 
     fun openWidgetsPage(animated: Boolean = true) {
@@ -682,11 +689,15 @@ class MainActivity : FragmentActivity() {
     }
 
     fun setWidgetsPageLocked(locked: Boolean) {
-        screenPagerManager.setLeftPageLocked(locked)
+        if (::screenPagerManager.isInitialized) {
+            screenPagerManager.setLeftPageLocked(locked)
+        }
     }
 
     fun refreshAppsForWorkspace() {
-        appListUIUpdater.refreshAppsForWorkspace()
+        if (::appListUIUpdater.isInitialized) {
+            appListUIUpdater.refreshAppsForWorkspace()
+        }
     }
 
     fun clearAppCacheAndReload() {
@@ -822,7 +833,7 @@ class MainActivity : FragmentActivity() {
         super.onTrimMemory(level)
 
         if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
-            cacheManager.getMetadataCache().keys
+            cacheManager.getMetadataCache().keys.toList()
                 .filter { it.startsWith("com.guruswarupa.launch.webapp.") }
                 .forEach { cacheManager.removeMetadata(it) }
             wallpaperManagerHelper.clearCache()

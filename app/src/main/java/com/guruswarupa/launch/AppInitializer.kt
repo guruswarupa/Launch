@@ -44,6 +44,10 @@ class AppInitializer(private val activity: MainActivity) {
             }
             initializeViews()
 
+            val mainContent = findViewById<FrameLayout>(R.id.main_content)
+            gestureHandler = GestureHandler(activity, views.drawerLayout, mainContent)
+            screenPagerManager = ScreenPagerManager(activity, views.drawerLayout)
+
             val requestPermissionsAfterDisclosure = activity.intent.getBooleanExtra("request_permissions_after_disclosure", false)
             if (requestPermissionsAfterDisclosure) {
                 activity.handler.post {
@@ -85,7 +89,7 @@ class AppInitializer(private val activity: MainActivity) {
 
             appListLoader = AppListLoader(
                 activity, packageManager, appListManager, appDockManager,
-                cacheManager, webAppManager, backgroundExecutor, handler, views.recyclerView, views.searchBox, views.voiceSearchButton, sharedPreferences
+                cacheManager, webAppManager, backgroundExecutor, resourceLoader, handler, views.recyclerView, views.searchBox, views.voiceSearchButton, sharedPreferences
             )
 
 
@@ -160,10 +164,6 @@ class AppInitializer(private val activity: MainActivity) {
 
             val drawerContentLayout = findViewById<LinearLayout>(R.id.drawer_content_layout)
             widgetManager = WidgetManager(activity, drawerContentLayout)
-
-            val mainContent = findViewById<FrameLayout>(R.id.main_content)
-            gestureHandler = GestureHandler(activity, views.drawerLayout, mainContent)
-            screenPagerManager = ScreenPagerManager(activity, views.drawerLayout)
 
             findViewById<View?>(R.id.rss_feed_page)?.let { rssPageView ->
                 RssFeedPage(activity, rssPageView).setup()
