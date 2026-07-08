@@ -29,4 +29,9 @@ object ExecutorsModule {
     @Singleton
     @BackgroundExecutor
     fun provideBackgroundExecutor(): ExecutorService = Executors.newFixedThreadPool(4)
+
+    @Provides
+    @Singleton
+    @ResourceLoader
+    fun provideResourceLoaderExecutor(): ExecutorService = Executors.newSingleThreadExecutor()
 }
