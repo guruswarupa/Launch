@@ -754,6 +754,27 @@ class WidgetManager(
     fun onStart() {
         try {
             appWidgetHost.startListening()
+            
+            // Force existing widget views to re-render after startListening()
+            // to prevent blank widgets after backgrounding/resuming
+            if (widgets.isNotEmpty()) {
+                val viewsToRemove = mutableListOf<View>()
+                for (i in 0 until widgetContainer.childCount) {
+                    val child = widgetContainer.getChildAt(i)
+                    if (child.tag is Int) {
+                        viewsToRemove.add(child)
+                    }
+                }
+                viewsToRemove.forEach { widgetContainer.removeView(it) }
+                
+                // Recreate widget views to pick up current RemoteViews
+                widgets.forEach { widgetInfo ->
+                    val appWidgetInfo = appWidgetManager.getAppWidgetInfo(widgetInfo.appWidgetId)
+                    if (appWidgetInfo != null) {
+                        recreateWidgetView(widgetInfo, appWidgetInfo)
+                    }
+                }
+            }
         } catch (e: Exception) {
             Log.w(TAG, "Error starting widget host listening", e)
         }
