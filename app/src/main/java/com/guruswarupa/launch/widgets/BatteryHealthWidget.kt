@@ -28,6 +28,7 @@ class BatteryHealthWidget(
     private lateinit var liveCapacityText: TextView
     private lateinit var currentFullCapacityText: TextView
     private lateinit var calculatedHealthPercentageText: TextView
+    private lateinit var healthPredictionIndicator: TextView
 
     private val batteryManager = BatteryManager(context)
     private val handler = Handler(Looper.getMainLooper())
@@ -59,6 +60,7 @@ class BatteryHealthWidget(
         liveCapacityText = widgetView.findViewById(R.id.live_capacity_text)
         currentFullCapacityText = widgetView.findViewById(R.id.current_full_capacity_text)
         calculatedHealthPercentageText = widgetView.findViewById(R.id.calculated_health_percentage_text)
+        healthPredictionIndicator = widgetView.findViewById(R.id.health_prediction_indicator)
 
         updateDisplay()
 
@@ -98,32 +100,59 @@ class BatteryHealthWidget(
         designCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.designCapacity)
         liveCapacityText.text = String.format(Locale.getDefault(), "%d mAh", batteryInfo.liveCapacity)
         
-        // Health Calculation and Persistence (Calibrated at 100%)
+        // Health Calculation based on current percentage and design capacity
+        // Predict full capacity and health percentage instead of requiring full charge calibration
+        val liveChargeCounter = batteryInfo.liveCapacity
+        val currentPercentage = batteryInfo.percentage
+        val designCapacity = batteryInfo.designCapacity
+        val isFull = batteryInfo.isFull
+        
         val KEY_LAST_CALCULATED_HEALTH = "last_calculated_health"
         val KEY_LAST_FULL_CAPACITY = "last_full_capacity"
         
-        val liveChargeCounter = batteryInfo.liveCapacity
-
-        if (batteryInfo.isFull && batteryInfo.designCapacity > 0 && liveChargeCounter > 0) {
-            val healthPct = (liveChargeCounter.toFloat() / batteryInfo.designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
+        if (isFull && designCapacity > 0 && liveChargeCounter > 0) {
+            // Accurate health calculation when battery is at 100% (most reliable method)
+            val healthPct = (liveChargeCounter.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
             prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, liveChargeCounter).apply()
             
             calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", healthPct)
             currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", liveChargeCounter)
+            
+            // Hide prediction indicator since this is the accurate calculation at 100%
+            healthPredictionIndicator.visibility = View.GONE
+        } else if (designCapacity > 0 && liveChargeCounter > 0 && currentPercentage > 0) {
+            // Predict what the full capacity will be when fully charged (estimate)
+            val predictedFullCapacity = (liveChargeCounter.toFloat() / currentPercentage.toFloat() * 100).toInt()
+            
+            // Calculate health percentage based on predicted full capacity vs design capacity
+            val healthPct = (predictedFullCapacity.toFloat() / designCapacity.toFloat() * 100).toInt().coerceAtMost(100)
+            
+            // Store the prediction for persistence
+            prefs.edit().putInt(KEY_LAST_CALCULATED_HEALTH, healthPct).putInt(KEY_LAST_FULL_CAPACITY, predictedFullCapacity).apply()
+            
+            calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", healthPct)
+            currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", predictedFullCapacity)
+            
+            // Show prediction indicator since this is an estimate, not measured at 100%
+            healthPredictionIndicator.visibility = View.VISIBLE
         } else {
+            // Fallback to stored values if current calculation is not possible
             val lastHealth = prefs.getInt(KEY_LAST_CALCULATED_HEALTH, -1)
             val lastFullCapacity = prefs.getInt(KEY_LAST_FULL_CAPACITY, -1)
             
             if (lastHealth != -1) {
                 calculatedHealthPercentageText.text = String.format(Locale.getDefault(), "%d%%", lastHealth)
+                // Hide prediction indicator since stored values may be from accurate 100% calculation
+                healthPredictionIndicator.visibility = View.GONE
             } else {
                 calculatedHealthPercentageText.text = "--"
+                healthPredictionIndicator.visibility = View.GONE
             }
             
             if (lastFullCapacity != -1) {
                 currentFullCapacityText.text = String.format(Locale.getDefault(), "%d mAh", lastFullCapacity)
             } else {
-                currentFullCapacityText.text = "Calibrating..."
+                currentFullCapacityText.text = "--"
             }
         }
     }
