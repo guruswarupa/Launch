@@ -243,6 +243,16 @@
                 android:textSize="10sp"/>
 
             <TextView
+                android:id="@+id/health_prediction_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*Predicted"
+                android:textColor="@color/widget_text_secondary"
+                android:textSize="10sp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"/>
+
+            <TextView
                 android:id="@+id/calculated_health_percentage_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
