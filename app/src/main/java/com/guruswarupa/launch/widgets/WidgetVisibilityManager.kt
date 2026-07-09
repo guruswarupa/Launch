@@ -196,6 +196,9 @@ class WidgetVisibilityManager(
                                 val child = view.getChildAt(i)
                                 if (child is AppWidgetHostView) {
                                     child.setOnLongClickListener(dragStartListener)
+                                    // Force re-render after re-attachment to prevent blank widgets
+                                    child.requestLayout()
+                                    child.invalidate()
                                 }
                             }
                         }
