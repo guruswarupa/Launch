@@ -245,7 +245,8 @@ class GithubContributionWidget(
     }
 
     private fun showGithubTokenDialog() {
-        val inflater = LayoutInflater.from(context)
+        val builder = AlertDialog.Builder(context, R.style.CustomDialogTheme)
+        val inflater = LayoutInflater.from(builder.context)
         val dialogView = inflater.inflate(R.layout.dialog_github_token, null)
 
         val tokenInput = dialogView.findViewById<EditText>(R.id.github_token_input)
@@ -257,7 +258,6 @@ class GithubContributionWidget(
         tokenInput.setText(savedToken)
         usernameInput.setText(savedUsername)
 
-        val builder = AlertDialog.Builder(context, R.style.CustomDialogTheme)
         builder.setTitle("GitHub Token Configuration")
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
