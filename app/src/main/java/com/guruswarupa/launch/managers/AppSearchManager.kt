@@ -115,14 +115,21 @@ class AppSearchManager @Inject constructor(
         val serial = info.preferredOrder
         val cacheKey = "${packageName}|$serial"
         
-        return appMetadataCache?.get(cacheKey)?.label?.lowercase()
-            ?: appLabelCache.getOrPut(cacheKey) {
-                try {
-                    info.loadLabel(packageManager).toString().lowercase()
-                } catch (_: Exception) {
-                    packageName.lowercase()
-                }
-            }
+        synchronized(dataLock) {
+            appMetadataCache?.get(cacheKey)?.label?.lowercase()?.let { return it }
+            appLabelCache[cacheKey]?.let { return it }
+        }
+
+        val label = try {
+            info.loadLabel(packageManager).toString().lowercase()
+        } catch (_: Exception) {
+            packageName.lowercase()
+        }
+
+        synchronized(dataLock) {
+            appLabelCache[cacheKey] = label
+        }
+        return label
     }
 
     private fun getSortKey(label: String): String {
@@ -347,9 +354,11 @@ class AppSearchManager @Inject constructor(
 
     private fun createSettingsOption(setting: String): ResolveInfo {
         val systemSetting = AndroidSettingsHelper.getAllSystemSettings().find { it.title == setting }
+        val key = "settings_result_$setting"
 
-        return cachedResolveInfos.getOrPut("settings_result_$setting") {
-            ResolveInfo().apply {
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "system_settings_result"
                     name = setting
@@ -358,6 +367,8 @@ class AppSearchManager @Inject constructor(
                     }
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
@@ -425,80 +436,108 @@ class AppSearchManager @Inject constructor(
     }
 
     private fun createFileOption(file: File): ResolveInfo {
-        return cachedResolveInfos.getOrPut("file_result_${file.absolutePath}") {
-            ResolveInfo().apply {
+        val key = "file_result_${file.absolutePath}"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "file_result"
                     name = file.name
                     nonLocalizedLabel = file.absolutePath
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
     private fun createMathResultOption(expression: String, result: String): ResolveInfo {
-        return cachedResolveInfos.getOrPut("math_result_$expression") {
-            ResolveInfo().apply {
+        val key = "math_result_$expression"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "math_result"
                     name = "$expression = $result"
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
     private fun createUnifiedContactOption(contact: String): ResolveInfo {
-        return cachedResolveInfos.getOrPut("contact_unified_$contact") {
-            ResolveInfo().apply {
+        val key = "contact_unified_$contact"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "contact_unified"
                     name = contact
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
     private fun createGoogleMapsSearchOption(query: String): ResolveInfo {
-        return cachedResolveInfos.getOrPut("maps_search_$query") {
-            ResolveInfo().apply {
+        val key = "maps_search_$query"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "maps_search"
                     name = query
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
     private fun createYoutubeSearchOption(query: String): ResolveInfo {
-        return cachedResolveInfos.getOrPut("yt_search_$query") {
-            ResolveInfo().apply {
+        val key = "yt_search_$query"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "yt_search"
                     name = query
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
     private fun createPlayStoreSearchOption(query: String): ResolveInfo {
-        return cachedResolveInfos.getOrPut("play_store_search_$query") {
-            ResolveInfo().apply {
+        val key = "play_store_search_$query"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "play_store_search"
                     name = query
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
     private fun createBrowserSearchOption(query: String): ResolveInfo {
-        return cachedResolveInfos.getOrPut("browser_search_$query") {
-            ResolveInfo().apply {
+        val key = "browser_search_$query"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
                 activityInfo = ActivityInfo().apply {
                     packageName = "browser_search"
                     name = query
                 }
             }
+            cachedResolveInfos[key] = info
+            return info
         }
     }
 
