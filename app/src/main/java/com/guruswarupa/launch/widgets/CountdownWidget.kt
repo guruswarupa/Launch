@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -552,37 +551,32 @@ class CountdownWidget(
             .appendPath(oneYearFromNow.toString())
             .build()
 
-        var cursor: Cursor? = null
         try {
-            cursor = context.contentResolver.query(
+            context.contentResolver.query(
                 uri,
                 projection,
                 null,
                 null,
                 "${CalendarContract.Instances.BEGIN} ASC"
-            )
+            )?.use { cursor ->
+                val idIndex = cursor.getColumnIndex(CalendarContract.Instances.EVENT_ID)
+                val titleIndex = cursor.getColumnIndex(CalendarContract.Instances.TITLE)
+                val startIndex = cursor.getColumnIndex(CalendarContract.Instances.BEGIN)
+                val endIndex = cursor.getColumnIndex(CalendarContract.Instances.END)
+                val locationIndex = cursor.getColumnIndex(CalendarContract.Instances.EVENT_LOCATION)
+                val allDayIndex = cursor.getColumnIndex(CalendarContract.Instances.ALL_DAY)
+                val calendarIdIndex = cursor.getColumnIndex(CalendarContract.Instances.CALENDAR_ID)
 
-            cursor?.let {
-                val idIndex = it.getColumnIndex(CalendarContract.Instances.EVENT_ID)
-                val titleIndex = it.getColumnIndex(CalendarContract.Instances.TITLE)
-                val startIndex = it.getColumnIndex(CalendarContract.Instances.BEGIN)
-                val endIndex = it.getColumnIndex(CalendarContract.Instances.END)
-                val locationIndex = it.getColumnIndex(CalendarContract.Instances.EVENT_LOCATION)
-                val allDayIndex = it.getColumnIndex(CalendarContract.Instances.ALL_DAY)
-                val calendarIdIndex = it.getColumnIndex(CalendarContract.Instances.CALENDAR_ID)
-
-                while (it.moveToNext()) {
-                    val eventId = it.getLong(idIndex)
-                    val title = it.getString(titleIndex) ?: "No Title"
-                    var startTime = it.getLong(startIndex)
-                    var endTime = it.getLong(endIndex)
-                    val location = it.getString(locationIndex)
-                    val allDay = it.getInt(allDayIndex) == 1
-                    val calendarId = it.getLong(calendarIdIndex)
-
+                while (cursor.moveToNext()) {
+                    val eventId = cursor.getLong(idIndex)
+                    val title = cursor.getString(titleIndex) ?: "No Title"
+                    var startTime = cursor.getLong(startIndex)
+                    var endTime = cursor.getLong(endIndex)
+                    val location = cursor.getString(locationIndex)
+                    val allDay = cursor.getInt(allDayIndex) == 1
+                    val calendarId = cursor.getLong(calendarIdIndex)
 
                     if (startTime < now) continue
-
 
                     if (allDay) {
                         val calendar = Calendar.getInstance()
@@ -593,17 +587,12 @@ class CountdownWidget(
                         calendar.set(Calendar.MILLISECOND, 0)
                         startTime = calendar.timeInMillis
 
-
                         calendar.add(Calendar.DAY_OF_MONTH, 1)
                         endTime = calendar.timeInMillis
                     }
 
-
-
-
                     val cal = Calendar.getInstance().apply { timeInMillis = startTime }
                     val dateKey = "${title.lowercase().trim()}_${cal.get(Calendar.YEAR)}_${cal.get(Calendar.MONTH)}_${cal.get(Calendar.DAY_OF_MONTH)}"
-
 
                     if (!seenEvents.contains(dateKey)) {
                         seenEvents.add(dateKey)
@@ -625,10 +614,7 @@ class CountdownWidget(
 
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
         }
-
 
         return eventsList
     }

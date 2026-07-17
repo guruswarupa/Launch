@@ -68,24 +68,22 @@ class PdfPageAdapterLazy(
 
         val future = renderExecutor.submit {
             try {
-                val page = pdfRenderer.openPage(position)
-                val scale = 2.0f
-                val width = (page.width * scale).toInt()
-                val height = (page.height * scale).toInt()
+                pdfRenderer.openPage(position).use { page ->
+                    val scale = 2.0f
+                    val width = (page.width * scale).toInt()
+                    val height = (page.height * scale).toInt()
 
-                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                val canvas = Canvas(bitmap)
-                canvas.drawColor(Color.WHITE)
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                page.close()
+                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bitmap)
+                    canvas.drawColor(Color.WHITE)
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
+                    bitmapCache.put(position, bitmap)
 
-                bitmapCache.put(position, bitmap)
-
-
-                holder.imageView.post {
-                    if (holder.bindingAdapterPosition == position && !bitmap.isRecycled) {
-                        holder.imageView.setImageBitmap(bitmap)
+                    holder.imageView.post {
+                        if (holder.bindingAdapterPosition == position && !bitmap.isRecycled) {
+                            holder.imageView.setImageBitmap(bitmap)
+                        }
                     }
                 }
             } catch (e: Exception) {

@@ -2102,6 +2102,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     }
 
     override fun onDestroy() {
+        instance = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && torchCallback != null) {
             cameraManager.unregisterTorchCallback(torchCallback)
         }

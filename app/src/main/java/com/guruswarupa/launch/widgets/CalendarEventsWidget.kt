@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -328,38 +327,33 @@ class CalendarEventsWidget(
             .appendPath(twoYearsFromNow.toString())
             .build()
 
-        var cursor: Cursor? = null
         try {
-
-            cursor = context.contentResolver.query(
+            context.contentResolver.query(
                 uri,
                 projection,
                 null,
                 null,
                 sortOrder
-            )
+            )?.use { cursor ->
+                val idIndex = cursor.getColumnIndex(CalendarContract.Instances.EVENT_ID)
+                val titleIndex = cursor.getColumnIndex(CalendarContract.Instances.TITLE)
+                val startIndex = cursor.getColumnIndex(CalendarContract.Instances.BEGIN)
+                val endIndex = cursor.getColumnIndex(CalendarContract.Instances.END)
+                val locationIndex = cursor.getColumnIndex(CalendarContract.Instances.EVENT_LOCATION)
+                val allDayIndex = cursor.getColumnIndex(CalendarContract.Instances.ALL_DAY)
+                val calendarIdIndex = cursor.getColumnIndex(CalendarContract.Instances.CALENDAR_ID)
+                val calendarDisplayNameIndex = cursor.getColumnIndex(CalendarContract.Instances.CALENDAR_DISPLAY_NAME)
 
-            cursor?.let {
-                val idIndex = it.getColumnIndex(CalendarContract.Instances.EVENT_ID)
-                val titleIndex = it.getColumnIndex(CalendarContract.Instances.TITLE)
-                val startIndex = it.getColumnIndex(CalendarContract.Instances.BEGIN)
-                val endIndex = it.getColumnIndex(CalendarContract.Instances.END)
-                val locationIndex = it.getColumnIndex(CalendarContract.Instances.EVENT_LOCATION)
-                val allDayIndex = it.getColumnIndex(CalendarContract.Instances.ALL_DAY)
-                val calendarIdIndex = it.getColumnIndex(CalendarContract.Instances.CALENDAR_ID)
-                val calendarDisplayNameIndex = it.getColumnIndex(CalendarContract.Instances.CALENDAR_DISPLAY_NAME)
-
-                while (it.moveToNext()) {
-                    val eventId = it.getLong(idIndex)
-                    val title = it.getString(titleIndex) ?: "No Title"
-                    var startTime = it.getLong(startIndex)
-                    var endTime = it.getLong(endIndex)
-                    val location = it.getString(locationIndex)
-                    val allDay = it.getInt(allDayIndex) == 1
-                    val calendarId = it.getLong(calendarIdIndex)
-                    val calendarDisplayName = it.getString(calendarDisplayNameIndex) ?: ""
-
-
+                while (cursor.moveToNext()) {
+                    val eventId = cursor.getLong(idIndex)
+                    val title = cursor.getString(titleIndex) ?: "No Title"
+                    var startTime = cursor.getLong(startIndex)
+                    var endTime = cursor.getLong(endIndex)
+                    val location = cursor.getString(locationIndex)
+                    val allDay = cursor.getInt(allDayIndex) == 1
+                    val calendarId = cursor.getLong(calendarIdIndex)
+                    val calendarDisplayName = cursor.getString(calendarDisplayNameIndex) ?: ""
+                    // ... (rest of the processing logic)
                     val isFestival = calendarDisplayName.lowercase().let { name ->
                         name.contains("festival") || name.contains("holiday") ||
                         name.contains("holidays") || name.contains("festivals") ||
@@ -368,12 +362,7 @@ class CalendarEventsWidget(
                         name.contains("christian") || name.contains("national")
                     }
 
-
-
-
                     if (allDay) {
-
-
                         val cal = Calendar.getInstance()
                         cal.timeInMillis = startTime
                         cal.set(Calendar.HOUR_OF_DAY, 0)
@@ -382,17 +371,12 @@ class CalendarEventsWidget(
                         cal.set(Calendar.MILLISECOND, 0)
                         startTime = cal.timeInMillis
 
-
                         cal.add(Calendar.DAY_OF_MONTH, 1)
                         endTime = cal.timeInMillis
                     }
 
-
-
-
                     val cal = Calendar.getInstance().apply { timeInMillis = startTime }
                     val dateKey = "${title.lowercase().trim()}_${cal.get(Calendar.YEAR)}_${cal.get(Calendar.MONTH)}_${cal.get(Calendar.DAY_OF_MONTH)}"
-
 
                     if (!seenEvents.contains(dateKey)) {
                         seenEvents.add(dateKey)
@@ -412,12 +396,9 @@ class CalendarEventsWidget(
                 }
             }
         } catch (_: SecurityException) {
-
             setupWithoutPermission()
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            cursor?.close()
         }
 
         return eventsList
