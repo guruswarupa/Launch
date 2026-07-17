@@ -126,10 +126,11 @@ class ShakeDetector(
                     shakeCount = 0
                 } else {
 
-                    resetShakeCountRunnable = Runnable {
+                    val runnable = Runnable {
                         shakeCount = 0
                     }
-                    handler.postDelayed(resetShakeCountRunnable!!, shakeTimeWindow)
+                    resetShakeCountRunnable = runnable
+                    handler.postDelayed(runnable, shakeTimeWindow)
                 }
             }
         }

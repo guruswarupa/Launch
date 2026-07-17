@@ -42,7 +42,7 @@ class WorkoutStopwatch(
             startStopButton.text = startStopButton.context.getString(R.string.workout_stop)
             resetButton.isEnabled = false
 
-            updateRunnable = object : Runnable {
+            val runnable = object : Runnable {
                 override fun run() {
                     if (isRunning) {
                         elapsedTime = System.currentTimeMillis() - startTime
@@ -51,7 +51,8 @@ class WorkoutStopwatch(
                     }
                 }
             }
-            handler.post(updateRunnable!!)
+            updateRunnable = runnable
+            handler.post(runnable)
         }
     }
 
