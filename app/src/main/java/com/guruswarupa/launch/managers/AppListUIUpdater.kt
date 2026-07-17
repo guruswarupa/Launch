@@ -115,17 +115,21 @@ class AppListUIUpdater(
 
             val deduplicatedFullAppList = newFullAppList.distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}" }
 
-            if (deduplicatedFullAppList !== fullAppList) {
-                fullAppList.clear()
-                fullAppList.addAll(deduplicatedFullAppList)
+            synchronized(fullAppList) {
+                if (deduplicatedFullAppList !== fullAppList) {
+                    fullAppList.clear()
+                    fullAppList.addAll(deduplicatedFullAppList)
+                }
             }
 
-            if (activity.appList !== appList) {
-                appList.clear()
-                appList.addAll(newAppList)
-            } else {
-                activity.appList.clear()
-                activity.appList.addAll(newAppList)
+            synchronized(appList) {
+                if (activity.appList !== appList) {
+                    appList.clear()
+                    appList.addAll(newAppList)
+                } else {
+                    activity.appList.clear()
+                    activity.appList.addAll(newAppList)
+                }
             }
 
             adapter?.updateAppList(newAppList)
@@ -214,7 +218,9 @@ class AppListUIUpdater(
                     val focusMode = appListManager.getFocusMode()
                     val workspaceMode = appListManager.getWorkspaceMode()
 
-                    val currentFullList = ArrayList(fullAppList)
+                    val currentFullList = synchronized(fullAppList) {
+                        ArrayList(fullAppList)
+                    }
                     val filteredApps = appListManager.filterAndPrepareApps(currentFullList, focusMode, workspaceMode)
                     val sortedFinalList = appListManager.sortAppsAlphabetically(filteredApps, activity.showOnlyFavoritesInitially)
                     val listWithSeparators = appListManager.addSeparators(sortedFinalList, activity.showOnlyFavoritesInitially)

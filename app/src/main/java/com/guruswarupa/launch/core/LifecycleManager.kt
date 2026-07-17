@@ -66,19 +66,23 @@ class LifecycleManager(
 
     private var dependencies = dependencies
 
-    var onResumeCallbacks: MutableList<() -> Unit> = mutableListOf()
-    var onPauseCallbacks: MutableList<() -> Unit> = mutableListOf()
+    var onResumeCallbacks: MutableList<() -> Unit> = java.util.Collections.synchronizedList(mutableListOf())
+    var onPauseCallbacks: MutableList<() -> Unit> = java.util.Collections.synchronizedList(mutableListOf())
     var onBatteryUpdate: (() -> Unit)? = null
     var onUsageUpdate: (() -> Unit)? = null
     var onFocusModeApply: ((Boolean) -> Unit)? = null
     var onLoadApps: ((Boolean) -> Unit)? = null
 
     fun updateDependencies(transform: Dependencies.() -> Dependencies) {
-        dependencies = dependencies.transform()
+        synchronized(this) {
+            dependencies = dependencies.transform()
+        }
     }
 
     private var isBlockingBackGesture = false
+    @Volatile
     private var lastAppListRefreshAt = 0L
+    @Volatile
     private var lastUsageRefreshAt = 0L
 
     fun onResume() {

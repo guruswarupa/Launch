@@ -176,8 +176,8 @@ class MainActivity : FragmentActivity() {
 
     var voiceCommandHandler: VoiceCommandHandler? = null
     var widgetPrewarmScheduled = false
-    var appList: MutableList<ResolveInfo> = mutableListOf()
-    var fullAppList: MutableList<ResolveInfo> = mutableListOf()
+    val appList: MutableList<ResolveInfo> = java.util.Collections.synchronizedList(mutableListOf())
+    val fullAppList: MutableList<ResolveInfo> = java.util.Collections.synchronizedList(mutableListOf())
 
 
     var showOnlyFavoritesInitially = true

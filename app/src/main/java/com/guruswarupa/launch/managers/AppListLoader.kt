@@ -46,12 +46,19 @@ class AppListLoader(
         // Constants moved to Constants.Timeouts for centralized management
     }
 
+    @Volatile
     private var cachedUnsortedList: List<ResolveInfo>? = null
+    @Volatile
     private var lastCacheTime = 0L
     private val cacheDuration = Constants.Timeouts.APP_LIST_CACHE_DURATION_MS
+    
+    private val retryLock = Any()
     private var workProfileEmptyRetryCount = 0
     private var generalEmptyRetryCount = 0
+    
+    @Volatile
     private var lastWorkProfileEnabledState = false
+    @Volatile
     private var lastWorkProfileRetryTime = 0L
     private val currentUserSerial by lazy {
         val userManager = activity.getSystemService(Context.USER_SERVICE) as UserManager
@@ -145,7 +152,7 @@ class AppListLoader(
 
         val currentCachedUnsortedList = cachedUnsortedList
         if (!forceRefresh && currentCachedUnsortedList != null &&
-            (currentTime - lastCacheTime) < cacheDuration &&
+            (System.currentTimeMillis() - lastCacheTime) < cacheDuration &&
             fullAppList.isNotEmpty()) {
             try {
                 val focusMode = appDockManager.getCurrentMode()
@@ -155,7 +162,9 @@ class AppListLoader(
                 val cachedFinalList = appListManager.filterAndPrepareApps(cachedAppsWithWebApps, focusMode, workspaceMode)
 
                 if (cachedFinalList.isNotEmpty() && adapter != null) {
-                    generalEmptyRetryCount = 0
+                    synchronized(retryLock) {
+                        generalEmptyRetryCount = 0
+                    }
                     val sorted = appListManager.sortAppsAlphabetically(cachedFinalList, activity.showOnlyFavoritesInitially)
                     handler.post {
                         onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
@@ -245,7 +254,9 @@ class AppListLoader(
                         }
                     }
                 } else {
-                    generalEmptyRetryCount = 0
+                    synchronized(retryLock) {
+                        generalEmptyRetryCount = 0
+                    }
                     val focusMode = appDockManager.getCurrentMode()
                     val workspaceMode = appDockManager.isWorkspaceModeActive()
                     val finalAppList = appListManager.filterAndPrepareApps(fullList, focusMode, workspaceMode)
@@ -255,8 +266,10 @@ class AppListLoader(
                     }
 
                     if (finalAppList.isNotEmpty()) {
-                        workProfileEmptyRetryCount = 0
-                        generalEmptyRetryCount = 0
+                        synchronized(retryLock) {
+                            workProfileEmptyRetryCount = 0
+                            generalEmptyRetryCount = 0
+                        }
                     }
 
 
@@ -324,8 +337,15 @@ class AppListLoader(
                 handler.post {
                     if (activity.isFinishing || activity.isDestroyed) return@post
                     if (appList.isEmpty() && !forceRefresh) {
-                        if (generalEmptyRetryCount < Constants.Timeouts.MAX_GENERAL_EMPTY_RETRIES) {
-                            generalEmptyRetryCount++
+                        var shouldRetry = false
+                        synchronized(retryLock) {
+                            if (generalEmptyRetryCount < Constants.Timeouts.MAX_GENERAL_EMPTY_RETRIES) {
+                                generalEmptyRetryCount++
+                                shouldRetry = true
+                            }
+                        }
+                        
+                        if (shouldRetry) {
                             Log.d(
                                 TAG,
                                 "App list empty after error; retrying load (${generalEmptyRetryCount}/${Constants.Timeouts.MAX_GENERAL_EMPTY_RETRIES})"
@@ -359,44 +379,47 @@ class AppListLoader(
         val isWorkProfileModeEnabled = sharedPreferences.getBoolean("work_profile_enabled", false)
         val currentTime = System.currentTimeMillis()
 
-        // Reset retry counter if work profile state changed since last check
-        if (lastWorkProfileEnabledState != isWorkProfileModeEnabled) {
-            workProfileEmptyRetryCount = 0
-            lastWorkProfileEnabledState = isWorkProfileModeEnabled
-            Log.d(TAG, "Work profile state changed to $isWorkProfileModeEnabled, resetting retry counter")
-        }
-
-        // Reset retry counter if enough time has passed since last retry attempt
-        if (lastWorkProfileRetryTime > 0 &&
-            (currentTime - lastWorkProfileRetryTime) > Constants.Timeouts.WORK_PROFILE_RETRY_RESET_TIMEOUT_MS) {
-            workProfileEmptyRetryCount = 0
-            Log.d(TAG, "Work profile retry timeout exceeded, resetting retry counter")
-        }
-
-        if (!isWorkProfileModeEnabled || finalAppList.isNotEmpty()) {
-            if (!isWorkProfileModeEnabled) {
+        synchronized(retryLock) {
+            // Reset retry counter if work profile state changed since last check
+            if (lastWorkProfileEnabledState != isWorkProfileModeEnabled) {
                 workProfileEmptyRetryCount = 0
+                lastWorkProfileEnabledState = isWorkProfileModeEnabled
+                Log.d(TAG, "Work profile state changed to $isWorkProfileModeEnabled, resetting retry counter")
             }
-            return false
-        }
 
-        val hasLoadedWorkApps = fullList.any(::isWorkProfileApp)
-        if (hasLoadedWorkApps) {
-            workProfileEmptyRetryCount = 0
-            return false
-        }
+            // Reset retry counter if enough time has passed since last retry attempt
+            if (lastWorkProfileRetryTime > 0 &&
+                (currentTime - lastWorkProfileRetryTime) > Constants.Timeouts.WORK_PROFILE_RETRY_RESET_TIMEOUT_MS) {
+                workProfileEmptyRetryCount = 0
+                Log.d(TAG, "Work profile retry timeout exceeded, resetting retry counter")
+            }
 
-        if (workProfileEmptyRetryCount >= Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES) {
-            Log.w(TAG, "Work profile list still empty after retries; showing empty state")
-            return false
-        }
+            if (!isWorkProfileModeEnabled || finalAppList.isNotEmpty()) {
+                if (!isWorkProfileModeEnabled) {
+                    workProfileEmptyRetryCount = 0
+                }
+                return false
+            }
 
-        workProfileEmptyRetryCount += 1
-        lastWorkProfileRetryTime = currentTime
-        Log.d(
-            TAG,
-            "Work profile apps not available yet; retrying load (${workProfileEmptyRetryCount}/${Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES})"
-        )
+            val hasLoadedWorkApps = fullList.any(::isWorkProfileApp)
+            if (hasLoadedWorkApps) {
+                workProfileEmptyRetryCount = 0
+                return false
+            }
+
+            if (workProfileEmptyRetryCount >= Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES) {
+                Log.w(TAG, "Work profile list still empty after retries; showing empty state")
+                return false
+            }
+
+            workProfileEmptyRetryCount += 1
+            lastWorkProfileRetryTime = currentTime
+            Log.d(
+                TAG,
+                "Work profile apps not available yet; retrying load (${workProfileEmptyRetryCount}/${Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES})"
+            )
+        }
+        
         handler.postDelayed({
             if (!activity.isFinishing && !activity.isDestroyed) {
                 loadApps(
@@ -427,8 +450,10 @@ class AppListLoader(
     fun clearCache() {
         cachedUnsortedList = null
         lastCacheTime = 0L
-        generalEmptyRetryCount = 0
-        workProfileEmptyRetryCount = 0
+        synchronized(retryLock) {
+            generalEmptyRetryCount = 0
+            workProfileEmptyRetryCount = 0
+        }
         lastWorkProfileEnabledState = false
         lastWorkProfileRetryTime = 0L
     }

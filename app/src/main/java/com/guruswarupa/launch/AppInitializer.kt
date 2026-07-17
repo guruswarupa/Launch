@@ -73,8 +73,8 @@ class AppInitializer(private val activity: MainActivity) {
 
             settingsChangeCoordinator.applyBackgroundTranslucency()
 
-            appList = mutableListOf()
-            fullAppList = mutableListOf()
+            appList.clear()
+            fullAppList.clear()
 
             contactActionHandler = ContactActionHandler(
                 activity, packageManager, contentResolver, views.searchBox, appList
