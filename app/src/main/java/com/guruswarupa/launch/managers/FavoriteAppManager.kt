@@ -15,9 +15,12 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
     }
 
 
+    @Volatile
     private var favoritesCache: Set<String>? = null
+    @Volatile
     private var cacheValid = false
 
+    @Synchronized
     private fun getFavoriteAppsInternal(): Set<String> {
         if (!cacheValid || favoritesCache == null) {
             try {
@@ -54,11 +57,13 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
         return favoritesCache ?: emptySet()
     }
 
+    @Synchronized
     private fun invalidateCache() {
         cacheValid = false
         favoritesCache = null
     }
 
+    @Synchronized
     fun addFavoriteApp(packageName: String) {
         val favorites = getFavoriteAppsInternal().toMutableSet()
         favorites.add(packageName)
@@ -67,6 +72,7 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
         cacheValid = true
     }
 
+    @Synchronized
     fun removeFavoriteApp(packageName: String) {
         val favorites = getFavoriteAppsInternal().toMutableSet()
         favorites.remove(packageName)

@@ -15,9 +15,12 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
     }
 
 
+    @Volatile
     private var hiddenAppsCache: Set<String>? = null
+    @Volatile
     private var cacheValid = false
 
+    @Synchronized
     private fun getHiddenAppsInternal(): Set<String> {
         if (!cacheValid || hiddenAppsCache == null) {
             try {
@@ -50,6 +53,7 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
         return hiddenAppsCache ?: emptySet()
     }
 
+    @Synchronized
     private fun invalidateCache() {
         cacheValid = false
         hiddenAppsCache = null
@@ -58,6 +62,7 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
 
 
 
+    @Synchronized
     fun hideApp(packageName: String) {
         val hiddenApps = getHiddenAppsInternal().toMutableSet()
         hiddenApps.add(packageName)
@@ -69,6 +74,7 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
 
 
 
+    @Synchronized
     fun unhideApp(packageName: String) {
         val hiddenApps = getHiddenAppsInternal().toMutableSet()
         hiddenApps.remove(packageName)
