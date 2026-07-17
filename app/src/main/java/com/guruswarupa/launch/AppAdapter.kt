@@ -153,8 +153,9 @@ class AppAdapter(
         isFastScrolling = isScrolling
         fastScrollDebounceRunnable?.let { fastScrollDebounceHandler.removeCallbacks(it) }
         if (!isScrolling) {
-            fastScrollDebounceRunnable = Runnable { forceRefreshVisibleIcons() }
-            fastScrollDebounceHandler.postDelayed(fastScrollDebounceRunnable!!, 100)
+            val runnable = Runnable { forceRefreshVisibleIcons() }
+            fastScrollDebounceRunnable = runnable
+            fastScrollDebounceHandler.postDelayed(runnable, 100)
         }
     }
 
@@ -919,9 +920,10 @@ class AppAdapter(
         val adapter = object : ArrayAdapter<Pair<String, Int>>(activity, R.layout.dialog_contact_item, options) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.dialog_contact_item, parent, false)
-                val item = getItem(position)!!
-                view.findViewById<ImageView>(R.id.option_icon).setImageResource(item.second)
-                view.findViewById<TextView>(R.id.option_text).text = item.first
+                getItem(position)?.let { item ->
+                    view.findViewById<ImageView>(R.id.option_icon).setImageResource(item.second)
+                    view.findViewById<TextView>(R.id.option_text).text = item.first
+                }
                 return view
             }
         }

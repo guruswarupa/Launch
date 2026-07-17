@@ -143,14 +143,15 @@ class AppListLoader(
             }
         }
 
-        if (!forceRefresh && cachedUnsortedList != null &&
+        val currentCachedUnsortedList = cachedUnsortedList
+        if (!forceRefresh && currentCachedUnsortedList != null &&
             (currentTime - lastCacheTime) < cacheDuration &&
             fullAppList.isNotEmpty()) {
             try {
                 val focusMode = appDockManager.getCurrentMode()
                 val workspaceMode = appDockManager.isWorkspaceModeActive()
 
-                val cachedAppsWithWebApps = appendWebApps(cachedUnsortedList!!).distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}|${it.preferredOrder}" }
+                val cachedAppsWithWebApps = appendWebApps(currentCachedUnsortedList).distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}|${it.preferredOrder}" }
                 val cachedFinalList = appListManager.filterAndPrepareApps(cachedAppsWithWebApps, focusMode, workspaceMode)
 
                 if (cachedFinalList.isNotEmpty() && adapter != null) {
@@ -181,10 +182,11 @@ class AppListLoader(
 
         safeExecute {
             try {
+                val currentCached = cachedUnsortedList
                 val unsortedList = if (!forceRefresh &&
-                    cachedUnsortedList != null &&
+                    currentCached != null &&
                     (currentTime - lastCacheTime) < cacheDuration) {
-                    cachedUnsortedList!!
+                    currentCached
                 } else {
                     val list = mutableListOf<ResolveInfo>()
 
