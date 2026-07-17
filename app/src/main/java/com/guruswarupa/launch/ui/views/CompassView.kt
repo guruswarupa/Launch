@@ -162,7 +162,7 @@ class CompassView @JvmOverloads constructor(
         centerY = h / 2f
         radius = minOf(centerX, centerY) - 30f
 
-        backgroundShader = RadialGradient(
+        val baseShader = RadialGradient(
             centerX, centerY, radius + 5f,
             "#2E3440".toColorInt(),
             "#3B4252".toColorInt(),
@@ -179,7 +179,7 @@ class CompassView @JvmOverloads constructor(
 
 
         backgroundShader = ComposeShader(
-            backgroundShader!!, outerGlowShader, PorterDuff.Mode.ADD
+            baseShader, outerGlowShader, PorterDuff.Mode.ADD
         )
 
         centerShader = RadialGradient(

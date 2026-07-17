@@ -88,14 +88,15 @@ class SystemMonitorActivity : AppCompatActivity() {
     }
 
     private fun startRealtimeUpdates() {
-        updateRunnable = object : Runnable {
+        val runnable = object : Runnable {
             override fun run() {
                 updatePerformanceInfo()
                 updateBatteryInfo()
                 handler.postDelayed(this, 1000)
             }
         }
-        handler.post(updateRunnable!!)
+        updateRunnable = runnable
+        handler.post(runnable)
     }
 
     override fun onDestroy() {
