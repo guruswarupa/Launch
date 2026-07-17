@@ -1172,8 +1172,9 @@ class AppDockManager(
     private fun startTimerDisplay() {
         stopTimerDisplay()
         focusTimerText.visibility = View.VISIBLE
-        timerHandler = android.os.Handler(android.os.Looper.getMainLooper())
-        timerRunnable = object : Runnable {
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        timerHandler = handler
+        val runnable = object : Runnable {
             override fun run() {
                 if (isFocusMode) {
                     val endTime = sharedPreferences.getLong(focusModeEndTimeKey, 0)
@@ -1183,14 +1184,15 @@ class AppDockManager(
                         val minutes = (remainingTime / (1000 * 60)).toInt()
                         val seconds = ((remainingTime % (1000 * 60)) / 1000).toInt()
                         focusTimerText.text = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-                        timerHandler?.postDelayed(this, 1000)
+                        handler.postDelayed(this, 1000)
                     } else {
                         focusTimerText.text = context.getString(R.string.timer_zero)
                     }
                 }
             }
         }
-        timerHandler?.post(timerRunnable!!)
+        timerRunnable = runnable
+        handler.post(runnable)
     }
 
     private fun stopTimerDisplay() {

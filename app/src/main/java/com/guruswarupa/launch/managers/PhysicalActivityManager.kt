@@ -303,8 +303,9 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
     }
 
     private fun getHistoricalData(forceRefresh: Boolean = false): MutableMap<String, ActivityData> {
-        if (!forceRefresh && historicalDataCache != null) {
-            return historicalDataCache!!
+        val cache = historicalDataCache
+        if (!forceRefresh && cache != null) {
+            return cache
         }
 
         val data = mutableMapOf<String, ActivityData>()
@@ -400,10 +401,11 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         if (stepsChanged < MIN_STEPS_FOR_SAVE) {
 
             saveRunnable?.let { handler.removeCallbacks(it) }
-            saveRunnable = Runnable {
+            val runnable = Runnable {
                 saveCurrentData()
             }
-            handler.postDelayed(saveRunnable!!, SAVE_INTERVAL_MS)
+            saveRunnable = runnable
+            handler.postDelayed(runnable, SAVE_INTERVAL_MS)
         } else {
 
             saveRunnable?.let { handler.removeCallbacks(it) }
@@ -571,8 +573,9 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
     }
 
     private fun getHourlyDataMap(forceRefresh: Boolean = false): MutableMap<String, String> {
-        if (!forceRefresh && hourlyDataCache != null) {
-            return hourlyDataCache!!
+        val cache = hourlyDataCache
+        if (!forceRefresh && cache != null) {
+            return cache
         }
 
         val map = mutableMapOf<String, String>()
