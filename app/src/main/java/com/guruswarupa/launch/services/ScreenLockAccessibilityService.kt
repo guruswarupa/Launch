@@ -158,8 +158,9 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private fun startUnlockMonitor() {
         stopUnlockMonitor()
 
-        unlockMonitorHandler = android.os.Handler(android.os.Looper.getMainLooper())
-        unlockMonitorRunnable = object : Runnable {
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        unlockMonitorHandler = handler
+        val runnable = object : Runnable {
             override fun run() {
                 val isLocked = keyguardManager?.isKeyguardLocked
 
@@ -167,11 +168,12 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     showEdgeHandleAfterUnlock()
                     showControlCenterTriggerAfterUnlock()
                 } else {
-                    unlockMonitorHandler?.postDelayed(this, 500)
+                    handler.postDelayed(this, 500)
                 }
             }
         }
-        unlockMonitorHandler?.post(unlockMonitorRunnable!!)
+        unlockMonitorRunnable = runnable
+        handler.post(runnable)
     }
 
     private fun stopUnlockMonitor() {
@@ -1341,8 +1343,9 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         if (shortcutMenu != null) return
 
         val themedContext = ContextThemeWrapper(this, R.style.Theme_Launch)
-        shortcutMenu = LayoutInflater.from(themedContext).inflate(R.layout.layout_accessibility_shortcut, null)
-        setupMenuListeners(shortcutMenu!!)
+        val menu = LayoutInflater.from(themedContext).inflate(R.layout.layout_accessibility_shortcut, null)
+        shortcutMenu = menu
+        setupMenuListeners(menu)
 
         val params = WindowManager.LayoutParams(
             getScreenWidth(),

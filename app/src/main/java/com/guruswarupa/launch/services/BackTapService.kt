@@ -137,7 +137,7 @@ class BackTapService : Service() {
     private fun registerScreenReceiver() {
         if (screenOnReceiver != null) return
 
-        screenOnReceiver = object : BroadcastReceiver() {
+        val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     Intent.ACTION_SCREEN_ON -> updateBackTapDetectionState()
@@ -145,6 +145,7 @@ class BackTapService : Service() {
                 }
             }
         }
+        screenOnReceiver = receiver
 
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_ON)
@@ -153,7 +154,7 @@ class BackTapService : Service() {
 
         ContextCompat.registerReceiver(
             this,
-            screenOnReceiver!!,
+            receiver,
             filter,
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
@@ -162,7 +163,7 @@ class BackTapService : Service() {
     private fun registerSettingsReceiver() {
         if (settingsReceiver != null) return
 
-        settingsReceiver = object : BroadcastReceiver() {
+        val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == "com.guruswarupa.launch.SETTINGS_UPDATED") {
                     applySettings()
@@ -170,12 +171,13 @@ class BackTapService : Service() {
                 }
             }
         }
+        settingsReceiver = receiver
 
         val filter = IntentFilter("com.guruswarupa.launch.SETTINGS_UPDATED")
 
         ContextCompat.registerReceiver(
             this,
-            settingsReceiver!!,
+            receiver,
             filter,
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
