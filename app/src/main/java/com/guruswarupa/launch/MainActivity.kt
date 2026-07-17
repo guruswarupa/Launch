@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.edit
@@ -44,6 +45,8 @@ class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
+    lateinit var secureStorageManager: SecureStorageManager
 
     @Inject
     @BackgroundExecutor
@@ -261,7 +264,7 @@ class MainActivity : FragmentActivity() {
                 refreshRightDrawerWallpaper()
             },
             onBatteryChanged = {
-                usageStatsRefreshManager.updateBatteryInBackground()
+                usageStatsRefreshManager.updateUsageInBackground()
             },
             onActivityRecognitionPermissionGranted = {
                 if (widgetLifecycleCoordinator.isPhysicalActivityWidgetInitialized()) {
@@ -292,6 +295,14 @@ class MainActivity : FragmentActivity() {
     internal fun initializeViews() {
         activityInitializer.initializeViews()
         views.fastScroller.refreshTypography(sharedPreferences)
+
+        findViewById<TextView>(R.id.daily_usage_time)?.setOnClickListener {
+            if (!usageStatsManager.hasUsageStatsPermission()) {
+                startActivity(usageStatsManager.requestUsageStatsPermission())
+            } else {
+                usageStatsRefreshManager.updateUsageInBackground()
+            }
+        }
 
         searchTypeMenuManager = SearchTypeMenuManager(
             context = this,
@@ -395,7 +406,7 @@ class MainActivity : FragmentActivity() {
         )
         timeDateManager.startUpdates()
 
-        widgetSetupManager = WidgetSetupManager(this, usageStatsManager, weatherManager, permissionManager)
+        widgetSetupManager = WidgetSetupManager(this, usageStatsManager, weatherManager, permissionManager, secureStorageManager)
         widgetSetupManager.setupWeather(views.weatherIcon, views.weatherText)
     }
 
@@ -461,7 +472,7 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun initializeFinanceWidgetIfNeeded() {
-        FinanceWidgetInitializer(this, sharedPreferences, 0)
+        FinanceWidgetInitializer(this, sharedPreferences, secureStorageManager, 0)
             .onInitialized { manager ->
                 financeWidgetManager = manager
             }
@@ -508,6 +519,7 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        secureStorageManager = SecureStorageManager(this)
         applyOrientationPreference()
         AppInitializer(this).initialize()
 
@@ -637,7 +649,6 @@ class MainActivity : FragmentActivity() {
             )
         )
 
-        lifecycleManager.onBatteryUpdate = { usageStatsRefreshManager.updateBatteryInBackground() }
         lifecycleManager.onUsageUpdate = { usageStatsRefreshManager.updateUsageInBackground() }
         lifecycleManager.onFocusModeApply = { isFocusMode -> applyFocusMode(isFocusMode) }
         lifecycleManager.onLoadApps = { forceRefresh -> appListLoader.loadApps(forceRefresh) }
