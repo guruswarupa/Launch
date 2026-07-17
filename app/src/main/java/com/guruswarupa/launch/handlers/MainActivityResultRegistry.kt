@@ -85,14 +85,18 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
         voiceSearchLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
 
-                if (deps.voiceCommandHandler == null && deps.packageManager != null && deps.contentResolver != null &&
-                    deps.searchBox != null && deps.appList != null) {
+                val pm = deps.packageManager
+                val cr = deps.contentResolver
+                val sb = deps.searchBox
+                val al = deps.appList
+                if (deps.voiceCommandHandler == null && pm != null && cr != null &&
+                    sb != null && al != null) {
                     deps.voiceCommandHandler = VoiceCommandHandler(
                         activity,
-                        deps.packageManager!!,
-                        deps.contentResolver!!,
-                        deps.searchBox!!,
-                        deps.appList!!
+                        pm,
+                        cr,
+                        sb,
+                        al
                     )
                 }
                 deps.activityResultHandler?.setVoiceCommandHandler(deps.voiceCommandHandler)
