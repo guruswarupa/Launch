@@ -275,40 +275,28 @@ class IconLoader(
         val builder = ShapeAppearanceModel.builder()
 
         when (currentIconStyle) {
-            "round" -> {
-                builder.setAllCorners(CornerFamily.ROUNDED, 0f)
-                builder.setAllCornerSizes(RelativeCornerSize(0.5f) as CornerSize)
-            }
-            "squircle" -> {
-                builder.setAllCorners(CornerFamily.ROUNDED, 0f)
-                builder.setAllCornerSizes(RelativeCornerSize(0.2f) as CornerSize)
-            }
-            "squared" -> builder.setAllCorners(CornerFamily.ROUNDED, 4f * density)
+            "round" -> builder.setAllCornerSizes(RelativeCornerSize(0.5f))
+            "squircle" -> builder.setAllCornerSizes(RelativeCornerSize(0.28f))
+            "squared" -> builder.setAllCornerSizes(RelativeCornerSize(0.08f))
             "teardrop" -> {
-                builder.setTopLeftCorner(CornerFamily.ROUNDED, 0f)
-                builder.setTopLeftCornerSize(RelativeCornerSize(0.5f) as CornerSize)
-                builder.setTopRightCorner(CornerFamily.ROUNDED, 0f)
-                builder.setTopRightCornerSize(RelativeCornerSize(0.5f) as CornerSize)
-                builder.setBottomLeftCorner(CornerFamily.ROUNDED, 0f)
-                builder.setBottomLeftCornerSize(RelativeCornerSize(0.5f) as CornerSize)
-                builder.setBottomRightCorner(CornerFamily.ROUNDED, 0f)
-                builder.setBottomRightCornerSize(RelativeCornerSize(0.1f) as CornerSize)
+                builder.setTopLeftCornerSize(RelativeCornerSize(0.5f))
+                builder.setTopRightCornerSize(RelativeCornerSize(0.5f))
+                builder.setBottomLeftCornerSize(RelativeCornerSize(0.5f))
+                builder.setBottomRightCornerSize(RelativeCornerSize(0.18f))
             }
             "vortex" -> {
                 builder.setAllCorners(CornerFamily.CUT, 0f)
-                builder.setAllCornerSizes(RelativeCornerSize(0.2f) as CornerSize)
+                builder.setAllCornerSizes(RelativeCornerSize(0.2f))
             }
-            "overlay" -> builder.setAllCorners(CornerFamily.ROUNDED, 12f * density)
-            else -> {
-                builder.setAllCorners(CornerFamily.ROUNDED, 0f)
-                builder.setAllCornerSizes(RelativeCornerSize(0.5f) as CornerSize)
-            }
+            "overlay" -> builder.setAllCornerSizes(RelativeCornerSize(0.18f))
+            else -> builder.setAllCornerSizes(RelativeCornerSize(0.5f))
         }
         return builder.build()
     }
 
     fun applyShapeAppearance(imageView: ShapeableImageView?) {
         imageView?.shapeAppearanceModel = getShapeAppearanceModel()
+        imageView?.invalidate()
     }
 
     fun updateIconSize(imageView: ImageView?) {
@@ -547,12 +535,13 @@ class IconLoader(
         val size = (currentIconSize * density).roundToInt().coerceAtLeast(1)
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
+        val bounds = RectF(0f, 0f, size.toFloat(), size.toFloat())
+        val path = createIconMaskPath(bounds)
+
+        canvas.save()
+        canvas.clipPath(path)
 
         if (drawable is AdaptiveIconDrawable) {
-            val bounds = RectF(0f, 0f, size.toFloat(), size.toFloat())
-            val path = createIconMaskPath(bounds)
-            canvas.save()
-            canvas.clipPath(path)
             val background = drawable.background?.constantState?.newDrawable(context.resources)?.mutate()
                 ?: drawable.background?.mutate()
             val foreground = drawable.foreground?.constantState?.newDrawable(context.resources)?.mutate()
@@ -561,13 +550,13 @@ class IconLoader(
             foreground?.setBounds(0, 0, size, size)
             background?.draw(canvas)
             foreground?.draw(canvas)
-            canvas.restore()
         } else {
             val copy = drawable.constantState?.newDrawable(context.resources)?.mutate() ?: drawable.mutate()
             copy.setBounds(0, 0, size, size)
             copy.draw(canvas)
         }
-
+        
+        canvas.restore()
         return BitmapDrawable(context.resources, bitmap)
     }
 
