@@ -52,6 +52,10 @@ class NavigationManager(
         }, backGestureBlockDuration)
     }
 
+    fun cleanup() {
+        handler.removeCallbacksAndMessages(null)
+    }
+
 
 
 

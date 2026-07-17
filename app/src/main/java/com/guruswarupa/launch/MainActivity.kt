@@ -772,6 +772,10 @@ class MainActivity : FragmentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+        if (::navigationManager.isInitialized) {
+            navigationManager.cleanup()
+        }
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onDestroy()
         }
