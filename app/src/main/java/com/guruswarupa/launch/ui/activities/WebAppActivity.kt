@@ -166,8 +166,8 @@ class WebAppActivity : AppCompatActivity() {
             displayZoomControls = false
             mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             mediaPlaybackRequiresUserGesture = false
-            allowFileAccess = true
-            allowContentAccess = true
+            allowFileAccess = false
+            allowContentAccess = false
             setSupportMultipleWindows(false)
             javaScriptCanOpenWindowsAutomatically = false
         }
