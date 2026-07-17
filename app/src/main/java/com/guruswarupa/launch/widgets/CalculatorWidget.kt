@@ -257,9 +257,10 @@ class CalculatorWidget(private val rootView: View) {
             val categorySpinner = converterCategory ?: return
             val fromSpinner = converterFromUnit ?: return
             val toSpinner = converterToUnit ?: return
-            val category = unitCategories[categorySpinner.selectedItemPosition]
-            val fromUnit = unitMap[category]!![fromSpinner.selectedItemPosition]
-            val toUnit = unitMap[category]!![toSpinner.selectedItemPosition]
+            val category = unitCategories.getOrNull(categorySpinner.selectedItemPosition) ?: return
+            val units = unitMap[category] ?: return
+            val fromUnit = units.getOrNull(fromSpinner.selectedItemPosition) ?: return
+            val toUnit = units.getOrNull(toSpinner.selectedItemPosition) ?: return
 
             if (category == "Currency") {
                 performCurrencyConversion(value, fromUnit, toUnit)
