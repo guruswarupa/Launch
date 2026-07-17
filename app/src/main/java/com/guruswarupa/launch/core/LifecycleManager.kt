@@ -68,7 +68,6 @@ class LifecycleManager(
 
     var onResumeCallbacks: MutableList<() -> Unit> = java.util.Collections.synchronizedList(mutableListOf())
     var onPauseCallbacks: MutableList<() -> Unit> = java.util.Collections.synchronizedList(mutableListOf())
-    var onBatteryUpdate: (() -> Unit)? = null
     var onUsageUpdate: (() -> Unit)? = null
     var onFocusModeApply: ((Boolean) -> Unit)? = null
     var onLoadApps: ((Boolean) -> Unit)? = null
@@ -168,7 +167,6 @@ class LifecycleManager(
 
             activity.lifecycleScope.launch {
                 delay(50)
-                onBatteryUpdate?.invoke()
                 onUsageUpdate?.invoke()
 
                 deps.backgroundExecutor?.execute {
