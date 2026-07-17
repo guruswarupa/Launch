@@ -433,10 +433,18 @@ class EncryptedFolderManager(private val context: Context) {
             java.util.zip.ZipInputStream(inputStream).use { zipIn ->
                 var entry = zipIn.nextEntry
                 while (entry != null) {
-                    val destFile = if (entry.name.startsWith("data/")) {
-                        File(encryptedFolder, entry.name.substring(5))
-                    } else if (entry.name.startsWith("thumbs/")) {
-                        File(thumbnailFolder, entry.name.substring(7))
+                    val entryName = entry.name
+                    // Prevent path traversal
+                    if (entryName.contains("..")) {
+                        zipIn.closeEntry()
+                        entry = zipIn.nextEntry
+                        continue
+                    }
+
+                    val destFile = if (entryName.startsWith("data/")) {
+                        File(encryptedFolder, entryName.substring(5))
+                    } else if (entryName.startsWith("thumbs/")) {
+                        File(thumbnailFolder, entryName.substring(7))
                     } else {
                         null
                     }
