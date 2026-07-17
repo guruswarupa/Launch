@@ -54,9 +54,10 @@ class WallpaperManagerHelper(
         }
 
 
+        val bitmap = currentWallpaperBitmap
         val needsReload = forceReload ||
-                         currentWallpaperBitmap == null ||
-                         currentWallpaperBitmap!!.isRecycled ||
+                         bitmap == null ||
+                         bitmap.isRecycled ||
                          (wallpaperId != -1 && wallpaperId != lastWallpaperId)
 
         if (!needsReload) {

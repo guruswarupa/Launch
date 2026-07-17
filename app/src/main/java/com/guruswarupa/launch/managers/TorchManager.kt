@@ -42,14 +42,16 @@ class TorchManager(private val context: Context) {
 
 
     fun toggleTorch(): Boolean {
-        if (cameraManager == null || cameraId == null) {
+        val manager = cameraManager
+        val id = cameraId
+        if (manager == null || id == null) {
             Toast.makeText(context, R.string.torch_not_available, Toast.LENGTH_SHORT).show()
             return false
         }
 
         return try {
             isTorchOn = !isTorchOn
-            cameraManager.setTorchMode(cameraId!!, isTorchOn)
+            manager.setTorchMode(id, isTorchOn)
             true
         } catch (_: CameraAccessException) {
             Toast.makeText(context, R.string.torch_camera_unavailable, Toast.LENGTH_SHORT).show()
@@ -66,9 +68,11 @@ class TorchManager(private val context: Context) {
 
 
     fun turnOffTorch() {
-        if (isTorchOn && cameraManager != null && cameraId != null) {
+        val manager = cameraManager
+        val id = cameraId
+        if (isTorchOn && manager != null && id != null) {
             try {
-                cameraManager.setTorchMode(cameraId!!, false)
+                manager.setTorchMode(id, false)
                 isTorchOn = false
             } catch (_: Exception) {
 
