@@ -71,12 +71,11 @@ class NetworkStatsManager {
         repeat(count) {
             val start = System.currentTimeMillis()
             try {
-
-                val socket = java.net.Socket()
-                socket.connect(java.net.InetSocketAddress(host, 53), 1000)
-                val end = System.currentTimeMillis()
-                pings.add(end - start)
-                socket.close()
+                java.net.Socket().use { socket ->
+                    socket.connect(java.net.InetSocketAddress(host, 53), 1000)
+                    val end = System.currentTimeMillis()
+                    pings.add(end - start)
+                }
             } catch (e: Exception) {
                 Log.w("NetworkStatsManager", "Ping attempt failed: ${e.message}")
             }
@@ -124,21 +123,21 @@ class NetworkStatsManager {
                     continue
                 }
 
-                val inputStream: InputStream = connection.inputStream
-                val buffer = ByteArray(64 * 1024)
-                var n: Int
-
+                val timeSeconds: Double
                 val testStartTime = System.currentTimeMillis()
-                while (System.currentTimeMillis() - testStartTime < maxDuration) {
-                    n = inputStream.read(buffer)
-                    if (n == -1) break
-                    totalBytesRead += n
+                connection.inputStream.use { inputStream ->
+                    val buffer = ByteArray(64 * 1024)
+                    var n: Int
+
+                    while (System.currentTimeMillis() - testStartTime < maxDuration) {
+                        n = inputStream.read(buffer)
+                        if (n == -1) break
+                        totalBytesRead += n
+                    }
+                    val endTime = System.currentTimeMillis()
+                    timeSeconds = (endTime - testStartTime) / 1000.0
                 }
 
-                val endTime = System.currentTimeMillis()
-                val timeSeconds = (endTime - testStartTime) / 1000.0
-
-                inputStream.close()
                 connection.disconnect()
 
                 if (timeSeconds > 0.1 && totalBytesRead > 0) {
@@ -186,18 +185,15 @@ class NetworkStatsManager {
                 java.util.Random().nextBytes(buffer)
 
                 val testStartTime = System.currentTimeMillis()
-                val outputStream = connection.outputStream
+                connection.outputStream.use { outputStream ->
+                    while (System.currentTimeMillis() - testStartTime < maxDuration) {
+                        outputStream.write(buffer)
+                        totalBytesWritten += bufferSize
 
-                while (System.currentTimeMillis() - testStartTime < maxDuration) {
-                    outputStream.write(buffer)
-                    totalBytesWritten += bufferSize
-
-                    if (totalBytesWritten > 50 * 1024 * 1024) break
+                        if (totalBytesWritten > 50 * 1024 * 1024) break
+                    }
+                    outputStream.flush()
                 }
-
-                outputStream.flush()
-                outputStream.close()
-
 
                 val responseCode = connection.responseCode
                 val endTime = System.currentTimeMillis()
