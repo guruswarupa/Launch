@@ -4,9 +4,9 @@
         <item name="android:windowBackground">@drawable/alert_dialog_background</item>
         <item name="colorSurface">@android:color/transparent</item>
         <item name="colorOnSurface">@color/white</item>
-        <item name="colorPrimary">@color/nord7</item>
-        <item name="colorAccent">@color/nord7</item>
-        <item name="colorControlActivated">@color/nord7</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
         <item name="colorControlHighlight">@color/dialog_button_background</item>
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.Dialog</item>
         <item name="materialAlertDialogTitleTextStyle">@style/CustomDialogTitleStyle</item>
@@ -98,12 +98,18 @@
         <item name="boxCornerRadiusTopEnd">16dp</item>
         <item name="boxCornerRadiusBottomStart">16dp</item>
         <item name="boxCornerRadiusBottomEnd">16dp</item>
-        <item name="boxStrokeColor">@color/nord7</item>
-        <item name="hintTextColor">@color/nord7</item>
+        <item name="boxStrokeColor">@color/white</item>
+        <item name="hintTextColor">@color/white</item>
         <item name="android:textColorHint">@color/text_secondary</item>
         <item name="helperTextTextColor">@color/text_secondary</item>
         <item name="counterTextColor">@color/text_secondary</item>
         <item name="errorTextColor">@color/red</item>
+        <item name="colorControlActivated">@color/white</item>
+    </style>
+
+    <style name="DialogTextInputEditText" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox.Dense">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textCursorDrawable">@null</item>
     </style>
     
     <style name="TextAppearance.Dialog.Title" parent="TextAppearance.MaterialComponents.Headline6">
