@@ -28,19 +28,12 @@
             android:background="#00000000"/>
 
         
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/main_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        
         <LinearLayout
             android:id="@+id/main_content_stack"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingTop="@dimen/main_content_stack_top_padding"
+            android:paddingTop="0dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="@dimen/main_content_stack_bottom_padding"
@@ -66,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp"
-                android:layout_marginTop="@dimen/widget_status_bar_clearance"
+                android:layout_marginTop="0dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/widget_background">
 
@@ -409,18 +402,18 @@
                 android:orientation="vertical"
                 android:layout_marginVertical="8dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/calendar_events_widget_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -428,11 +421,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -440,11 +432,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -452,11 +443,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -464,11 +454,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -476,11 +465,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -488,11 +476,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -500,22 +487,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/weather_forecast_widget_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -523,11 +508,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -535,11 +519,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -547,11 +530,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -559,11 +541,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -571,11 +552,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -583,38 +563,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="16dp"
+                android:visibility="gone">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/weekly_usage_content_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Weekly Usage"
-                    android:textSize="18sp"
-                    android:textColor="@color/widget_text"
-                    android:textStyle="bold"
-                    android:gravity="start"
-                    android:layout_marginBottom="16dp"/>
+                    android:orientation="vertical"
+                    android:background="@drawable/widget_background"
+                    android:padding="20dp">
 
-                <com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
-                    android:id="@+id/weekly_usage_graph"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Weekly Usage"
+                        android:textSize="18sp"
+                        android:textColor="@color/widget_text"
+                        android:textStyle="bold"
+                        android:gravity="start"
+                        android:layout_marginBottom="16dp"/>
 
-                <Button
-                    android:id="@+id/request_usage_stats_permission_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Grant Usage Access Permission"
-                    android:textColor="@color/widget_text"
-                    android:textSize="14sp"
-                    android:background="@drawable/button_neutral_ripple"
-                    android:paddingVertical="12dp"
-                    android:layout_marginTop="16dp"
-                    android:visibility="gone" />
+                    <com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
+                        android:id="@+id/weekly_usage_graph"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/request_usage_stats_permission_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Grant Usage Access Permission"
+                        android:textColor="@color/widget_text"
+                        android:textSize="14sp"
+                        android:background="@drawable/button_neutral_ripple"
+                        android:paddingVertical="12dp"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone" />
+                </LinearLayout>
             </LinearLayout>
 
             
@@ -623,11 +611,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:visibility="gone" />
 
             
             <LinearLayout
@@ -635,11 +622,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="16dp"
+                android:visibility="gone">
 
                 <FrameLayout
                     android:id="@+id/workout_widget_container"
@@ -654,28 +640,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Calculator"
-                        android:textColor="@color/widget_text"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                android:layout_marginEnd="16dp"
+                android:visibility="gone">
 
                 <FrameLayout
                     android:id="@+id/calculator_widget_container"
@@ -690,47 +658,55 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="16dp"
+                android:visibility="gone">
 
                 <LinearLayout
+                    android:id="@+id/todo_content_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
+                    android:orientation="vertical"
+                    android:background="@drawable/widget_background"
+                    android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Todo List"
-                        android:textColor="@color/widget_text"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                    <ImageButton
-                        android:id="@+id/add_todo_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/button_neutral_ripple"
-                        android:src="@drawable/ic_add"
-                        android:contentDescription="Add todo item"
-                        android:padding="8dp" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Todo List"
+                            android:textColor="@color/widget_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
+                        <ImageButton
+                            android:id="@+id/add_todo_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/button_neutral_ripple"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="Add todo item"
+                            android:padding="8dp" />
+
+                    </LinearLayout>
+
+                    <com.guruswarupa.launch.ui.views.SafeRecyclerView
+                        android:id="@+id/todo_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="300dp"
+                        android:clipToPadding="false"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp" />
                 </LinearLayout>
-
-                <com.guruswarupa.launch.ui.views.SafeRecyclerView
-                    android:id="@+id/todo_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="300dp"
-                    android:clipToPadding="false"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp" />
 
             </LinearLayout>
 
@@ -742,70 +718,77 @@
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/widget_background"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:visibility="gone">
 
-                
                 <LinearLayout
+                    android:id="@+id/finance_content_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="20dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Finance Tracker"
-                        android:textColor="@color/widget_text"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <Spinner
-                        android:id="@+id/finance_currency_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:background="@drawable/button_neutral_ripple"
-                        android:paddingHorizontal="8dp" />
-                </LinearLayout>
-
-                
-                <LinearLayout
-                    android:id="@+id/balance_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/balance_card_ripple"
+                    android:background="@drawable/widget_background"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:layout_marginBottom="20dp"
-                    android:clickable="true"
-                    android:focusable="true">
+                    android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Total Balance"
-                        android:textColor="@color/widget_text_secondary"
-                        android:textSize="12sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <TextView
-                        android:id="@+id/balance_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$0.00"
-                        android:textColor="@color/widget_text"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="20dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Finance Tracker"
+                            android:textColor="@color/widget_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Spinner
+                            android:id="@+id/finance_currency_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:background="@drawable/button_neutral_ripple"
+                            android:paddingHorizontal="8dp" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/balance_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/balance_card_ripple"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:layout_marginBottom="20dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Balance"
+                            android:textColor="@color/widget_text_secondary"
+                            android:textSize="12sp"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:id="@+id/balance_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$0.00"
+                            android:textColor="@color/widget_text"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
                         <TextView
                             android:id="@+id/monthly_spent_text"
@@ -886,9 +869,9 @@
                         android:textStyle="bold"
                         android:elevation="4dp" />
                 </LinearLayout>
-
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+            </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </FrameLayout>
 

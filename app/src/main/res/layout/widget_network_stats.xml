@@ -3,7 +3,9 @@
     android:id="@+id/network_stats_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"

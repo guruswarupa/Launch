@@ -22,7 +22,7 @@ class GestureHandler(
     private val drawerLayout: DrawerLayout,
     private val mainContent: FrameLayout
 ) {
-    private val mainScrollView: View? = mainContent.findViewById<NestedScrollView>(R.id.main_scroll_view)
+    private val mainScrollView: View? = null
     private val initialPaddingLeft = mainScrollView?.paddingLeft ?: 0
     private val initialPaddingTop = mainScrollView?.paddingTop ?: 0
     private val initialPaddingRight = mainScrollView?.paddingRight ?: 0

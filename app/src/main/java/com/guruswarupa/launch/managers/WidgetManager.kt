@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.managers
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.appwidget.AppWidgetHost
@@ -12,12 +13,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.GestureDetector
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -27,7 +24,10 @@ import androidx.core.content.edit
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.handlers.ActivityResultHandler
+import com.guruswarupa.launch.models.PendingSystemWidgetBindRequest
+import com.guruswarupa.launch.models.SystemWidgetInfo
 import com.guruswarupa.launch.ui.activities.WidgetConfigurationActivity
+import com.guruswarupa.launch.widgets.WidgetContainerFactory
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -40,10 +40,20 @@ class WidgetManager(
     private val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
     private val appWidgetHost: AppWidgetHost = AppWidgetHost(context, APPWIDGET_HOST_ID)
     private val prefs: SharedPreferences = context.getSharedPreferences("com.guruswarupa.launch.PREFS", Context.MODE_PRIVATE)
-    private val widgets = mutableListOf<WidgetInfo>()
+    private val widgets = mutableListOf<SystemWidgetInfo>()
     private val widgetOptionsCache = mutableMapOf<Int, String>()
     private var pendingConfigureWidgetId: Int? = null
-    private var pendingBindRequest: PendingBindRequest? = null
+    private var pendingBindRequest: PendingSystemWidgetBindRequest? = null
+
+    private val containerFactory = WidgetContainerFactory(
+        context = context,
+        dpToPx = { dp -> dpToPx(dp) },
+        pxToDp = { px -> pxToDp(px) },
+        updateWidgetCustomHeight = { id, height -> updateWidgetCustomHeight(id, height) },
+        applyWidgetSizeOptions = { view, id, container, minH, forcedH ->
+            applyWidgetSizeOptions(view, id, container, minH, forcedH)
+        }
+    )
 
     companion object {
         private const val APPWIDGET_HOST_ID = 1024
@@ -52,23 +62,7 @@ class WidgetManager(
         private const val PREFS_WIDGETS_CHANGED_KEY = "saved_widgets_changed"
     }
 
-    data class WidgetInfo(
-        val appWidgetId: Int,
-        val providerPackage: String,
-        val providerClass: String,
-        val minWidth: Int,
-        val minHeight: Int,
-        val customHeightDp: Int? = null
-    )
-
-    private data class PendingBindRequest(
-        val appWidgetId: Int,
-        val providerPackage: String,
-        val providerClass: String
-    )
-
     init {
-
         appWidgetHost.startListening()
         if (shouldLoadWidgets) {
             loadWidgets()
@@ -97,9 +91,6 @@ class WidgetManager(
         }
     }
 
-
-
-
     fun bindProvider(activity: Activity, providerPackage: String, providerClass: String, requestCode: Int) {
         val appWidgetId = appWidgetHost.allocateAppWidgetId()
         val providers = appWidgetManager.installedProviders
@@ -116,7 +107,7 @@ class WidgetManager(
         if (success) {
             launchConfigureOrBind(activity, appWidgetId, providerInfo)
         } else {
-            pendingBindRequest = PendingBindRequest(appWidgetId, providerPackage, providerClass)
+            pendingBindRequest = PendingSystemWidgetBindRequest(appWidgetId, providerPackage, providerClass)
             val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, providerInfo.provider)
@@ -138,7 +129,6 @@ class WidgetManager(
             appWidgetHost.deleteAppWidgetId(appWidgetId)
             return
         }
-
 
         if (appWidgetInfo.configure != null) {
             val configIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE)
@@ -232,12 +222,9 @@ class WidgetManager(
 
     private fun bindWidget(appWidgetId: Int, appWidgetInfo: AppWidgetProviderInfo) {
         try {
-
             val widgetView = try {
                 appWidgetHost.createView(context, appWidgetId, appWidgetInfo)
             } catch (_: Exception) {
-
-
                 val bound = try {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         appWidgetManager.bindAppWidgetIdIfAllowed(
@@ -255,7 +242,6 @@ class WidgetManager(
                 }
 
                 if (!bound) {
-
                     Toast.makeText(
                         context,
                         "Cannot add this widget. Some widgets require special launcher permissions.",
@@ -264,7 +250,6 @@ class WidgetManager(
                     appWidgetHost.deleteAppWidgetId(appWidgetId)
                     return
                 }
-
 
                 try {
                     appWidgetHost.createView(context, appWidgetId, appWidgetInfo)
@@ -281,12 +266,10 @@ class WidgetManager(
                 return
             }
 
-
             widgetView.setAppWidget(appWidgetId, appWidgetInfo)
 
-
-            val existingCustomHeightDp = widgets.firstOrNull { it.appWidgetId == appWidgetId }?.customHeightDp
-            val widgetInfo = WidgetInfo(
+            val existingCustomHeightDp = widgets.find { it.appWidgetId == appWidgetId }?.customHeightDp
+            val widgetInfo = SystemWidgetInfo(
                 appWidgetId = appWidgetId,
                 providerPackage = appWidgetInfo.provider.packageName,
                 providerClass = appWidgetInfo.provider.className,
@@ -298,10 +281,7 @@ class WidgetManager(
             widgets.removeAll { it.appWidgetId == appWidgetId }
             widgets.add(widgetInfo)
 
-
             val widgetContainerView = createWidgetContainer(widgetView, widgetInfo, appWidgetInfo)
-
-
             widgetContainer.addView(widgetContainerView)
 
             saveWidgets()
@@ -321,151 +301,10 @@ class WidgetManager(
 
     private fun createWidgetContainer(
         widgetView: AppWidgetHostView,
-        widgetInfo: WidgetInfo,
+        widgetInfo: SystemWidgetInfo,
         appWidgetInfo: AppWidgetProviderInfo
     ): View {
-        val appWidgetId = widgetInfo.appWidgetId
-        val resizeHandleSizePx = dpToPx(34)
-        val resizeHandleInsetPx = dpToPx(6)
-        val minHeightPx = dpToPx(120)
-        val maxHeightPx = (context.resources.displayMetrics.heightPixels * 0.85f).toInt()
-
-        val containerLayout = FrameLayout(context).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(0, 12, 0, 12)
-            }
-            background = null
-            tag = appWidgetId
-        }
-
-        widgetView.layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            widgetInfo.customHeightDp?.let { dpToPx(it) } ?: FrameLayout.LayoutParams.WRAP_CONTENT
-        )
-        containerLayout.addView(widgetView)
-
-        val resizeHandle = ImageView(context).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                resizeHandleSizePx,
-                resizeHandleSizePx,
-                Gravity.END or Gravity.BOTTOM
-            ).apply {
-                marginEnd = resizeHandleInsetPx
-                bottomMargin = resizeHandleInsetPx
-            }
-            setImageResource(android.R.drawable.ic_menu_crop)
-            setBackgroundResource(R.drawable.drawer_widgets_action_bg)
-            imageTintList = android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(context, android.R.color.white)
-            )
-            contentDescription = "Resize widget"
-            setPadding(dpToPx(7), dpToPx(7), dpToPx(7), dpToPx(7))
-            visibility = View.GONE
-        }
-        containerLayout.addView(resizeHandle)
-        val hideResizeHandleRunnable = Runnable { resizeHandle.visibility = View.GONE }
-
-        val showResizeHandle = {
-            resizeHandle.visibility = View.VISIBLE
-            resizeHandle.bringToFront()
-            resizeHandle.removeCallbacks(hideResizeHandleRunnable)
-            resizeHandle.postDelayed(hideResizeHandleRunnable, 4000L)
-        }
-
-
-        containerLayout.setOnLongClickListener {
-            showResizeHandle()
-            true
-        }
-        widgetView.setOnLongClickListener {
-            showResizeHandle()
-            true
-        }
-        val resizeGestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onDown(e: MotionEvent): Boolean = true
-            override fun onDoubleTap(e: MotionEvent): Boolean {
-                showResizeHandle()
-                return true
-            }
-        })
-        containerLayout.setOnTouchListener { _, event ->
-            resizeGestureDetector.onTouchEvent(event)
-            false
-        }
-        widgetView.setOnTouchListener { _, event ->
-            resizeGestureDetector.onTouchEvent(event)
-            false
-        }
-
-        resizeHandle.setOnTouchListener(object : View.OnTouchListener {
-            private var startRawY = 0f
-            private var startHeightPx = 0
-
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        resizeHandle.removeCallbacks(hideResizeHandleRunnable)
-                        startRawY = event.rawY
-                        startHeightPx = widgetView.height
-                            .takeIf { it > 0 }
-                            ?: widgetView.measuredHeight.takeIf { it > 0 }
-                            ?: dpToPx(widgetInfo.customHeightDp ?: widgetInfo.minHeight.coerceAtLeast(120))
-                        containerLayout.parent?.requestDisallowInterceptTouchEvent(true)
-                        return true
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        val deltaY = (event.rawY - startRawY).toInt()
-                        val targetHeightPx = (startHeightPx + deltaY).coerceIn(minHeightPx, maxHeightPx)
-                        val lp = widgetView.layoutParams as FrameLayout.LayoutParams
-                        if (lp.height != targetHeightPx) {
-                            lp.height = targetHeightPx
-                            widgetView.layoutParams = lp
-                            val targetHeightDp = pxToDp(targetHeightPx).coerceAtLeast(1)
-                            applyWidgetSizeOptions(
-                                widgetView,
-                                appWidgetId,
-                                containerLayout,
-                                appWidgetInfo.minHeight,
-                                forcedHeightDp = targetHeightDp
-                            )
-                        }
-                        return true
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        val finalHeightDp = pxToDp(widgetView.height).coerceAtLeast(1)
-                        updateWidgetCustomHeight(appWidgetId, finalHeightDp)
-                        containerLayout.parent?.requestDisallowInterceptTouchEvent(false)
-                        resizeHandle.postDelayed(hideResizeHandleRunnable, 2500L)
-                        return true
-                    }
-                }
-                return false
-            }
-        })
-
-        containerLayout.post {
-            applyWidgetSizeOptions(
-                widgetView,
-                appWidgetId,
-                containerLayout,
-                appWidgetInfo.minHeight,
-                forcedHeightDp = widgetInfo.customHeightDp
-            )
-        }
-        containerLayout.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            applyWidgetSizeOptions(
-                widgetView,
-                appWidgetId,
-                containerLayout,
-                appWidgetInfo.minHeight,
-                forcedHeightDp = widgetInfo.customHeightDp
-            )
-        }
-
-        return containerLayout
+        return containerFactory.createWidgetContainer(widgetView, widgetInfo, appWidgetInfo)
     }
 
     private fun applyWidgetSizeOptions(
@@ -486,21 +325,17 @@ class WidgetManager(
         if (widgetOptionsCache[appWidgetId] == optionsKey) return
         widgetOptionsCache[appWidgetId] = optionsKey
 
+        val options = Bundle().apply {
+            putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widthDp)
+            putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widthDp)
+            putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
+            putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
+        }
+        
         try {
-            widgetView.updateAppWidgetSize(
-                null,
-                widthDp,
-                heightDp,
-                widthDp,
-                heightDp
-            )
+            @Suppress("DEPRECATION")
+            widgetView.updateAppWidgetSize(options, widthDp, heightDp, widthDp, heightDp)
         } catch (_: Exception) {
-            val options = Bundle().apply {
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widthDp)
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widthDp)
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
-            }
             runCatching { appWidgetManager.updateAppWidgetOptions(appWidgetId, options) }
         }
     }
@@ -547,7 +382,7 @@ class WidgetManager(
                 when (selectedOption) {
                     "Move Up" -> moveWidgetUp(appWidgetId)
                     "Move Down" -> moveWidgetDown(appWidgetId)
-                    "Delete" -> showRemoveWidgetDialog(appWidgetId, widgetName)
+                    "Delete" -> showRemoveWidgetDialog(appWidgetId, widgetName.toString())
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -574,10 +409,8 @@ class WidgetManager(
     fun moveWidgetUp(appWidgetId: Int) {
         val currentIndex = widgets.indexOfFirst { it.appWidgetId == appWidgetId }
         if (currentIndex > 0 && currentIndex < widgetContainer.childCount) {
-
             val widget = widgets.removeAt(currentIndex)
             widgets.add(currentIndex - 1, widget)
-
 
             val viewToMove = widgetContainer.getChildAt(currentIndex)
             val viewToSwapWith = widgetContainer.getChildAt(currentIndex - 1)
@@ -595,10 +428,8 @@ class WidgetManager(
     fun moveWidgetDown(appWidgetId: Int) {
         val currentIndex = widgets.indexOfFirst { it.appWidgetId == appWidgetId }
         if (currentIndex < widgets.size - 1 && currentIndex < widgetContainer.childCount - 1) {
-
             val widget = widgets.removeAt(currentIndex)
             widgets.add(currentIndex + 1, widget)
-
 
             val viewToMove = widgetContainer.getChildAt(currentIndex)
             val viewToSwapWith = widgetContainer.getChildAt(currentIndex + 1)
@@ -626,7 +457,6 @@ class WidgetManager(
 
     fun removeWidget(appWidgetId: Int) {
         try {
-
             for (i in 0 until widgetContainer.childCount) {
                 val view = widgetContainer.getChildAt(i)
                 if (view.tag == appWidgetId) {
@@ -635,17 +465,11 @@ class WidgetManager(
                 }
             }
 
-
             widgets.removeAll { it.appWidgetId == appWidgetId }
             widgetOptionsCache.remove(appWidgetId)
-
-
             appWidgetHost.deleteAppWidgetId(appWidgetId)
-
-
             saveWidgets()
             
-            // Explicitly notify the system that widgets have changed to trigger drawer refresh
             prefs.edit { 
                 putBoolean(PREFS_WIDGETS_CHANGED_KEY, true)
             }
@@ -657,11 +481,10 @@ class WidgetManager(
     }
 
     fun syncWidgetOrder(appWidgetIds: List<Int>) {
-        val newOrder = mutableListOf<WidgetInfo>()
+        val newOrder = mutableListOf<SystemWidgetInfo>()
         appWidgetIds.forEach { id ->
             widgets.find { it.appWidgetId == id }?.let { newOrder.add(it) }
         }
-        // Add any missing ones
         widgets.forEach { w -> if (newOrder.none { it.appWidgetId == w.appWidgetId }) newOrder.add(w) }
         
         widgets.clear()
@@ -701,10 +524,9 @@ class WidgetManager(
                 val json = jsonArray.getJSONObject(i)
                 val appWidgetId = json.getInt("appWidgetId")
 
-
                 val appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId)
                 if (appWidgetInfo != null) {
-                    val widgetInfo = WidgetInfo(
+                    val widgetInfo = SystemWidgetInfo(
                         appWidgetId = appWidgetId,
                         providerPackage = json.getString("providerPackage"),
                         providerClass = json.getString("providerClass"),
@@ -713,15 +535,11 @@ class WidgetManager(
                         customHeightDp = if (json.has("customHeightDp")) json.optInt("customHeightDp") else null
                     )
                     widgets.add(widgetInfo)
-
-
                     recreateWidgetView(widgetInfo, appWidgetInfo)
                 } else {
-
                     appWidgetHost.deleteAppWidgetId(appWidgetId)
                 }
             }
-
 
             if (widgets.size != jsonArray.length()) {
                 saveWidgets()
@@ -730,13 +548,12 @@ class WidgetManager(
         }
     }
 
-    private fun recreateWidgetView(widgetInfo: WidgetInfo, appWidgetInfo: AppWidgetProviderInfo) {
+    private fun recreateWidgetView(widgetInfo: SystemWidgetInfo, appWidgetInfo: AppWidgetProviderInfo) {
         try {
             val widgetView = appWidgetHost.createView(context, widgetInfo.appWidgetId, appWidgetInfo)
             val widgetContainerView = createWidgetContainer(widgetView, widgetInfo, appWidgetInfo)
             widgetContainer.addView(widgetContainerView)
         } catch (_: Exception) {
-
             widgets.remove(widgetInfo)
             appWidgetHost.deleteAppWidgetId(widgetInfo.appWidgetId)
         }
@@ -746,7 +563,6 @@ class WidgetManager(
         try {
             appWidgetHost.stopListening()
         } catch (e: Exception) {
-
             Log.w(TAG, "Error stopping widget host listening", e)
         }
     }
@@ -755,8 +571,6 @@ class WidgetManager(
         try {
             appWidgetHost.startListening()
             
-            // Force existing widget views to re-render after startListening()
-            // to prevent blank widgets after backgrounding/resuming
             if (widgets.isNotEmpty()) {
                 val viewsToRemove = mutableListOf<View>()
                 for (i in 0 until widgetContainer.childCount) {
@@ -767,7 +581,6 @@ class WidgetManager(
                 }
                 viewsToRemove.forEach { widgetContainer.removeView(it) }
                 
-                // Recreate widget views to pick up current RemoteViews
                 widgets.forEach { widgetInfo ->
                     val appWidgetInfo = appWidgetManager.getAppWidgetInfo(widgetInfo.appWidgetId)
                     if (appWidgetInfo != null) {
@@ -780,9 +593,6 @@ class WidgetManager(
         }
     }
 
-
-
-
     fun reloadWidgets() {
         val viewsToRemove = mutableListOf<View>()
         for (i in 0 until widgetContainer.childCount) {
@@ -794,7 +604,6 @@ class WidgetManager(
         viewsToRemove.forEach { widgetContainer.removeView(it) }
         widgets.clear()
         widgetOptionsCache.clear()
-
         loadWidgets()
     }
 
@@ -811,7 +620,6 @@ class WidgetManager(
         try {
             appWidgetHost.stopListening()
         } catch (e: Exception) {
-
             Log.w(TAG, "Error stopping widget host listening in destroy", e)
         }
     }

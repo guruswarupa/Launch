@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/widget_background"
+    android:padding="20dp">
 
     <LinearLayout
         android:id="@+id/github_container"
