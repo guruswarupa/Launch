@@ -91,26 +91,30 @@ class DocumentViewerActivity : VaultBaseActivity() {
         vaultFileName = intent.getStringExtra(EXTRA_VAULT_FILE_NAME)
         val uriString = intent.getStringExtra(EXTRA_FILE_URI)
 
-        if (!vaultFileName.isNullOrEmpty()) {
+        val vfn = vaultFileName
+        if (!vfn.isNullOrEmpty()) {
             isVaultFile = true
-            vaultManager = EncryptedFolderManager(this)
-            if (!vaultManager!!.isUnlocked()) {
+            val manager = EncryptedFolderManager(this)
+            vaultManager = manager
+            if (!manager.isUnlocked()) {
                 Toast.makeText(this, "Vault is locked", Toast.LENGTH_SHORT).show()
                 finish()
                 return
             }
-            documentTitle.text = vaultFileName
-            loadVaultDocument(vaultFileName!!)
+            documentTitle.text = vfn
+            loadVaultDocument(vfn)
         } else if (uriString != null) {
-            externalUri = Uri.parse(uriString)
-            val displayName = intent.getStringExtra(EXTRA_FILE_NAME) ?: getFileNameFromUri(externalUri!!) ?: "Document"
+            val uri = Uri.parse(uriString)
+            externalUri = uri
+            val displayName = intent.getStringExtra(EXTRA_FILE_NAME) ?: getFileNameFromUri(uri) ?: "Document"
             documentTitle.text = displayName
-            loadExternalDocument(externalUri!!, displayName)
+            loadExternalDocument(uri, displayName)
         } else if (intent?.action == Intent.ACTION_VIEW && intent?.data != null) {
-            externalUri = intent.data
-            val displayName = getFileNameFromUri(externalUri!!) ?: "Document"
+            val uri = intent.data ?: return
+            externalUri = uri
+            val displayName = getFileNameFromUri(uri) ?: "Document"
             documentTitle.text = displayName
-            loadExternalDocument(externalUri!!, displayName)
+            loadExternalDocument(uri, displayName)
         } else {
             showError("No document provided", showOpenWithButton = false)
         }
@@ -333,8 +337,8 @@ class DocumentViewerActivity : VaultBaseActivity() {
         lifecycleScope.launch {
             try {
                 val decryptedFile = withContext(Dispatchers.IO) {
-                    vaultManager!!.decryptToCache(fileName)
-                }
+                    vaultManager?.decryptToCache(fileName)
+                } ?: throw IllegalStateException("Vault manager not initialized")
                 tempFile = decryptedFile
                 openDocument(decryptedFile, fileName)
             } catch (e: Exception) {
@@ -422,9 +426,11 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 fileDescriptor?.close()
 
                 withContext(Dispatchers.IO) {
-                    fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-                    pdfRenderer = PdfRenderer(fileDescriptor!!)
-                    totalPages = pdfRenderer!!.pageCount
+                    val fd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+                    fileDescriptor = fd
+                    val renderer = PdfRenderer(fd)
+                    pdfRenderer = renderer
+                    totalPages = renderer.pageCount
                 }
 
                 hideLoading()
@@ -436,7 +442,13 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
                 val layoutManager = LinearLayoutManager(this@DocumentViewerActivity)
                 pdfRecyclerView.layoutManager = layoutManager
-                pdfRecyclerView.adapter = PdfPageAdapterLazy(pdfRenderer!!, totalPages)
+                val renderer = pdfRenderer
+                if (renderer != null) {
+                    pdfRecyclerView.adapter = PdfPageAdapterLazy(renderer, totalPages)
+                } else {
+                    showError("Failed to initialize PDF renderer")
+                    return@launch
+                }
 
                 currentPageIndex = 0
                 updatePageIndicator(currentPageIndex + 1)

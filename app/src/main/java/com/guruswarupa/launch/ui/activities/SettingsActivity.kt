@@ -539,9 +539,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             }
             applyBtn.isVisible = false
         } else {
-
-            val category = selectedThemeCategory!!
-
+            val category = selectedThemeCategory ?: return
             val contentRow = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = android.view.Gravity.CENTER_VERTICAL
@@ -1897,9 +1895,11 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             .setTitle("Restart Launcher")
             .setMessage("Are you sure you want to restart the launcher?")
             .setPositiveButton("Restart") { _, _ ->
-                packageManager.getLaunchIntentForPackage(packageName)?.let {
-                    startActivity(Intent.makeRestartActivityTask(it.component!!))
-                    Runtime.getRuntime().exit(0)
+                packageManager.getLaunchIntentForPackage(packageName)?.let { intent ->
+                    intent.component?.let { component ->
+                        startActivity(Intent.makeRestartActivityTask(component))
+                        Runtime.getRuntime().exit(0)
+                    }
                 }
             }
             .setNegativeButton("Later", null)
