@@ -42,6 +42,7 @@ import com.guruswarupa.launch.models.AppMetadata
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.activities.WebAppActivity
 import com.guruswarupa.launch.ui.activities.WebAppSettingsActivity
+import com.guruswarupa.launch.handlers.AppContextMenuHandler
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -49,7 +50,7 @@ import java.util.concurrent.TimeUnit
 
 class AppAdapter(
     private val activity: MainActivity,
-    appList: MutableList<ResolveInfo>,
+    private val appList: MutableList<ResolveInfo>,
     private val searchBox: AutoCompleteTextView,
     private var isGridMode: Boolean,
     private val context: Context,
@@ -63,16 +64,14 @@ class AppAdapter(
         const val VIEW_TYPE_SEPARATOR_SMALL = 3
         const val SEPARATOR_PACKAGE = "com.guruswarupa.launch.SEPARATOR"
 
-
         const val PAYLOAD_ICON_STYLE = 1
         const val PAYLOAD_ICON_SIZE = 2
         const val PAYLOAD_VIEW_MODE = 3
         const val PAYLOAD_ICON_VISUAL_STATE = 4
 
         private val SPECIAL_PACKAGE_NAMES = setOf(
-            "contact_unified", "play_store_search", "maps_search", "yt_search", "browser_search", "math_result",
-            "file_result", "settings_result", "system_settings_result",
-            "launcher_settings_shortcut", "launcher_vault_shortcut"
+            "com.android.settings",
+            "com.google.android.googlequicksearchbox"
         )
     }
 
@@ -86,7 +85,6 @@ class AppAdapter(
 
     private val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
     private val mainUserSerial = userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
-    private val usageStatsManager = AppUsageStatsManager(activity)
     private val labelCache = ConcurrentHashMap<String, String>()
     private val usageCache = ConcurrentHashMap<String, String>()
     private val executor = Executors.newSingleThreadExecutor()
@@ -132,73 +130,95 @@ class AppAdapter(
         applyIconVisualState = { packageName, holder -> applyIconVisualState(packageName, holder.appIcon) }
     )
 
+    private val appContextMenuHandler = AppContextMenuHandler(
+        activity = activity,
+        context = context,
+        executor = executor!!,
+        labelResolver = { packageName: String, appInfo: ResolveInfo ->
+            labelCache["${packageName}|${appInfo.preferredOrder}"] ?: packageName
+        },
+        onAppModified = {
+            notifyItemRangeChanged(0, getCurrentListSize(), PAYLOAD_ICON_VISUAL_STATE)
+        },
+        openWebApp = { appInfo: ResolveInfo -> openWebApp(appInfo) }
+    )
+
     init {
         setHasStableIds(true)
         submitList(ArrayList(appList))
     }
 
     override fun getItemId(position: Int): Long {
+        if (position < 0 || position >= currentList.size) return RecyclerView.NO_ID
         val item = getItem(position)
         return ("${item.activityInfo.packageName}|${item.activityInfo.name}|${item.preferredOrder}").hashCode().toLong()
     }
 
-    fun updateViewMode(isGrid: Boolean) {
-        if (this.isGridMode != isGrid) {
-            this.isGridMode = isGrid
+    fun updateViewMode(isGridMode: Boolean) {
+        if (this.isGridMode != isGridMode) {
+            this.isGridMode = isGridMode
             notifyItemRangeChanged(0, currentList.size, PAYLOAD_VIEW_MODE)
         }
     }
 
     fun setFastScrollingState(isScrolling: Boolean) {
         isFastScrolling = isScrolling
-        fastScrollDebounceRunnable?.let { fastScrollDebounceHandler.removeCallbacks(it) }
+        fastScrollDebounceHandler.removeCallbacksAndMessages(null)
         if (!isScrolling) {
-            val runnable = Runnable { forceRefreshVisibleIcons() }
-            fastScrollDebounceRunnable = runnable
-            fastScrollDebounceHandler.postDelayed(runnable, 100)
+            fastScrollDebounceHandler.postDelayed({
+                forceRefreshVisibleIcons()
+            }, 100)
         }
     }
 
-    private fun forceRefreshVisibleIcons() {}
+    private fun forceRefreshVisibleIcons() {
+        notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_VISUAL_STATE)
+    }
+
+    fun forceRebindViewHolder(holder: ViewHolder, position: Int) {
+        onBindViewHolder(holder, position, mutableListOf())
+    }
 
     fun clearUsageCache() {
         usageCache.clear()
+        notifyDataSetChanged()
     }
 
     fun clearContactPhotoCache() {
-        iconLoader.clearContactPhotoCache()
+        notifyDataSetChanged()
     }
 
     fun cleanup() {
+        executor?.shutdownNow()
         fastScrollDebounceHandler.removeCallbacksAndMessages(null)
-        iconLoader.cleanup()
     }
 
     fun getCurrentIconStyle(): String = currentIconStyle
-    
+
     fun getCurrentIconSize(): Int = currentIconSize
 
-    fun updateIconStyle(style: String) {
-        currentIconStyle = style
-        iconLoader.updateIconStyle(style)
-        (context as? Activity)?.runOnUiThread {
+    fun updateIconStyle(newStyle: String) {
+        if (currentIconStyle != newStyle) {
+            currentIconStyle = newStyle
+            iconLoader.updateIconStyle(newStyle)
             notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE)
         }
     }
 
-    fun updateIconSize(size: Int) {
-        currentIconSize = size
-        iconLoader.updateIconSize(size)
-        (context as? Activity)?.runOnUiThread {
+    fun updateIconSize(newSize: Int) {
+        if (currentIconSize != newSize) {
+            currentIconSize = newSize
+            iconLoader.updateIconSize(newSize)
             notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_SIZE)
         }
     }
 
     fun refreshIcons() {
-        iconLoader.onIconPackChanged()
-        iconLoader.clearIconCaches(clearDiskCache = false) // Let onIconPackChanged handle disk cache
-        (context as? Activity)?.runOnUiThread {
-            notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE)
+        iconLoader.updateIconStyle(currentIconStyle)
+        iconLoader.updateIconSize(currentIconSize)
+        executor.execute {
+            iconLoader.preloadIcons(currentList.filter { it.activityInfo.packageName != SEPARATOR_PACKAGE })
+            activity.runOnUiThread { notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE) }
         }
     }
 
@@ -206,36 +226,27 @@ class AppAdapter(
         if (currentShowAppNamesInGrid != show) {
             currentShowAppNamesInGrid = show
             if (isGridMode) {
-                (context as? Activity)?.runOnUiThread {
-                    notifyItemRangeChanged(0, currentList.size, PAYLOAD_VIEW_MODE)
-                }
+                notifyItemRangeChanged(0, currentList.size)
             }
         }
     }
-
 
     fun getItemAtPosition(position: Int): ResolveInfo? {
         if (position < 0 || position >= currentList.size) return null
         return getItem(position)
     }
 
-
     fun getCurrentListSize(): Int = currentList.size
 
-    private fun applyIconVisualState(packageName: String, imageView: ImageView?) {
+    fun applyIconVisualState(packageName: String, imageView: ImageView?) {
         if (imageView == null) return
-
-        val overDailyLimit = packageName !in SPECIAL_PACKAGE_NAMES &&
-            packageName != SEPARATOR_PACKAGE &&
-            !WebAppManager.isWebAppPackage(packageName) &&
-            activity.appTimerManager.isAppOverDailyLimit(packageName)
-
-        if (overDailyLimit) {
+        val isHidden = activity.hiddenAppManager.isAppHidden(packageName)
+        if (isHidden) {
             val matrix = ColorMatrix().apply { setSaturation(0f) }
             imageView.colorFilter = ColorMatrixColorFilter(matrix)
             imageView.alpha = 0.5f
+            imageView.drawable?.colorFilter = ColorMatrixColorFilter(matrix)
         } else {
-            imageView.colorFilter = null
             imageView.clearColorFilter()
             imageView.alpha = 1f
             imageView.drawable?.clearColorFilter()
@@ -272,9 +283,7 @@ class AppAdapter(
         } catch (_: Exception) {
         }
 
-
         submitList(newItems) {
-
             if (isFirstLoad && newItems.isNotEmpty()) {
                 itemsRendered = newItems.size
                 executor.execute {
@@ -284,56 +293,49 @@ class AppAdapter(
         }
     }
 
-    fun forceRebindViewHolder(viewHolder: ViewHolder, position: Int) {
-        if (position < 0 || position >= currentList.size) return
-        onBindViewHolder(viewHolder, position)
-    }
-
     private class AppListDiffCallback : DiffUtil.ItemCallback<ResolveInfo>() {
         override fun areItemsTheSame(oldItem: ResolveInfo, newItem: ResolveInfo): Boolean {
             if (oldItem.activityInfo.packageName == SEPARATOR_PACKAGE && newItem.activityInfo.packageName == SEPARATOR_PACKAGE) {
                 return oldItem.activityInfo.name == newItem.activityInfo.name
             }
             return oldItem.activityInfo.packageName == newItem.activityInfo.packageName &&
-                oldItem.preferredOrder == newItem.preferredOrder
+                    oldItem.activityInfo.name == newItem.activityInfo.name &&
+                    oldItem.preferredOrder == newItem.preferredOrder
         }
 
         override fun areContentsTheSame(oldItem: ResolveInfo, newItem: ResolveInfo): Boolean {
             return oldItem.activityInfo.packageName == newItem.activityInfo.packageName &&
-                oldItem.activityInfo.name == newItem.activityInfo.name &&
-                oldItem.preferredOrder == newItem.preferredOrder
+                    oldItem.activityInfo.name == newItem.activityInfo.name &&
+                    oldItem.preferredOrder == newItem.preferredOrder
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        val packageName = item.activityInfo.packageName
-
-        if (packageName == SEPARATOR_PACKAGE) {
-            val separatorId = item.activityInfo.name ?: ""
-            return if (separatorId.startsWith("letter_separator_") || separatorId.startsWith("small_separator_") || separatorId == "launcher_shortcuts_separator") {
-                VIEW_TYPE_SEPARATOR_SMALL
-            } else {
-                VIEW_TYPE_SEPARATOR
+        return when (item.activityInfo.packageName) {
+            SEPARATOR_PACKAGE -> {
+                val name = item.activityInfo.name ?: ""
+                if (name == "SMALL" || name.startsWith("letter_separator_")) {
+                    VIEW_TYPE_SEPARATOR_SMALL
+                } else {
+                    VIEW_TYPE_SEPARATOR
+                }
             }
+            else -> if (isGridMode) VIEW_TYPE_GRID else VIEW_TYPE_LIST
         }
-
-        return if (isGridMode) VIEW_TYPE_GRID else VIEW_TYPE_LIST
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutId = when (viewType) {
+        val layout = when (viewType) {
+            VIEW_TYPE_GRID -> R.layout.app_item_grid
             VIEW_TYPE_SEPARATOR -> R.layout.item_app_separator
             VIEW_TYPE_SEPARATOR_SMALL -> R.layout.item_app_separator_small
-            VIEW_TYPE_GRID -> R.layout.app_item_grid
             else -> R.layout.app_item
         }
-        val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-        TypographyManager.applyToView(view)
+        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return ViewHolder(view)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         onBindViewHolder(holder, position, mutableListOf())
     }
@@ -341,71 +343,67 @@ class AppAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
         val appInfo = getItem(position)
         val packageName = appInfo.activityInfo.packageName
-        val serial = appInfo.preferredOrder
-        val cacheKey = "${packageName}|${serial}"
-
-        if (packageName == SEPARATOR_PACKAGE) return
-
 
         if (payloads.isNotEmpty()) {
-            var needsFullBind = false
-
             for (payload in payloads) {
                 when (payload) {
                     PAYLOAD_ICON_STYLE -> {
-
                         iconLoader.applyShapeAppearance(holder.appIcon)
-                        holder.appIcon?.setImageDrawable(null)
-                        bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
+                        bindCachedOrAsyncIcon(holder, appInfo, packageName)
+                        applyIconVisualState(packageName, holder.appIcon)
                     }
                     PAYLOAD_ICON_SIZE -> {
-
                         iconLoader.updateIconSize(holder.appIcon)
-                        holder.appIcon?.setImageDrawable(null)
-                        bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
+                        bindCachedOrAsyncIcon(holder, appInfo, packageName)
                     }
+                    PAYLOAD_ICON_VISUAL_STATE -> applyIconVisualState(packageName, holder.appIcon)
                     PAYLOAD_VIEW_MODE -> {
-
-                        needsFullBind = true
-                    }
-                    PAYLOAD_ICON_VISUAL_STATE -> {
-
-                        applyIconVisualState(packageName, holder.appIcon)
+                        configureLabelVisibility(holder)
                     }
                 }
             }
-
-            if (!needsFullBind && payloads.none { it == PAYLOAD_VIEW_MODE }) {
-                return
-            }
+            return
         }
 
+        if (packageName == SEPARATOR_PACKAGE) {
+            holder.appName?.text = appInfo.nonLocalizedLabel ?: ""
+            return
+        }
+
+        if (searchResultBinderRegistry.bind(holder, appInfo, position)) {
+            return
+        }
 
         if (WebAppManager.isWebAppPackage(packageName)) {
             bindWebApp(holder, appInfo, packageName)
             return
         }
 
-        val needsRefresh = holder.itemView.tag != null && holder.itemView.tag != cacheKey
-        if (needsRefresh) {
-            TypographyManager.applyToView(holder.itemView)
+        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
+        holder.itemView.tag = cacheKey
+
+        val appName = labelCache[cacheKey]
+        if (appName != null) {
+            bindAppLabel(holder, appInfo, packageName, appName)
+        } else {
+            holder.appName?.text = ""
+            loadLabelAsync(holder, appInfo, packageName, cacheKey)
         }
 
         iconLoader.updateIconSize(holder.appIcon)
         iconLoader.applyShapeAppearance(holder.appIcon)
-        if (needsRefresh) holder.appIcon?.setImageDrawable(null)
-
-        holder.appIcon?.background = null
-        holder.itemView.elevation = 0f
-        holder.itemView.tag = cacheKey
+        bindCachedOrAsyncIcon(holder, appInfo, packageName)
         configureLabelVisibility(holder)
-        holder.appUsageTime?.visibility = View.GONE
+        applyIconVisualState(packageName, holder.appIcon)
 
-        if (searchResultBinderRegistry.bind(holder, appInfo, position)) {
-            return
+        holder.itemView.setOnClickListener {
+            appClickHandler.handleAppClick(holder, appInfo, packageName, appInfo.preferredOrder)
         }
 
-        bindStandardApp(holder, appInfo, position, packageName, cacheKey, serial)
+        holder.itemView.setOnLongClickListener {
+            showAppContextMenu(holder.itemView, packageName, appInfo)
+            true
+        }
     }
 
     private fun configureLabelVisibility(holder: ViewHolder) {
@@ -416,107 +414,41 @@ class AppAdapter(
         }
     }
 
-    private fun bindStandardApp(
-        holder: ViewHolder,
-        appInfo: ResolveInfo,
-        position: Int,
-        packageName: String,
-        cacheKey: String,
-        serial: Int
-    ) {
-        val activityName = appInfo.activityInfo.name
-        if (packageName == activity.packageName) {
-            when {
-                activityName.contains("SettingsActivity") -> {
-                    holder.appName?.text = activity.getString(R.string.settings_app_name)
-                    iconLoader.setIconResource(holder.appIcon, R.mipmap.ic_launcher)
-                }
-                activityName.contains("EncryptedVaultActivity") -> {
-                    holder.appName?.text = activity.getString(R.string.vault_app_name)
-                    iconLoader.setIconResource(holder.appIcon, R.drawable.ic_vault)
-                }
-                else -> {
-
-                    holder.appName?.text = labelCache[cacheKey] ?: packageName
-                    bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
-                }
-            }
+    private fun bindAppLabel(holder: ViewHolder, appInfo: ResolveInfo, packageName: String, label: String) {
+        holder.appName?.text = label
+        val usageTime = usageCache[packageName]
+        if (usageTime != null) {
+            holder.appUsageTime?.text = usageTime
+            holder.appUsageTime?.visibility = View.VISIBLE
         } else {
-            bindAppLabel(holder, appInfo, packageName, cacheKey)
-            bindCachedOrAsyncIcon(holder, appInfo, cacheKey)
-        }
-
-        applyIconVisualState(packageName, holder.appIcon)
-
-        if (position < currentList.size - 1 && position % 8 == 0) {
-            iconLoader.preloadNextIcons(currentList, position + 1, minOf(position + Constants.Limits.MAX_VISIBLE_PRELOAD_ITEMS, currentList.size))
-        }
-
-        holder.itemView.setOnClickListener {
-            appClickHandler.handleAppClick(holder, appInfo, packageName, serial)
-        }
-        holder.itemView.setOnLongClickListener {
-            showAppContextMenu(holder.itemView, packageName, appInfo)
-            true
+            holder.appUsageTime?.visibility = View.GONE
         }
     }
 
-    private fun bindAppLabel(
-        holder: ViewHolder,
-        appInfo: ResolveInfo,
-        packageName: String,
-        cacheKey: String
-    ) {
-        val cachedLabel = labelCache[cacheKey]
-        if (cachedLabel != null) {
-            holder.appName?.text = cachedLabel
-            return
-        }
-
-
-        holder.appName?.text = packageName
-        loadLabelAsync(holder, appInfo, packageName, cacheKey)
-    }
-
-    private fun bindCachedOrAsyncIcon(
-        holder: ViewHolder,
-        appInfo: ResolveInfo,
-        cacheKey: String
-    ) {
-        val packageName = appInfo.activityInfo.packageName
+    private fun bindCachedOrAsyncIcon(holder: ViewHolder, appInfo: ResolveInfo, packageName: String) {
+        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
         val cachedIcon = iconLoader.getCachedIcon(cacheKey)
+
         if (cachedIcon != null) {
-
-            if (!(cachedIcon is android.graphics.drawable.BitmapDrawable && cachedIcon.bitmap.isRecycled)) {
-                holder.appIcon?.setImageDrawable(cachedIcon)
-                applyIconVisualState(packageName, holder.appIcon)
-            } else {
-
-                iconLoader.setIconResource(holder.appIcon, R.drawable.ic_default_app_icon)
-                val priority = if (isFastScrolling) IconLoader.PRIORITY_HIGH else IconLoader.PRIORITY_MEDIUM
-                iconLoader.submitIconLoadTask(appInfo, priority, holder) { readyPackageName, readyHolder ->
-                    applyIconVisualState(readyPackageName, readyHolder.appIcon)
+            iconLoader.setIconDrawable(holder.appIcon, cachedIcon, useLegacyIconPlate = true)
+        } else {
+            iconLoader.setIconResource(holder.appIcon, R.drawable.ic_launcher_foreground)
+            if (!isFastScrolling) {
+                iconLoader.submitIconLoadTask(appInfo, IconLoader.PRIORITY_MEDIUM, holder) { _, _ ->
+                    applyIconVisualState(packageName, holder.appIcon)
                 }
             }
-            return
-        }
-
-        iconLoader.setIconResource(holder.appIcon, R.drawable.ic_default_app_icon)
-        val priority = if (isFastScrolling) IconLoader.PRIORITY_HIGH else IconLoader.PRIORITY_MEDIUM
-        iconLoader.submitIconLoadTask(appInfo, priority, holder) { readyPackageName, readyHolder ->
-            applyIconVisualState(readyPackageName, readyHolder.appIcon)
         }
     }
 
     override fun getItemCount(): Int = currentList.size
 
     private fun loadLabelAsync(holder: ViewHolder, appInfo: ResolveInfo, packageName: String, cacheKey: String) {
-        if (labelCache.containsKey(cacheKey)) return
         pendingLabelTasks[cacheKey]?.cancel(true)
 
         val labelTask = object : Runnable, Future<Boolean> {
-            @Volatile private var isDone = false
-            @Volatile private var isCancelled = false
+            var completed = false
+            var cancelled = false
 
             override fun run() {
                 try {
@@ -545,18 +477,18 @@ class AppAdapter(
                         }
                     }
                 } finally {
-                    isDone = true
+                    completed = true
                 }
             }
 
             override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
-                if (isDone || isCancelled) return false
-                isCancelled = true
+                if (completed || cancelled) return false
+                cancelled = true
                 return true
             }
 
-            override fun isCancelled(): Boolean = isCancelled
-            override fun isDone(): Boolean = isDone
+            override fun isCancelled(): Boolean = cancelled
+            override fun isDone(): Boolean = completed
             override fun get(): Boolean? = null
             override fun get(timeout: Long, unit: TimeUnit): Boolean? = null
         }
@@ -570,286 +502,11 @@ class AppAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showAppContextMenu(view: View, packageName: String, appInfo: ResolveInfo) {
-        val popupMenu = PopupMenu(activity, view, Gravity.END, 0, R.style.PopupMenuStyle)
-        popupMenu.menuInflater.inflate(R.menu.app_context_menu, popupMenu.menu)
-        val textColor = ContextCompat.getColor(activity, R.color.text)
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
-        val appName = labelCache[cacheKey] ?: packageName
-
-        val dailyLimitItem = popupMenu.menu.add(0, 100, 0, activity.getString(R.string.daily_usage_set_limit_action))
-        val limitSpannable = android.text.SpannableString(dailyLimitItem.title)
-        limitSpannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, limitSpannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        dailyLimitItem.title = limitSpannable
-
-        val usageHeader = popupMenu.menu.findItem(R.id.usage_header)
-        if (usageHeader != null) {
-            executor.execute {
-                val usageTime = usageStatsManager.getAppUsageTime(packageName)
-                val formattedTime = usageStatsManager.formatUsageTime(usageTime)
-                activity.runOnUiThread {
-                    usageHeader.title = activity.getString(R.string.app_context_usage_format, formattedTime)
-                    val spannable = android.text.SpannableString(usageHeader.title)
-                    spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    usageHeader.title = spannable
-                }
-            }
-        }
-
-        val toggleSessionTimerItem = popupMenu.menu.findItem(R.id.toggle_session_timer)
-        if (toggleSessionTimerItem != null) {
-            val isEnabled = activity.appTimerManager.isSessionTimerEnabled(packageName)
-            toggleSessionTimerItem.title = activity.getString(
-                if (isEnabled) R.string.app_context_disable_session_timer else R.string.app_context_enable_session_timer
-            )
-            val spannable = android.text.SpannableString(toggleSessionTimerItem.title)
-            spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            toggleSessionTimerItem.title = spannable
-        }
-
-        val favoriteMenuItem = popupMenu.menu.findItem(R.id.toggle_favorite)
-        if (favoriteMenuItem != null) {
-            val isFavorite = activity.favoriteAppManager.isFavoriteApp(packageName)
-            favoriteMenuItem.title = if (isFavorite) "Remove from Favorites" else "Add to Favorites"
-            val spannable = android.text.SpannableString(favoriteMenuItem.title)
-            spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            favoriteMenuItem.title = spannable
-        }
-
-        val hideMenuItem = popupMenu.menu.findItem(R.id.toggle_hide)
-        if (hideMenuItem != null) {
-            try {
-                val isHidden = activity.hiddenAppManager.isAppHidden(packageName)
-                hideMenuItem.title = if (isHidden) "Unhide App" else "Hide App"
-                val spannable = android.text.SpannableString(hideMenuItem.title)
-                spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                hideMenuItem.title = spannable
-            } catch (_: UninitializedPropertyAccessException) {
-                hideMenuItem.isVisible = false
-            }
-        }
-
-        for (i in 0 until popupMenu.menu.size()) {
-            val item = popupMenu.menu.getItem(i)
-            val itemTitle = item.title?.toString() ?: continue
-            val spannable = android.text.SpannableString(itemTitle)
-            spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            item.title = spannable
-        }
-
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                100 -> {
-                    activity.appTimerManager.showDailyLimitDialog(appName, packageName) {
-                        notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_VISUAL_STATE)
-                    }
-                    true
-                }
-                R.id.toggle_session_timer -> {
-                    val isEnabled = activity.appTimerManager.isSessionTimerEnabled(packageName)
-                    activity.appTimerManager.setSessionTimerEnabled(packageName, !isEnabled)
-                    val sessionTimerStatus = activity.getString(
-                        if (!isEnabled) R.string.app_context_session_timer_enabled else R.string.app_context_session_timer_disabled
-                    )
-                    Toast.makeText(
-                        activity,
-                        activity.getString(R.string.app_context_session_timer_changed, sessionTimerStatus, appName),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    true
-                }
-                R.id.app_info -> {
-                    showAppInfo(packageName)
-                    true
-                }
-                R.id.share_app -> {
-                    shareApp(packageName, appInfo)
-                    true
-                }
-                R.id.uninstall_app -> {
-                    uninstallApp(packageName)
-                    true
-                }
-                R.id.toggle_favorite -> {
-                    toggleFavoriteApp(packageName, appInfo)
-                    true
-                }
-                R.id.toggle_hide -> {
-                    toggleHideApp(packageName, appInfo)
-                    true
-                }
-                else -> false
-            }
-        }
-        popupMenu.show()
-        fixPopupMenuTextColors(popupMenu)
+        appContextMenuHandler.showAppContextMenu(view, packageName, appInfo)
     }
 
     private fun showWebAppContextMenu(view: View, packageName: String, appInfo: ResolveInfo) {
-        val popupMenu = PopupMenu(activity, view, Gravity.END, 0, R.style.PopupMenuStyle)
-        val textColor = ContextCompat.getColor(activity, R.color.text)
-        val appName = appInfo.activityInfo.name
-
-        popupMenu.menu.add(0, 200, 0, activity.getString(R.string.open_web_app))
-        popupMenu.menu.add(0, 201, 1, activity.getString(R.string.edit_web_app))
-        popupMenu.menu.add(0, 202, 2, activity.getString(R.string.open_in_browser))
-        popupMenu.menu.add(0, 203, 3, activity.getString(R.string.remove_web_app))
-        popupMenu.menu.add(0, 204, 4, if (activity.favoriteAppManager.isFavoriteApp(packageName)) activity.getString(R.string.remove_from_favorites_plain) else activity.getString(R.string.add_to_favorites_plain))
-        popupMenu.menu.add(0, 205, 5, if (activity.hiddenAppManager.isAppHidden(packageName)) activity.getString(R.string.unhide_app_plain) else activity.getString(R.string.hide_app_plain))
-
-        for (i in 0 until popupMenu.menu.size()) {
-            val item = popupMenu.menu.getItem(i)
-            val spannable = android.text.SpannableString(item.title)
-            spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            item.title = spannable
-        }
-
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                200 -> {
-                    openWebApp(appInfo)
-                    true
-                }
-                201 -> {
-                    activity.startActivity(Intent(activity, WebAppSettingsActivity::class.java))
-                    true
-                }
-                202 -> {
-                    val url = appInfo.activityInfo.nonLocalizedLabel?.toString().orEmpty()
-                    if (url.isNotBlank()) activity.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
-                    true
-                }
-                203 -> {
-                    val webApp = activity.webAppManager.getWebApp(packageName)
-                    if (webApp != null) {
-                        activity.webAppManager.removeWebApp(webApp.id)
-                        Toast.makeText(activity, activity.getString(R.string.removed_web_app, appName), Toast.LENGTH_SHORT).show()
-                        activity.sendBroadcast(Intent("com.guruswarupa.launch.SETTINGS_UPDATED").apply { setPackage(activity.packageName) })
-                    }
-                    true
-                }
-                204 -> {
-                    toggleFavoriteApp(packageName, appInfo)
-                    true
-                }
-                205 -> {
-                    toggleHideApp(packageName, appInfo)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        popupMenu.show()
-        fixPopupMenuTextColors(popupMenu)
-    }
-
-    @SuppressLint("DiscouragedPrivateApi")
-    private fun fixPopupMenuTextColors(popupMenu: PopupMenu) {
-        try {
-            val textColor = TypographyManager.getConfiguredFontColor(activity) ?: ContextCompat.getColor(activity, R.color.text)
-            val popupField = popupMenu.javaClass.getDeclaredField("mPopup")
-            popupField.isAccessible = true
-            val menuPopupHelper = popupField.get(popupMenu)
-            val menuPopupHelperClass = menuPopupHelper?.javaClass
-            val listViewFieldNames = arrayOf("mDropDownList", "mPopup", "mListView")
-            var listView: android.widget.ListView? = null
-
-            for (fieldName in listViewFieldNames) {
-                try {
-                    val listViewField = menuPopupHelperClass?.getDeclaredField(fieldName)
-                    listViewField?.isAccessible = true
-                    val result = listViewField?.get(menuPopupHelper)
-                    if (result is android.widget.ListView) {
-                        listView = result
-                        break
-                    }
-                } catch (_: NoSuchFieldException) {
-                }
-            }
-
-            fun fixTextColors(view: View) {
-                if (view is TextView) {
-                    view.setTextColor(textColor)
-                } else if (view is ViewGroup) {
-                    findTextViewsAndSetColor(view, textColor)
-                }
-            }
-
-            listView?.let { lv ->
-                try {
-                    for (i in 0 until lv.childCount) fixTextColors(lv.getChildAt(i))
-                } catch (_: Exception) {
-                }
-                lv.post {
-                    try {
-                        for (i in 0 until lv.childCount) {
-                            val itemView = lv.getChildAt(i)
-                            if (itemView is TextView) itemView.setTextColor(textColor) else if (itemView is ViewGroup) findTextViewsAndSetColor(itemView, textColor)
-                        }
-                    } catch (_: Exception) {
-                    }
-                }
-            }
-        } catch (_: Exception) {
-        }
-    }
-
-    private fun findTextViewsAndSetColor(viewGroup: ViewGroup, color: Int) {
-        for (i in 0 until viewGroup.childCount) {
-            val child = viewGroup.getChildAt(i)
-            if (child is TextView) child.setTextColor(color) else if (child is ViewGroup) findTextViewsAndSetColor(child, color)
-        }
-    }
-
-    private fun showAppInfo(packageName: String) {
-        activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply { data = "package:$packageName".toUri() })
-    }
-
-    private fun shareApp(packageName: String, appInfo: ResolveInfo) {
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
-        val appName = labelCache[cacheKey] ?: packageName
-        ShareManager(activity).shareApk(packageName, appName)
-    }
-
-    private fun uninstallApp(packageName: String) {
-        @Suppress("DEPRECATION")
-        activity.startActivity(Intent(Intent.ACTION_UNINSTALL_PACKAGE).apply { data = "package:$packageName".toUri() })
-    }
-
-    private fun toggleFavoriteApp(packageName: String, appInfo: ResolveInfo) {
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
-        val appName = labelCache[cacheKey] ?: packageName
-        if (activity.favoriteAppManager.isFavoriteApp(packageName)) {
-            activity.favoriteAppManager.removeFavoriteApp(packageName)
-            Toast.makeText(activity, activity.getString(R.string.removed_from_favorites, appName), Toast.LENGTH_SHORT).show()
-
-
-            val remainingFavorites = activity.favoriteAppManager.getFavoriteApps()
-            if (remainingFavorites.isEmpty() && activity.showOnlyFavoritesInitially) {
-                activity.showOnlyFavoritesInitially = false
-            }
-        } else {
-            activity.favoriteAppManager.addFavoriteApp(packageName)
-            Toast.makeText(activity, activity.getString(R.string.added_to_favorites, appName), Toast.LENGTH_SHORT).show()
-        }
-        activity.filterAppsWithoutReload()
-    }
-
-    private fun toggleHideApp(packageName: String, appInfo: ResolveInfo) {
-        try {
-            val cacheKey = "${packageName}|${appInfo.preferredOrder}"
-            val appName = labelCache[cacheKey] ?: packageName
-            if (activity.hiddenAppManager.isAppHidden(packageName)) {
-                activity.hiddenAppManager.unhideApp(packageName)
-                Toast.makeText(activity, activity.getString(R.string.unhid_app, appName), Toast.LENGTH_SHORT).show()
-            } else {
-                activity.hiddenAppManager.hideApp(packageName)
-                Toast.makeText(activity, activity.getString(R.string.hid_app, appName), Toast.LENGTH_SHORT).show()
-            }
-            activity.filterAppsWithoutReload()
-        } catch (_: UninitializedPropertyAccessException) {
-            Toast.makeText(activity, activity.getString(R.string.hidden_apps_feature_not_available), Toast.LENGTH_SHORT).show()
-        }
+        appContextMenuHandler.showWebAppContextMenu(view, packageName, appInfo)
     }
 
     private fun bindWebApp(holder: ViewHolder, appInfo: ResolveInfo, packageName: String) {
@@ -891,7 +548,6 @@ class AppAdapter(
             Toast.makeText(activity, R.string.web_app_load_failed, Toast.LENGTH_SHORT).show()
             return
         }
-
 
         val webAppManager = com.guruswarupa.launch.managers.WebAppManager(
             activity.getSharedPreferences(com.guruswarupa.launch.models.Constants.Prefs.PREFS_NAME, android.content.Context.MODE_PRIVATE)
