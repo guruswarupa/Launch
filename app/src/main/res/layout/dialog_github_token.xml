@@ -23,11 +23,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/github_username_input"
+            style="@style/DialogTextInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="14dp"
             android:paddingBottom="14dp"
-            android:textColor="@color/dialog_text"
             android:textSize="15sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -41,12 +41,12 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/github_token_input"
+            style="@style/DialogTextInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:paddingTop="14dp"
             android:paddingBottom="14dp"
-            android:textColor="@color/dialog_text"
             android:textSize="15sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
