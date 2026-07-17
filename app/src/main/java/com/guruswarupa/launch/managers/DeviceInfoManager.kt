@@ -33,17 +33,17 @@ class DeviceInfoManager(private val context: Context) {
 
     fun getCpuModel(): String {
         return try {
-            val reader = BufferedReader(FileReader("/proc/cpuinfo"))
-            var line: String? = reader.readLine()
             var model = "Unknown"
-            while (line != null) {
-                if (line.contains("Hardware") || line.contains("model name")) {
-                    model = line.split(":")[1].trim()
-                    break
+            BufferedReader(FileReader("/proc/cpuinfo")).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    if (line.contains("Hardware") || line.contains("model name")) {
+                        model = line.split(":")[1].trim()
+                        break
+                    }
+                    line = reader.readLine()
                 }
-                line = reader.readLine()
             }
-            reader.close()
 
             if (model == "Unknown" || model.isEmpty()) {
                 return Build.HARDWARE ?: Build.BOARD
@@ -62,9 +62,7 @@ class DeviceInfoManager(private val context: Context) {
 
     private fun getCpuUsageFromProcStat(): Int {
         return try {
-            val reader = BufferedReader(FileReader("/proc/stat"))
-            val line = reader.readLine() ?: return 0
-            reader.close()
+            val line = BufferedReader(FileReader("/proc/stat")).use { it.readLine() } ?: return 0
 
             val parts = line.split("\\s+".toRegex())
             if (parts.size >= 8) {
@@ -96,35 +94,35 @@ class DeviceInfoManager(private val context: Context) {
     fun getCpuCoreUsages(): List<Int> {
         val coreUsages = mutableListOf<Int>()
         try {
-            val reader = BufferedReader(FileReader("/proc/stat"))
-            reader.readLine() // skip first line (total)
-            var line = reader.readLine()
-            var coreIdx = 0
-            while (line != null && line.startsWith("cpu") && coreIdx < 32) {
-                val parts = line.split("\\s+".toRegex())
-                if (parts.size >= 5) {
-                    val user = parts[1].toLong()
-                    val nice = parts[2].toLong()
-                    val system = parts[3].toLong()
-                    val idle = parts[4].toLong()
-                    val ioWait = if (parts.size > 5) parts[5].toLong() else 0L
-                    val irq = if (parts.size > 6) parts[6].toLong() else 0L
-                    val softIrq = if (parts.size > 7) parts[7].toLong() else 0L
+            BufferedReader(FileReader("/proc/stat")).use { reader ->
+                reader.readLine() // skip first line (total)
+                var line = reader.readLine()
+                var coreIdx = 0
+                while (line != null && line.startsWith("cpu") && coreIdx < 32) {
+                    val parts = line.split("\\s+".toRegex())
+                    if (parts.size >= 5) {
+                        val user = parts[1].toLong()
+                        val nice = parts[2].toLong()
+                        val system = parts[3].toLong()
+                        val idle = parts[4].toLong()
+                        val ioWait = if (parts.size > 5) parts[5].toLong() else 0L
+                        val irq = if (parts.size > 6) parts[6].toLong() else 0L
+                        val softIrq = if (parts.size > 7) parts[7].toLong() else 0L
 
-                    val total = user + nice + system + idle + ioWait + irq + softIrq
-                    val diffTotal = total - lastCoreTotal[coreIdx]
-                    val diffIdle = idle - lastCoreIdle[coreIdx]
+                        val total = user + nice + system + idle + ioWait + irq + softIrq
+                        val diffTotal = total - lastCoreTotal[coreIdx]
+                        val diffIdle = idle - lastCoreIdle[coreIdx]
 
-                    lastCoreTotal[coreIdx] = total
-                    lastCoreIdle[coreIdx] = idle
+                        lastCoreTotal[coreIdx] = total
+                        lastCoreIdle[coreIdx] = idle
 
-                    val usage = if (diffTotal > 0) ((diffTotal - diffIdle) * 100 / diffTotal).toInt() else 0
-                    coreUsages.add(usage.coerceIn(0, 100))
+                        val usage = if (diffTotal > 0) ((diffTotal - diffIdle) * 100 / diffTotal).toInt() else 0
+                        coreUsages.add(usage.coerceIn(0, 100))
+                    }
+                    line = reader.readLine()
+                    coreIdx++
                 }
-                line = reader.readLine()
-                coreIdx++
             }
-            reader.close()
         } catch (_: Exception) {}
 
         if (coreUsages.isEmpty()) {
@@ -276,9 +274,7 @@ class DeviceInfoManager(private val context: Context) {
             try {
                 val file = File(path)
                 if (file.exists() && file.canRead()) {
-                    val reader = BufferedReader(FileReader(file))
-                    val line = reader.readLine()
-                    reader.close()
+                    val line = BufferedReader(FileReader(file)).use { it.readLine() }
                     if (line != null) {
                         if (line.contains(" ")) {
                             val parts = line.trim().split("\\s+".toRegex())

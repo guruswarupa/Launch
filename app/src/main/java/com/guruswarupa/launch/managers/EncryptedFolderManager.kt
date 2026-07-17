@@ -129,9 +129,9 @@ class EncryptedFolderManager(private val context: Context) {
 
                 FileOutputStream(destinationFile).use { fos ->
                     fos.write(iv)
-                    val cipherOutputStream = javax.crypto.CipherOutputStream(fos, cipher)
-                    inputStream.copyTo(cipherOutputStream)
-                    cipherOutputStream.close()
+                    javax.crypto.CipherOutputStream(fos, cipher).use { cos ->
+                        inputStream.copyTo(cos)
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -145,16 +145,20 @@ class EncryptedFolderManager(private val context: Context) {
         val sourceFile = File(encryptedFolder, fileName)
 
         val fis = FileInputStream(sourceFile)
-        val iv = ByteArray(IV_SIZE)
-        if (fis.read(iv) != IV_SIZE) {
+        try {
+            val iv = ByteArray(IV_SIZE)
+            if (fis.read(iv) != IV_SIZE) {
+                throw IOException("Invalid file format")
+            }
+
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
+
+            return javax.crypto.CipherInputStream(fis, cipher)
+        } catch (e: Exception) {
             fis.close()
-            throw IOException("Invalid file format")
+            throw e
         }
-
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
-
-        return javax.crypto.CipherInputStream(fis, cipher)
     }
 
     fun decryptToOutputStream(fileName: String, outputStream: OutputStream) {
@@ -333,9 +337,9 @@ class EncryptedFolderManager(private val context: Context) {
 
         FileOutputStream(thumbFile).use { fos ->
             fos.write(iv)
-            val cos = javax.crypto.CipherOutputStream(fos, cipher)
-            cos.write(byteArray)
-            cos.close()
+            javax.crypto.CipherOutputStream(fos, cipher).use { cos ->
+                cos.write(byteArray)
+            }
         }
         if (cropped != bitmap) cropped.recycle()
     }
@@ -402,25 +406,21 @@ class EncryptedFolderManager(private val context: Context) {
 
     fun exportVault(outputStream: OutputStream): Boolean {
         return try {
-            val zipOut = java.util.zip.ZipOutputStream(outputStream)
+            java.util.zip.ZipOutputStream(outputStream).use { zipOut ->
+                encryptedFolder.listFiles()?.forEach { file ->
+                    val entry = java.util.zip.ZipEntry("data/${file.name}")
+                    zipOut.putNextEntry(entry)
+                    file.inputStream().use { it.copyTo(zipOut) }
+                    zipOut.closeEntry()
+                }
 
-
-            encryptedFolder.listFiles()?.forEach { file ->
-                val entry = java.util.zip.ZipEntry("data/${file.name}")
-                zipOut.putNextEntry(entry)
-                file.inputStream().use { it.copyTo(zipOut) }
-                zipOut.closeEntry()
+                thumbnailFolder.listFiles()?.forEach { file ->
+                    val entry = java.util.zip.ZipEntry("thumbs/${file.name}")
+                    zipOut.putNextEntry(entry)
+                    file.inputStream().use { it.copyTo(zipOut) }
+                    zipOut.closeEntry()
+                }
             }
-
-
-            thumbnailFolder.listFiles()?.forEach { file ->
-                val entry = java.util.zip.ZipEntry("thumbs/${file.name}")
-                zipOut.putNextEntry(entry)
-                file.inputStream().use { it.copyTo(zipOut) }
-                zipOut.closeEntry()
-            }
-
-            zipOut.close()
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -430,27 +430,27 @@ class EncryptedFolderManager(private val context: Context) {
 
     fun importVault(inputStream: InputStream): Boolean {
         return try {
-            val zipIn = java.util.zip.ZipInputStream(inputStream)
-            var entry = zipIn.nextEntry
-            while (entry != null) {
-                val destFile = if (entry.name.startsWith("data/")) {
-                    File(encryptedFolder, entry.name.substring(5))
-                } else if (entry.name.startsWith("thumbs/")) {
-                    File(thumbnailFolder, entry.name.substring(7))
-                } else {
-                    null
-                }
-
-                destFile?.let {
-                    it.parentFile?.mkdirs()
-                    FileOutputStream(it).use { fos ->
-                        zipIn.copyTo(fos)
+            java.util.zip.ZipInputStream(inputStream).use { zipIn ->
+                var entry = zipIn.nextEntry
+                while (entry != null) {
+                    val destFile = if (entry.name.startsWith("data/")) {
+                        File(encryptedFolder, entry.name.substring(5))
+                    } else if (entry.name.startsWith("thumbs/")) {
+                        File(thumbnailFolder, entry.name.substring(7))
+                    } else {
+                        null
                     }
+
+                    destFile?.let {
+                        it.parentFile?.mkdirs()
+                        FileOutputStream(it).use { fos ->
+                            zipIn.copyTo(fos)
+                        }
+                    }
+                    zipIn.closeEntry()
+                    entry = zipIn.nextEntry
                 }
-                zipIn.closeEntry()
-                entry = zipIn.nextEntry
             }
-            zipIn.close()
             true
         } catch (e: Exception) {
             e.printStackTrace()

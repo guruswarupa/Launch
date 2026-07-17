@@ -175,9 +175,9 @@ class CacheManager @Inject constructor(
         return try {
             if (!appMetadataCacheFile.exists()) return emptyMap()
 
-            val inputStream = FileInputStream(appMetadataCacheFile)
-            val json = inputStream.bufferedReader().use { it.readText() }
-            inputStream.close()
+            val json = FileInputStream(appMetadataCacheFile).use { inputStream ->
+                inputStream.bufferedReader().readText()
+            }
 
             val adapter = moshi.adapter<Map<String, AppMetadata>>(mapType)
             val metadata = adapter.fromJson(json) ?: emptyMap()
@@ -212,9 +212,9 @@ class CacheManager @Inject constructor(
                 val adapter = moshi.adapter<Map<String, AppMetadata>>(mapType)
                 val json = adapter.toJson(metadata)
 
-                val outputStream = FileOutputStream(appMetadataCacheFile)
-                outputStream.bufferedWriter().use { it.write(json) }
-                outputStream.close()
+                FileOutputStream(appMetadataCacheFile).use { outputStream ->
+                    outputStream.bufferedWriter().write(json)
+                }
             } catch (_: Exception) {
             }
         }
@@ -336,8 +336,9 @@ class CacheManager @Inject constructor(
                 }
                 
                 val outputStream = java.io.FileOutputStream(iconFile)
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, outputStream)
-                outputStream.close()
+                outputStream.use { os ->
+                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, os)
+                }
             } catch (_: Exception) {
             }
         }
