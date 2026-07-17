@@ -68,14 +68,15 @@ class AppUsageMonitor : Service() {
     private fun startMonitoring() {
         if (monitoringRunnable != null) return
 
-        monitoringRunnable = object : Runnable {
+        val runnable = object : Runnable {
             override fun run() {
                 checkForegroundAppUsage()
 
                 handler.postDelayed(this, POLLING_INTERVAL_MS)
             }
         }
-        handler.post(monitoringRunnable!!)
+        monitoringRunnable = runnable
+        handler.post(runnable)
     }
 
     private fun checkForegroundAppUsage() {
