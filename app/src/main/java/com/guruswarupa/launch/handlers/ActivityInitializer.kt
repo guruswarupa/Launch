@@ -172,7 +172,7 @@ class ActivityInitializer(
         views.timeTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
         views.dateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
         views.weatherText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-        activity.findViewById<TextView>(R.id.battery_percentage)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+        activity.findViewById<TextView>(R.id.daily_usage_time)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
 
         (views.appDock.parent as? View)?.let { dockContainer ->
             dockContainer.setPadding(compactMargin, compactMargin, compactMargin, compactMargin)
@@ -199,7 +199,7 @@ class ActivityInitializer(
         views.timeTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32f)
         views.dateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
         views.weatherText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-        activity.findViewById<TextView>(R.id.battery_percentage)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+        activity.findViewById<TextView>(R.id.daily_usage_time)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
 
         (views.appDock.parent as? View)?.setPadding(
             defaultDockPadding,
