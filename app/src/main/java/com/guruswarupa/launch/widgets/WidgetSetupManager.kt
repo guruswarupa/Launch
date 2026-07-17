@@ -10,7 +10,6 @@ import android.widget.TextView
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.AppUsageStatsManager
-import com.guruswarupa.launch.managers.BatteryManager
 
 
 
@@ -19,7 +18,8 @@ class WidgetSetupManager(
     private val activity: MainActivity,
     private val usageStatsManager: AppUsageStatsManager,
     private val weatherManager: com.guruswarupa.launch.utils.WeatherManager,
-    private val permissionManager: com.guruswarupa.launch.core.PermissionManager
+    private val permissionManager: com.guruswarupa.launch.core.PermissionManager,
+    private val secureStorageManager: com.guruswarupa.launch.core.SecureStorageManager
 ) {
     companion object {
         private const val TAG = "WidgetSetupManager"
@@ -75,13 +75,8 @@ class WidgetSetupManager(
         return createWidget(widgetView)
     }
 
-    fun setupBatteryAndUsage() {
-
-        val batteryPercentageTextView = activity.findViewById<TextView>(R.id.battery_percentage)
-
-
-        val batteryManager = BatteryManager(activity)
-        batteryPercentageTextView?.let { batteryManager.updateBatteryInfo(it) }
+    fun setupTopWidgetData() {
+        // Usage update is handled by UsageStatsRefreshManager via LifecycleManager
     }
 
     fun setupWeather(weatherIcon: ImageView, weatherText: TextView) {
@@ -190,8 +185,9 @@ class WidgetSetupManager(
     }
 
     fun setupGithubContributionWidget(sharedPreferences: android.content.SharedPreferences): GithubContributionWidget =
-        setupWidgetWithPrefs(R.id.github_contributions_widget_container, sharedPreferences) { act, container, prefs ->
-            GithubContributionWidget(act, container, prefs)
+        setupWidgetWithPrefs(R.id.github_contributions_widget_container, sharedPreferences) { act, container, _ ->
+            val securePrefs = secureStorageManager.getSecurePrefs(com.guruswarupa.launch.core.SecureStorageManager.GITHUB_PREFS)
+            GithubContributionWidget(act, container, securePrefs)
         }
 
     fun setupBatteryHealthWidget(): BatteryHealthWidget =

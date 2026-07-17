@@ -16,6 +16,7 @@ import com.guruswarupa.launch.utils.FinanceWidgetManager
 class FinanceWidgetInitializer(
     private val context: Context,
     private val sharedPreferences: SharedPreferences,
+    private val secureStorageManager: com.guruswarupa.launch.core.SecureStorageManager,
     private val delay: Long
 ) {
     private var onInitializedListener: ((FinanceWidgetManager) -> Unit)? = null
@@ -37,7 +38,8 @@ class FinanceWidgetInitializer(
             val activity = context as? MainActivity ?: return@postDelayed
             if (activity.isFinishing || activity.isDestroyed) return@postDelayed
 
-            val financeManager = FinanceManager(sharedPreferences)
+            val financePrefs = secureStorageManager.getSecurePrefs(com.guruswarupa.launch.core.SecureStorageManager.FINANCE_PREFS)
+            val financeManager = FinanceManager(financePrefs)
             val balanceText = activity.findViewById<TextView>(R.id.balance_text)
             val monthlySpentText = activity.findViewById<TextView>(R.id.monthly_spent_text)
             val amountInput = activity.findViewById<EditText>(R.id.amount_input)
@@ -47,7 +49,7 @@ class FinanceWidgetInitializer(
                 amountInput != null && descriptionInput != null
             ) {
                 val manager = FinanceWidgetManager(
-                    activity, sharedPreferences, financeManager,
+                    activity, financePrefs, financeManager,
                     balanceText, monthlySpentText, amountInput, descriptionInput
                 )
                 manager.setup()

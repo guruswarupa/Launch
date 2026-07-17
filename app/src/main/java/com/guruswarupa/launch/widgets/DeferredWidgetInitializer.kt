@@ -14,7 +14,7 @@ class DeferredWidgetInitializer(
 ) {
 
     fun initialize() {
-        widgetSetupManager.setupBatteryAndUsage()
+        widgetSetupManager.setupTopWidgetData()
 
         with(widgetLifecycleCoordinator) {
             mediaControllerWidget = widgetSetupManager.setupMediaControllerWidget()
