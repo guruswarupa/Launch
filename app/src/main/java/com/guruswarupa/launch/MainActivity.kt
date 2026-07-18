@@ -772,24 +772,28 @@ class MainActivity : FragmentActivity() {
 
     private fun handlePackageChange(packageName: String?, isRemoved: Boolean) {
         if (packageName == null) return
-        cacheManager.removeMetadata(packageName)
+        backgroundExecutor.execute {
+            cacheManager.removeMetadata(packageName)
 
-        if (isRemoved) {
-            cacheManager.clearCache()
-        }
+            if (isRemoved) {
+                cacheManager.clearCache()
+            }
 
-        runOnUiThread {
             appList.removeAll { it.activityInfo.packageName == packageName }
             fullAppList.removeAll { it.activityInfo.packageName == packageName }
 
-            appListLoader.clearCache()
-            adapter.updateAppList(appList)
-            updateFastScrollerVisibility()
-        }
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed) {
+                    appListLoader.clearCache()
+                    adapter.updateAppList(appList)
+                    updateFastScrollerVisibility()
+                }
+            }
 
-        if (!isRemoved) {
-            appListLoader.clearCache()
-            appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
+            if (!isRemoved) {
+                appListLoader.clearCache()
+                appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
+            }
         }
     }
 
@@ -860,9 +864,11 @@ class MainActivity : FragmentActivity() {
         super.onTrimMemory(level)
 
         if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
-            cacheManager.getMetadataCache().keys.toList()
-                .filter { it.startsWith("com.guruswarupa.launch.webapp.") }
-                .forEach { cacheManager.removeMetadata(it) }
+            backgroundExecutor.execute {
+                cacheManager.getMetadataCache().keys.toList()
+                    .filter { it.startsWith("com.guruswarupa.launch.webapp.") }
+                    .forEach { cacheManager.removeMetadata(it) }
+            }
             wallpaperManagerHelper.clearCache()
         }
 
