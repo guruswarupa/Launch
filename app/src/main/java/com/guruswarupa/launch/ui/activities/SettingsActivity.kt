@@ -17,6 +17,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
+import java.lang.ref.WeakReference
 import android.provider.Settings
 import android.text.Html
 import android.text.method.LinkMovementMethod
@@ -85,7 +87,15 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
     }
 
     private val prefs by lazy { getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE) }
-    private val handler = Handler(Looper.getMainLooper())
+
+    private class SettingsHandler(activity: SettingsActivity) : Handler(Looper.getMainLooper()) {
+        private val weakActivity = WeakReference(activity)
+        override fun handleMessage(msg: Message) {
+            val activity = weakActivity.get() ?: return
+        }
+    }
+
+    private val handler = SettingsHandler(this)
     private var selectedThemeId: String = "stardust"
     private var selectedThemeCategory: String? = null
     private var hasUnsavedThemeChanges = false

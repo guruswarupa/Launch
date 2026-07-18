@@ -13,6 +13,8 @@ import android.os.BatteryManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
+import java.lang.ref.WeakReference
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -36,7 +38,15 @@ class SystemMonitorActivity : AppCompatActivity() {
 
     private lateinit var deviceInfoManager: DeviceInfoManager
     private lateinit var appBatteryManager: AppBatteryManager
-    private val handler = Handler(Looper.getMainLooper())
+
+    private class SystemMonitorHandler(activity: SystemMonitorActivity) : Handler(Looper.getMainLooper()) {
+        private val weakActivity = WeakReference(activity)
+        override fun handleMessage(msg: Message) {
+            val activity = weakActivity.get() ?: return
+        }
+    }
+
+    private val handler = SystemMonitorHandler(this)
     private var updateRunnable: Runnable? = null
     private val prefs by lazy { getSharedPreferences("system_monitor_prefs", MODE_PRIVATE) }
 

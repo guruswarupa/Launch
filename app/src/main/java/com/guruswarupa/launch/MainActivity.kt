@@ -12,6 +12,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
+import java.lang.ref.WeakReference
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -108,7 +110,17 @@ class MainActivity : FragmentActivity() {
     lateinit var weatherManager: WeatherManager
 
     internal val prefsName = "com.guruswarupa.launch.PREFS"
-    internal val handler = Handler(Looper.getMainLooper())
+
+    internal class MainActivityHandler(activity: MainActivity) : Handler(Looper.getMainLooper()) {
+        private val weakActivity = WeakReference(activity)
+
+        override fun handleMessage(msg: Message) {
+            val activity = weakActivity.get() ?: return
+            // Specific message handling can be added here if needed
+        }
+    }
+
+    internal val handler = MainActivityHandler(this)
 
     lateinit var adapter: AppAdapter
 
