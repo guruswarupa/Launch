@@ -264,5 +264,6 @@ class NetworkStatsManager {
 
     fun cleanup() {
         executor.shutdown()
+        handler.removeCallbacksAndMessages(null)
     }
 }

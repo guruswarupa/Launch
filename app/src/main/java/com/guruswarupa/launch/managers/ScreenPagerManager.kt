@@ -313,8 +313,14 @@ class ScreenPagerManager(
         }
     }
 
-    fun setOnPageChanged(listener: (Page) -> Unit) {
+    fun setOnPageChanged(listener: ((Page) -> Unit)?) {
         pageChangeListener = listener
+    }
+
+    fun cleanup() {
+        pageChangeListener = null
+        velocityTracker?.recycle()
+        velocityTracker = null
     }
 
     fun isPageOpen(page: Page): Boolean = currentPage == page
