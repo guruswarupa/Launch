@@ -1,6 +1,7 @@
 package com.guruswarupa.launch.services
 
 import android.service.notification.NotificationListenerService
+import java.lang.ref.WeakReference
 import android.service.notification.StatusBarNotification
 import android.util.Log
 
@@ -8,8 +9,12 @@ class LaunchNotificationListenerService : NotificationListenerService() {
 
     companion object {
         private const val TAG = "LaunchNotificationListener"
-        var instance: LaunchNotificationListenerService? = null
-            private set
+        private var _instance: WeakReference<LaunchNotificationListenerService>? = null
+        var instance: LaunchNotificationListenerService?
+            get() = _instance?.get()
+            private set(value) {
+                _instance = value?.let { WeakReference(it) }
+            }
     }
 
     private var isListenerConnected = false

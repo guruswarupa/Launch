@@ -38,6 +38,7 @@ import android.text.TextUtils
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
+import java.lang.ref.WeakReference
 import android.content.SharedPreferences
 import android.content.Context.RECEIVER_EXPORTED
 import androidx.core.content.ContextCompat
@@ -55,8 +56,12 @@ import kotlin.math.abs
 class ScreenLockAccessibilityService : AccessibilityService() {
     companion object {
         private const val TAG = "ScreenLockAccessibility"
-        var instance: ScreenLockAccessibilityService? = null
-            private set
+        private var _instance: WeakReference<ScreenLockAccessibilityService>? = null
+        var instance: ScreenLockAccessibilityService?
+            get() = _instance?.get()
+            private set(value) {
+                _instance = value?.let { WeakReference(it) }
+            }
 
         const val DEFAULT_SHORTCUTS = "wifi,bluetooth,airplane,torch,data,rotation,sound,dnd,location,qr_scan,camera,screenshot,record,lock,power,hotspot,screen_timeout"
     }
