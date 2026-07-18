@@ -218,8 +218,8 @@
                                 android:id="@+id/show_app_name_in_grid_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:thumbTint="@color/nord8"
-                                android:trackTint="@color/nord8"/>
+                                app:thumbTint="@color/nord8"
+                                app:trackTint="@color/nord8"/>
                         </LinearLayout>
 
                         <LinearLayout
