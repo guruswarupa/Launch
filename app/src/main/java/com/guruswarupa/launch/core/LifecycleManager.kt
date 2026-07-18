@@ -230,5 +230,10 @@ class LifecycleManager(
 
     fun cleanup() {
         handler.removeCallbacksAndMessages(null)
+        onResumeCallbacks.clear()
+        onPauseCallbacks.clear()
+        onUsageUpdate = null
+        onFocusModeApply = null
+        onLoadApps = null
     }
 }

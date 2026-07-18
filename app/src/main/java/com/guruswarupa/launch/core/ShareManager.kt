@@ -298,5 +298,6 @@ class ShareManager(private val context: Context) {
 
     fun cleanup() {
         executor.shutdown()
+        handler.removeCallbacksAndMessages(null)
     }
 }
