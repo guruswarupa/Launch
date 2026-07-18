@@ -76,7 +76,14 @@ class RssFeedPage(
             manageButton.performClick()
         }
 
-        renderArticles(activity.rssFeedManager.getCachedArticles())
+        activity.backgroundExecutor.execute {
+            val cachedArticles = activity.rssFeedManager.getCachedArticles()
+            activity.runOnUiThread {
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    renderArticles(cachedArticles)
+                }
+            }
+        }
     }
 
     private fun updateContentTopPadding() {
@@ -116,10 +123,17 @@ class RssFeedPage(
 
     private fun renderArticles(articles: List<RssArticle>) {
         allArticles = articles
-        updateTopicChips()
-        val filteredArticles = filterArticles()
-        adapter.submitArticles(filteredArticles)
-        applyEmptyState(filteredArticles)
+        activity.backgroundExecutor.execute {
+            val categories = activity.rssFeedManager.getEnabledCategories()
+            activity.runOnUiThread {
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    updateTopicChipsWithCategories(categories)
+                    val filteredArticles = filterArticles()
+                    adapter.submitArticles(filteredArticles)
+                    applyEmptyState(filteredArticles)
+                }
+            }
+        }
     }
 
     private fun applyEmptyState(filteredArticles: List<RssArticle>) {
@@ -156,7 +170,17 @@ class RssFeedPage(
     }
 
     private fun updateTopicChips() {
-        val categories = activity.rssFeedManager.getEnabledCategories()
+        activity.backgroundExecutor.execute {
+            val categories = activity.rssFeedManager.getEnabledCategories()
+            activity.runOnUiThread {
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    updateTopicChipsWithCategories(categories)
+                }
+            }
+        }
+    }
+
+    private fun updateTopicChipsWithCategories(categories: List<String>) {
         topicChips.isVisible = categories.isNotEmpty()
         if (categories.isEmpty()) {
             selectedCategory = null
