@@ -14,7 +14,7 @@ class AppLauncher(
     fun launchApp(packageName: String, appName: String) {
         try {
             val intent = packageManager.getLaunchIntentForPackage(packageName)
-            if (intent != null) {
+            if (intent != null && intent.resolveActivity(packageManager) != null) {
                 activity.startActivity(intent)
             } else {
                 Toast.makeText(activity, "$appName app is not installed.", Toast.LENGTH_SHORT).show()
