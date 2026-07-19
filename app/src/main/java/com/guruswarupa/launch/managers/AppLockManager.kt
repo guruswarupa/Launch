@@ -174,7 +174,7 @@ class AppLockManager(private val context: Context) {
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
                     Toast.makeText(context, R.string.app_lock_biometric_failed, Toast.LENGTH_SHORT).show()
-
+                    callback(false)
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
