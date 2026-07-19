@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.AppTimerManager
 import com.guruswarupa.launch.managers.AppUsageMonitor
-import com.guruswarupa.launch.managers.DailyUsageManager
 import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.setDialogInputView
@@ -50,7 +49,6 @@ class AppTimerManagementActivity : ComponentActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var appTimerManager: AppTimerManager
-    private lateinit var dailyUsageManager: DailyUsageManager
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var searchBox: EditText
     private lateinit var summaryText: TextView
@@ -71,7 +69,6 @@ class AppTimerManagementActivity : ComponentActivity() {
         applyContentInsets()
 
         appTimerManager = AppTimerManager(this)
-        dailyUsageManager = DailyUsageManager(this)
 
         setupViews()
         loadAppsList()
@@ -116,7 +113,7 @@ class AppTimerManagementActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             val apps = withContext(Dispatchers.IO) {
-                val usageMap = dailyUsageManager.getTodayUsageMap()
+                val usageMap = appTimerManager.getTodayUsageMap()
                 val pm = packageManager
                 val launcherIntent = Intent(Intent.ACTION_MAIN).apply {
                     addCategory(Intent.CATEGORY_LAUNCHER)
@@ -139,7 +136,7 @@ class AppTimerManagementActivity : ComponentActivity() {
                             packageName = pkgName,
                             limitMs = appTimerManager.getDailyLimit(pkgName),
                             usageTimeMs = usageMap[pkgName] ?: 0L,
-                            enabled = dailyUsageManager.isTimerEnabled(pkgName)
+                            enabled = appTimerManager.isTimerEnabled(pkgName)
                         )
                     }.sortedBy { it.name.lowercase() }
             }
@@ -186,7 +183,6 @@ class AppTimerManagementActivity : ComponentActivity() {
                     val limitMs = minutes * 60000L
 
                     appTimerManager.setDailyLimit(item.packageName, limitMs)
-                    dailyUsageManager.setTimerEnabled(item.packageName, limitMs > 0)
 
                     val updatedItem = item.copy(limitMs = limitMs, enabled = limitMs > 0)
                     (recyclerView.adapter as? AppTimerAdapter)?.updateItem(updatedItem, position)
@@ -280,7 +276,7 @@ class AppTimerManagementActivity : ComponentActivity() {
                 val currentPosition = h.bindingAdapterPosition
                 if (currentPosition == RecyclerView.NO_POSITION) return@setOnCheckedChangeListener
                 val currentItem = items[currentPosition]
-                dailyUsageManager.setTimerEnabled(currentItem.packageName, isChecked)
+                appTimerManager.setTimerEnabled(currentItem.packageName, isChecked)
                 AppUsageMonitor.syncMonitoring(this@AppTimerManagementActivity)
                 items[currentPosition] = currentItem.copy(enabled = isChecked)
                 notifyItemChanged(currentPosition)
