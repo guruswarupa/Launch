@@ -304,6 +304,7 @@ class AppTimerManager(private val context: Context) {
         currentPackageName = packageName
         prefs.edit { putLong("timer_remaining_$packageName", duration) }
 
+        currentTimer?.cancel()
         currentTimer = object : CountDownTimer(duration, 1000) {
             override fun onTick(millisUntilFinished: Long) {
 
