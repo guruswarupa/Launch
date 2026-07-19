@@ -35,6 +35,7 @@ import java.util.concurrent.RejectedExecutionException
 
 class AppTimerManager(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("app_timer_prefs", Context.MODE_PRIVATE)
+    private val dailyUsagePrefs: SharedPreferences = context.getSharedPreferences("daily_usage_prefs", Context.MODE_PRIVATE)
     private var currentTimer: CountDownTimer? = null
     private var currentPackageName: String? = null
     private val backgroundExecutor = Executors.newSingleThreadExecutor()
@@ -50,6 +51,31 @@ class AppTimerManager(private val context: Context) {
 
         const val PREF_DAILY_LIMIT_PREFIX = "daily_limit_"
         const val PREF_SESSION_TIMER_ENABLED_PREFIX = "session_timer_enabled_"
+        private const val PREF_TIMER_ENABLED_PREFIX = "timer_enabled_"
+    }
+
+    fun isTimerEnabled(packageName: String): Boolean {
+        return dailyUsagePrefs.getBoolean("${PREF_TIMER_ENABLED_PREFIX}$packageName", false)
+    }
+
+    fun setTimerEnabled(packageName: String, enabled: Boolean) {
+        dailyUsagePrefs.edit { putBoolean("${PREF_TIMER_ENABLED_PREFIX}$packageName", enabled) }
+    }
+
+    fun getAppsWithTimers(): Set<String> {
+        val apps = mutableSetOf<String>()
+        val allPrefs = dailyUsagePrefs.all
+        for (key in allPrefs.keys) {
+            if (key.startsWith(PREF_TIMER_ENABLED_PREFIX) && dailyUsagePrefs.getBoolean(key, false)) {
+                val packageName = key.removePrefix(PREF_TIMER_ENABLED_PREFIX)
+                apps.add(packageName)
+            }
+        }
+        return apps
+    }
+
+    fun getTodayUsageMap(): Map<String, Long> {
+        return usageStatsManager.getUsageMapForToday()
     }
 
     private fun runOnBackgroundThread(task: () -> Unit) {
@@ -77,7 +103,7 @@ class AppTimerManager(private val context: Context) {
 
     fun setDailyLimit(packageName: String, limit: Long) {
         prefs.edit { putLong(PREF_DAILY_LIMIT_PREFIX + packageName, limit) }
-        DailyUsageManager(context).setTimerEnabled(packageName, limit > NO_TIMER)
+        setTimerEnabled(packageName, limit > NO_TIMER)
         AppUsageMonitor.syncMonitoring(context)
         usageStatsManager.invalidateCache()
     }
