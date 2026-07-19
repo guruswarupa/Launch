@@ -68,6 +68,9 @@ class ScreenRecordingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        createNotificationChannel()
+        startForeground(NOTIFICATION_ID, createNotification())
+
         when (intent?.action) {
             ACTION_START -> {
                 val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0)
@@ -88,15 +91,15 @@ class ScreenRecordingService : Service() {
                 stopRecording()
                 stopSelf()
             }
+            else -> {
+                stopSelf()
+            }
         }
         return START_NOT_STICKY
     }
 
     private fun startRecording(resultCode: Int, data: Intent) {
         if (isRecording) return
-
-        createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification())
 
         val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val metrics = DisplayMetrics()
