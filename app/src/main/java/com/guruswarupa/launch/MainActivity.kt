@@ -896,7 +896,9 @@ class MainActivity : FragmentActivity() {
             },
             onCallPhoneGranted = {  },
             onNotificationGranted = {
-                todoManager.rescheduleTodoAlarms()
+                if (::todoManager.isInitialized) {
+                    todoManager.rescheduleTodoAlarms()
+                }
             },
             onStorageGranted = {
 

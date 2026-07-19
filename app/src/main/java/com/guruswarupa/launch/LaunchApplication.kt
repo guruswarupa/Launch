@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -124,7 +125,16 @@ class LaunchApplication : Application() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
+            val mainLooper = android.os.Looper.getMainLooper()
+            if (Looper.myLooper() == mainLooper) {
+                startActivity(intent)
+            } else {
+                android.os.Handler(mainLooper).post {
+                    try {
+                        startActivity(intent)
+                    } catch (_: Exception) {}
+                }
+            }
         }
     }
 
