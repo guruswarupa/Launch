@@ -9,15 +9,12 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
@@ -28,8 +25,6 @@ import com.guruswarupa.launch.ui.activities.FocusModeConfigActivity
 import com.guruswarupa.launch.ui.activities.WorkspaceConfigActivity
 import com.guruswarupa.launch.ui.activities.EncryptedVaultActivity
 import com.guruswarupa.launch.utils.DialogStyler
-import com.guruswarupa.launch.utils.setDialogInputView
-import java.text.DateFormat
 import java.util.Locale
 import kotlin.math.abs
 
@@ -54,21 +49,46 @@ class AppDockManager(
     private lateinit var workProfileToggle: ImageView
     private lateinit var workProfileNameText: TextView
     private val pomodoroManager: PomodoroManager
+    private val focusModeDialogs: FocusModeDialogs
     private var isFocusMode: Boolean = false
     private val res = context.resources
     private var timerHandler: android.os.Handler? = null
     private var timerRunnable: Runnable? = null
     private val workspaceManager: WorkspaceManager
     private val workProfileManager: WorkProfileManager
+    private val workspaceProfileDialogs: WorkspaceProfileDialogs
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
         isFocusMode = sharedPreferences.getBoolean(focusModeKey, false)
         workspaceManager = WorkspaceManager(sharedPreferences)
         workProfileManager = WorkProfileManager(context, sharedPreferences)
+        workspaceProfileDialogs = WorkspaceProfileDialogs(
+            context = context,
+            activity = activity,
+            workspaceManager = workspaceManager,
+            workProfileManager = workProfileManager,
+            callbacks = object : WorkspaceProfileDialogs.Callbacks {
+                override fun updateWorkspaceIcon() = this@AppDockManager.updateWorkspaceIcon()
+                override fun updateWorkProfileIcon() = this@AppDockManager.updateWorkProfileIcon()
+                override fun updateDockVisibility() = this@AppDockManager.updateDockVisibility()
+                override fun refreshAppsForWorkspace() = this@AppDockManager.refreshAppsForWorkspace()
+                override fun scrollToTop() = this@AppDockManager.scrollToTop()
+                override fun showWorkspaceSettings() = this@AppDockManager.showWorkspaceSettings()
+            }
+        )
 
         val focusModeManager = FocusModeManager(context, sharedPreferences)
         pomodoroManager = PomodoroManager(context, sharedPreferences, focusModeManager)
+        focusModeDialogs = FocusModeDialogs(
+            context = context,
+            sharedPreferences = sharedPreferences,
+            pomodoroManager = pomodoroManager,
+            onShowPomodoroSettings = { showPomodoroSettingsDialog() },
+            onEnableFocusMode = { durationMinutes, enableDnd, modeType ->
+                enableFocusMode(durationMinutes, enableDnd, modeType)
+            }
+        )
         pomodoroManager.onTimerTick = { remainingMillis, state ->
             updatePomodoroTimerDisplay(remainingMillis, state)
         }
@@ -436,125 +456,19 @@ class AppDockManager(
     }
 
     private fun showWorkProfileManagementDialog() {
-        if (!workProfileManager.hasActualWorkProfile()) {
-            AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                .setTitle("Work Profile")
-                .setMessage("Create a work profile to separate your work apps from personal apps. Work profiles keep your data isolated and secure.")
-                .setPositiveButton("Create Work Profile") { _, _ ->
-                    startWorkProfileCreation()
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
-        } else {
-            showManageWorkProfileDialog()
-        }
-    }
-
-    private fun showManageWorkProfileDialog() {
-        val options = arrayOf("Open Work Profile Settings")
-
-        AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Work Profile")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> openWorkProfileSettings()
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        workspaceProfileDialogs.showWorkProfileManagementDialog()
     }
 
     private fun startWorkProfileCreation() {
-        if (!workProfileManager.isWorkProfileSupported()) {
-            AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                .setTitle("Not Supported")
-                .setMessage("Work profiles are not supported on this device. This feature requires Android 9.0 (Pie) or higher and device support for managed profiles.")
-                .setPositiveButton("OK", null)
-                .show()
-            return
-        }
-
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                workProfileManager.createWorkProfile(activity)
-            } else {
-                Toast.makeText(context, "Work profiles require Android 9.0 or higher", Toast.LENGTH_LONG).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(context, "Failed to create work profile: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun openWorkProfileSettings() {
-        val packageManager = context.packageManager
-        val intents = listOf(
-            Intent("android.settings.MANAGED_PROFILE_SETTINGS"),
-            Intent("android.settings.SYNC_SETTINGS"),
-            Intent(android.provider.Settings.ACTION_SETTINGS)
-        ).map { intent ->
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.setPackage("com.android.settings")
-            intent
-        }
-
-        val targetIntent = intents.firstOrNull { intent ->
-            intent.resolveActivity(packageManager) != null
-        }
-
-        if (targetIntent != null) {
-            try {
-                context.startActivity(targetIntent)
-                return
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to open work profile settings", e)
-            }
-        }
-
-        Toast.makeText(context, "Unable to open work profile settings", Toast.LENGTH_SHORT).show()
+        workspaceProfileDialogs.startWorkProfileCreation()
     }
 
     private fun showCreateWorkProfileDialog() {
-        AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Create Work Profile")
-            .setMessage("No work profile was found. Create one to keep work apps separate from your personal apps.")
-            .setPositiveButton("Create") { _, _ ->
-                startWorkProfileCreation()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        workspaceProfileDialogs.showCreateWorkProfileDialog()
     }
 
     private fun showWorkspaceSelector() {
-        val workspaces = workspaceManager.getAllWorkspaces()
-        if (workspaces.isEmpty()) {
-            Toast.makeText(context, "No workspaces available. create one.", Toast.LENGTH_SHORT).show()
-            showWorkspaceSettings()
-            return
-        }
-
-        val isWorkspaceActive = workspaceManager.isWorkspaceModeActive()
-        val workspaceNames = workspaces.map { it.name }.toMutableList()
-        if (isWorkspaceActive) workspaceNames.add("Turn Off")
-
-        val itemsArray = workspaceNames.toTypedArray()
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle(if (isWorkspaceActive) "Switch Workspace" else "Select Workspace")
-            .setItems(itemsArray) { _, which ->
-                if (isWorkspaceActive && which == itemsArray.size - 1) {
-                    workspaceManager.setActiveWorkspaceId(null)
-                } else {
-                    val selectedWorkspace = workspaces[which]
-                    workspaceManager.setActiveWorkspaceId(selectedWorkspace.id)
-                }
-                updateWorkspaceIcon()
-                refreshAppsForWorkspace()
-                scrollToTop()
-            }
-            .setNegativeButton("Cancel", null)
-            .create()
-
-        DialogStyler.styleDialog(dialog)
-        dialog.show()
+        workspaceProfileDialogs.showWorkspaceSelector()
     }
 
     private fun cycleWorkspaces() {
@@ -735,88 +649,7 @@ class AppDockManager(
     }
 
     private fun showFocusModeDurationPicker() {
-        val durations = arrayOf(pomodoroManager.getModeLabel(), "15 minutes", "30 minutes", "1 hour", "2 hours", "4 hours", "Custom")
-        val durationValues = arrayOf(-2, 15, 30, 60, 120, 240, -1)
-
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Select Focus Mode Duration")
-            .setItems(durations) { _, which ->
-                when (durationValues[which]) {
-                    -2 -> pomodoroManager.startPomodoro()
-                    -1 -> showCustomDurationDialog()
-                    else -> showFocusModeTypeDialog(durationValues[which])
-                }
-            }
-            .setNeutralButton("Pomodoro Settings") { _, _ ->
-                showPomodoroSettingsDialog()
-            }
-            .setNegativeButton("Cancel", null)
-            .create()
-
-        DialogStyler.styleDialog(dialog)
-        dialog.show()
-    }
-
-    private fun showFocusModeTypeDialog(durationMinutes: Int) {
-        val modes = arrayOf("Strict Mode", "Casual Mode")
-
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Select Focus Mode Type")
-            .setSingleChoiceItems(modes, 0) { dialog, which ->
-                val modeType = if (which == 0) Constants.Prefs.FOCUS_MODE_TYPE_STRICT else Constants.Prefs.FOCUS_MODE_TYPE_CASUAL
-                sharedPreferences.edit { putString(Constants.Prefs.FOCUS_MODE_TYPE, modeType) }
-                dialog.dismiss()
-                promptForDnd(durationMinutes, modeType)
-            }
-            .setNegativeButton("Cancel", null)
-            .create()
-
-        DialogStyler.styleDialog(dialog)
-        dialog.show()
-    }
-
-    private fun showCustomDurationDialog() {
-        val input = android.widget.EditText(context).apply {
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            hint = "Enter minutes (1-480)"
-            DialogStyler.styleInput(context, this)
-        }
-
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Custom Duration")
-            .setMessage("Enter duration in minutes:")
-            .setDialogInputView(context, input)
-            .setPositiveButton("Next") { _, _ ->
-                val minutes = input.text.toString().toIntOrNull()
-                if (minutes != null && minutes in 1..480) {
-                    showFocusModeTypeDialog(minutes)
-                } else {
-                    Toast.makeText(context, "Please enter a duration between 1-480 min", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .create()
-
-        DialogStyler.styleDialog(dialog)
-        dialog.show()
-    }
-
-    private fun promptForDnd(durationMinutes: Int, modeType: String) {
-        val modeLabel = if (modeType == Constants.Prefs.FOCUS_MODE_TYPE_STRICT) "Strict" else "Casual"
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Enable Do Not Disturb?")
-            .setMessage("$modeLabel Mode - Would you like to enable Do Not Disturb mode to mute notifications during this focus session?")
-            .setPositiveButton("Yes") { _, _ ->
-                enableFocusMode(durationMinutes, true, modeType)
-            }
-            .setNegativeButton("No") { _, _ ->
-                enableFocusMode(durationMinutes, false, modeType)
-            }
-            .setNeutralButton("Cancel", null)
-            .create()
-
-        DialogStyler.styleDialog(dialog)
-        dialog.show()
+        focusModeDialogs.showDurationPicker()
     }
 
     private fun enableFocusMode(durationMinutes: Int, enableDnd: Boolean, modeType: String) {
@@ -879,133 +712,7 @@ class AppDockManager(
     }
 
     private fun showPomodoroSettingsDialog() {
-        val config = pomodoroManager.getConfig()
-        val stats = pomodoroManager.getSessionStats()
-
-        val container = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            val padding = (16 * context.resources.displayMetrics.density).toInt()
-            setPadding(padding, padding, padding, padding)
-        }
-
-        val statsView = TextView(context).apply {
-            setTextColor(Color.WHITE)
-            textSize = 14f
-            text = buildPomodoroStatsText(stats)
-        }
-
-        val descriptionView = TextView(context).apply {
-            setTextColor(Color.WHITE)
-            textSize = 14f
-            text = "Set the length of your work sessions, regular breaks, long breaks, and how often a long break should happen."
-        }
-
-        val workField = createPomodoroInputField("Work session length", "Minutes spent focusing before a break starts.", config.workMinutes)
-        val shortBreakField = createPomodoroInputField("Short break length", "Minutes for the regular break after most work sessions.", config.shortBreakMinutes)
-        val longBreakField = createPomodoroInputField("Long break length", "Minutes for the longer recovery break.", config.longBreakMinutes)
-        val longBreakIntervalField = createPomodoroInputField("Long break frequency", "Start a long break after this many completed work sessions.", config.longBreakInterval)
-
-        container.addView(statsView)
-        container.addView(descriptionView)
-        container.addView(workField)
-        container.addView(shortBreakField)
-        container.addView(longBreakField)
-        container.addView(longBreakIntervalField)
-
-        val scrollView = ScrollView(context).apply {
-            addView(container)
-        }
-
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Pomodoro Settings")
-            .setView(scrollView)
-            .setPositiveButton("Save", null)
-            .setNeutralButton("Start", null)
-            .setNegativeButton("Close", null)
-            .create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                if (savePomodoroConfig(workField, shortBreakField, longBreakField, longBreakIntervalField)) {
-                    dialog.dismiss()
-                }
-            }
-            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
-                if (savePomodoroConfig(workField, shortBreakField, longBreakField, longBreakIntervalField)) {
-                    pomodoroManager.startPomodoro()
-                    dialog.dismiss()
-                }
-            }
-        }
-
-        DialogStyler.styleDialog(dialog)
-        dialog.show()
-    }
-
-    private fun savePomodoroConfig(
-        workField: LinearLayout,
-        shortBreakField: LinearLayout,
-        longBreakField: LinearLayout,
-        longBreakIntervalField: LinearLayout
-    ): Boolean {
-        val workInput = workField.tag as EditText
-        val shortBreakInput = shortBreakField.tag as EditText
-        val longBreakInput = longBreakField.tag as EditText
-        val longBreakIntervalInput = longBreakIntervalField.tag as EditText
-        val workMinutes = workInput.text.toString().toIntOrNull() ?: -1
-        val shortBreakMinutes = shortBreakInput.text.toString().toIntOrNull() ?: -1
-        val longBreakMinutes = longBreakInput.text.toString().toIntOrNull() ?: -1
-        val longBreakInterval = longBreakIntervalInput.text.toString().toIntOrNull() ?: -1
-
-        if (workMinutes !in 1..180 || shortBreakMinutes !in 1..60 || longBreakMinutes !in 1..120 || longBreakInterval !in 2..12) {
-            Toast.makeText(context, "Use work 1-180, short break 1-60, long break 1-120, interval 2-12", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        pomodoroManager.updateConfig(workMinutes, shortBreakMinutes, longBreakMinutes, longBreakInterval)
-        Toast.makeText(context, "Pomodoro settings updated", Toast.LENGTH_SHORT).show()
-        return true
-    }
-
-    private fun createPomodoroInputField(title: String, subtitle: String, value: Int): LinearLayout {
-        val fieldContainer = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            val topPadding = (12 * context.resources.displayMetrics.density).toInt()
-            setPadding(0, topPadding, 0, 0)
-        }
-        val titleView = TextView(context).apply {
-            setTextColor(Color.WHITE)
-            textSize = 15f
-            text = title
-        }
-        val subtitleView = TextView(context).apply {
-            setTextColor(Color.parseColor("#CCFFFFFF"))
-            textSize = 13f
-            text = subtitle
-        }
-        val input = EditText(context).apply {
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            setText(value.toString())
-            hint = title
-            DialogStyler.styleInput(context, this)
-        }
-        fieldContainer.addView(titleView)
-        fieldContainer.addView(subtitleView)
-        fieldContainer.addView(input)
-        fieldContainer.tag = input
-        return fieldContainer
-    }
-
-    private fun buildPomodoroStatsText(stats: PomodoroManager.PomodoroStats): String {
-        val recent = if (stats.recentSessions.isEmpty()) {
-            "Recent sessions: none yet"
-        } else {
-            stats.recentSessions.joinToString(separator = "\n", prefix = "Recent sessions:\n") { session ->
-                val timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(session.completedAtMillis)
-                "$timestamp  ${session.durationMinutes}m  cycle ${session.cycleNumber}"
-            }
-        }
-        return "Completed sessions: ${stats.completedSessions}\nToday's sessions: ${stats.todaySessions}\nTotal focus time: ${stats.totalFocusMinutes}m\nCurrent cycle: ${stats.currentCycle}\n\n$recent"
+        PomodoroSettingsDialog(context, pomodoroManager).show()
     }
 
     private fun showDndPermissionDialog() {
