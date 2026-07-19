@@ -191,7 +191,7 @@ class DailyUsageManager(private val context: Context) {
             prefs.edit {
                 val allPrefs = prefs.all
                 for (key in allPrefs.keys) {
-                    if (key.startsWith(PREF_DAILY_USAGE_PREFIX)) {
+                    if (key.startsWith("last_used_")) {
                         remove(key)
                     }
                 }
