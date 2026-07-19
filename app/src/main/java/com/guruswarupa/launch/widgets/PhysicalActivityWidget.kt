@@ -220,13 +220,14 @@ class PhysicalActivityWidget(
 
         startTrackingService()
 
-        handler.postDelayed({
-            updateDisplay()
-        }, 1000)
+        handler.removeCallbacks(initialDisplayRunnable)
+        handler.postDelayed(initialDisplayRunnable, 1000)
 
 
         handler.postDelayed(updateRunnable, 5000)
     }
+
+    private val initialDisplayRunnable = Runnable { updateDisplay() }
 
     private fun startTrackingService() {
         sharedPreferences.edit().putBoolean(PREF_PHYSICAL_ACTIVITY_TRACKING_ENABLED, true).apply()
@@ -335,6 +336,7 @@ class PhysicalActivityWidget(
     fun onResume() {
         if (isInitialized && activityManager.hasActivityRecognitionPermission()) {
             updateDisplay()
+            handler.removeCallbacks(updateRunnable)
             handler.post(updateRunnable)
         }
     }
@@ -345,6 +347,11 @@ class PhysicalActivityWidget(
 
     fun cleanup() {
         handler.removeCallbacks(updateRunnable)
+        handler.removeCallbacks(initialDisplayRunnable)
+        handler.removeCallbacksAndMessages(null)
+        if (sharedPreferences.getBoolean(PREF_PHYSICAL_ACTIVITY_TRACKING_ENABLED, false)) {
+            stopTrackingService()
+        }
     }
 
     private fun formatWalkingTime(totalMinutes: Int): String {

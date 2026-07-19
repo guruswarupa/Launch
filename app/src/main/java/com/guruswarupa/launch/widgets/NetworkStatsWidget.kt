@@ -112,6 +112,7 @@ class NetworkStatsWidget(
 
     fun onResume() {
         if (isInitialized) {
+            handler.removeCallbacks(updateRunnable)
             handler.post(updateRunnable)
         }
     }

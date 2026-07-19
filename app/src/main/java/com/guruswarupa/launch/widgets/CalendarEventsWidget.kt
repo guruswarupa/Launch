@@ -69,9 +69,8 @@ class CalendarEventsWidget(
         override fun run() {
             if (isInitialized && hasCalendarPermission()) {
                 updateEvents()
+                handler.postDelayed(this, 300000)
             }
-
-            handler.postDelayed(this, 300000)
         }
     }
 
