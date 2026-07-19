@@ -81,8 +81,9 @@ class EncryptedFolderManager(private val context: Context) {
             FileInputStream(configFile).use { fis ->
                 val salt = ByteArray(SALT_SIZE)
                 val iv = ByteArray(IV_SIZE)
-                fis.read(salt)
-                fis.read(iv)
+                if (!readFully(fis, salt) || !readFully(fis, iv)) {
+                    return false
+                }
                 val encryptedVerification = fis.readBytes()
 
                 val key = deriveKey(password, salt)
@@ -106,6 +107,16 @@ class EncryptedFolderManager(private val context: Context) {
     }
 
     fun isUnlocked(): Boolean = masterKey != null
+
+    private fun readFully(stream: InputStream, buffer: ByteArray): Boolean {
+        var offset = 0
+        while (offset < buffer.size) {
+            val read = stream.read(buffer, offset, buffer.size - offset)
+            if (read < 0) return false
+            offset += read
+        }
+        return true
+    }
 
     private fun deriveKey(password: String, salt: ByteArray): SecretKey {
         val factory = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM)
@@ -429,13 +440,14 @@ class EncryptedFolderManager(private val context: Context) {
     }
 
     fun importVault(inputStream: InputStream): Boolean {
+        val canonicalDataDir = encryptedFolder.canonicalPath
+        val canonicalThumbsDir = thumbnailFolder.canonicalPath
         return try {
             java.util.zip.ZipInputStream(inputStream).use { zipIn ->
                 var entry = zipIn.nextEntry
                 while (entry != null) {
                     val entryName = entry.name
-                    // Prevent path traversal
-                    if (entryName.contains("..")) {
+                    if (entryName.contains("..") || File(entryName).isAbsolute) {
                         zipIn.closeEntry()
                         entry = zipIn.nextEntry
                         continue
@@ -449,10 +461,17 @@ class EncryptedFolderManager(private val context: Context) {
                         null
                     }
 
-                    destFile?.let {
-                        it.parentFile?.mkdirs()
-                        FileOutputStream(it).use { fos ->
-                            zipIn.copyTo(fos)
+                    if (destFile != null) {
+                        val canonicalDest = destFile.canonicalPath
+                        val isInsideData = canonicalDest.startsWith("$canonicalDataDir${File.separator}") ||
+                                canonicalDest == canonicalDataDir
+                        val isInsideThumbs = canonicalDest.startsWith("$canonicalThumbsDir${File.separator}") ||
+                                canonicalDest == canonicalThumbsDir
+                        if (isInsideData || isInsideThumbs) {
+                            destFile.parentFile?.mkdirs()
+                            FileOutputStream(destFile).use { fos ->
+                                zipIn.copyTo(fos)
+                            }
                         }
                     }
                     zipIn.closeEntry()
