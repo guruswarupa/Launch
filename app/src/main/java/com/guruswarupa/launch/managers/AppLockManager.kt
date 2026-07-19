@@ -11,9 +11,8 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.core.SecureStorageManager
 import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.setDialogInputView
 import java.security.MessageDigest
@@ -22,21 +21,7 @@ import java.security.SecureRandom
 class AppLockManager(private val context: Context) {
 
     private val sharedPreferences: SharedPreferences by lazy {
-        try {
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-            EncryptedSharedPreferences.create(
-                context,
-                "app_lock_prefs",
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-        } catch (_: Exception) {
-
-            context.getSharedPreferences("app_lock_prefs", Context.MODE_PRIVATE)
-        }
+        SecureStorageManager(context).getSecurePrefs("app_lock_prefs")
     }
 
     companion object {
