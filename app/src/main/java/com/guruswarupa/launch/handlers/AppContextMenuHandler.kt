@@ -28,7 +28,8 @@ class AppContextMenuHandler(
     private val executor: ExecutorService,
     private val labelResolver: (String, ResolveInfo) -> String,
     private val onAppModified: () -> Unit,
-    private val openWebApp: (ResolveInfo) -> Unit
+    private val openWebApp: (ResolveInfo) -> Unit,
+    private val shareManager: ShareManager
 ) {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -269,7 +270,7 @@ class AppContextMenuHandler(
 
     private fun shareApp(packageName: String, appInfo: ResolveInfo) {
         val appName = labelResolver(packageName, appInfo)
-        ShareManager(activity).shareApk(packageName, appName)
+        shareManager.shareApk(packageName, appName)
     }
 
     private fun uninstallApp(packageName: String) {

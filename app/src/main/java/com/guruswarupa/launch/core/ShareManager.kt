@@ -299,5 +299,14 @@ class ShareManager(private val context: Context) {
     fun cleanup() {
         executor.shutdown()
         handler.removeCallbacksAndMessages(null)
+        clearSharedApksCache()
+    }
+
+    private fun clearSharedApksCache() {
+        try {
+            val cacheDir = File(context.cacheDir, Constants.SHARED_APKS_DIR)
+            cacheDir.listFiles()?.forEach { it.delete() }
+        } catch (_: Exception) {
+        }
     }
 }
