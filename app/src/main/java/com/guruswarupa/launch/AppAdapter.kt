@@ -157,7 +157,8 @@ class AppAdapter(
     override fun getItemId(position: Int): Long {
         if (position < 0 || position >= currentList.size) return RecyclerView.NO_ID
         val item = getItem(position)
-        return ("${item.activityInfo.packageName}|${item.activityInfo.name}|${item.preferredOrder}").hashCode().toLong()
+        val key = "${item.activityInfo.packageName}|${item.activityInfo.name}|${item.preferredOrder}"
+        return fnv1a64(key)
     }
 
     fun updateViewMode(isGridMode: Boolean) {
@@ -670,4 +671,13 @@ class AppAdapter(
         }
         return phoneNumber ?: activity.getString(R.string.contact_phone_not_found)
     }
+}
+
+private fun fnv1a64(value: String): Long {
+    var hash: ULong = 0xcbf29ce484222325uL
+    for (byte in value.toByteArray()) {
+        hash = hash xor byte.toULong()
+        hash = hash * 0x100000001b3uL
+    }
+    return (hash and 0x7FFFFFFFFFFFFFFFuL).toLong()
 }
