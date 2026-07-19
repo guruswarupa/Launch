@@ -309,7 +309,6 @@ class ScreenPagerManager(
                 v.performClick()
             }
             gestureDetector.onTouchEvent(event)
-            true
         }
     }
 
