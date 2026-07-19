@@ -293,9 +293,11 @@ class AppTimerManagementActivity : ComponentActivity() {
             }
         }
 
-        fun updateItem(item: AppTimerItem, position: Int) {
-            items[position] = item
-            notifyItemChanged(position)
+        fun updateItem(item: AppTimerItem, @Suppress("UNUSED_PARAMETER") position: Int) {
+            val currentPosition = items.indexOfFirst { it.packageName == item.packageName }
+                .takeIf { it != -1 } ?: return
+            items[currentPosition] = item
+            notifyItemChanged(currentPosition)
             val currentQuery = searchBox.text?.toString().orEmpty()
             allItems = allItems.map {
                 if (it.packageName == item.packageName) item else it
