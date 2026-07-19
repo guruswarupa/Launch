@@ -13,6 +13,7 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
     companion object {
         private const val BALANCE_KEY = "finance_balance"
         private const val CURRENCY_KEY = "finance_currency"
+        private const val CENTS_PER_UNIT = 100L
 
         val SUPPORTED_CURRENCIES = mapOf(
             "USD" to "$",
@@ -54,61 +55,61 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
     }
 
     fun addIncome(amount: Double, description: String = "") {
-        val currentBalance = getBalance()
-        val newBalance = currentBalance + amount
-        sharedPreferences.edit { putFloat(BALANCE_KEY, newBalance.toFloat()) }
+        val newBalanceCents = getBalanceCents() + amountToCents(amount)
+        sharedPreferences.edit { putLong(BALANCE_KEY, newBalanceCents) }
 
-        val monthlyIncome = getMonthlyIncome()
-        sharedPreferences.edit { putFloat("finance_income_$currentMonth", (monthlyIncome + amount).toFloat()) }
+        val monthlyIncomeCents = getMonthlyIncomeCents() + amountToCents(amount)
+        sharedPreferences.edit { putLong("finance_income_$currentMonth", monthlyIncomeCents) }
 
         addTransaction(amount, "income", description)
     }
 
     fun addExpense(amount: Double, description: String = "") {
-        val currentBalance = getBalance()
-        val newBalance = currentBalance - amount
-        sharedPreferences.edit { putFloat(BALANCE_KEY, newBalance.toFloat()) }
+        val newBalanceCents = getBalanceCents() - amountToCents(amount)
+        sharedPreferences.edit { putLong(BALANCE_KEY, newBalanceCents) }
 
-        val monthlyExpenses = getMonthlyExpenses()
-        sharedPreferences.edit { putFloat("finance_expenses_$currentMonth", (monthlyExpenses + amount).toFloat()) }
+        val monthlyExpensesCents = getMonthlyExpensesCents() + amountToCents(amount)
+        sharedPreferences.edit { putLong("finance_expenses_$currentMonth", monthlyExpensesCents) }
 
         addTransaction(-amount, "expense", description)
     }
 
-    fun getBalance(): Double {
+    fun getBalance(): Double = centsToAmount(getBalanceCents())
+
+    fun getMonthlyExpenses(): Double = centsToAmount(getMonthlyExpensesCents())
+
+    fun getMonthlyIncome(): Double = centsToAmount(getMonthlyIncomeCents())
+
+    private fun getBalanceCents(): Long {
         return try {
-            sharedPreferences.getFloat(BALANCE_KEY, 0.0f).toDouble()
+            sharedPreferences.getLong(BALANCE_KEY, 0L)
         } catch (_: ClassCastException) {
-
-            val intBalance = sharedPreferences.getInt(BALANCE_KEY, 0)
-            val floatBalance = intBalance.toFloat()
-
-            sharedPreferences.edit { putFloat(BALANCE_KEY, floatBalance) }
-            floatBalance.toDouble()
+            (sharedPreferences.getFloat(BALANCE_KEY, 0.0f).toDouble() * CENTS_PER_UNIT).toLong()
+                .also { sharedPreferences.edit { putLong(BALANCE_KEY, it) } }
         }
     }
 
-    fun getMonthlyExpenses(): Double {
+    private fun getMonthlyExpensesCents(): Long {
         return try {
-            sharedPreferences.getFloat("finance_expenses_$currentMonth", 0.0f).toDouble()
+            sharedPreferences.getLong("finance_expenses_$currentMonth", 0L)
         } catch (_: ClassCastException) {
-            val intExpenses = sharedPreferences.getInt("finance_expenses_$currentMonth", 0)
-            val floatExpenses = intExpenses.toFloat()
-            sharedPreferences.edit { putFloat("finance_expenses_$currentMonth", floatExpenses) }
-            floatExpenses.toDouble()
+            (sharedPreferences.getFloat("finance_expenses_$currentMonth", 0.0f).toDouble() * CENTS_PER_UNIT).toLong()
+                .also { sharedPreferences.edit { putLong("finance_expenses_$currentMonth", it) } }
         }
     }
 
-    fun getMonthlyIncome(): Double {
+    private fun getMonthlyIncomeCents(): Long {
         return try {
-            sharedPreferences.getFloat("finance_income_$currentMonth", 0.0f).toDouble()
+            sharedPreferences.getLong("finance_income_$currentMonth", 0L)
         } catch (_: ClassCastException) {
-            val intIncome = sharedPreferences.getInt("finance_income_$currentMonth", 0)
-            val floatIncome = intIncome.toFloat()
-            sharedPreferences.edit { putFloat("finance_income_$currentMonth", floatIncome) }
-            floatIncome.toDouble()
+            (sharedPreferences.getFloat("finance_income_$currentMonth", 0.0f).toDouble() * CENTS_PER_UNIT).toLong()
+                .also { sharedPreferences.edit { putLong("finance_income_$currentMonth", it) } }
         }
     }
+
+    private fun amountToCents(amount: Double): Long = (amount * CENTS_PER_UNIT).toLong()
+
+    private fun centsToAmount(cents: Long): Double = cents.toDouble() / CENTS_PER_UNIT
 
     fun addTransaction(amount: Double, type: String, description: String = "") {
         val timestamp = System.currentTimeMillis()
@@ -125,29 +126,44 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
         val transactionData = sharedPreferences.getString(key, "") ?: ""
 
         if (transactionData.isNotEmpty()) {
-            val parts = transactionData.split(":")
-            if (parts.size >= 2) {
+            val parts = transactionData.split(":", limit = 4)
+            if (parts.size >= 3) {
                 val type = parts[0]
                 val amount = parts[1].toDoubleOrNull() ?: 0.0
 
 
-                val currentBalance = getBalance()
-                sharedPreferences.edit { putFloat(BALANCE_KEY, (currentBalance - amount).toFloat()) }
+                val currentBalanceCents = getBalanceCents() - amountToCents(amount)
+                sharedPreferences.edit { putLong(BALANCE_KEY, currentBalanceCents) }
 
 
                 val date = Date(timestamp)
                 val monthStr = dateFormat.format(date)
                 if (type == "income") {
-                    val monthlyIncome = sharedPreferences.getFloat("finance_income_$monthStr", 0.0f).toDouble()
-                    sharedPreferences.edit { putFloat("finance_income_$monthStr", (monthlyIncome - amount).toFloat()) }
+                    val monthlyIncomeCents = getMonthlyIncomeCentsForMonth(monthStr) - amountToCents(amount)
+                    sharedPreferences.edit { putLong("finance_income_$monthStr", monthlyIncomeCents) }
                 } else {
-                    val monthlyExpenses = sharedPreferences.getFloat("finance_expenses_$monthStr", 0.0f).toDouble()
-
-                    sharedPreferences.edit { putFloat("finance_expenses_$monthStr", (monthlyExpenses - kotlin.math.abs(amount)).toFloat()) }
+                    val monthlyExpensesCents = getMonthlyExpensesCentsForMonth(monthStr) - amountToCents(kotlin.math.abs(amount))
+                    sharedPreferences.edit { putLong("finance_expenses_$monthStr", monthlyExpensesCents) }
                 }
 
                 sharedPreferences.edit { remove(key) }
             }
+        }
+    }
+
+    private fun getMonthlyExpensesCentsForMonth(monthStr: String): Long {
+        return try {
+            sharedPreferences.getLong("finance_expenses_$monthStr", 0L)
+        } catch (_: ClassCastException) {
+            (sharedPreferences.getFloat("finance_expenses_$monthStr", 0.0f).toDouble() * CENTS_PER_UNIT).toLong()
+        }
+    }
+
+    private fun getMonthlyIncomeCentsForMonth(monthStr: String): Long {
+        return try {
+            sharedPreferences.getLong("finance_income_$monthStr", 0L)
+        } catch (_: ClassCastException) {
+            (sharedPreferences.getFloat("finance_income_$monthStr", 0.0f).toDouble() * CENTS_PER_UNIT).toLong()
         }
     }
 
@@ -158,7 +174,7 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
 
         allPrefs.forEach { (key, value) ->
             if (key.startsWith("transaction_") && value is String) {
-                val parts = value.split(":")
+                val parts = value.split(":", limit = 4)
                 if (parts.size >= 3) {
                     val type = parts[0]
                     val amount = parts[1].toDoubleOrNull() ?: 0.0
