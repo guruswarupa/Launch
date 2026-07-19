@@ -94,23 +94,26 @@ object WebAppIconFetcher {
     }
 
     private fun fetchAndCache(context: Context, siteUrl: String): Drawable? {
-        val iconBytes = resolveIconBytes(siteUrl) ?: return null
-        val bitmap = BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size)
-            ?: fallbackFaviconUrl(siteUrl)?.takeIf { it != siteUrl }?.let(::fetchBytes)?.let { fallbackBytes ->
-                BitmapFactory.decodeByteArray(fallbackBytes, 0, fallbackBytes.size)?.also {
-                    runCatching {
-                        getIconFile(context, siteUrl).parentFile?.mkdirs()
-                        getIconFile(context, siteUrl).writeBytes(fallbackBytes)
-                    }
-                }
-            }
-            ?: return null
+        val iconBytes = resolveIconBytes(siteUrl)
         val file = getIconFile(context, siteUrl)
+
+        val primaryBitmap = iconBytes?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+        if (primaryBitmap != null) {
+            runCatching {
+                file.parentFile?.mkdirs()
+                file.writeBytes(iconBytes!!)
+            }
+            return primaryBitmap.toDrawable(context.resources)
+        }
+
+        val fallbackUrl = fallbackFaviconUrl(siteUrl)?.takeIf { it != siteUrl } ?: return null
+        val fallbackBytes = fetchBytes(fallbackUrl) ?: return null
+        val fallbackBitmap = BitmapFactory.decodeByteArray(fallbackBytes, 0, fallbackBytes.size) ?: return null
         runCatching {
             file.parentFile?.mkdirs()
-            file.writeBytes(iconBytes)
+            file.writeBytes(fallbackBytes)
         }
-        return bitmap.toDrawable(context.resources)
+        return fallbackBitmap.toDrawable(context.resources)
     }
 
     private fun loadFromDisk(context: Context, siteUrl: String): Drawable? {
