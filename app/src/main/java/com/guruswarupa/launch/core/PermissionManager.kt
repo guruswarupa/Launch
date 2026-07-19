@@ -47,6 +47,7 @@ class PermissionManager(
 
 
     private var isRequestingPermissions = false
+    private var pendingContactsGranted: (() -> Unit)? = null
 
 
 
@@ -61,6 +62,7 @@ class PermissionManager(
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CONTACTS) ||
                 !sharedPreferences.getBoolean(Constants.Prefs.CONTACTS_PERMISSION_DENIED, false)) {
                 isRequestingPermissions = true
+                pendingContactsGranted = onGranted
                 ActivityCompat.requestPermissions(
                     activity,
                     arrayOf(Manifest.permission.READ_CONTACTS),
@@ -293,7 +295,7 @@ class PermissionManager(
 
 
     fun isNotificationListenerServiceEnabled(): Boolean {
-        val enabledServices = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+        val enabledServices = Settings.Secure.getString(activity.contentResolver, "enabled_notification_listeners")
             ?: return false
 
         val componentName = ComponentName(activity, LaunchNotificationListenerService::class.java)
@@ -442,10 +444,13 @@ class PermissionManager(
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     sharedPreferences.edit { putBoolean(Constants.Prefs.CONTACTS_PERMISSION_DENIED, false) }
                     onContactsGranted()
+                    pendingContactsGranted?.invoke()
+                    pendingContactsGranted = null
                 } else {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CONTACTS)) {
                         sharedPreferences.edit { putBoolean(Constants.Prefs.CONTACTS_PERMISSION_DENIED, true) }
                     }
+                    pendingContactsGranted = null
                 }
             }
             REQUEST_CODE_CALL_PHONE -> {
