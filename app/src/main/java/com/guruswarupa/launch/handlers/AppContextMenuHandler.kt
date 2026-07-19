@@ -49,7 +49,9 @@ class AppContextMenuHandler(
             executor.execute {
                 val usageTime = activity.usageStatsManager.getAppUsageTime(packageName)
                 val formattedTime = activity.usageStatsManager.formatUsageTime(usageTime)
+                if (activity.isFinishing || activity.isDestroyed) return@execute
                 activity.runOnUiThread {
+                    if (activity.isFinishing || activity.isDestroyed) return@runOnUiThread
                     usageHeader.title = activity.getString(R.string.app_context_usage_format, formattedTime)
                     val spannable = android.text.SpannableString(usageHeader.title)
                     spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -178,7 +180,14 @@ class AppContextMenuHandler(
                 }
                 202 -> {
                     val url = appInfo.activityInfo.nonLocalizedLabel?.toString().orEmpty()
-                    if (url.isNotBlank()) activity.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                    if (url.isNotBlank()) {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
+                        if (browserIntent.resolveActivity(activity.packageManager) != null) {
+                            activity.startActivity(browserIntent)
+                        } else {
+                            Toast.makeText(activity, R.string.web_app_load_failed, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     true
                 }
                 203 -> {
