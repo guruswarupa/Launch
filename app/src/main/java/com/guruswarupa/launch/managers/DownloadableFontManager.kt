@@ -65,6 +65,13 @@ object DownloadableFontManager {
         return getDownloadedFonts(context).contains(styleKey)
     }
 
+    fun preloadDownloadedFonts(context: Context) {
+        val downloaded = getDownloadedFonts(context)
+        downloaded.forEach { styleKey ->
+            requestFont(context, styleKey, silent = true) { _ -> }
+        }
+    }
+
     fun uninstallFont(context: Context, styleKey: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val updated = getDownloadedFonts(context).apply { remove(styleKey) }
@@ -77,7 +84,7 @@ object DownloadableFontManager {
         return prefs.getStringSet(KEY_DOWNLOADED_FONTS, emptySet())?.toMutableSet() ?: mutableSetOf()
     }
 
-    fun requestFont(context: Context, styleKey: String, callback: (Boolean) -> Unit) {
+    fun requestFont(context: Context, styleKey: String, silent: Boolean = false, callback: (Boolean) -> Unit) {
         val option = fontOptionsMap[styleKey] ?: run {
             callback(false)
             return
@@ -109,12 +116,13 @@ object DownloadableFontManager {
             }
 
             override fun onTypefaceRequestFailed(reason: Int) {
-
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.font_download_failed_with_name, option.displayName),
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (!silent) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.font_download_failed_with_name, option.displayName),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 dispatch(styleKey, false)
             }
         }
