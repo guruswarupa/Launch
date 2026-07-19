@@ -125,9 +125,22 @@ class EncryptedFolderManager(private val context: Context) {
         return SecretKeySpec(intermediate, "AES")
     }
 
+    private fun resolveVaultFile(fileName: String): File {
+        val sanitized = fileName.replace("/", "_").replace("\\", "_").replace("..", "_").trim()
+        if (sanitized.isBlank() || sanitized.equals(".", ignoreCase = true)) {
+            throw IllegalArgumentException("Invalid file name: $fileName")
+        }
+        val resolved = File(encryptedFolder, sanitized).canonicalFile
+        val base = encryptedFolder.canonicalFile
+        if (resolved != base && !resolved.path.startsWith("${base.path}${File.separator}")) {
+            throw SecurityException("Path traversal detected: $fileName")
+        }
+        return resolved
+    }
+
     fun encryptFile(sourceUri: Uri, fileName: String) {
         val key = masterKey ?: throw IllegalStateException("Vault is locked")
-        val destinationFile = File(encryptedFolder, fileName)
+        val destinationFile = resolveVaultFile(fileName)
 
 
         generateThumbnail(sourceUri, fileName)
@@ -153,7 +166,7 @@ class EncryptedFolderManager(private val context: Context) {
 
     fun getDecryptedInputStream(fileName: String): InputStream {
         val key = masterKey ?: throw IllegalStateException("Vault is locked")
-        val sourceFile = File(encryptedFolder, fileName)
+        val sourceFile = resolveVaultFile(fileName)
 
         val fis = FileInputStream(sourceFile)
         try {
@@ -174,7 +187,7 @@ class EncryptedFolderManager(private val context: Context) {
 
     fun decryptToOutputStream(fileName: String, outputStream: OutputStream) {
         val key = masterKey ?: throw IllegalStateException("Vault is locked")
-        val sourceFile = File(encryptedFolder, fileName)
+        val sourceFile = resolveVaultFile(fileName)
 
         FileInputStream(sourceFile).use { inputStream ->
             val iv = ByteArray(IV_SIZE)
@@ -329,8 +342,16 @@ class EncryptedFolderManager(private val context: Context) {
         }
     }
 
+    private fun thumbFileFor(fileName: String): File {
+        val sanitized = fileName.replace("/", "_").replace("\\", "_").replace("..", "_").trim()
+        if (sanitized.isBlank() || sanitized.equals(".", ignoreCase = true)) {
+            throw IllegalArgumentException("Invalid file name: $fileName")
+        }
+        return File(thumbnailFolder, "$sanitized.thumb")
+    }
+
     private fun saveThumbnail(bitmap: Bitmap, fileName: String, key: SecretKey) {
-        val thumbFile = File(thumbnailFolder, "$fileName.thumb")
+        val thumbFile = thumbFileFor(fileName)
         val iv = ByteArray(IV_SIZE).apply { SecureRandom().nextBytes(this) }
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, iv))
@@ -357,7 +378,7 @@ class EncryptedFolderManager(private val context: Context) {
 
     fun getThumbnail(fileName: String): Bitmap? {
         val key = masterKey ?: return null
-        val thumbFile = File(thumbnailFolder, "$fileName.thumb")
+        val thumbFile = thumbFileFor(fileName)
         if (!thumbFile.exists()) return null
 
         return try {
