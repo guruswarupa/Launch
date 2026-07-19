@@ -63,6 +63,7 @@ class ScreenRecordingService : Service() {
             context.startService(intent)
         }
 
+        @Volatile
         var isRunning = false
             private set
     }
@@ -71,16 +72,6 @@ class ScreenRecordingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceCompat.startForeground(
-                this,
-                NOTIFICATION_ID,
-                createNotification(),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
-            )
-        } else {
-            startForeground(NOTIFICATION_ID, createNotification())
-        }
 
         when (intent?.action) {
             ACTION_START -> {
@@ -93,12 +84,14 @@ class ScreenRecordingService : Service() {
                 }
 
                 if (resultCode != 0 && data != null) {
+                    startForegroundForService()
                     startRecording(resultCode, data)
                 } else {
                     stopSelf()
                 }
             }
             ACTION_STOP -> {
+                startForegroundForService()
                 stopRecording()
                 stopSelf()
             }
@@ -107,6 +100,19 @@ class ScreenRecordingService : Service() {
             }
         }
         return START_NOT_STICKY
+    }
+
+    private fun startForegroundForService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ServiceCompat.startForeground(
+                this,
+                NOTIFICATION_ID,
+                createNotification(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, createNotification())
+        }
     }
 
     private fun startRecording(resultCode: Int, data: Intent) {
@@ -259,6 +265,7 @@ class ScreenRecordingService : Service() {
 
         isRecording = false
         isRunning = false
+        stopForeground(STOP_FOREGROUND_REMOVE)
         Toast.makeText(this, "Recording saved to Movies/LaunchRecordings", Toast.LENGTH_LONG).show()
     }
 
@@ -285,6 +292,7 @@ class ScreenRecordingService : Service() {
 
     override fun onDestroy() {
         stopRecording()
+        isRunning = false
         super.onDestroy()
     }
 }
