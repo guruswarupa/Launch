@@ -26,8 +26,9 @@ class BroadcastReceiverManager(
     private val settingsUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "com.guruswarupa.launch.SETTINGS_UPDATED") {
+                if (activity.isFinishing || activity.isDestroyed) return
                 activity.runOnUiThread {
-                    onSettingsUpdated()
+                    if (!activity.isFinishing && !activity.isDestroyed) onSettingsUpdated()
                 }
             }
         }
@@ -35,6 +36,7 @@ class BroadcastReceiverManager(
 
     private val packageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            if (activity.isFinishing || activity.isDestroyed) return
             when (intent?.action) {
                 Intent.ACTION_PACKAGE_REMOVED -> {
                     if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
@@ -60,8 +62,9 @@ class BroadcastReceiverManager(
         override fun onReceive(context: Context?, intent: Intent?) {
             @Suppress("DEPRECATION")
             if (intent?.action == Intent.ACTION_WALLPAPER_CHANGED) {
+                if (activity.isFinishing || activity.isDestroyed) return
                 activity.runOnUiThread {
-                    onWallpaperChanged()
+                    if (!activity.isFinishing && !activity.isDestroyed) onWallpaperChanged()
                 }
             }
         }
@@ -69,8 +72,9 @@ class BroadcastReceiverManager(
 
     private val batteryChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            if (activity.isFinishing || activity.isDestroyed) return
             activity.runOnUiThread {
-                onBatteryChanged()
+                if (!activity.isFinishing && !activity.isDestroyed) onBatteryChanged()
             }
         }
     }
@@ -78,8 +82,9 @@ class BroadcastReceiverManager(
     private val activityRecognitionPermissionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "com.guruswarupa.launch.ACTIVITY_RECOGNITION_PERMISSION_GRANTED") {
+                if (activity.isFinishing || activity.isDestroyed) return
                 activity.runOnUiThread {
-                    onActivityRecognitionPermissionGranted()
+                    if (!activity.isFinishing && !activity.isDestroyed) onActivityRecognitionPermissionGranted()
                 }
             }
         }
@@ -88,8 +93,9 @@ class BroadcastReceiverManager(
     private val dndReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED) {
+                if (activity.isFinishing || activity.isDestroyed) return
                 activity.runOnUiThread {
-                    onDndStateChanged()
+                    if (!activity.isFinishing && !activity.isDestroyed) onDndStateChanged()
                 }
             }
         }
@@ -97,23 +103,31 @@ class BroadcastReceiverManager(
 
     private val launcherAppsCallback = object : LauncherApps.Callback() {
         override fun onPackageAdded(packageName: String, user: UserHandle) {
-            activity.runOnUiThread { onPackageChanged(packageName, false) }
+            postPackageChange(packageName, false)
         }
 
         override fun onPackageRemoved(packageName: String, user: UserHandle) {
-            activity.runOnUiThread { onPackageChanged(packageName, true) }
+            postPackageChange(packageName, true)
         }
 
         override fun onPackageChanged(packageName: String, user: UserHandle) {
-            activity.runOnUiThread { onPackageChanged(packageName, false) }
+            postPackageChange(packageName, false)
         }
 
         override fun onPackagesAvailable(packageNames: Array<out String>, user: UserHandle, replacing: Boolean) {
-            packageNames.forEach { activity.runOnUiThread { onPackageChanged(it, false) } }
+            packageNames.forEach { postPackageChange(it, false) }
         }
 
         override fun onPackagesUnavailable(packageNames: Array<out String>, user: UserHandle, replacing: Boolean) {
-            packageNames.forEach { activity.runOnUiThread { onPackageChanged(it, true) } }
+            packageNames.forEach { postPackageChange(it, true) }
+        }
+    }
+
+    private fun postPackageChange(packageName: String, removed: Boolean) {
+        if (activity.isFinishing || activity.isDestroyed) return
+        activity.runOnUiThread {
+            if (activity.isFinishing || activity.isDestroyed) return@runOnUiThread
+            onPackageChanged(packageName, removed)
         }
     }
 
