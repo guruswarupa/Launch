@@ -229,9 +229,9 @@ class ScreenLockAccessibilityService : AccessibilityService() {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(focusModeReceiver, IntentFilter("com.guruswarupa.launch.FOCUS_MODE_CHANGED"), RECEIVER_EXPORTED)
+            registerReceiver(focusModeReceiver, IntentFilter("com.guruswarupa.launch.FOCUS_MODE_CHANGED"), RECEIVER_NOT_EXPORTED)
             isFocusModeReceiverRegistered = true
-            registerReceiver(settingsReceiver, IntentFilter("com.guruswarupa.launch.SETTINGS_UPDATED"), RECEIVER_EXPORTED)
+            registerReceiver(settingsReceiver, IntentFilter("com.guruswarupa.launch.SETTINGS_UPDATED"), RECEIVER_NOT_EXPORTED)
             isSettingsReceiverRegistered = true
         } else {
             registerReceiver(focusModeReceiver, IntentFilter("com.guruswarupa.launch.FOCUS_MODE_CHANGED"))
