@@ -48,6 +48,7 @@ class AppInitializer(private val activity: MainActivity) {
     }
 
     private fun MainActivity.setupCoreManagers() {
+        DownloadableFontManager.preloadDownloadedFonts(activity)
         widgetConfigurationManager = WidgetConfigurationManager(activity, sharedPreferences)
         widgetVisibilityManager = WidgetVisibilityManager(activity, widgetConfigurationManager)
 

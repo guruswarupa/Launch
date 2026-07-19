@@ -85,6 +85,7 @@ class SettingsChangeCoordinator(
         applyThemeBasedWidgetBackgrounds()
         applyBackgroundTranslucency()
         TypographyManager.applyToActivity(activity)
+        adapter?.refreshTypography()
         views.fastScroller.refreshTypography(sharedPreferences)
 
 
