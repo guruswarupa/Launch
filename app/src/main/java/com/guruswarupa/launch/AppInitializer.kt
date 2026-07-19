@@ -52,7 +52,6 @@ class AppInitializer(private val activity: MainActivity) {
         widgetConfigurationManager = WidgetConfigurationManager(activity, sharedPreferences)
         widgetVisibilityManager = WidgetVisibilityManager(activity, widgetConfigurationManager)
 
-        usageStatsCacheManager = UsageStatsCacheManager(sharedPreferences, backgroundExecutor)
         contactManager = ContactManager(activity, contentResolver, backgroundExecutor)
         rssFeedManager = RssFeedManager(activity, sharedPreferences, backgroundExecutor)
 

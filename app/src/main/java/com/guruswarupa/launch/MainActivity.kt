@@ -137,8 +137,6 @@ class MainActivity : FragmentActivity() {
 
     lateinit var contactManager: ContactManager
 
-    lateinit var usageStatsCacheManager: UsageStatsCacheManager
-    
     lateinit var lifecycleManager: LifecycleManager
 
     lateinit var appDockManager: AppDockManager
