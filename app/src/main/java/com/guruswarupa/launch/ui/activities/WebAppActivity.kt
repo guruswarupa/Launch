@@ -290,24 +290,25 @@ class WebAppActivity : AppCompatActivity() {
                 val isSameDomain = targetDomain != null && isDomainAllowed(targetDomain)
 
 
-                if (blockRedirects && !isSameDomain) {
-                    Toast.makeText(
-                        this@WebAppActivity,
-                        "Navigation blocked: Redirecting to external domain is not allowed",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    return true
-                }
-
-
-                if (!blockRedirects && !isSameDomain) {
+                if (!isSameDomain) {
                     val targetDomainSafe = targetDomain ?: "unknown domain"
-                    
-                    // Skip dialog if domain is already trusted
+
+                    // Trusted domains are always allowed, even when redirects are blocked
                     if (targetDomainSafe in trustedDomains) {
                         Log.d(TAG, "Navigating to trusted external domain: $targetDomainSafe")
                         return false
                     }
+
+                    if (blockRedirects) {
+                        Toast.makeText(
+                            this@WebAppActivity,
+                            "Navigation blocked: Redirecting to external domain is not allowed",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return true
+                    }
+
+                    Log.w(TAG, "External domain navigation attempt: $targetDomainSafe (from: $allowedDomain)")
                     
                     Log.w(TAG, "External domain navigation attempt: $targetDomainSafe (from: $allowedDomain)")
                     
