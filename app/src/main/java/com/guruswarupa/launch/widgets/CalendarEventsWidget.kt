@@ -344,15 +344,19 @@ class CalendarEventsWidget(
                 val calendarIdIndex = cursor.getColumnIndex(CalendarContract.Instances.CALENDAR_ID)
                 val calendarDisplayNameIndex = cursor.getColumnIndex(CalendarContract.Instances.CALENDAR_DISPLAY_NAME)
 
+                if (idIndex < 0 || startIndex < 0 || endIndex < 0) {
+                    return eventsList
+                }
+
                 while (cursor.moveToNext()) {
                     val eventId = cursor.getLong(idIndex)
-                    val title = cursor.getString(titleIndex) ?: "No Title"
+                    val title = if (titleIndex >= 0) cursor.getString(titleIndex) ?: "No Title" else "No Title"
                     var startTime = cursor.getLong(startIndex)
                     var endTime = cursor.getLong(endIndex)
-                    val location = cursor.getString(locationIndex)
-                    val allDay = cursor.getInt(allDayIndex) == 1
-                    val calendarId = cursor.getLong(calendarIdIndex)
-                    val calendarDisplayName = cursor.getString(calendarDisplayNameIndex) ?: ""
+                    val location = if (locationIndex >= 0) cursor.getString(locationIndex) else null
+                    val allDay = allDayIndex >= 0 && cursor.getInt(allDayIndex) == 1
+                    val calendarId = if (calendarIdIndex >= 0) cursor.getLong(calendarIdIndex) else 0L
+                    val calendarDisplayName = if (calendarDisplayNameIndex >= 0) cursor.getString(calendarDisplayNameIndex) ?: "" else ""
                     // ... (rest of the processing logic)
                     val isFestival = calendarDisplayName.lowercase().let { name ->
                         name.contains("festival") || name.contains("holiday") ||

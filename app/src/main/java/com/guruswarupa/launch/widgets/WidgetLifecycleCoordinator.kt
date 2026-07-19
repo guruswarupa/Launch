@@ -75,7 +75,8 @@ class WidgetLifecycleCoordinator {
 
     fun setupDefaultLifecycle() {
         widgets.clear()
-        register({ ::mediaControllerWidget.isInitialized }, { mediaControllerWidget.refreshController() }, { })
+        register({ ::mediaControllerWidget.isInitialized }, { mediaControllerWidget.refreshController() }, { }, { mediaControllerWidget.cleanup() })
+        register({ ::yearProgressWidget.isInitialized }, { yearProgressWidget.onResume() }, { yearProgressWidget.onPause() }, { yearProgressWidget.cleanup() })
         register({ ::physicalActivityWidget.isInitialized }, { physicalActivityWidget.onResume() }, { physicalActivityWidget.onPause() }, { physicalActivityWidget.cleanup() })
         register({ ::compassWidget.isInitialized }, { compassWidget.onResume() }, { compassWidget.onPause() }, { compassWidget.onPause() })
         register({ ::pressureWidget.isInitialized }, { pressureWidget.onResume() }, { pressureWidget.onPause() }, { pressureWidget.cleanup() })

@@ -61,6 +61,7 @@ class WidgetThemeManager(
         activity.findViewById<View>(R.id.rss_manage_button)?.setBackgroundResource(widgetBackground)
         activity.findViewById<View>(R.id.rss_empty_state)?.setBackgroundResource(emptyStateBackground)
 
+        TypographyManager.applyToActivity(activity)
 
         searchBox?.let { sb ->
             val searchBg = R.drawable.search_box_transparent_bg

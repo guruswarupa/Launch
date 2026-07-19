@@ -165,4 +165,16 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
             Toast.makeText(context, "Could not open settings", Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun cleanup() {
+        activeController?.unregisterCallback(callback)
+        activeController = null
+        if (sessionListenerRegistered) {
+            try {
+                mediaSessionManager.removeOnActiveSessionsChangedListener(sessionListener)
+            } catch (_: Exception) {
+            }
+            sessionListenerRegistered = false
+        }
+    }
 }

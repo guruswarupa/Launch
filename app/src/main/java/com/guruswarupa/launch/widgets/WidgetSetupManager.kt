@@ -39,6 +39,7 @@ class WidgetSetupManager(
         }
         val widget = createWidget(activity, container, sharedPreferences)
         (widget as? com.guruswarupa.launch.widgets.InitializableWidget)?.initialize()
+        com.guruswarupa.launch.managers.TypographyManager.applyToView(container)
         return widget
     }
 
@@ -55,6 +56,7 @@ class WidgetSetupManager(
         }
         val widget = createWidget(activity, container)
         (widget as? com.guruswarupa.launch.widgets.InitializableWidget)?.initialize()
+        com.guruswarupa.launch.managers.TypographyManager.applyToView(container)
         return widget
     }
 
@@ -72,6 +74,7 @@ class WidgetSetupManager(
         val widgetView = LayoutInflater.from(activity).inflate(layoutId, container, false)
         container.addView(widgetView)
         Log.d(TAG, "${T::class.simpleName} widget setup: container found, added=${widgetView.parent != null}")
+        com.guruswarupa.launch.managers.TypographyManager.applyToView(widgetView)
         return createWidget(widgetView)
     }
 

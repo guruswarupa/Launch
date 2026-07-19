@@ -55,16 +55,18 @@ class YearProgressWidget(
         )
     }
 
-    private fun startPeriodicUpdates() {
-        val updateRunnable = object : Runnable {
-            override fun run() {
-                if (isInitialized) {
-                    yearProgressView.refresh()
-                    updateProgressInfo()
-                }
-                handler.postDelayed(this, 3600000)
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            if (isInitialized) {
+                yearProgressView.refresh()
+                updateProgressInfo()
             }
+            handler.postDelayed(this, 3600000)
         }
+    }
+
+    private fun startPeriodicUpdates() {
+        handler.removeCallbacks(updateRunnable)
         handler.post(updateRunnable)
     }
 
@@ -76,11 +78,11 @@ class YearProgressWidget(
     }
 
     fun onPause() {
-
+        handler.removeCallbacks(updateRunnable)
     }
 
     fun cleanup() {
-
+        handler.removeCallbacks(updateRunnable)
     }
 
     fun setGlobalVisibility(visible: Boolean) {
