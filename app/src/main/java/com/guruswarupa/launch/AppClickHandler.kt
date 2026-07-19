@@ -85,14 +85,26 @@ class AppClickHandler(
             val userHandle = userManager.getUserForSerialNumber(serial.toLong())
             if (userHandle != null) {
                 val launcherApps = activity.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-                launcherApps.startMainActivity(ComponentName(packageName, activityName), userHandle, null, null)
-                clearSearch()
-                return LaunchResolution.AlreadyLaunched
+                if (launcherApps.isActivityEnabled(ComponentName(packageName, activityName), userHandle)) {
+                    launcherApps.startMainActivity(ComponentName(packageName, activityName), userHandle, null, null)
+                    clearSearch()
+                    return LaunchResolution.AlreadyLaunched
+                }
+                return LaunchResolution.Failed
             }
+            // No user handle for this serial: do not fall through to the main profile.
+            return LaunchResolution.Failed
+        }
+
+        if (appInfo.activityInfo.enabled.not()) {
+            return LaunchResolution.Failed
         }
 
         val intent = activity.packageManager.getLaunchIntentForPackage(packageName)
-        return if (intent != null) LaunchResolution.IntentLaunch(intent) else LaunchResolution.Failed
+        if (intent != null && intent.resolveActivity(activity.packageManager) != null) {
+            return LaunchResolution.IntentLaunch(intent)
+        }
+        return LaunchResolution.Failed
     }
 
     private fun launchWithOptionalLock(packageName: String, intent: Intent, afterLaunch: (() -> Unit)? = null) {
