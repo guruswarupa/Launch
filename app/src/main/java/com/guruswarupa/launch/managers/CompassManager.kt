@@ -78,6 +78,11 @@ class CompassManager(context: Context) : SensorEventListener {
 
         if (success1 && success2) {
             isListening = true
+        } else {
+            // Partial registration: a listener may already be active, so unregister
+            // the whole listener to avoid leaking a sensor registration.
+            sensorManager.unregisterListener(this)
+            isListening = false
         }
     }
 

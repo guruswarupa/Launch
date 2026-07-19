@@ -62,14 +62,15 @@ class PressureManager(context: Context) : SensorEventListener {
 
         if (success) {
             isListening = true
+        } else {
+            sensorManager.unregisterListener(this)
+            isListening = false
         }
     }
 
     fun stopTracking() {
-        if (isListening) {
-            sensorManager.unregisterListener(this)
-            isListening = false
-        }
+        sensorManager.unregisterListener(this)
+        isListening = false
     }
 
 
