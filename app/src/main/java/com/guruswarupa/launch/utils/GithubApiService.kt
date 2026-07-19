@@ -8,7 +8,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.DayOfWeek
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
 
 data class ContributionData(
@@ -21,8 +20,6 @@ data class ContributionData(
 )
 
 class GithubApiService(private val context: Context) {
-
-    private val executor = Executors.newSingleThreadExecutor()
 
     fun fetchContributionData(username: String, token: String, year: Int = LocalDate.now().year): ContributionData {
 

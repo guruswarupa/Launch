@@ -819,6 +819,7 @@ class MainActivity : FragmentActivity() {
 
         // If widgets were changed in configuration, ensure they are reordered correctly
         if (widgetsChanged) {
+            sharedPreferences.edit { putBoolean("saved_widgets_changed", false) }
             if (deferredWidgetsInitialized) {
                 initializeDeferredWidgets()
             }

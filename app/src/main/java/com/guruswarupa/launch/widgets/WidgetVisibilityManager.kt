@@ -55,6 +55,8 @@ class WidgetVisibilityManager(
         if (failedWidgets.isNotEmpty()) {
             Log.w(TAG, "Failed to update visibility for widgets: ${failedWidgets.joinToString()}. Scheduling retry.")
             scheduleRetry(yearProgressWidget, githubContributionWidget)
+        } else {
+            retryCount = 0
         }
     }
 
@@ -467,10 +469,19 @@ class WidgetVisibilityManager(
         return widgetViewCache[widgetId]
     }
 
+    private var retryCount = 0
+    private val maxRetries = 5
+
     private fun scheduleRetry(
         yearProgressWidget: YearProgressWidget? = null,
         githubContributionWidget: GithubContributionWidget? = null
     ) {
+        if (retryCount >= maxRetries) {
+            Log.w(TAG, "Widget visibility retry limit ($maxRetries) reached; giving up.")
+            retryCount = 0
+            return
+        }
+        retryCount++
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
             try {
                 update(yearProgressWidget, githubContributionWidget)
