@@ -226,7 +226,18 @@ class TodoManager(
         recurrenceInterval: Int? = null,
         intervalStartTime: String? = null
     ) {
-        val newTodo = TodoItem(text, false, isRecurring, null, selectedDays, priority, category, dueTime, recurrenceInterval, intervalStartTime)
+        val newTodo = TodoItem(
+            text = text,
+            isChecked = false,
+            isRecurring = isRecurring,
+            lastCompletedDate = null,
+            selectedDays = selectedDays,
+            priority = priority,
+            category = category,
+            dueTime = dueTime,
+            recurrenceInterval = recurrenceInterval,
+            intervalStartTime = intervalStartTime
+        )
         val index = todoItems.size
         todoItems.add(newTodo)
         todoAdapter.notifyItemInserted(index)
@@ -312,17 +323,30 @@ class TodoManager(
                         parts[9]
                     } else null
                     
-                    legacyItems.add(TodoItem(text, isChecked, isRecurring, lastCompletedDate, selectedDays, priority, category, dueTime, recurrenceInterval, intervalStartTime))
+                    legacyItems.add(
+                        TodoItem(
+                            text = text,
+                            isChecked = isChecked,
+                            isRecurring = isRecurring,
+                            lastCompletedDate = lastCompletedDate,
+                            selectedDays = selectedDays,
+                            priority = priority,
+                            category = category,
+                            dueTime = dueTime,
+                            recurrenceInterval = recurrenceInterval,
+                            intervalStartTime = intervalStartTime
+                        )
+                    )
                 } else if (parts.size >= 3) {
                     val text = parts[0]
                     val isChecked = parts[1].toBoolean()
                     val isRecurring = parts[2].toBoolean()
                     val lastCompletedDate = if (parts.size > 3) parts[3] else null
-                    legacyItems.add(TodoItem(text, isChecked, isRecurring, lastCompletedDate))
+                    legacyItems.add(TodoItem(id = 0L, text = text, isChecked = isChecked, isRecurring = isRecurring, lastCompletedDate = lastCompletedDate))
                 } else if (parts.size == 2) {
                     val text = parts[0]
                     val isChecked = parts[1].toBoolean()
-                    legacyItems.add(TodoItem(text, isChecked, false))
+                    legacyItems.add(TodoItem(id = 0L, text = text, isChecked = isChecked))
                 }
             }
         }

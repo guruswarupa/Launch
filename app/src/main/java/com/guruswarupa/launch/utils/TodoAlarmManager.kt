@@ -273,9 +273,8 @@ class TodoAlarmManager(private val context: Context) {
 
 
 
-    fun getRequestCode(todoItem: TodoItem, index: Int): Int {
-
-        return (todoItem.text.hashCode() + index * 1000) and 0x7FFFFFFF
+    fun getRequestCode(todoItem: TodoItem, @Suppress("UNUSED_PARAMETER") index: Int = 0): Int {
+        return (todoItem.id and 0x7FFFFFFF).toInt()
     }
 
 
