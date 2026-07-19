@@ -29,7 +29,7 @@ class AppUsageMonitor : Service() {
             if (!usageManager.hasUsageStatsPermission()) {
                 return false
             }
-            return DailyUsageManager(context).getAppsWithTimers().isNotEmpty()
+            return AppTimerManager(context).getAppsWithTimers().isNotEmpty()
         }
 
         fun syncMonitoring(context: Context) {
