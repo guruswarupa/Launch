@@ -259,7 +259,7 @@ class RssFeedManager(
 
     fun getFeedUrls(): List<String> = getStoredFeedUrls(sharedPreferences)
 
-    fun getCustomFeedUrls(): List<String> = getCustomFeedUrls(sharedPreferences)
+    fun getCustomFeedUrls(): List<String> = Companion.getCustomFeedUrls(sharedPreferences)
 
     fun isFeedEnabled(url: String): Boolean {
         return getFeedUrls().any { it.equals(url, ignoreCase = true) }
