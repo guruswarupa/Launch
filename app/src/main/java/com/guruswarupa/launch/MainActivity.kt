@@ -361,6 +361,10 @@ class MainActivity : FragmentActivity() {
     internal fun updateFastScrollerVisibility() {
         if (!views.isSearchBoxInitialized()) return
 
+        findViewById<View?>(R.id.rss_feed_page)?.let { rssPageView ->
+            RssFeedPage(this, rssPageView).updateTypography()
+        }
+
         val focusMode = appDockManager.getCurrentMode()
         val workspaceMode = appDockManager.isWorkspaceModeActive()
         val showFastScroller = sharedPreferences.getBoolean(Constants.Prefs.SHOW_FAST_SCROLLER, true)
@@ -448,6 +452,7 @@ class MainActivity : FragmentActivity() {
                 todoManager.initialize()
                 updateLifecycleManagerWithDeferredWidgets()
 
+                TypographyManager.applyToActivity(this)
 
                 widgetVisibilityManager.update(
                     if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
