@@ -9,6 +9,7 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
     private val currentMonth = dateFormat.format(Date())
+    private var transactionCounter = 0L
 
     companion object {
         private const val BALANCE_KEY = "finance_balance"
@@ -107,13 +108,14 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
         }
     }
 
-    private fun amountToCents(amount: Double): Long = (amount * CENTS_PER_UNIT).toLong()
+    private fun amountToCents(amount: Double): Long = java.lang.Math.round(amount * CENTS_PER_UNIT)
 
     private fun centsToAmount(cents: Long): Double = cents.toDouble() / CENTS_PER_UNIT
 
     fun addTransaction(amount: Double, type: String, description: String = "") {
         val timestamp = System.currentTimeMillis()
-        val transactionKey = "transaction_$timestamp"
+        val transactionKey = "transaction_${timestamp}_$transactionCounter"
+        transactionCounter++
         val transactionData = "$type:$amount:$timestamp:$description"
         sharedPreferences.edit { putString(transactionKey, transactionData) }
 
