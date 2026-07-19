@@ -1125,48 +1125,28 @@ class AppDockManager(
         val hideFocusMode = sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_FOCUS_MODE, false)
         val hideWorkspaces = sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORKSPACES, false)
 
-        val allThreeHidden = hideWorkProfile && hideFocusMode && hideWorkspaces
+        val allThreeHiddenInSettings = hideWorkProfile && hideFocusMode && hideWorkspaces
 
+        var hasVisibleChildren = false
         for (i in 0 until appDock.childCount) {
             val child = appDock.getChildAt(i)
-            when (child.tag) {
-                "workspace_container" -> {
-                    if (allThreeHidden) {
-                        child.visibility = View.GONE
-                    } else {
-
-                        child.visibility = if (isWorkMode || isFocusActive || hideWorkspaces) View.GONE else View.VISIBLE
-                    }
-                }
-                "focus_mode_container" -> {
-                    if (allThreeHidden) {
-                        child.visibility = View.GONE
-                    } else {
-
-                        child.visibility = if (isWorkMode || hideFocusMode) View.GONE else View.VISIBLE
-                    }
-                }
-                "work_profile_container" -> {
-                    if (allThreeHidden) {
-                        child.visibility = View.GONE
-                    } else {
-
-                        child.visibility = if (hideWorkProfile) View.GONE else View.VISIBLE
-                    }
-                }
-                else -> {
-                    if (allThreeHidden) {
-                        child.visibility = View.GONE
-                    } else {
-
-                        child.visibility = if (isFocusActive) View.GONE else View.VISIBLE
-                    }
-                }
+            val shouldBeVisible = when (child.tag) {
+                "workspace_container" -> !hideWorkspaces && !isWorkMode && !isFocusActive
+                "focus_mode_container" -> !hideFocusMode && !isWorkMode
+                "work_profile_container" -> !hideWorkProfile
+                else -> !isFocusActive
+            }
+            
+            val finalVisibility = if (allThreeHiddenInSettings || !shouldBeVisible) View.GONE else View.VISIBLE
+            child.visibility = finalVisibility
+            if (finalVisibility == View.VISIBLE) {
+                hasVisibleChildren = true
             }
         }
 
-
-        appDock.visibility = if (allThreeHidden) View.GONE else View.VISIBLE
+        val dockVisible = !allThreeHiddenInSettings && hasVisibleChildren
+        appDock.visibility = if (dockVisible) View.VISIBLE else View.GONE
+        (appDock.parent as? View)?.visibility = if (dockVisible) View.VISIBLE else View.GONE
     }
 
     private fun startTimerDisplay() {
