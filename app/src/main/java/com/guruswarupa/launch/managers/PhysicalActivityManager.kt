@@ -48,6 +48,8 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
     private val handler = android.os.Handler(android.os.Looper.getMainLooper())
     private var saveRunnable: Runnable? = null
 
+    private val dataLock = Any()
+
 
 
 
@@ -231,7 +233,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         }
     }
 
-    private fun resetDailyCount() {
+    private fun resetDailyCount() = synchronized(dataLock) {
         val today = getCurrentDate()
 
         if (lastResetDate.isNotEmpty()) {
@@ -415,6 +417,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
+        synchronized(dataLock) {
         ensureDataLoaded()
 
         when (event.sensor.type) {
@@ -481,13 +484,14 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
                 }
             }
         }
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
     }
 
-    private fun updateHourlySteps(steps: Int, distanceKm: Double) {
+    private fun updateHourlySteps(steps: Int, distanceKm: Double) = synchronized(dataLock) {
         calendar.timeInMillis = System.currentTimeMillis()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
 
@@ -496,7 +500,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         hourlyDistances[hour] = (hourlyDistances[hour] ?: 0.0) + distanceKm
     }
 
-    private fun recordWalkingMinute() {
+    private fun recordWalkingMinute() = synchronized(dataLock) {
         calendar.timeInMillis = System.currentTimeMillis()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minuteOfDay = hour * 60 + calendar.get(Calendar.MINUTE)
@@ -506,7 +510,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         }
     }
 
-    private fun saveCurrentData(date: String = getCurrentDate()) {
+    private fun saveCurrentData(date: String = getCurrentDate()) = synchronized(dataLock) {
         if (todayStepCount < 0) {
             Log.w(TAG, "Invalid step count for saving: $todayStepCount")
             return
@@ -595,7 +599,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         return map
     }
 
-    private fun loadHourlyData(date: String) {
+    private fun loadHourlyData(date: String) = synchronized(dataLock) {
         val dateKey = "hourly_$date"
         val allHourlyData = getHourlyDataMap(forceRefresh = true)
 
@@ -632,7 +636,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         }
     }
 
-    fun getHourlyActivityForDate(date: String): List<HourlyActivityData> {
+    fun getHourlyActivityForDate(date: String): List<HourlyActivityData> = synchronized(dataLock) {
         val dateKey = "hourly_$date"
         val allHourlyData = getHourlyDataMap(forceRefresh = true)
         val jsonStr = allHourlyData[dateKey]
@@ -695,7 +699,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
 
 
-    fun getTodayActivity(): ActivityData {
+    fun getTodayActivity(): ActivityData = synchronized(dataLock) {
         ensureDataLoaded()
 
         if (!isListening) {
