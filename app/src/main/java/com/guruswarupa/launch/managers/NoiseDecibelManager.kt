@@ -20,6 +20,8 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
     private var isRecording = false
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var onDecibelChangedListener: ((Double) -> Unit)? = null
+    private var readBuffer: ShortArray? = null
+    private var readBufferSize = 0
 
     companion object {
         private const val SAMPLE_RATE = 44100
@@ -86,6 +88,8 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
 
             audioRecord?.startRecording()
             isRecording = true
+            readBuffer = ShortArray(bufferSize)
+            readBufferSize = bufferSize
             handler.post(recordingRunnable)
             return true
         } catch (_: Exception) {
@@ -108,6 +112,8 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
         } catch (_: Exception) {
 
         }
+        readBuffer = null
+        readBufferSize = 0
     }
 
 
@@ -115,17 +121,11 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
 
     private fun calculateDecibel(): Double {
         val currentAudioRecord = this.audioRecord ?: return 0.0
+        val buffer = readBuffer ?: return 0.0
+        val bufferSize = readBufferSize
+        if (bufferSize <= 0) return 0.0
 
         try {
-            val bufferSize = AudioRecord.getMinBufferSize(
-                SAMPLE_RATE,
-                CHANNEL_CONFIG,
-                AUDIO_FORMAT
-            )
-
-            if (bufferSize <= 0) return 0.0
-
-            val buffer = ShortArray(bufferSize)
             val readSize = currentAudioRecord.read(buffer, 0, bufferSize)
 
             if (readSize <= 0) {
