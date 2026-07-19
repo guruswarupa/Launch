@@ -156,7 +156,7 @@ class AppSearchManager @Inject constructor(
     fun updateData(newFullAppList: List<ResolveInfo>, newHomeAppList: List<ResolveInfo>, newContactsList: List<String>) {
         synchronized(dataLock) {
 
-            val deduplicatedFullAppList = newFullAppList.distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}" }
+            val deduplicatedFullAppList = newFullAppList.distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}|${it.preferredOrder}" }
 
             if (deduplicatedFullAppList !== fullAppList) {
                 fullAppList.clear()
