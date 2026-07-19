@@ -134,17 +134,22 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
                 val amount = parts[1].toDoubleOrNull() ?: 0.0
 
 
-                val currentBalanceCents = getBalanceCents() - amountToCents(amount)
+                val absAmountCents = amountToCents(kotlin.math.abs(amount))
+                val currentBalanceCents = if (type == "income") {
+                    getBalanceCents() - absAmountCents
+                } else {
+                    getBalanceCents() + absAmountCents
+                }
                 sharedPreferences.edit { putLong(BALANCE_KEY, currentBalanceCents) }
 
 
                 val date = Date(timestamp)
                 val monthStr = dateFormat.format(date)
                 if (type == "income") {
-                    val monthlyIncomeCents = getMonthlyIncomeCentsForMonth(monthStr) - amountToCents(amount)
+                    val monthlyIncomeCents = getMonthlyIncomeCentsForMonth(monthStr) - absAmountCents
                     sharedPreferences.edit { putLong("finance_income_$monthStr", monthlyIncomeCents) }
                 } else {
-                    val monthlyExpensesCents = getMonthlyExpensesCentsForMonth(monthStr) - amountToCents(kotlin.math.abs(amount))
+                    val monthlyExpensesCents = getMonthlyExpensesCentsForMonth(monthStr) - absAmountCents
                     sharedPreferences.edit { putLong("finance_expenses_$monthStr", monthlyExpensesCents) }
                 }
 
