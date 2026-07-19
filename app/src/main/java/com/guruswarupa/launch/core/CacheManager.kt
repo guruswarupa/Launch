@@ -266,14 +266,15 @@ class CacheManager @Inject constructor(
         }
     }
 
-    fun getMetadataCache(): Map<String, AppMetadata> = appMetadataCache
+    fun getMetadataCache(): Map<String, AppMetadata> = appMetadataCache.toMap()
 
     fun updateMetadataCache(cacheKey: String, metadata: AppMetadata) {
         appMetadataCache[cacheKey] = metadata
     }
 
     fun removeMetadata(packageName: String) {
-        appMetadataCache.remove(packageName)
+        val prefix = "$packageName|"
+        appMetadataCache.keys.removeIf { it == packageName || it.startsWith(prefix) }
     }
     
     fun getIconCacheKey(iconStyle: String, iconSize: Int): String {
