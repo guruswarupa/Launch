@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class TodoItem(
+    @Json(name = "id") val id: Long = System.nanoTime(),
     val text: String,
     var isChecked: Boolean,
     @Json(name = "isRecurring") val isRecurring: Boolean = false,
