@@ -17,6 +17,8 @@ import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.setDialogInputView
 import java.security.MessageDigest
 import java.security.SecureRandom
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 class AppLockManager(private val context: Context) {
 
@@ -33,6 +35,8 @@ class AppLockManager(private val context: Context) {
         private const val PREF_FINGERPRINT_ENABLED = "fingerprint_enabled"
         private const val AUTH_TIMEOUT = 1 * 60 * 1000L
         private const val SALT_LENGTH_BYTES = 16
+        private const val PIN_HASH_ITERATIONS = 310000
+        private const val PIN_HASH_KEY_LENGTH = 256
     }
 
     private fun generateSalt(): String {
@@ -42,8 +46,10 @@ class AppLockManager(private val context: Context) {
     }
 
     private fun hashPinWithSalt(pin: String, salt: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hashBytes = digest.digest((salt + pin).toByteArray())
+        val saltBytes = salt.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+        val spec = PBEKeySpec(pin.toCharArray(), saltBytes, PIN_HASH_ITERATIONS, PIN_HASH_KEY_LENGTH)
+        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        val hashBytes = factory.generateSecret(spec).encoded
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
