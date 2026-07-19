@@ -302,9 +302,9 @@ class CacheManager @Inject constructor(
         }
     }
     
-    fun getCachedIcon(cacheKey: String): android.graphics.drawable.Drawable? {
+    fun getCachedIcon(cacheKey: String, version: String = ""): android.graphics.drawable.Drawable? {
         return try {
-            val iconFile = File(iconCacheDir, "${cacheKey.replace("/", "_")}.png")
+            val iconFile = File(iconCacheDir, "${version}_${cacheKey.replace("/", "_")}.png")
             if (!iconFile.exists()) return null
             
             val bitmap = android.graphics.BitmapFactory.decodeFile(iconFile.absolutePath)
@@ -318,10 +318,10 @@ class CacheManager @Inject constructor(
         }
     }
     
-    fun cacheIcon(cacheKey: String, drawable: android.graphics.drawable.Drawable) {
+    fun cacheIcon(cacheKey: String, drawable: android.graphics.drawable.Drawable, version: String = "") {
         backgroundExecutor.execute {
             try {
-                val iconFile = File(iconCacheDir, "${cacheKey.replace("/", "_")}.png")
+                val iconFile = File(iconCacheDir, "${version}_${cacheKey.replace("/", "_")}.png")
                 
                 val bitmap = when (drawable) {
                     is android.graphics.drawable.BitmapDrawable -> drawable.bitmap

@@ -261,17 +261,18 @@ class IconLoader(
         if (memCached != null) {
             return memCached
         }
-        
+
         // Check disk cache if in-memory cache miss
         if (cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
-            val diskCached = cacheManager.getCachedIcon(cacheKey)
+            val version = cacheManager.getIconCacheKey(currentIconStyle, currentIconSize)
+            val diskCached = cacheManager.getCachedIcon(cacheKey, version)
             if (diskCached != null) {
                 // Put into in-memory cache for faster access next time
                 iconCache.put(cacheKey, diskCached)
                 return diskCached
             }
         }
-        
+
         return null
     }
 
@@ -397,7 +398,7 @@ class IconLoader(
                     iconCache.put(cacheKey, shapedIcon)
                     
                     // Save to disk cache for persistence
-                    cacheManager.cacheIcon(cacheKey, shapedIcon)
+                    cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                 }
 
                 val readyIcon = iconCache.get(cacheKey) ?: return@PriorityRunnable
