@@ -516,7 +516,11 @@ class WebAppSettingsActivity : ComponentActivity() {
     }
 
     private fun isSupportedWebUrl(rawUrl: String, allowHttp: Boolean = false): Boolean {
-        val normalized = webAppManager.normalizeUrl(rawUrl)
+        val normalized = try {
+            webAppManager.normalizeUrl(rawUrl)
+        } catch (_: IllegalArgumentException) {
+            return false
+        }
 
         // Always allow HTTPS
         if (normalized.startsWith("https://", ignoreCase = true)) {
