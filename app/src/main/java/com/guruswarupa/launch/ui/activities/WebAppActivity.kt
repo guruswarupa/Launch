@@ -43,6 +43,7 @@ class WebAppActivity : AppCompatActivity() {
         const val EXTRA_WEB_APP_URL = "web_app_url"
         const val EXTRA_BLOCK_REDIRECTS = "block_redirects"
         private const val TAG = "WebAppActivity"
+        private val BLOCKED_SCHEMES = setOf("javascript", "file", "content", "intent")
     }
 
     private lateinit var webView: WebView
@@ -164,7 +165,7 @@ class WebAppActivity : AppCompatActivity() {
             domStorageEnabled = true
             builtInZoomControls = false
             displayZoomControls = false
-            mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             mediaPlaybackRequiresUserGesture = false
             allowFileAccess = false
             allowContentAccess = false
@@ -256,10 +257,13 @@ class WebAppActivity : AppCompatActivity() {
                     return true
                 }
 
-                val scheme = targetUri.scheme.orEmpty()
+                val scheme = targetUri.scheme.orEmpty().lowercase()
 
 
                 if (scheme != "http" && scheme != "https") {
+                    if (scheme in BLOCKED_SCHEMES) {
+                        return true
+                    }
 
                     val shouldOpen = try {
                         android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
