@@ -145,7 +145,8 @@ class AppAdapter(
         onAppModified = {
             notifyItemRangeChanged(0, getCurrentListSize(), PAYLOAD_ICON_VISUAL_STATE)
         },
-        openWebApp = { appInfo: ResolveInfo -> openWebApp(appInfo) }
+        openWebApp = { appInfo: ResolveInfo -> openWebApp(appInfo) },
+        shareManager = activity.shareManager
     )
 
     init {
