@@ -78,7 +78,7 @@ class WidgetLifecycleCoordinator {
         register({ ::mediaControllerWidget.isInitialized }, { mediaControllerWidget.refreshController() }, { }, { mediaControllerWidget.cleanup() })
         register({ ::yearProgressWidget.isInitialized }, { yearProgressWidget.onResume() }, { yearProgressWidget.onPause() }, { yearProgressWidget.cleanup() })
         register({ ::physicalActivityWidget.isInitialized }, { physicalActivityWidget.onResume() }, { physicalActivityWidget.onPause() }, { physicalActivityWidget.cleanup() })
-        register({ ::compassWidget.isInitialized }, { compassWidget.onResume() }, { compassWidget.onPause() }, { compassWidget.onPause() })
+        register({ ::compassWidget.isInitialized }, { compassWidget.onResume() }, { compassWidget.onPause() }, { compassWidget.cleanup() })
         register({ ::pressureWidget.isInitialized }, { pressureWidget.onResume() }, { pressureWidget.onPause() }, { pressureWidget.cleanup() })
         register({ ::temperatureWidget.isInitialized }, { temperatureWidget.onResume() }, { temperatureWidget.onPause() }, { temperatureWidget.cleanup() })
         register({ ::weatherForecastWidget.isInitialized }, { weatherForecastWidget.onResume() }, { weatherForecastWidget.onPause() }, { weatherForecastWidget.cleanup() })
