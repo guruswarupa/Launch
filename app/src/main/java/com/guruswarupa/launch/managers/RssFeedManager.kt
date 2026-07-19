@@ -400,6 +400,7 @@ class RssFeedManager(
         var title = fallbackSource
 
         while (!(parser.eventType == XmlPullParser.END_TAG && parser.depth == startDepth && parser.name == parent)) {
+            if (parser.eventType == XmlPullParser.END_DOCUMENT) break
             parser.next()
             if (parser.eventType == XmlPullParser.START_TAG && parser.name.equals("title", ignoreCase = true)) {
                 title = parser.nextText().trim().ifEmpty { fallbackSource }
