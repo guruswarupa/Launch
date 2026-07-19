@@ -411,56 +411,11 @@ class AppTimerManager(private val context: Context) {
                 val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
                     ?: return@runOnBackgroundThread
 
-
-
+                // Best-effort background-process cleanup only. A third-party launcher cannot
+                // force-stop a foreground app; the real enforcement is returning the user to
+                // the home screen via returnToLauncher().
                 activityManager.killBackgroundProcesses(packageName)
-
-
-                CoroutineScope(Dispatchers.Main + NonCancellable).launch {
-                    delay(300)
-                    try {
-                        activityManager.killBackgroundProcesses(packageName)
-                    } catch (_: Exception) {
-
-                    }
-                }
-
-
-                try {
-
-                    @Suppress("DEPRECATION")
-                    val recentTasks = activityManager.getRecentTasks(50, ActivityManager.RECENT_WITH_EXCLUDED)
-                    for (taskInfo in recentTasks) {
-                        val baseIntent = taskInfo.baseIntent
-                        val component = baseIntent.component
-                        if (component != null && component.packageName == packageName) {
-
-                            try {
-
-                                activityManager.killBackgroundProcesses(packageName)
-                            } catch (_: Exception) {
-
-                            }
-                        }
-                    }
-                } catch (_: SecurityException) {
-
-
-                } catch (_: Exception) {
-
-                }
-
-            } catch (_: SecurityException) {
-
-
-                try {
-                    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-                    activityManager?.killBackgroundProcesses(packageName)
-                } catch (_: Exception) {
-
-                }
             } catch (_: Exception) {
-
             }
         }
     }
