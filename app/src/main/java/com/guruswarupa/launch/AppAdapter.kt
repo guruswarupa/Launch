@@ -261,11 +261,9 @@ class AppAdapter(
             val matrix = ColorMatrix().apply { setSaturation(0f) }
             imageView.colorFilter = ColorMatrixColorFilter(matrix)
             imageView.alpha = 0.5f
-            imageView.drawable?.colorFilter = ColorMatrixColorFilter(matrix)
         } else {
             imageView.clearColorFilter()
             imageView.alpha = 1f
-            imageView.drawable?.clearColorFilter()
         }
     }
 
