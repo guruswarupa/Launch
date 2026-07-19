@@ -155,12 +155,14 @@ class AppListManager @Inject constructor(
             if (!isInternal) {
                 val label = getDisplayLabel(app)
                 val firstChar = if (label.isNotEmpty()) label[0].uppercaseChar() else null
-                
+
                 // Only add letter separators when NOT in favorites-only mode
-                if (!showOnlyFavorites && firstChar != null && firstChar != lastLetter) {
+                if (!showOnlyFavorites && firstChar != null) {
                     val separatorLetter = if (firstChar.isLetter()) firstChar else '#'
-                    result.add(createSeparatorInfo("letter_separator_$separatorLetter"))
-                    lastLetter = firstChar
+                    if (separatorLetter != lastLetter) {
+                        result.add(createSeparatorInfo("letter_separator_$separatorLetter"))
+                        lastLetter = separatorLetter
+                    }
                 }
             } else if (lastLetter != null) {
                 // Add large separator before system apps (Settings/Vault) to force new row
