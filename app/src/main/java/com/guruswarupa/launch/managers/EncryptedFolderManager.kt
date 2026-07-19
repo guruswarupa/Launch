@@ -23,7 +23,7 @@ class EncryptedFolderManager(private val context: Context) {
         private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
         private const val SALT_SIZE = 16
         private const val IV_SIZE = 12
-        private const val ITERATIONS = 10000
+        private const val ITERATIONS = 310000
         private const val KEY_LENGTH = 256
         private const val VAULT_DIR = "encrypted_vault"
         private const val THUMBS_DIR = "vault_thumbs"
