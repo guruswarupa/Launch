@@ -1908,7 +1908,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                 packageManager.getLaunchIntentForPackage(packageName)?.let { intent ->
                     intent.component?.let { component ->
                         startActivity(Intent.makeRestartActivityTask(component))
-                        Runtime.getRuntime().exit(0)
+                        finish()
                     }
                 }
             }
