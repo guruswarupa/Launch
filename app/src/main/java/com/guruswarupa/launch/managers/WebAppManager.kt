@@ -100,11 +100,25 @@ class WebAppManager @Inject constructor(private val sharedPreferences: SharedPre
 
     fun normalizeUrl(rawUrl: String): String {
         val trimmed = rawUrl.trim()
-        return when {
+        val candidate = when {
             trimmed.startsWith("https://", ignoreCase = true) -> trimmed
             trimmed.startsWith("http://", ignoreCase = true) -> trimmed
             else -> "https://$trimmed"
         }
+
+        val uri = try {
+            android.net.Uri.parse(candidate)
+        } catch (_: Exception) {
+            throw IllegalArgumentException("Invalid web app URL: $rawUrl")
+        }
+        val scheme = uri.scheme.orEmpty().lowercase()
+        if (scheme != "http" && scheme != "https") {
+            throw IllegalArgumentException("Unsupported web app URL scheme: $scheme")
+        }
+        if (uri.host.isNullOrBlank()) {
+            throw IllegalArgumentException("Web app URL must include a host: $rawUrl")
+        }
+        return candidate
     }
 
     private fun saveWebApps(entries: List<WebAppEntry>) {
