@@ -784,21 +784,8 @@ class MainActivity : FragmentActivity() {
                 cacheManager.clearCache()
             }
 
-            appList.removeAll { it.activityInfo.packageName == packageName }
-            fullAppList.removeAll { it.activityInfo.packageName == packageName }
-
-            runOnUiThread {
-                if (!isFinishing && !isDestroyed) {
-                    appListLoader.clearCache()
-                    adapter.updateAppList(appList)
-                    updateFastScrollerVisibility()
-                }
-            }
-
-            if (!isRemoved) {
-                appListLoader.clearCache()
-                appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
-            }
+            appListLoader.clearCache()
+            appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
         }
     }
 
