@@ -203,6 +203,7 @@ class AppAdapter(
 
     fun cleanup() {
         adapterScope.cancel()
+        iconLoader.cleanup()
         fastScrollDebounceHandler.removeCallbacksAndMessages(null)
     }
 

@@ -51,6 +51,11 @@ class IconLoader(
         const val PRIORITY_BACKGROUND = 0
     }
 
+    private fun safeRunOnUiThread(block: () -> Unit) {
+        if (activity.isFinishing || activity.isDestroyed) return
+        activity.runOnUiThread(block)
+    }
+
     private val maxCacheSize = Constants.Dimensions.ICON_CACHE_MAX_SIZE
     private val iconCache = object : LruCache<String, Drawable>(maxCacheSize) {
         override fun entryRemoved(evicted: Boolean, key: String, oldValue: Drawable, newValue: Drawable?) {
@@ -444,7 +449,7 @@ class IconLoader(
                     try {
                         val icon = shapeIconDrawable(activity.packageManager.getApplicationIcon(candidatePackage))
                         specialAppIconCache.put(cacheId, icon)
-                        (context as? Activity)?.runOnUiThread {
+                        safeRunOnUiThread {
                             if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
 
                                 if (!(icon is BitmapDrawable && icon.bitmap.isRecycled)) {
@@ -493,7 +498,7 @@ class IconLoader(
                         Drawable.createFromStream(inputStream, photoUri)
                     } ?: return@execute
                     contactPhotoCache.put(contactName, drawable)
-                    (context as? Activity)?.runOnUiThread {
+                    safeRunOnUiThread {
                         if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
 
                             if (!(drawable is BitmapDrawable && drawable.bitmap.isRecycled)) {
@@ -517,12 +522,12 @@ class IconLoader(
         drawable: Drawable,
         onIconReady: ((String, AppAdapter.ViewHolder) -> Unit)?
     ) {
-        (context as? Activity)?.runOnUiThread {
+        safeRunOnUiThread {
             val currentPosition = holder.bindingAdapterPosition
             val currentTag = holder.itemView.tag
             if (currentPosition != RecyclerView.NO_POSITION && currentTag == cacheKey) {
                 if (drawable is BitmapDrawable && drawable.bitmap.isRecycled) {
-                    return@runOnUiThread
+                    return@safeRunOnUiThread
                 }
                 holder.appIcon?.setImageDrawable(drawable)
                 onIconReady?.invoke(cacheKey.substringBefore('|'), holder)
