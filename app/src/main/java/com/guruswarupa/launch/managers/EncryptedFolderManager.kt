@@ -171,7 +171,7 @@ class EncryptedFolderManager(private val context: Context) {
         val fis = FileInputStream(sourceFile)
         try {
             val iv = ByteArray(IV_SIZE)
-            if (fis.read(iv) != IV_SIZE) {
+            if (!readFully(fis, iv)) {
                 throw IOException("Invalid file format")
             }
 
@@ -191,7 +191,7 @@ class EncryptedFolderManager(private val context: Context) {
 
         FileInputStream(sourceFile).use { inputStream ->
             val iv = ByteArray(IV_SIZE)
-            if (inputStream.read(iv) != IV_SIZE) {
+            if (!readFully(inputStream, iv)) {
                 throw IOException("Invalid file format")
             }
 
@@ -382,15 +382,16 @@ class EncryptedFolderManager(private val context: Context) {
         if (!thumbFile.exists()) return null
 
         return try {
-            val fis = FileInputStream(thumbFile)
-            val iv = ByteArray(IV_SIZE)
-            fis.read(iv)
+            FileInputStream(thumbFile).use { fis ->
+                val iv = ByteArray(IV_SIZE)
+                if (!readFully(fis, iv)) return null
 
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
+                val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+                cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
 
-            val cis = javax.crypto.CipherInputStream(fis, cipher)
-            BitmapFactory.decodeStream(cis)
+                val cis = javax.crypto.CipherInputStream(fis, cipher)
+                BitmapFactory.decodeStream(cis)
+            }
         } catch (e: Exception) {
             null
         }
