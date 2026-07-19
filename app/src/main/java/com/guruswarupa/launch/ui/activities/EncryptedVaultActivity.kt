@@ -323,7 +323,6 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                     if (DocumentsContract.isDocumentUri(this, uri)) {
                         deleted = DocumentsContract.deleteDocument(contentResolver, uri)
                     }
-                    if (!deleted) deleted = contentResolver.delete(uri, null, null) > 0
                 } catch (e: Exception) {}
             }
             loadFiles()

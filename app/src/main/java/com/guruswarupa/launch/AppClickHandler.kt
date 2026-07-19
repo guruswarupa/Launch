@@ -73,7 +73,8 @@ class AppClickHandler(
     }
 
     private fun resolveLaunchIntent(appInfo: ResolveInfo, packageName: String, serial: Int): LaunchResolution {
-        val activityName = appInfo.activityInfo.name
+        val activityInfo = appInfo.activityInfo ?: return LaunchResolution.Failed
+        val activityName = activityInfo.name
         if (packageName == activity.packageName) {
             return LaunchResolution.IntentLaunch(Intent().apply {
                 component = ComponentName(packageName, activityName)
