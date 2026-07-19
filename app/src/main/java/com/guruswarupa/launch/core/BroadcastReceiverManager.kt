@@ -5,10 +5,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.LauncherApps
 import android.os.Build
+import android.os.UserHandle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-
 
 
 
@@ -94,6 +95,28 @@ class BroadcastReceiverManager(
         }
     }
 
+    private val launcherAppsCallback = object : LauncherApps.Callback() {
+        override fun onPackageAdded(packageName: String, user: UserHandle) {
+            activity.runOnUiThread { onPackageChanged(packageName, false) }
+        }
+
+        override fun onPackageRemoved(packageName: String, user: UserHandle) {
+            activity.runOnUiThread { onPackageChanged(packageName, true) }
+        }
+
+        override fun onPackageChanged(packageName: String, user: UserHandle) {
+            activity.runOnUiThread { onPackageChanged(packageName, false) }
+        }
+
+        override fun onPackagesAvailable(packageNames: Array<out String>, user: UserHandle, replacing: Boolean) {
+            packageNames.forEach { activity.runOnUiThread { onPackageChanged(it, false) } }
+        }
+
+        override fun onPackagesUnavailable(packageNames: Array<out String>, user: UserHandle, replacing: Boolean) {
+            packageNames.forEach { activity.runOnUiThread { onPackageChanged(it, true) } }
+        }
+    }
+
 
 
 
@@ -124,6 +147,9 @@ class BroadcastReceiverManager(
 
 
         registerReceiverCompat(dndReceiver, IntentFilter(NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED), exported = true)
+
+        val launcherApps = activity.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+        launcherApps.registerCallback(launcherAppsCallback)
     }
 
     private fun registerReceiverCompat(receiver: BroadcastReceiver, filter: IntentFilter, exported: Boolean) {
@@ -152,6 +178,12 @@ class BroadcastReceiverManager(
             activityRecognitionPermissionReceiver,
             dndReceiver
         )
+
+        try {
+            val launcherApps = activity.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
+            launcherApps.unregisterCallback(launcherAppsCallback)
+        } catch (_: Exception) {
+        }
 
         for (receiver in receivers) {
             try {
