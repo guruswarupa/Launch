@@ -66,6 +66,7 @@ class PermissionsActivity : ComponentActivity() {
             view.findViewById<TextView>(R.id.permission_name).text = perm.name
             view.findViewById<TextView>(R.id.permission_description).text = perm.description
             val sw = view.findViewById<SwitchCompat>(R.id.permission_switch)
+            sw.setOnCheckedChangeListener(null)
             sw.isChecked = perm.granted
             sw.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked && !perm.granted) {

@@ -149,26 +149,14 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                     allWidgets.removeAt(fromPos)
                     allWidgets.add(toPos, movedItem)
                 } else {
-                    // Re-calculate the whole order based on filtered list changes
-                    val originalDisabled = allWidgets.filter { !it.enabled }
-                    val newEnabledOrder = allWidgets.filter { it.enabled }.toMutableList()
-                    
-                    // Find the items in newEnabledOrder that correspond to filteredWidgets
-                    // This is complex, simpler way: find the anchor item
-                    val anchorItem = if (toPos < filteredWidgets.size - 1) filteredWidgets[toPos + 1] else null
-                    
-                    val originalFrom = allWidgets.indexOfFirst { it.id == movedItem.id }
-                    if (originalFrom != -1) {
-                        allWidgets.removeAt(originalFrom)
-                        val newIndex = if (anchorItem != null) {
-                            allWidgets.indexOfFirst { it.id == anchorItem.id }.coerceAtLeast(0)
-                        } else {
-                            allWidgets.indexOfLast { it.enabled }.coerceAtLeast(0) + 1
-                        }
-                        allWidgets.add(newIndex.coerceIn(0, allWidgets.size), movedItem)
-                    }
+                    val disabled = allWidgets.filter { !it.enabled }
+                    val reorderedEnabled = filteredWidgets.toList()
+                    allWidgets.clear()
+                    allWidgets.addAll(reorderedEnabled)
+                    allWidgets.addAll(disabled)
                 }
 
+                adapter?.updateWidgets(filteredWidgets)
                 persistWidgetConfiguration()
                 adapter?.notifyItemMoved(fromPos, toPos)
                 refreshSectionHeaders()
