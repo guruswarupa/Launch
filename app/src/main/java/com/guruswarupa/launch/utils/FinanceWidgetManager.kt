@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.FinanceManager
+import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.ui.adapters.Transaction
 import com.guruswarupa.launch.ui.adapters.TransactionAdapter
 import java.util.Locale
@@ -28,6 +29,8 @@ class FinanceWidgetManager(
 ) {
 
     fun setup() {
+        TypographyManager.applyToView(balanceText.parent as View)
+
         activity.findViewById<Button>(R.id.add_income_btn).setOnClickListener {
             addTransaction(true)
         }
@@ -226,6 +229,7 @@ class FinanceWidgetManager(
         }
 
         dialog.show()
+        TypographyManager.applyToView(dialogView)
         fixDialogTextColors(dialog)
     }
 

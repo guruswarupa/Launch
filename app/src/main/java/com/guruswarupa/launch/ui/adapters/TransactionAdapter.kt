@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.managers.TypographyManager
 
 data class Transaction(
     val type: String,
@@ -60,6 +61,8 @@ class TransactionAdapter(
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = differ.currentList[position]
         val context = holder.itemView.context
+
+        TypographyManager.applyToView(holder.itemView)
 
 
         val isIncome = transaction.type == "income"

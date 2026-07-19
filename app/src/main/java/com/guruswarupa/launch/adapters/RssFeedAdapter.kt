@@ -12,11 +12,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.RssArticle
+import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.ui.activities.WebAppActivity
 import java.text.DateFormat
 import java.util.Date
 
 class RssFeedAdapter : RecyclerView.Adapter<RssFeedAdapter.RssArticleViewHolder>() {
+
+    private var fontScale = 1.0f
+    private var fontStyle = "default"
+    private var fontIntensity = "regular"
+    private var fontColor: Int? = null
+
+    fun updateTypography(scale: Float, style: String, intensity: String, color: Int?) {
+        fontScale = scale
+        fontStyle = style
+        fontIntensity = intensity
+        fontColor = color
+        notifyDataSetChanged()
+    }
 
     private val differCallback = object : DiffUtil.ItemCallback<RssArticle>() {
         override fun areItemsTheSame(oldItem: RssArticle, newItem: RssArticle): Boolean {
@@ -38,6 +52,7 @@ class RssFeedAdapter : RecyclerView.Adapter<RssFeedAdapter.RssArticleViewHolder>
     }
 
     override fun onBindViewHolder(holder: RssArticleViewHolder, position: Int) {
+        TypographyManager.applyToViewTree(holder.itemView, fontScale, fontStyle, fontIntensity, fontColor)
         holder.bind(differ.currentList[position])
     }
 

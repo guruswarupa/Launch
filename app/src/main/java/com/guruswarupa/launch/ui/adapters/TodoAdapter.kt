@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.models.TodoItem
 import java.util.Calendar
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.managers.TypographyManager
 
 class TodoAdapter(
     private val todoItems: MutableList<TodoItem>,
@@ -52,6 +53,8 @@ class TodoAdapter(
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val todoItem = todoItems[position]
         val context = holder.itemView.context
+        
+        TypographyManager.applyToView(holder.itemView)
 
         holder.todoCheckBox.isChecked = todoItem.isChecked
 

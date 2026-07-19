@@ -25,6 +25,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.adapters.RssFeedAdapter
 import com.guruswarupa.launch.managers.RssArticle
 import com.guruswarupa.launch.managers.RssFeedManager
+import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.models.Constants
 
 class RssFeedPage(
@@ -47,6 +48,8 @@ class RssFeedPage(
     fun setup() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
+
+        updateTypography()
 
 
         recyclerView.setHasFixedSize(true)
@@ -84,6 +87,18 @@ class RssFeedPage(
                 }
             }
         }
+    }
+
+    fun updateTypography() {
+        val prefs = activity.sharedPreferences
+        val scale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100) / 100f
+        val style = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
+        val intensity = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular") ?: "regular"
+        val color = TypographyManager.getConfiguredFontColor(activity)
+        adapter.updateTypography(scale, style, intensity, color)
+        
+        TypographyManager.applyToViewTree(rootView.findViewById(R.id.rss_header), scale, style, intensity, color)
+        TypographyManager.applyToViewTree(emptyState, scale, style, intensity, color)
     }
 
     private fun updateContentTopPadding() {
