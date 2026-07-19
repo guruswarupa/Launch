@@ -205,7 +205,7 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
         if (transactionKeys.size > 100) {
 
             val sortedKeys = transactionKeys.sortedByDescending { key ->
-                key.substringAfter("transaction_").toLongOrNull() ?: 0L
+                key.removePrefix("transaction_").substringBefore("_").toLongOrNull() ?: 0L
             }
 
 
