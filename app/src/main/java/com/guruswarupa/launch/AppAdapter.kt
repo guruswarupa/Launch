@@ -67,6 +67,7 @@ class AppAdapter(
         const val PAYLOAD_VIEW_MODE = 3
         const val PAYLOAD_ICON_VISUAL_STATE = 4
         const val PAYLOAD_USAGE = 5
+        const val PAYLOAD_TYPOGRAPHY = 6
 
         private val SPECIAL_PACKAGE_NAMES = setOf(
             "com.android.settings",
@@ -95,6 +96,11 @@ class AppAdapter(
     private var currentIconStyle = prefs.getString(Constants.Prefs.ICON_STYLE, "squircle") ?: "round"
     private var currentIconSize = prefs.getInt(Constants.Prefs.ICON_SIZE, 40)
     private var currentShowAppNamesInGrid = prefs.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
+
+    private var currentFontScale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100) / 100f
+    private var currentFontStyle = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
+    private var currentFontIntensity = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular") ?: "regular"
+    private var currentFontColor = TypographyManager.getConfiguredFontColor(context)
 
     private val iconLoader = IconLoader(
         activity = activity,
@@ -185,6 +191,14 @@ class AppAdapter(
 
     fun clearContactPhotoCache() {
         notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_VISUAL_STATE)
+    }
+
+    fun refreshTypography() {
+        currentFontScale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100) / 100f
+        currentFontStyle = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
+        currentFontIntensity = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular") ?: "regular"
+        currentFontColor = TypographyManager.getConfiguredFontColor(context)
+        notifyItemRangeChanged(0, currentList.size, PAYLOAD_TYPOGRAPHY)
     }
 
     fun cleanup() {
@@ -376,10 +390,15 @@ class AppAdapter(
                     PAYLOAD_USAGE -> {
                         bindUsageTime(holder, packageName)
                     }
+                    PAYLOAD_TYPOGRAPHY -> {
+                        TypographyManager.applyToViewTree(holder.itemView, currentFontScale, currentFontStyle, currentFontIntensity, currentFontColor)
+                    }
                 }
             }
             return
         }
+
+        TypographyManager.applyToViewTree(holder.itemView, currentFontScale, currentFontStyle, currentFontIntensity, currentFontColor)
 
         if (packageName == SEPARATOR_PACKAGE) {
             holder.appName?.text = appInfo.nonLocalizedLabel ?: ""
