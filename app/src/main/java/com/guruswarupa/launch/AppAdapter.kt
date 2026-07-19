@@ -44,9 +44,7 @@ import com.guruswarupa.launch.ui.activities.WebAppActivity
 import com.guruswarupa.launch.ui.activities.WebAppSettingsActivity
 import com.guruswarupa.launch.handlers.AppContextMenuHandler
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
 
 class AppAdapter(
     private val activity: MainActivity,
@@ -68,6 +66,7 @@ class AppAdapter(
         const val PAYLOAD_ICON_SIZE = 2
         const val PAYLOAD_VIEW_MODE = 3
         const val PAYLOAD_ICON_VISUAL_STATE = 4
+        const val PAYLOAD_USAGE = 5
 
         private val SPECIAL_PACKAGE_NAMES = setOf(
             "com.android.settings",
@@ -87,8 +86,8 @@ class AppAdapter(
     private val mainUserSerial = userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
     private val labelCache = ConcurrentHashMap<String, String>()
     private val usageCache = ConcurrentHashMap<String, String>()
-    private val executor = Executors.newSingleThreadExecutor()
-    private val pendingLabelTasks = ConcurrentHashMap<String, Future<*>>()
+    private val adapterScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val pendingLabelJobs = ConcurrentHashMap<String, Job>()
     private var itemsRendered = 0
     private var isFastScrolling = false
     private val fastScrollDebounceHandler = Handler(Looper.getMainLooper())
@@ -133,7 +132,7 @@ class AppAdapter(
     private val appContextMenuHandler = AppContextMenuHandler(
         activity = activity,
         context = context,
-        executor = executor!!,
+        executor = activity.backgroundExecutor,
         labelResolver = { packageName: String, appInfo: ResolveInfo ->
             labelCache["${packageName}|${appInfo.preferredOrder}"] ?: packageName
         },
@@ -181,15 +180,15 @@ class AppAdapter(
 
     fun clearUsageCache() {
         usageCache.clear()
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, currentList.size, PAYLOAD_USAGE)
     }
 
     fun clearContactPhotoCache() {
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_VISUAL_STATE)
     }
 
     fun cleanup() {
-        executor?.shutdownNow()
+        adapterScope.cancel()
         fastScrollDebounceHandler.removeCallbacksAndMessages(null)
     }
 
@@ -216,9 +215,11 @@ class AppAdapter(
     fun refreshIcons() {
         iconLoader.updateIconStyle(currentIconStyle)
         iconLoader.updateIconSize(currentIconSize)
-        executor.execute {
+        adapterScope.launch(Dispatchers.IO) {
             iconLoader.preloadIcons(currentList.filter { it.activityInfo.packageName != SEPARATOR_PACKAGE })
-            activity.runOnUiThread { notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE) }
+            withContext(Dispatchers.Main) {
+                notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE)
+            }
         }
     }
 
@@ -268,26 +269,30 @@ class AppAdapter(
         val newItems = ArrayList(newAppList)
         val isFirstLoad = itemsRendered == 0
 
-        try {
-            val metadataCache = activity.cacheManager.getMetadataCache()
-            for (app in newItems) {
-                val packageName = app.activityInfo.packageName
-                if (packageName == SEPARATOR_PACKAGE) continue
-                val cacheKey = "${packageName}|${app.preferredOrder}"
+        adapterScope.launch(Dispatchers.IO) {
+            try {
+                val metadataCache = activity.cacheManager.getMetadataCache()
+                for (app in newItems) {
+                    val packageName = app.activityInfo.packageName
+                    if (packageName == SEPARATOR_PACKAGE) continue
+                    val cacheKey = "${packageName}|${app.preferredOrder}"
 
-                val cachedMetadata = metadataCache[cacheKey]
-                if (cachedMetadata != null && !labelCache.containsKey(cacheKey)) {
-                    labelCache[cacheKey] = cachedMetadata.label
+                    val cachedMetadata = metadataCache[cacheKey]
+                    if (cachedMetadata != null && !labelCache.containsKey(cacheKey)) {
+                        labelCache[cacheKey] = cachedMetadata.label
+                    }
                 }
+            } catch (_: Exception) {
             }
-        } catch (_: Exception) {
-        }
 
-        submitList(newItems) {
-            if (isFirstLoad && newItems.isNotEmpty()) {
-                itemsRendered = newItems.size
-                executor.execute {
-                    iconLoader.preloadIcons(newItems.filter { it.activityInfo.packageName != SEPARATOR_PACKAGE })
+            withContext(Dispatchers.Main) {
+                submitList(newItems) {
+                    if (isFirstLoad && newItems.isNotEmpty()) {
+                        itemsRendered = newItems.size
+                        adapterScope.launch(Dispatchers.IO) {
+                            iconLoader.preloadIcons(newItems.filter { it.activityInfo.packageName != SEPARATOR_PACKAGE })
+                        }
+                    }
                 }
             }
         }
@@ -304,9 +309,17 @@ class AppAdapter(
         }
 
         override fun areContentsTheSame(oldItem: ResolveInfo, newItem: ResolveInfo): Boolean {
+            if (oldItem.activityInfo.packageName == SEPARATOR_PACKAGE) {
+                val oldName = oldItem.activityInfo.name
+                val newName = newItem.activityInfo.name
+                val oldLabel = oldItem.nonLocalizedLabel?.toString()
+                val newLabel = newItem.nonLocalizedLabel?.toString()
+                return oldName == newName && oldLabel == newLabel
+            }
             return oldItem.activityInfo.packageName == newItem.activityInfo.packageName &&
                     oldItem.activityInfo.name == newItem.activityInfo.name &&
-                    oldItem.preferredOrder == newItem.preferredOrder
+                    oldItem.preferredOrder == newItem.preferredOrder &&
+                    oldItem.activityInfo.enabled == newItem.activityInfo.enabled
         }
     }
 
@@ -359,6 +372,9 @@ class AppAdapter(
                     PAYLOAD_ICON_VISUAL_STATE -> applyIconVisualState(packageName, holder.appIcon)
                     PAYLOAD_VIEW_MODE -> {
                         configureLabelVisibility(holder)
+                    }
+                    PAYLOAD_USAGE -> {
+                        bindUsageTime(holder, packageName)
                     }
                 }
             }
@@ -414,8 +430,7 @@ class AppAdapter(
         }
     }
 
-    private fun bindAppLabel(holder: ViewHolder, appInfo: ResolveInfo, packageName: String, label: String) {
-        holder.appName?.text = label
+    private fun bindUsageTime(holder: ViewHolder, packageName: String) {
         val usageTime = usageCache[packageName]
         if (usageTime != null) {
             holder.appUsageTime?.text = usageTime
@@ -423,6 +438,11 @@ class AppAdapter(
         } else {
             holder.appUsageTime?.visibility = View.GONE
         }
+    }
+
+    private fun bindAppLabel(holder: ViewHolder, appInfo: ResolveInfo, packageName: String, label: String) {
+        holder.appName?.text = label
+        bindUsageTime(holder, packageName)
     }
 
     private fun bindCachedOrAsyncIcon(holder: ViewHolder, appInfo: ResolveInfo, packageName: String) {
@@ -444,59 +464,34 @@ class AppAdapter(
     override fun getItemCount(): Int = currentList.size
 
     private fun loadLabelAsync(holder: ViewHolder, appInfo: ResolveInfo, packageName: String, cacheKey: String) {
-        pendingLabelTasks[cacheKey]?.cancel(true)
+        pendingLabelJobs[cacheKey]?.cancel()
 
-        val labelTask = object : Runnable, Future<Boolean> {
-            var completed = false
-            var cancelled = false
-
-            override fun run() {
+        pendingLabelJobs[cacheKey] = adapterScope.launch {
+            val label = withContext(Dispatchers.IO) {
                 try {
-                    val label = appInfo.loadLabel(activity.packageManager).toString()
-                    labelCache[cacheKey] = label
+                    val loadedLabel = appInfo.loadLabel(activity.packageManager).toString()
+                    labelCache[cacheKey] = loadedLabel
                     try {
                         activity.cacheManager.updateMetadataCache(
                             packageName,
-                            AppMetadata(packageName, appInfo.activityInfo.name, label, System.currentTimeMillis())
+                            AppMetadata(packageName, appInfo.activityInfo.name, loadedLabel, System.currentTimeMillis())
                         )
                     } catch (_: Exception) {
                     }
-
-                    (context as? Activity)?.runOnUiThread {
-                        val currentPosition = holder.bindingAdapterPosition
-                        if (currentPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
-                            holder.appName?.text = label
-                        }
-                    }
+                    loadedLabel
                 } catch (_: Exception) {
                     labelCache[cacheKey] = packageName
-                    (context as? Activity)?.runOnUiThread {
-                        val currentPosition = holder.bindingAdapterPosition
-                        if (currentPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
-                            holder.appName?.text = packageName
-                        }
-                    }
-                } finally {
-                    completed = true
+                    packageName
                 }
             }
 
-            override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
-                if (completed || cancelled) return false
-                cancelled = true
-                return true
+            if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
+                holder.appName?.text = label
             }
-
-            override fun isCancelled(): Boolean = cancelled
-            override fun isDone(): Boolean = completed
-            override fun get(): Boolean? = null
-            override fun get(timeout: Long, unit: TimeUnit): Boolean? = null
         }
 
-        executor.execute(labelTask)
-        pendingLabelTasks[cacheKey] = labelTask
-        if (pendingLabelTasks.size > 50) {
-            pendingLabelTasks.entries.removeAll { it.value.isDone }
+        if (pendingLabelJobs.size > 100) {
+            pendingLabelJobs.entries.removeIf { it.value.isCompleted }
         }
     }
 
@@ -567,50 +562,54 @@ class AppAdapter(
     }
 
     private fun showContactChoiceDialog(contactName: String) {
-        val phoneNumber = getPhoneNumberForContact(contactName)
-        val photoUri = getPhotoUriForContact(contactName)
-        val options = listOf(
-            activity.getString(R.string.call_button) to R.drawable.ic_phone,
-            activity.getString(R.string.whatsapp) to R.drawable.ic_whatsapp,
-            activity.getString(R.string.sms) to R.drawable.ic_message
-        )
-        val adapter = object : ArrayAdapter<Pair<String, Int>>(activity, R.layout.dialog_contact_item, options) {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.dialog_contact_item, parent, false)
-                getItem(position)?.let { item ->
-                    view.findViewById<ImageView>(R.id.option_icon).setImageResource(item.second)
-                    view.findViewById<TextView>(R.id.option_text).text = item.first
-                }
-                return view
+        adapterScope.launch {
+            val (phoneNumber, photoUri) = withContext(Dispatchers.IO) {
+                getPhoneNumberForContact(contactName) to getPhotoUriForContact(contactName)
             }
-        }
-        val builder = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
-
-        @SuppressLint("InflateParams")
-        val titleView = LayoutInflater.from(activity).inflate(R.layout.dialog_contact_title, null)
-        titleView.findViewById<TextView>(R.id.contact_name).text = contactName
-        titleView.findViewById<TextView>(R.id.contact_number).text = phoneNumber
-        val photoImageView = titleView.findViewById<ImageView>(R.id.contact_photo)
-        if (photoUri != null) {
-            try {
-                activity.contentResolver.openInputStream(photoUri.toUri())?.use { inputStream ->
-                    val drawable = Drawable.createFromStream(inputStream, photoUri)
-                    if (drawable != null) photoImageView.setImageDrawable(drawable) else photoImageView.setImageResource(R.drawable.ic_person)
+            
+            val options = listOf(
+                activity.getString(R.string.call_button) to R.drawable.ic_phone,
+                activity.getString(R.string.whatsapp) to R.drawable.ic_whatsapp,
+                activity.getString(R.string.sms) to R.drawable.ic_message
+            )
+            val adapter = object : ArrayAdapter<Pair<String, Int>>(activity, R.layout.dialog_contact_item, options) {
+                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                    val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.dialog_contact_item, parent, false)
+                    getItem(position)?.let { item ->
+                        view.findViewById<ImageView>(R.id.option_icon).setImageResource(item.second)
+                        view.findViewById<TextView>(R.id.option_text).text = item.first
+                    }
+                    return view
                 }
-            } catch (_: Exception) {
+            }
+            val builder = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
+
+            @SuppressLint("InflateParams")
+            val titleView = LayoutInflater.from(activity).inflate(R.layout.dialog_contact_title, null)
+            titleView.findViewById<TextView>(R.id.contact_name).text = contactName
+            titleView.findViewById<TextView>(R.id.contact_number).text = phoneNumber
+            val photoImageView = titleView.findViewById<ImageView>(R.id.contact_photo)
+            if (photoUri != null) {
+                try {
+                    activity.contentResolver.openInputStream(photoUri.toUri())?.use { inputStream ->
+                        val drawable = Drawable.createFromStream(inputStream, photoUri)
+                        if (drawable != null) photoImageView.setImageDrawable(drawable) else photoImageView.setImageResource(R.drawable.ic_person)
+                    }
+                } catch (_: Exception) {
+                    photoImageView.setImageResource(R.drawable.ic_person)
+                }
+            } else {
                 photoImageView.setImageResource(R.drawable.ic_person)
             }
-        } else {
-            photoImageView.setImageResource(R.drawable.ic_person)
-        }
 
-        builder.setCustomTitle(titleView).setAdapter(adapter) { _, which ->
-            when (which) {
-                0 -> call(phoneNumber)
-                1 -> activity.contactActionHandler.openWhatsAppChat(contactName)
-                2 -> activity.contactActionHandler.openSMSChat(contactName)
-            }
-        }.setNegativeButton(activity.getString(R.string.cancel_button), null).show()
+            builder.setCustomTitle(titleView).setAdapter(adapter) { _, which ->
+                when (which) {
+                    0 -> call(phoneNumber)
+                    1 -> activity.contactActionHandler.openWhatsAppChat(contactName)
+                    2 -> activity.contactActionHandler.openSMSChat(contactName)
+                }
+            }.setNegativeButton(activity.getString(R.string.cancel_button), null).show()
+        }
     }
 
     private fun getPhotoUriForContact(contactName: String): String? {
