@@ -56,6 +56,7 @@ class TodoAdapter(
         
         TypographyManager.applyToView(holder.itemView)
 
+        holder.todoCheckBox.setOnCheckedChangeListener(null)
         holder.todoCheckBox.isChecked = todoItem.isChecked
 
 

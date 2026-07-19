@@ -43,7 +43,7 @@ class PrivacyDashboardAdapter(
     }
 
     override fun getItemId(position: Int): Long {
-        return apps[position].packageName.hashCode().toLong()
+        return fnv1a64(apps[position].packageName)
     }
 
     @SuppressLint("InlinedApi")
@@ -243,4 +243,13 @@ private class AppPrivacyDiffCallback(
                 oldApp.isSideloaded == newApp.isSideloaded &&
                 oldApp.isExpanded == newApp.isExpanded
     }
+}
+
+private fun fnv1a64(value: String): Long {
+    var hash: ULong = 0xcbf29ce484222325uL
+    for (byte in value.toByteArray()) {
+        hash = hash xor byte.toULong()
+        hash = hash * 0x100000001b3uL
+    }
+    return (hash and 0x7FFFFFFFFFFFFFFFuL).toLong()
 }
