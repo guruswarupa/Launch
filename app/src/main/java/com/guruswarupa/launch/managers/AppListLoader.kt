@@ -104,7 +104,7 @@ class AppListLoader(
                     val workspaceMode = appDockManager.isWorkspaceModeActive()
 
                     val cachedAppsWithWebApps = appendWebApps(cachedApps).distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}|${it.preferredOrder}" }
-                    val cachedFinalList = appListManager.filterAndPrepareApps(cachedAppsWithWebApps, focusMode, workspaceMode)
+                    val cachedFinalList = appListManager.prepareSortedList(cachedAppsWithWebApps, focusMode, workspaceMode, activity.showOnlyFavoritesInitially)
 
 
                     if (activity.showOnlyFavoritesInitially && !focusMode && !workspaceMode) {
@@ -116,7 +116,7 @@ class AppListLoader(
 
                     if (cachedFinalList.isNotEmpty() && adapter != null) {
                         generalEmptyRetryCount = 0
-                        val sorted = appListManager.sortAppsAlphabetically(cachedFinalList, activity.showOnlyFavoritesInitially)
+                        val sorted = cachedFinalList
                         handler.post {
                             onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
                         }
@@ -149,13 +149,13 @@ class AppListLoader(
                 val workspaceMode = appDockManager.isWorkspaceModeActive()
 
                 val cachedAppsWithWebApps = appendWebApps(currentCachedUnsortedList).distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}|${it.preferredOrder}" }
-                val cachedFinalList = appListManager.filterAndPrepareApps(cachedAppsWithWebApps, focusMode, workspaceMode)
+                val cachedFinalList = appListManager.prepareSortedList(cachedAppsWithWebApps, focusMode, workspaceMode, activity.showOnlyFavoritesInitially)
 
                 if (cachedFinalList.isNotEmpty() && adapter != null) {
                     synchronized(retryLock) {
                         generalEmptyRetryCount = 0
                     }
-                    val sorted = appListManager.sortAppsAlphabetically(cachedFinalList, activity.showOnlyFavoritesInitially)
+                    val sorted = cachedFinalList
                     handler.post {
                         onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
                     }
@@ -249,7 +249,7 @@ class AppListLoader(
                     }
                     val focusMode = appDockManager.getCurrentMode()
                     val workspaceMode = appDockManager.isWorkspaceModeActive()
-                    val finalAppList = appListManager.filterAndPrepareApps(fullList, focusMode, workspaceMode)
+                    val finalAppList = appListManager.prepareSortedList(fullList, focusMode, workspaceMode, activity.showOnlyFavoritesInitially)
 
                     if (shouldRetryForEmptyWorkProfileList(fullList, finalAppList)) {
                         return@safeExecute
@@ -291,7 +291,7 @@ class AppListLoader(
                             cacheManager?.saveAppMetadataToCache(cacheManager.getMetadataCache())
 
 
-                            val sortedApps = appListManager.sortAppsAlphabetically(finalAppList, activity.showOnlyFavoritesInitially)
+                            val sortedApps = finalAppList
                             handler.post {
                                 if (activity.isFinishing || activity.isDestroyed) return@post
                                 onAppListUpdated?.invoke(sortedApps, fullList, true)

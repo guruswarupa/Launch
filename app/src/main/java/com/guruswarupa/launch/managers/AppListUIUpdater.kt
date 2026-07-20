@@ -221,8 +221,7 @@ class AppListUIUpdater(
                     val currentFullList = synchronized(fullAppList) {
                         ArrayList(fullAppList)
                     }
-                    val filteredApps = appListManager.filterAndPrepareApps(currentFullList, focusMode, workspaceMode)
-                    val sortedFinalList = appListManager.sortAppsAlphabetically(filteredApps, activity.showOnlyFavoritesInitially)
+                    val sortedFinalList = appListManager.prepareSortedList(currentFullList, focusMode, workspaceMode, activity.showOnlyFavoritesInitially)
                     val listWithSeparators = appListManager.addSeparators(sortedFinalList, activity.showOnlyFavoritesInitially)
 
                     activity.runOnUiThread {

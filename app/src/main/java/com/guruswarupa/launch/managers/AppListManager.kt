@@ -218,6 +218,16 @@ class AppListManager @Inject constructor(
         return result
     }
 
+    fun prepareSortedList(
+        apps: List<ResolveInfo>,
+        focusMode: Boolean,
+        workspaceMode: Boolean,
+        showOnlyFavorites: Boolean
+    ): List<ResolveInfo> {
+        val filtered = filterAndPrepareApps(apps, focusMode, workspaceMode)
+        return sortAppsAlphabetically(filtered, showOnlyFavorites)
+    }
+
     private fun createSeparatorInfo(id: String): ResolveInfo {
         val ri = ResolveInfo()
         ri.activityInfo = ActivityInfo()
