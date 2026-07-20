@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.AppAdapter
+import com.guruswarupa.launch.utils.TimeUtils
 import java.util.concurrent.Executor
 
 class FocusModeApplier(
@@ -22,18 +23,11 @@ class FocusModeApplier(
     private val showOnlyFavoritesInitially: () -> Boolean = { false }
 ) {
 
-    private fun safeExecute(task: Runnable): Boolean {
-        if (activity.isFinishing || activity.isDestroyed) {
-            return false
-        }
-        try {
-            backgroundExecutor.execute(task)
-            return true
-        } catch (e: Exception) {
-            Log.w("FocusModeApplier", "Task rejected by executor", e)
-            return false
-        }
-    }
+    private fun safeExecute(task: Runnable): Boolean =
+        TimeUtils.safeExecuteOn(
+            isActivityAlive = { !(activity.isFinishing || activity.isDestroyed) },
+            executor = backgroundExecutor
+        ) { task.run() }
 
     fun setAdapter(adapter: AppAdapter) {
         this.adapter = adapter

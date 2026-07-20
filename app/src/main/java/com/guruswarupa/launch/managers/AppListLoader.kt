@@ -21,10 +21,10 @@ import com.guruswarupa.launch.AppAdapter
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import java.util.concurrent.Executor
-import java.util.concurrent.RejectedExecutionException
 import com.guruswarupa.launch.core.CacheManager
 import com.guruswarupa.launch.models.AppMetadata
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.utils.TimeUtils
 
 class AppListLoader(
     private val activity: MainActivity,
@@ -68,22 +68,12 @@ class AppListLoader(
     var onAppListUpdated: ((List<ResolveInfo>, List<ResolveInfo>, Boolean) -> Unit)? = null
     var onAdapterNeedsUpdate: ((Boolean) -> Unit)? = null
 
-    private fun safeExecute(task: Runnable): Boolean {
-        if (activity.isFinishing || activity.isDestroyed) {
-            return false
-        }
-        try {
-            if ((backgroundExecutor as? java.util.concurrent.ExecutorService)?.isShutdown == true) {
-                Log.w(TAG, "Background executor is shut down, skipping task")
-                return false
-            }
-            backgroundExecutor.execute(task)
-            return true
-        } catch (e: RejectedExecutionException) {
-            Log.w(TAG, "Task rejected by executor", e)
-            return false
-        }
-    }
+    private fun safeExecute(task: Runnable): Boolean =
+        TimeUtils.safeExecuteOn(
+            isActivityAlive = { !(activity.isFinishing || activity.isDestroyed) },
+            executor = backgroundExecutor,
+            checkShutdown = true
+        ) { task.run() }
 
     fun loadApps(forceRefresh: Boolean = false) {
         if (activity.isFinishing || activity.isDestroyed) return

@@ -1,9 +1,9 @@
 package com.guruswarupa.launch.managers
 
-import android.util.Log
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.utils.TimeUtils
 import java.util.concurrent.Executor
 
 import com.guruswarupa.launch.managers.AppUsageStatsManager
@@ -20,18 +20,11 @@ class UsageStatsRefreshManager(
 
 
 
-    private fun safeExecute(task: Runnable): Boolean {
-        if (activity.isFinishing || activity.isDestroyed) {
-            return false
-        }
-        try {
-            backgroundExecutor.execute(task)
-            return true
-        } catch (e: Exception) {
-            Log.w("UsageStatsRefreshManager", "Task rejected by executor", e)
-            return false
-        }
-    }
+    private fun safeExecute(task: Runnable): Boolean =
+        TimeUtils.safeExecuteOn(
+            isActivityAlive = { !(activity.isFinishing || activity.isDestroyed) },
+            executor = backgroundExecutor
+        ) { task.run() }
 
 
 
