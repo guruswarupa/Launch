@@ -6,6 +6,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import com.guruswarupa.launch.utils.TimeUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -118,12 +119,7 @@ class AppUsageStatsManager(private val context: Context) {
     fun getUsageMapForToday(): Map<String, Long> {
         if (!hasUsageStatsPermission()) return emptyMap()
 
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        val startTime = calendar.timeInMillis
+        val startTime = TimeUtils.startOfToday()
         val endTime = System.currentTimeMillis()
 
         return try {
@@ -163,12 +159,7 @@ class AppUsageStatsManager(private val context: Context) {
             }
         }
 
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        val startTime = calendar.timeInMillis
+        val startTime = TimeUtils.startOfToday()
         val endTime = System.currentTimeMillis()
 
         val usageMap = getForegroundUsageMap(startTime, endTime)
@@ -197,18 +188,7 @@ class AppUsageStatsManager(private val context: Context) {
             .sum()
     }
 
-    fun formatUsageTime(timeInMillis: Long): String {
-        if (timeInMillis <= 0) return "0m"
-
-        val minutes = timeInMillis / (1000 * 60)
-        val hours = minutes / 60
-
-        return when {
-            hours > 0 -> "${hours}h ${minutes % 60}m"
-            minutes > 0 -> "${minutes}m"
-            else -> "<1m"
-        }
-    }
+    fun formatUsageTime(timeInMillis: Long): String = TimeUtils.formatDuration(timeInMillis)
 
     fun getWeeklyUsageData(): List<Pair<String, Long>> {
         if (!hasUsageStatsPermission()) return emptyList()

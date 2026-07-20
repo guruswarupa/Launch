@@ -29,13 +29,13 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.AppTimerManager
 import com.guruswarupa.launch.managers.AppUsageMonitor
 import com.guruswarupa.launch.utils.DialogStyler
+import com.guruswarupa.launch.utils.TimeUtils
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.setDialogInputView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 
 
 
@@ -201,16 +201,7 @@ class AppTimerManagementActivity : ComponentActivity() {
             .show()
     }
 
-    private fun formatTime(ms: Long): String {
-        if (ms == 0L) return "0m"
-        val hours = TimeUnit.MILLISECONDS.toHours(ms)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(ms) % 60
-        return when {
-            hours > 0 -> "${hours}h ${minutes}m"
-            minutes > 0 -> "${minutes}m"
-            else -> "< 1m"
-        }
-    }
+    private fun formatTime(ms: Long): String = TimeUtils.formatDuration(ms)
 
     private fun applyFilter(query: String) {
         val trimmedQuery = query.trim()

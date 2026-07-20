@@ -15,6 +15,7 @@ import com.guruswarupa.launch.ui.adapters.AppUsageAdapter
 import com.guruswarupa.launch.ui.adapters.AppUsageItem
 import com.guruswarupa.launch.ui.views.DailyUsagePieView
 import com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
+import com.guruswarupa.launch.utils.TimeUtils
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
@@ -173,16 +174,5 @@ class UsageStatsDisplayManager(
         dialog.show()
     }
 
-    private fun formatUsageTimeForDialog(timeInMillis: Long): String {
-        if (timeInMillis <= 0) return "0m"
-
-        val minutes = timeInMillis / (1000 * 60)
-        val hours = minutes / 60
-
-        return when {
-            hours > 0 -> "${hours}h ${minutes % 60}m"
-            minutes > 0 -> "${minutes}m"
-            else -> "<1m"
-        }
-    }
+    private fun formatUsageTimeForDialog(timeInMillis: Long): String = TimeUtils.formatDuration(timeInMillis)
 }

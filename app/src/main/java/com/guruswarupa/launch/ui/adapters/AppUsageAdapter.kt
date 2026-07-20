@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.utils.TimeUtils
 
 data class AppUsageItem(
     val appName: String,
@@ -50,16 +51,5 @@ class AppUsageAdapter(
 
     override fun getItemCount(): Int = appUsages.size
 
-    private fun formatUsageTime(timeInMillis: Long): String {
-        if (timeInMillis <= 0) return "0m"
-
-        val minutes = timeInMillis / (1000 * 60)
-        val hours = minutes / 60
-
-        return when {
-            hours > 0 -> "${hours}h ${minutes % 60}m"
-            minutes > 0 -> "${minutes}m"
-            else -> "<1m"
-        }
-    }
+    private fun formatUsageTime(timeInMillis: Long): String = TimeUtils.formatDuration(timeInMillis)
 }
