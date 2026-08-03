@@ -622,6 +622,7 @@ class MainActivity : FragmentActivity() {
         if (::screenPagerManager.isInitialized) {
             screenPagerManager.setOnPageChanged { page ->
                 viewModel.updateCurrentPage(page)
+                systemBarManager.updateSystemBars(page == ScreenPagerManager.Page.WALLPAPER)
                 if (page == ScreenPagerManager.Page.WIDGETS) {
                     initializeDeferredWidgets()
                 }
@@ -629,6 +630,7 @@ class MainActivity : FragmentActivity() {
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
                 initializeDeferredWidgets()
             }
+            systemBarManager.updateSystemBars(screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WALLPAPER)
         }
     }
 
