@@ -41,6 +41,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:animateLayoutChanges="true"
+            android:fitsSystemWindows="false"
             android:descendantFocusability="beforeDescendants">
 
             
