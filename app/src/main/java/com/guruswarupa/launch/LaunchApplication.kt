@@ -30,9 +30,10 @@ class LaunchApplication : Application() {
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: android.os.Bundle?) {
                 if (activity is ComponentActivity) {
+                    val scrimColor = Color.argb(0x66, 0, 0, 0)
                     activity.enableEdgeToEdge(
-                        statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-                        navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+                        statusBarStyle = SystemBarStyle.dark(scrimColor),
+                        navigationBarStyle = SystemBarStyle.dark(scrimColor)
                     )
                     WindowCompat.getInsetsController(activity.window, activity.window.decorView)?.let { controller ->
                         controller.isAppearanceLightStatusBars = false
