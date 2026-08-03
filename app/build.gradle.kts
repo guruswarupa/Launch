@@ -12,8 +12,8 @@ android {
     defaultConfig {
         applicationId = "com.guruswarupa.launch"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 63
+        targetSdk = 36
+        versionCode = 64
         versionName = "7.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
