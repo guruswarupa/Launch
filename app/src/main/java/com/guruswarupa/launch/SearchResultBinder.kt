@@ -3,7 +3,6 @@ package com.guruswarupa.launch
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -27,7 +26,6 @@ class SearchResultBinderRegistry(
 }
 
 class ContactSearchResultBinder(
-    private val activity: MainActivity,
     private val searchBox: AutoCompleteTextView,
     private val iconLoader: IconLoader,
     private val applyIconVisualState: (String, AppAdapter.ViewHolder) -> Unit,
@@ -40,7 +38,7 @@ class ContactSearchResultBinder(
         holder.itemView.tag = packageName
         iconLoader.applyShapeAppearance(holder.appIcon)
         val contactName = appInfo.activityInfo.name
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
+        val cacheKey = "$packageName|${appInfo.preferredOrder}"
         iconLoader.loadContactPhoto(
             holder = holder,
             cacheKey = cacheKey,
@@ -60,7 +58,6 @@ class ContactSearchResultBinder(
 
 class PackageIconSearchResultBinder(
     override val packageName: String,
-    private val activity: MainActivity,
     private val searchBox: AutoCompleteTextView,
     private val iconLoader: IconLoader,
     private val iconCacheId: String,
@@ -72,7 +69,7 @@ class PackageIconSearchResultBinder(
     override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
         holder.itemView.tag = packageName
         iconLoader.applyShapeAppearance(holder.appIcon)
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
+        val cacheKey = "$packageName|${appInfo.preferredOrder}"
         iconLoader.loadSpecialAppIcon(
             holder = holder,
             cacheKey = cacheKey,
@@ -125,11 +122,11 @@ class FileSearchResultBinder(
         iconLoader.applyShapeAppearance(holder.appIcon)
         val fileName = appInfo.activityInfo.name
         val ext = fileName.substringAfterLast('.', "").lowercase()
-        val fileIconRes = when {
-            ext == "pdf" -> R.drawable.ic_pdf
-            ext in listOf("doc", "docx") -> R.drawable.ic_word
-            ext in listOf("ppt", "pptx") -> R.drawable.ic_presentation
-            ext in listOf("xls", "xlsx") -> R.drawable.ic_spreadsheet
+        val fileIconRes = when (ext) {
+            "pdf" -> R.drawable.ic_pdf
+            "doc", "docx" -> R.drawable.ic_word
+            "ppt", "pptx" -> R.drawable.ic_presentation
+            "xls", "xlsx" -> R.drawable.ic_spreadsheet
             else -> R.drawable.ic_file
         }
         iconLoader.setIconResource(holder.appIcon, fileIconRes)
@@ -171,9 +168,8 @@ fun createSearchResultBinderRegistry(
     applyIconVisualState: (String, AppAdapter.ViewHolder) -> Unit
 ): SearchResultBinderRegistry {
     val prefs = context.getSharedPreferences(Constants.Prefs.PREFS_NAME, android.content.Context.MODE_PRIVATE)
-    val binders = listOf<SearchResultBinder>(
+    val binders = listOf(
         ContactSearchResultBinder(
-            activity = activity,
             searchBox = searchBox,
             iconLoader = iconLoader,
             applyIconVisualState = applyIconVisualState,
@@ -182,7 +178,6 @@ fun createSearchResultBinderRegistry(
         ),
         PackageIconSearchResultBinder(
             packageName = "play_store_search",
-            activity = activity,
             searchBox = searchBox,
             iconLoader = iconLoader,
             iconCacheId = "com.android.vending",
@@ -196,7 +191,6 @@ fun createSearchResultBinderRegistry(
         ),
         PackageIconSearchResultBinder(
             packageName = "maps_search",
-            activity = activity,
             searchBox = searchBox,
             iconLoader = iconLoader,
             iconCacheId = "com.google.android.apps.maps",
@@ -217,7 +211,6 @@ fun createSearchResultBinderRegistry(
         ),
         PackageIconSearchResultBinder(
             packageName = "yt_search",
-            activity = activity,
             searchBox = searchBox,
             iconLoader = iconLoader,
             iconCacheId = "youtube_search",
@@ -293,13 +286,13 @@ fun createSearchResultBinderRegistry(
                     if (intent.resolveActivity(activity.packageManager) != null) {
                         activity.startActivity(intent)
                     } else {
-                        activity.startActivity(android.content.Intent(android.provider.Settings.ACTION_SETTINGS).apply {
-                            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                        activity.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         })
                     }
-                } catch (e: Exception) {
-                    activity.startActivity(android.content.Intent(android.provider.Settings.ACTION_SETTINGS).apply {
-                        addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                } catch (_: Exception) {
+                    activity.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     })
                 }
             },
