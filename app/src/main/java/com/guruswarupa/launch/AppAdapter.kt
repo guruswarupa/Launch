@@ -192,6 +192,7 @@ class AppAdapter(
     }
 
     fun clearContactPhotoCache() {
+        iconLoader.clearContactPhotoCache()
         notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_VISUAL_STATE)
     }
 
@@ -470,7 +471,7 @@ class AppAdapter(
         val cachedIcon = iconLoader.getCachedIcon(cacheKey)
 
         if (cachedIcon != null) {
-            iconLoader.setIconDrawable(holder.appIcon, cachedIcon, useLegacyIconPlate = true)
+            iconLoader.setIconDrawable(holder.appIcon, cachedIcon)
         } else {
             iconLoader.setIconResource(holder.appIcon, R.drawable.ic_launcher_foreground)
             if (!isFastScrolling) {
@@ -539,7 +540,7 @@ class AppAdapter(
         if (siteUrl.isNotBlank()) {
             WebAppIconFetcher.loadIcon(activity, siteUrl) { drawable ->
                 if (holder.itemView.tag == packageName && drawable != null) {
-                    iconLoader.setIconDrawable(holder.appIcon, drawable, useLegacyIconPlate = true)
+                    iconLoader.setIconDrawable(holder.appIcon, drawable)
                     applyIconVisualState(packageName, holder.appIcon)
                 }
             }

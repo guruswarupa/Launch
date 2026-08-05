@@ -12,11 +12,11 @@ import androidx.core.content.edit
 
 class AppClickHandler(
     private val activity: MainActivity,
-    private val context: Context,
+    context: Context,
     private val searchBox: AutoCompleteTextView,
     private val userManager: UserManager,
     private val mainUserSerial: Int,
-    private val labelResolver: (String, ResolveInfo) -> String
+    private val labelResolver: (String, ResolveInfo) -> String,
 ) {
     private sealed interface LaunchResolution {
         data class IntentLaunch(val intent: Intent) : LaunchResolution
@@ -34,7 +34,7 @@ class AppClickHandler(
         serial: Int
     ) {
         val currentTime = System.currentTimeMillis()
-        if (currentTime - holder.lastClickTime < clickDebounceDelay) return
+        if ((currentTime - holder.lastClickTime) < clickDebounceDelay) return
         holder.lastClickTime = currentTime
 
         if (activity.appTimerManager.isAppOverDailyLimit(packageName)) {
@@ -76,10 +76,12 @@ class AppClickHandler(
         val activityInfo = appInfo.activityInfo ?: return LaunchResolution.Failed
         val activityName = activityInfo.name
         if (packageName == activity.packageName) {
-            return LaunchResolution.IntentLaunch(Intent().apply {
-                component = ComponentName(packageName, activityName)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            })
+            return LaunchResolution.IntentLaunch(
+                Intent().apply {
+                    component = ComponentName(packageName, activityName)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            )
         }
 
         if (serial != mainUserSerial) {
