@@ -1,6 +1,5 @@
 package com.guruswarupa.launch
 
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
@@ -17,6 +16,10 @@ import android.os.UserManager
 import android.util.LruCache
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.applyCanvas
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
@@ -35,6 +38,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 class IconLoader(
     private val activity: MainActivity,
@@ -59,19 +63,19 @@ class IconLoader(
     private val maxCacheSize = Constants.Dimensions.ICON_CACHE_MAX_SIZE
     private val iconCache = object : LruCache<String, Drawable>(maxCacheSize) {
         override fun entryRemoved(evicted: Boolean, key: String, oldValue: Drawable, newValue: Drawable?) {
-            recycleDrawableBitmap(oldValue)
+            recycleDrawableBitmap()
         }
     }
 
     private val specialAppIconCache = object : LruCache<String, Drawable>(maxCacheSize / 2) {
         override fun entryRemoved(evicted: Boolean, key: String, oldValue: Drawable, newValue: Drawable?) {
-            recycleDrawableBitmap(oldValue)
+            recycleDrawableBitmap()
         }
     }
 
     private val contactPhotoCache = object : LruCache<String, Drawable>(maxCacheSize / 2) {
         override fun entryRemoved(evicted: Boolean, key: String, oldValue: Drawable, newValue: Drawable?) {
-            recycleDrawableBitmap(oldValue)
+            recycleDrawableBitmap()
         }
     }
     private val pendingIconTasks = ConcurrentHashMap<String, TrackedTask>()
@@ -132,7 +136,7 @@ class IconLoader(
             }
             
             if (resourceId != 0) {
-                iconPackResources.getDrawable(resourceId, context.theme)
+                ResourcesCompat.getDrawable(iconPackResources, resourceId, context.theme)
             } else {
                 null
             }
@@ -142,7 +146,7 @@ class IconLoader(
         }
     }
 
-    private fun recycleDrawableBitmap(drawable: Drawable?) {
+    private fun recycleDrawableBitmap() {
         // Don't manually recycle bitmaps from cache eviction.
         // The drawable might still be in use by an ImageView.
         // Let the system's garbage collector handle bitmap memory.
@@ -239,7 +243,7 @@ class IconLoader(
 
     fun cleanup() {
         // Cancel all pending tasks
-        pendingIconTasks.values.forEach { it.cancel(true) }
+        pendingIconTasks.values.forEach { it.cancel(mayInterruptIfRunning = true) }
         pendingIconTasks.clear()
         
         // Shutdown executors
@@ -257,7 +261,7 @@ class IconLoader(
 
     fun getCachedIcon(cacheKey: String): Drawable? {
         // Check in-memory cache first
-        val memCached = iconCache.get(cacheKey)
+        val memCached = iconCache[cacheKey]
         if (memCached != null) {
             return memCached
         }
@@ -316,12 +320,12 @@ class IconLoader(
         }
     }
 
-    fun setIconDrawable(imageView: ImageView?, drawable: Drawable?, useLegacyIconPlate: Boolean = false) {
-        imageView?.setImageDrawable(drawable?.let { shapeIconDrawable(it, useLegacyIconPlate) })
+    fun setIconDrawable(imageView: ImageView?, drawable: Drawable?) {
+        imageView?.setImageDrawable(drawable?.let { shapeIconDrawable(it) })
     }
 
-    fun setIconResource(imageView: ImageView?, resId: Int, useLegacyIconPlate: Boolean = false) {
-        setIconDrawable(imageView, ContextCompat.getDrawable(context, resId), useLegacyIconPlate)
+    fun setIconResource(imageView: ImageView?, resId: Int) {
+        setIconDrawable(imageView, ContextCompat.getDrawable(context, resId))
     }
 
     fun preloadIcons(apps: List<ResolveInfo>) {
@@ -336,7 +340,7 @@ class IconLoader(
                 for (app in batch) {
                     submitIconLoadTask(app, PRIORITY_BACKGROUND)
                 }
-                delay(Constants.Timeouts.ICON_PRELOAD_DELAY_MS)
+                delay(Constants.Timeouts.ICON_PRELOAD_DELAY_MS.milliseconds)
             }
         }
     }
@@ -368,7 +372,7 @@ class IconLoader(
         if (packageName == separatorPackage) return
 
         val cacheKey = "${packageName}|${app.preferredOrder}"
-        val cachedIcon = iconCache.get(cacheKey)
+        val cachedIcon = iconCache[cacheKey]
         if (packageName in specialPackageNames || cachedIcon != null) {
             if (cachedIcon != null && holder?.appIcon != null) {
                 updateHolderIcon(holder, cacheKey, cachedIcon, onIconReady)
@@ -376,10 +380,10 @@ class IconLoader(
             return
         }
 
-        pendingIconTasks.remove(cacheKey)?.cancel(true)
+        pendingIconTasks.remove(cacheKey)?.cancel(mayInterruptIfRunning = true)
         val priorityRunnable = PriorityRunnable(priority) {
             try {
-                if (iconCache.get(cacheKey) == null) {
+                if (iconCache[cacheKey] == null) {
                     // Try to load from icon pack first
                     var icon = loadIconFromPack(packageName, app.activityInfo.name)
                     
@@ -394,14 +398,14 @@ class IconLoader(
                             icon = activity.packageManager.getUserBadgedIcon(icon, userHandle)
                         }
                     }
-                    val shapedIcon = shapeIconDrawable(icon, useLegacyIconPlate = true)
+                    val shapedIcon = shapeIconDrawable(icon)
                     iconCache.put(cacheKey, shapedIcon)
                     
                     // Save to disk cache for persistence
                     cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                 }
 
-                val readyIcon = iconCache.get(cacheKey) ?: return@PriorityRunnable
+                val readyIcon = iconCache[cacheKey] ?: return@PriorityRunnable
                 if (holder != null) {
                     updateHolderIcon(holder, cacheKey, readyIcon, onIconReady)
                 }
@@ -433,7 +437,7 @@ class IconLoader(
     ) {
         if (iconLoadExecutor.isShutdown || iconLoadExecutor.isTerminated) return
         
-        val cachedIcon = specialAppIconCache.get(cacheId)
+        val cachedIcon = specialAppIconCache[cacheId]
         if (cachedIcon != null) {
 
             if (!(cachedIcon is BitmapDrawable && cachedIcon.bitmap.isRecycled)) {
@@ -480,7 +484,7 @@ class IconLoader(
     ) {
         if (iconLoadExecutor.isShutdown || iconLoadExecutor.isTerminated) return
 
-        val cachedPhoto = contactPhotoCache.get(contactName)
+        val cachedPhoto = contactPhotoCache[contactName]
         if (cachedPhoto != null) {
 
             if (!(cachedPhoto is BitmapDrawable && cachedPhoto.bitmap.isRecycled)) {
@@ -536,34 +540,35 @@ class IconLoader(
         }
     }
 
-    private fun shapeIconDrawable(drawable: Drawable, useLegacyIconPlate: Boolean = false): Drawable {
+    private fun shapeIconDrawable(drawable: Drawable): Drawable {
         val density = context.resources.displayMetrics.density
         val size = (currentIconSize * density).roundToInt().coerceAtLeast(1)
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
+        val bitmap = createBitmap(size, size, Bitmap.Config.ARGB_8888)
         val bounds = RectF(0f, 0f, size.toFloat(), size.toFloat())
         val path = createIconMaskPath(bounds)
 
-        canvas.save()
-        canvas.clipPath(path)
+        bitmap.applyCanvas {
+            save()
+            clipPath(path)
 
-        if (drawable is AdaptiveIconDrawable) {
-            val background = drawable.background?.constantState?.newDrawable(context.resources)?.mutate()
-                ?: drawable.background?.mutate()
-            val foreground = drawable.foreground?.constantState?.newDrawable(context.resources)?.mutate()
-                ?: drawable.foreground?.mutate()
-            background?.setBounds(0, 0, size, size)
-            foreground?.setBounds(0, 0, size, size)
-            background?.draw(canvas)
-            foreground?.draw(canvas)
-        } else {
-            val copy = drawable.constantState?.newDrawable(context.resources)?.mutate() ?: drawable.mutate()
-            copy.setBounds(0, 0, size, size)
-            copy.draw(canvas)
+            if (drawable is AdaptiveIconDrawable) {
+                val background = drawable.background?.constantState?.newDrawable(context.resources)?.mutate()
+                    ?: drawable.background?.mutate()
+                val foreground = drawable.foreground?.constantState?.newDrawable(context.resources)?.mutate()
+                    ?: drawable.foreground?.mutate()
+                background?.setBounds(0, 0, size, size)
+                foreground?.setBounds(0, 0, size, size)
+                background?.draw(this)
+                foreground?.draw(this)
+            } else {
+                val copy = drawable.constantState?.newDrawable(context.resources)?.mutate() ?: drawable.mutate()
+                copy.setBounds(0, 0, size, size)
+                copy.draw(this)
+            }
+
+            restore()
         }
-        
-        canvas.restore()
-        return BitmapDrawable(context.resources, bitmap)
+        return bitmap.toDrawable(context.resources)
     }
 
     private fun createIconMaskPath(bounds: RectF): Path {
