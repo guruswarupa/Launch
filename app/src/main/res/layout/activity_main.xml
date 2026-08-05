@@ -415,8 +415,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -427,8 +425,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -439,8 +435,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -451,8 +445,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -463,8 +455,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -475,8 +465,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -487,8 +475,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -499,8 +485,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -510,8 +494,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -522,8 +504,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -534,8 +514,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -546,8 +524,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -558,8 +534,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -570,8 +544,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -582,38 +554,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Weekly Usage"
-                    android:textSize="18sp"
-                    android:textColor="@color/widget_text"
-                    android:textStyle="bold"
-                    android:gravity="start"
-                    android:layout_marginBottom="16dp"/>
+                    android:orientation="vertical"
+                    android:background="@drawable/widget_background"
+                    android:padding="20dp">
 
-                <com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
-                    android:id="@+id/weekly_usage_graph"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Weekly Usage"
+                        android:textSize="18sp"
+                        android:textColor="@color/widget_text"
+                        android:textStyle="bold"
+                        android:gravity="start"
+                        android:layout_marginBottom="16dp"/>
 
-                <Button
-                    android:id="@+id/request_usage_stats_permission_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Grant Usage Access Permission"
-                    android:textColor="@color/widget_text"
-                    android:textSize="14sp"
-                    android:background="@drawable/button_neutral_ripple"
-                    android:paddingVertical="12dp"
-                    android:layout_marginTop="16dp"
-                    android:visibility="gone" />
+                    <com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
+                        android:id="@+id/weekly_usage_graph"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <Button
+                        android:id="@+id/request_usage_stats_permission_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Grant Usage Access Permission"
+                        android:textColor="@color/widget_text"
+                        android:textSize="14sp"
+                        android:background="@drawable/button_neutral_ripple"
+                        android:paddingVertical="12dp"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone" />
+                </LinearLayout>
             </LinearLayout>
 
             
@@ -622,8 +600,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
@@ -634,8 +610,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp">
@@ -653,28 +627,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Calculator"
-                        android:textColor="@color/widget_text"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
 
                 <FrameLayout
                     android:id="@+id/calculator_widget_container"
@@ -689,8 +644,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_background"
-                android:padding="20dp"
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp">
@@ -698,38 +651,46 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
+                    android:orientation="vertical"
+                    android:background="@drawable/widget_background"
+                    android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Todo List"
-                        android:textColor="@color/widget_text"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                    <ImageButton
-                        android:id="@+id/add_todo_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/button_neutral_ripple"
-                        android:src="@drawable/ic_add"
-                        android:contentDescription="Add todo item"
-                        android:padding="8dp" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Todo List"
+                            android:textColor="@color/widget_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
+                        <ImageButton
+                            android:id="@+id/add_todo_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/button_neutral_ripple"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="Add todo item"
+                            android:padding="8dp" />
+
+                    </LinearLayout>
+
+                    <com.guruswarupa.launch.ui.views.SafeRecyclerView
+                        android:id="@+id/todo_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxHeight="300dp"
+                        android:clipToPadding="false"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp" />
                 </LinearLayout>
-
-                <com.guruswarupa.launch.ui.views.SafeRecyclerView
-                    android:id="@+id/todo_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="300dp"
-                    android:clipToPadding="false"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp" />
 
             </LinearLayout>
 
@@ -741,11 +702,15 @@
                 android:layout_marginVertical="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/widget_background"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:orientation="vertical">
 
-                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/widget_background"
+                    android:padding="20dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -884,6 +849,7 @@
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:elevation="4dp" />
+                </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
