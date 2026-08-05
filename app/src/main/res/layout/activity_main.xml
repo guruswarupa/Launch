@@ -40,7 +40,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingTop="@dimen/main_content_stack_top_padding"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="@dimen/main_content_stack_bottom_padding"
@@ -66,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp"
-                android:layout_marginTop="@dimen/widget_status_bar_clearance"
+                android:layout_marginTop="0dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/widget_background">
 

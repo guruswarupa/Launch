@@ -10,9 +10,8 @@
     <dimen name="min_drawer_width">320dp</dimen>
     
     <dimen name="search_top_margin_when_widget_hidden">48dp</dimen>
-    <dimen name="main_content_stack_top_padding">32dp</dimen>
+    <dimen name="main_content_stack_top_padding">0dp</dimen>
     <dimen name="main_content_stack_bottom_padding">12dp</dimen>
-    <dimen name="widget_status_bar_clearance">20dp</dimen>
     <dimen name="search_bar_top_margin_pinned">24dp</dimen>
     <dimen name="search_container_bottom_margin">8dp</dimen>
     
