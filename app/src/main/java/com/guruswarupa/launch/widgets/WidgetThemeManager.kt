@@ -30,28 +30,7 @@ class WidgetThemeManager(
 
 
         activity.findViewById<View>(R.id.top_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.calendar_events_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.countdown_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.dns_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.note_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.physical_activity_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.compass_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.pressure_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.temperature_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.weather_forecast_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.network_stats_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.device_info_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.noise_decibel_widget_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.workout_widget_container)?.parent?.let { parent ->
-            if (parent is View) parent.setBackgroundResource(widgetBackground)
-        }
-        activity.findViewById<View>(R.id.calculator_widget_container)?.parent?.let { parent ->
-            if (parent is View) parent.setBackgroundResource(widgetBackground)
-        }
-        activity.findViewById<View>(R.id.todo_widget_main_container)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.finance_widget)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.weekly_usage_widget)?.setBackgroundResource(widgetBackground)
-        activity.findViewById<View>(R.id.habit_tracker_widget_container)?.setBackgroundResource(widgetBackground)
+
 
         activity.findViewById<View>(R.id.widget_settings_header)?.setBackgroundResource(widgetBackground)
         activity.findViewById<View>(R.id.widget_config_button)?.setBackgroundResource(widgetBackground)
