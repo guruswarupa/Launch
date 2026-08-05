@@ -79,6 +79,7 @@ class ActivityInitializer(
                 v.setPadding(v.paddingLeft, statusBarHeight, v.paddingRight, v.paddingBottom)
                 insets
             }
+            ViewCompat.requestApplyInsets(mainContentStack)
 
             recyclerView.setHasFixedSize(true)
             applyFastScrollerLayout()
@@ -170,7 +171,7 @@ class ActivityInitializer(
 
         views.topWidgetContainer.setPadding(compactPadding, compactPadding, compactPadding, compactPadding)
         (views.topWidgetContainer.layoutParams as? MarginLayoutParams)?.let { params ->
-            params.topMargin = compactMargin
+            params.topMargin = 0
             params.bottomMargin = compactMargin
             views.topWidgetContainer.layoutParams = params
         }
@@ -197,7 +198,7 @@ class ActivityInitializer(
             defaultContainerPadding
         )
         (views.topWidgetContainer.layoutParams as? MarginLayoutParams)?.let { params ->
-            params.topMargin = activity.resources.getDimensionPixelSize(R.dimen.widget_status_bar_clearance)
+            params.topMargin = 0
             params.bottomMargin = defaultContainerPadding
             views.topWidgetContainer.layoutParams = params
         }
