@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.guruswarupa.launch.core.*
 import com.guruswarupa.launch.handlers.*
 import com.guruswarupa.launch.managers.*
 import com.guruswarupa.launch.models.Constants
@@ -84,7 +83,7 @@ class AppInitializer(private val activity: MainActivity) {
             adapterProvider = { activity.adapter },
             appDockManagerProvider = { activity.appDockManager },
             widgetSetupManagerProvider = { activity.widgetSetupManager },
-            widgetThemeManagerProvider = { activity.widgetThemeManager }
+            widgetThemeManagerProvider = { activity.widgetThemeManager },
         )
 
         applyThemeBasedWidgetBackgrounds()
@@ -160,7 +159,7 @@ class AppInitializer(private val activity: MainActivity) {
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 val viewType = adapter.getItemViewType(position)
-                return if (viewType == AppAdapter.VIEW_TYPE_SEPARATOR || viewType == AppAdapter.VIEW_TYPE_SEPARATOR_SMALL) {
+                return if (viewType == AppAdapter.VIEW_TYPE_SEPARATOR || (viewType == AppAdapter.VIEW_TYPE_SEPARATOR_SMALL)) {
                     columns
                 } else {
                     1
