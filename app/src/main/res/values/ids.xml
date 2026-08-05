@@ -7,4 +7,5 @@
     <item name="tag_typography_base_fake_bold" type="id" />
     <item name="tag_typography_base_scale_x" type="id" />
     <item name="tag_typography_base_alpha" type="id" />
+    <item name="main_content_stack" type="id" />
 </resources>
