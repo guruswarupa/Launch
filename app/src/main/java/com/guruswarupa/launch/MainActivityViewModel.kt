@@ -11,7 +11,7 @@ data class MainActivityUiState(
     val searchQuery: String = "",
     val currentPage: ScreenPagerManager.Page? = null,
     val deferredWidgetsInitialized: Boolean = false,
-    val hasAskedDefaultLauncherThisOpen: Boolean = false
+    val hasAskedDefaultLauncherThisOpen: Boolean = false,
 )
 
 class MainActivityViewModel(

@@ -1,7 +1,6 @@
 package com.guruswarupa.launch
 
 import android.annotation.SuppressLint
-import android.content.ComponentCallbacks2
 import android.app.NotificationManager
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
@@ -109,13 +108,11 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var weatherManager: WeatherManager
 
-    internal val prefsName = "com.guruswarupa.launch.PREFS"
-
     internal class MainActivityHandler(activity: MainActivity) : Handler(Looper.getMainLooper()) {
         private val weakActivity = WeakReference(activity)
 
         override fun handleMessage(msg: Message) {
-            val activity = weakActivity.get() ?: return
+            weakActivity.get() ?: return
             // Specific message handling can be added here if needed
         }
     }
@@ -336,8 +333,8 @@ class MainActivity : FragmentActivity() {
     private fun ensureContactsLoadedForSearch() {
         if (contactManager.hasLoadedContacts()) return
 
-        contactManager.loadContacts { loadedContacts ->
-            if (isFinishing || isDestroyed || loadedContacts.isEmpty()) return@loadContacts
+        contactManager.loadContacts { _ ->
+            if (isFinishing || isDestroyed) return@loadContacts
             updateAppSearchManager()
         }
     }
@@ -396,7 +393,7 @@ class MainActivity : FragmentActivity() {
 
     internal fun requestInitialPermissions(onComplete: () -> Unit = {}) {
         permissionManager.requestContactsPermission {
-            contactManager.loadContacts { loadedContacts ->
+            contactManager.loadContacts { _ ->
                 updateAppSearchManager()
             }
 
@@ -475,7 +472,7 @@ class MainActivity : FragmentActivity() {
         widgetPrewarmScheduled = true
         lifecycleScope.launch {
             try {
-                delay(1200)
+                delay(1200L)
                 widgetPrewarmScheduled = false
                 if (!isFinishing && !isDestroyed && !deferredWidgetsInitialized) {
                     initializeDeferredWidgets()
@@ -672,7 +669,6 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun updateLifecycleManagerWithDeferredWidgets() {
-        val coordinator = widgetLifecycleCoordinator
         lifecycleManager.updateDependencies {
             copy(
                 todoManager = todoManager
@@ -856,7 +852,7 @@ class MainActivity : FragmentActivity() {
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
 
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+        if (level >= TRIM_MEMORY_RUNNING_LOW) {
             backgroundExecutor.execute {
                 cacheManager.getMetadataCache().keys.toList()
                     .filter { it.startsWith("com.guruswarupa.launch.webapp.") }
@@ -865,7 +861,7 @@ class MainActivity : FragmentActivity() {
             wallpaperManagerHelper.clearCache()
         }
 
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+        if (level >= TRIM_MEMORY_UI_HIDDEN) {
             cacheManager.clearCache()
             appListLoader.clearCache()
             wallpaperManagerHelper.clearCache()
@@ -891,7 +887,7 @@ class MainActivity : FragmentActivity() {
             permissions,
             grantResults,
             onContactsGranted = {
-                contactManager.loadContacts { loadedContacts ->
+                contactManager.loadContacts { _ ->
                     updateAppSearchManager()
                 }
             },
