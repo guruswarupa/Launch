@@ -427,6 +427,7 @@ class MainActivity : FragmentActivity() {
         }
 
         if (deferredWidgetsInitialized) {
+            // Always update widget visibility to ensure all enabled widgets are shown
             widgetVisibilityManager.update(
                 if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
                 if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null

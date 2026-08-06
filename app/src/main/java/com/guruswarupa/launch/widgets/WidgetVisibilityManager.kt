@@ -32,7 +32,6 @@ class WidgetVisibilityManager(
         yearProgressWidget: YearProgressWidget? = null,
         githubContributionWidget: GithubContributionWidget? = null
     ) {
-
         widgetConfigurationManager.forceRefresh()
 
         val widgets = widgetConfigurationManager.getWidgetOrder()
@@ -127,7 +126,7 @@ class WidgetVisibilityManager(
                 }
             }
 
-            // Collect all widget views first
+            // Collect all widget views first - always try to find them even if not currently in layout
             val viewMap = mutableMapOf<String, View>()
             widgets.forEach { widget ->
                 val view = if (widget.isSystemWidget) {
@@ -136,6 +135,7 @@ class WidgetVisibilityManager(
                         if (widgetIdNum != null) layout.findViewWithTag<View>(widgetIdNum) else null
                     }
                 } else {
+                    // Always try to find the widget view, even if not currently in layout
                     getWidgetViewById(widget.id)
                 }
 
@@ -418,8 +418,7 @@ class WidgetVisibilityManager(
     }
 
     private fun getWidgetViewById(widgetId: String): View? {
-        val contentLayout = activity.findViewById<LinearLayout>(com.guruswarupa.launch.R.id.drawer_content_layout) ?: return null
-
+        // Always try to find the view from activity first, regardless of current parent
         val view = when (widgetId) {
             "media_controller_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.media_controller_widget_container)
             "calendar_events_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.calendar_events_widget_container)
@@ -449,24 +448,12 @@ class WidgetVisibilityManager(
             }
         }
 
-        // If the view is already a direct child, return it
-        if (view != null && view.parent == contentLayout) {
-            return view
-        }
-
-        // If the view is not a direct child but we found it, search up the tree
+        // Cache the view for future use, even if not currently in layout
         if (view != null) {
-            var current: View? = view
-            while (current?.parent != null) {
-                if (current.parent == contentLayout) {
-                    return current
-                }
-                current = current.parent as? View
-            }
+            widgetViewCache[widgetId] = view
         }
 
-        // If not found in hierarchy, check our cache (might be detached)
-        return widgetViewCache[widgetId]
+        return view
     }
 
     private var retryCount = 0
