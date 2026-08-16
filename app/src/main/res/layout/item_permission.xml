@@ -20,7 +20,7 @@
             android:id="@+id/permission_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Permission Name"
+            android:text="@string/permission_name"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/text"
@@ -30,7 +30,7 @@
             android:id="@+id/permission_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Permission description"
+            android:text="@string/permission_description"
             android:textSize="12sp"
             android:textColor="@color/text"
             android:alpha="0.7"/>

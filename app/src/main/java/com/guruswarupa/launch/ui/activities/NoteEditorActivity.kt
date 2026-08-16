@@ -41,7 +41,7 @@ class NoteEditorActivity : VaultBaseActivity() {
 
 
         if (!vaultManager.isUnlocked()) {
-            Toast.makeText(this, "Vault is locked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_vault_is_locked), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -89,13 +89,13 @@ class NoteEditorActivity : VaultBaseActivity() {
         }
 
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Rename file")
+            .setTitle(getString(R.string.dlg_rename_file))
             .setView(editText, dp(20), dp(12), dp(20), 0)
-            .setPositiveButton("Rename") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_rename)) { _, _ ->
                 val candidate = editText.text.toString()
                 val sanitized = sanitizeFileName(candidate)
                 if (sanitized.isBlank()) {
-                    Toast.makeText(this, "File name cannot be empty", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_file_name_cannot_be_empty), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 if (sanitized == currentName) return@setPositiveButton
@@ -104,12 +104,12 @@ class NoteEditorActivity : VaultBaseActivity() {
                 if (renamed) {
                     fileName = sanitized
                     updateHeaderTitle()
-                    Toast.makeText(this, "Renamed to $sanitized", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_renamed_to, sanitized), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "Unable to rename file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_unable_to_rename_file), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
@@ -128,7 +128,7 @@ class NoteEditorActivity : VaultBaseActivity() {
     private fun loadExistingNote() {
         val fileNameToLoad = fileName
         if (fileNameToLoad.isNullOrBlank()) {
-            Toast.makeText(this, "Invalid note file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_invalid_note_file), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -147,7 +147,7 @@ class NoteEditorActivity : VaultBaseActivity() {
                 noteContent.setText(contentStr)
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to load note: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_failed_to_load_note, e.message), Toast.LENGTH_SHORT).show()
         } finally {
             tempFile?.delete()
         }
@@ -158,7 +158,7 @@ class NoteEditorActivity : VaultBaseActivity() {
         val content = noteContent.text.toString()
 
         if (content.isEmpty()) {
-            Toast.makeText(this, "Cannot save empty note", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_cannot_save_empty_note), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -167,7 +167,7 @@ class NoteEditorActivity : VaultBaseActivity() {
             val fileNameToUse = if (isEditing) {
                 val existingFileName = fileName
                 if (existingFileName.isNullOrBlank()) {
-                    Toast.makeText(this, "Invalid note file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_invalid_note_file), Toast.LENGTH_SHORT).show()
                     return
                 }
                 existingFileName
@@ -183,11 +183,11 @@ class NoteEditorActivity : VaultBaseActivity() {
                 tempFile.delete()
             }
 
-            Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_note_saved), Toast.LENGTH_SHORT).show()
             setResult(RESULT_OK)
             finish()
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to save note: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, this.getString(R.string.toast_failed_to_save_note, e.message), Toast.LENGTH_LONG).show()
         }
     }
 }

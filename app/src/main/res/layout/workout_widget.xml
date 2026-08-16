@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Workout"
+            android:text="@string/workout"
             android:textColor="@color/widget_text"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -27,7 +27,7 @@
             android:id="@+id/view_toggle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calendar"
+            android:text="@string/calendar_view_calendar"
             android:textColor="@color/widget_text"
             android:textSize="12sp"
             android:background="@drawable/button_neutral_ripple"
@@ -39,7 +39,7 @@
             android:id="@+id/add_exercise_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+ Add"
+            android:text="@string/add"
             android:textColor="@color/widget_text"
             android:textSize="14sp"
             android:background="@drawable/button_neutral_ripple"
@@ -74,7 +74,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Today"
+                    android:text="@string/weather_today"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp"
                     android:layout_marginBottom="4dp" />
@@ -105,7 +105,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Exercises"
+                    android:text="@string/exercises"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp"
                     android:layout_marginBottom="4dp" />
@@ -144,7 +144,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Streak"
+                    android:text="@string/streak"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="11sp"
                     android:layout_marginBottom="4dp" />
@@ -153,7 +153,7 @@
                     android:id="@+id/streak_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0 days"
+                    android:text="@string/s_0_days"
                     android:textColor="@color/nord14"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -175,7 +175,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This Week"
+                    android:text="@string/this_week"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="11sp"
                     android:layout_marginBottom="4dp" />
@@ -230,7 +230,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No exercises yet"
+            android:text="@string/no_exercises_yet"
             android:textColor="@color/widget_text"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -239,7 +239,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tap + Add to start tracking your workouts"
+            android:text="@string/tap_add_to_start_tracking_your_workouts"
             android:textColor="@color/widget_text_secondary"
             android:textSize="14sp"
             android:gravity="center" />

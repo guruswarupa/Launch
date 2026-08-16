@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     
     <View
@@ -39,7 +39,7 @@
                 android:layout_height="48dp"
                 android:padding="12dp"
                 android:src="@drawable/ic_back"
-                android:contentDescription="Back"
+                android:contentDescription="@string/back_button"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 app:tint="@color/text"
@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vault"
+                android:text="@string/vault"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:textColor="@color/text"
@@ -60,7 +60,7 @@
                 android:layout_height="48dp"
                 android:padding="12dp"
                 android:src="@drawable/ic_settings"
-                android:contentDescription="Settings"
+                android:contentDescription="@string/settings"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 app:tint="@color/text"
@@ -82,7 +82,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Vault is empty"
+            android:text="@string/vault_is_empty"
             android:textColor="@color/text"
             android:alpha="0.6"
             android:textSize="16sp"
@@ -101,6 +101,6 @@
         app:tint="@android:color/white"
         app:fabSize="normal"
         app:elevation="8dp"
-        android:contentDescription="Add File"/>
+        android:contentDescription="@string/add_file"/>
 
 </FrameLayout>

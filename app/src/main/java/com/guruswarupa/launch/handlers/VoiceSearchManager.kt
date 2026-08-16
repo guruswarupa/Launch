@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.handlers
 
+import com.guruswarupa.launch.R
 import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -41,10 +42,10 @@ class VoiceSearchManager(
                 @Suppress("DEPRECATION")
                 activity.startActivityForResult(intent, PermissionManager.VOICE_SEARCH_REQUEST)
             } catch (_: ActivityNotFoundException) {
-                Toast.makeText(activity, "Voice recognition not supported on this device", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_voice_recognition_not_supported_on_this_device), Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(activity, "Voice recognition not available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_voice_recognition_not_available), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -69,10 +70,10 @@ class VoiceSearchManager(
             try {
                 launcher.launch(intent)
             } catch (_: ActivityNotFoundException) {
-                Toast.makeText(activity, "Voice recognition not supported on this device", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_voice_recognition_not_supported_on_this_device), Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(activity, "Voice recognition not available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_voice_recognition_not_available), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -89,7 +90,7 @@ class VoiceSearchManager(
             try {
                 activity.startActivity(intent)
             } catch (_: Exception) {
-                Toast.makeText(activity, "Could not launch system assistant", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_could_not_launch_system_assistant), Toast.LENGTH_SHORT).show()
             }
         } else {
 
@@ -99,7 +100,7 @@ class VoiceSearchManager(
             if (searchIntent.resolveActivity(packageManager) != null) {
                 activity.startActivity(searchIntent)
             } else {
-                Toast.makeText(activity, "No voice assistant found on this device", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_no_voice_assistant_found_on_this_device), Toast.LENGTH_SHORT).show()
             }
         }
     }

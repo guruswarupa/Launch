@@ -15,7 +15,6 @@ import java.util.Collections
 
 object ServiceNotificationManager {
     private const val CHANNEL_ID = "launch_services_channel"
-    private const val CHANNEL_NAME = "Launch Background Services"
     const val NOTIFICATION_ID = 1000
 
     private val activeServices = Collections.synchronizedSet(mutableSetOf<String>())
@@ -51,10 +50,10 @@ object ServiceNotificationManager {
             if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
                 val channel = NotificationChannel(
                     CHANNEL_ID,
-                    CHANNEL_NAME,
+                    context.getString(R.string.bg_services_channel_name),
                     NotificationManager.IMPORTANCE_LOW
                 ).apply {
-                    description = "Shows the status of running Launch background services"
+                    description = context.getString(R.string.bg_services_channel_description)
                     setShowBadge(false)
                     enableLights(false)
                     enableVibration(false)
@@ -75,20 +74,20 @@ object ServiceNotificationManager {
         )
 
         val contentText = if (activeServices.isEmpty()) {
-            "Launch background services"
+            context.getString(R.string.bg_services_default_text)
         } else {
             activeServices.joinToString(", ")
         }
 
         val title = when {
-            activeServices.size == 1 -> "Launch Service Active"
-            activeServices.size > 1 -> "Launch Services Active (${activeServices.size})"
-            else -> "Launch Services"
+            activeServices.size == 1 -> context.getString(R.string.bg_services_title_one_active)
+            activeServices.size > 1 -> context.getString(R.string.bg_services_title_many_active, activeServices.size)
+            else -> context.getString(R.string.bg_services_title_idle)
         }
 
-        val nightModeAction = createAction(context, NotificationActionReceiver.ACTION_TOGGLE_NIGHT_MODE, "Night", R.drawable.ic_night_mode)
-        val dimmerAction = createAction(context, NotificationActionReceiver.ACTION_TOGGLE_DIMMER, "Dim", R.drawable.ic_dimmer)
-        val grayscaleAction = createAction(context, NotificationActionReceiver.ACTION_TOGGLE_GRAYSCALE, "Gray", R.drawable.ic_grayscale)
+        val nightModeAction = createAction(context, NotificationActionReceiver.ACTION_TOGGLE_NIGHT_MODE, context.getString(R.string.bg_services_action_night), R.drawable.ic_night_mode)
+        val dimmerAction = createAction(context, NotificationActionReceiver.ACTION_TOGGLE_DIMMER, context.getString(R.string.bg_services_action_dim), R.drawable.ic_dimmer)
+        val grayscaleAction = createAction(context, NotificationActionReceiver.ACTION_TOGGLE_GRAYSCALE, context.getString(R.string.bg_services_action_gray), R.drawable.ic_grayscale)
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(title)

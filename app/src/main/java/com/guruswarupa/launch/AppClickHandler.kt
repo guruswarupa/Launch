@@ -38,7 +38,7 @@ class AppClickHandler(
         holder.lastClickTime = currentTime
 
         if (activity.appTimerManager.isAppOverDailyLimit(packageName)) {
-            Toast.makeText(activity, "Daily limit reached for ${labelResolver(packageName, appInfo)}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_daily_limit_reached_for, labelResolver(packageName, appInfo)), Toast.LENGTH_SHORT).show()
             return
         }
 

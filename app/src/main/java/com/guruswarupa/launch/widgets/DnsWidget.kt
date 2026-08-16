@@ -143,14 +143,14 @@ class DnsWidget(
         val currentIndex = providers.indexOfFirst { it.id == currentProvider?.id }
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Select DNS Provider")
+            .setTitle(context.getString(R.string.dlg_select_dns_provider))
             .setSingleChoiceItems(providerNames, currentIndex) { dialog, which ->
                 val selectedProvider = providers[which]
                 applyDnsProvider(selectedProvider)
                 dialog.dismiss()
             }
-            .setPositiveButton("Cancel", null)
-            .setNegativeButton("Add Custom") { _, _ ->
+            .setPositiveButton(context.getString(R.string.cancel_button), null)
+            .setNegativeButton(context.getString(R.string.dlg_add_custom)) { _, _ ->
                 showAddCustomDnsDialog()
             }
             .show()
@@ -184,11 +184,7 @@ class DnsWidget(
             saveCurrentDns(provider)
             updateDisplay()
 
-            Toast.makeText(
-                context,
-                "DNS changed to ${provider.name}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(context, context.getString(R.string.toast_dns_changed_to, provider.name), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
             showPermissionErrorDialog()
@@ -197,17 +193,17 @@ class DnsWidget(
 
     private fun showPermissionErrorDialog() {
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Permission Required")
-            .setMessage("Modifying Private DNS requires the WRITE_SECURE_SETTINGS permission.\n\n" +
+            .setTitle(context.getString(R.string.dlg_permission_required))
+            .setMessage(context.getString(R.string.dlg_modifying_private_dns_requires_the_write_secure) +
                     "Please run this command via ADB:\n\n" +
                     "adb shell pm grant ${context.packageName} android.permission.WRITE_SECURE_SETTINGS")
-            .setPositiveButton("Copy Command") { _, _ ->
+            .setPositiveButton(context.getString(R.string.dlg_copy_command)) { _, _ ->
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                 val clip = android.content.ClipData.newPlainText("ADB Command", "adb shell pm grant ${context.packageName} android.permission.WRITE_SECURE_SETTINGS")
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_command_copied_to_clipboard), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Close", null)
+            .setNegativeButton(context.getString(R.string.support_thank_you_close), null)
             .show()
     }
 
@@ -219,16 +215,16 @@ class DnsWidget(
         val adBlockingCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.ad_blocking_checkbox)
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Add Custom DNS")
+            .setTitle(context.getString(R.string.dlg_add_custom_dns))
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(context.getString(R.string.save_button)) { _, _ ->
                 val name = nameEditText.text.toString().trim()
                 val hostname = hostnameEditText.text.toString().trim()
                 val description = descriptionEditText.text.toString().trim()
                 val isAdBlocking = adBlockingCheckbox.isChecked
 
                 if (name.isEmpty() || hostname.isEmpty()) {
-                    Toast.makeText(context, "Name and hostname are required", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_name_and_hostname_are_required), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
@@ -243,7 +239,7 @@ class DnsWidget(
                 saveCustomProvider(customProvider)
                 applyDnsProvider(customProvider)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
 
         fixDialogTextColors(dialog)

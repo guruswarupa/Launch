@@ -70,7 +70,7 @@ class TodoManager(
 
     fun showAddTodoDialog() {
         val dialogBuilder = android.app.AlertDialog.Builder(activity, R.style.CustomDialogTheme)
-        dialogBuilder.setTitle("Add Todo Item")
+        dialogBuilder.setTitle(activity.getString(R.string.dlg_add_todo_item))
 
 
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_add_todo, null)
@@ -158,7 +158,7 @@ class TodoManager(
 
         dialogBuilder.setView(dialogView)
 
-        dialogBuilder.setPositiveButton("Add Task") { _, _ ->
+        dialogBuilder.setPositiveButton(activity.getString(R.string.dlg_add_task)) { _, _ ->
             val todoText = taskInput.text.toString().trim()
             if (todoText.isNotEmpty()) {
                 val isRecurring = recurringCheckbox.isChecked
@@ -198,7 +198,7 @@ class TodoManager(
             }
         }
 
-        dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+        dialogBuilder.setNegativeButton(activity.getString(R.string.cancel_button)) { dialog, _ ->
             dialog.cancel()
         }
 

@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Battery Health"
+        android:text="@string/battery_health"
         android:textColor="@color/widget_text"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -31,7 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Battery"
+                android:text="@string/battery"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -55,7 +55,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Time Left"
+                android:text="@string/time_left"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="10sp"/>
 
@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Charging"
+                android:text="@string/charging"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="10sp"/>
 
@@ -100,14 +100,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Health"
+                android:text="@string/health"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="10sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Good"
+                android:text="@string/good"
                 android:textColor="@color/nord14"
                 android:textSize="11sp"
                 android:textStyle="bold"/>

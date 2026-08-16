@@ -17,10 +17,10 @@ class AppLauncher(
             if (intent != null && intent.resolveActivity(packageManager) != null) {
                 activity.startActivity(intent)
             } else {
-                Toast.makeText(activity, "$appName app is not installed.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_app_is_not_installed, appName), Toast.LENGTH_SHORT).show()
             }
         } catch (_: Exception) {
-            Toast.makeText(activity, "Error opening $appName app.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_error_opening_app, appName), Toast.LENGTH_SHORT).show()
         }
     }
 

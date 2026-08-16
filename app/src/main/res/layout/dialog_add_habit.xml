@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Habit Name"
+            android:text="@string/habit_name"
             android:textColor="@color/text"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -23,7 +23,7 @@
             android:id="@+id/habit_name_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="e.g., Exercise, Read, Meditate"
+            android:hint="@string/e_g_exercise_read_meditate"
             android:inputType="textCapSentences"
             android:maxLines="1"
             android:padding="12dp"
@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description (Optional)"
+            android:text="@string/description_optional_2"
             android:textColor="@color/text"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -46,7 +46,7 @@
             android:id="@+id/habit_description_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Brief description of your habit"
+            android:hint="@string/brief_description_of_your_habit"
             android:inputType="textCapSentences|textMultiLine"
             android:maxLines="2"
             android:padding="12dp"
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Frequency"
+            android:text="@string/frequency"
             android:textColor="@color/text"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -83,7 +83,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Days:"
+                android:text="@string/select_days"
                 android:textColor="@color/text"
                 android:textSize="12sp"
                 android:layout_marginBottom="8dp" />
@@ -97,49 +97,49 @@
                     android:id="@+id/habit_day_sunday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sunday"
+                    android:text="@string/sunday"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/habit_day_monday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Monday"
+                    android:text="@string/monday"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/habit_day_tuesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tuesday"
+                    android:text="@string/tuesday"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/habit_day_wednesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Wednesday"
+                    android:text="@string/wednesday"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/habit_day_thursday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thursday"
+                    android:text="@string/thursday"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/habit_day_friday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Friday"
+                    android:text="@string/friday"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/habit_day_saturday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Saturday"
+                    android:text="@string/saturday"
                     android:textColor="@color/text" />
             </LinearLayout>
         </LinearLayout>
@@ -148,7 +148,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enable Reminder"
+            android:text="@string/enable_reminder"
             android:textColor="@color/text"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -159,7 +159,7 @@
             android:id="@+id/habit_enable_reminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set reminder time"
+            android:text="@string/set_reminder_time"
             android:textColor="@color/text" />
 
         <TimePicker

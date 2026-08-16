@@ -129,9 +129,9 @@ class SystemMonitorActivity : AppCompatActivity() {
         if (cTemp > 0) {
             cpuTempText.text = String.format(Locale.getDefault(), "CPU Temp: %.1f°C", cTemp)
         } else if (cTemp == -2f) {
-            cpuTempText.text = "CPU Temp: Sensor Blocked"
+            cpuTempText.text = getString(R.string.lbl_cpu_temp_sensor_blocked)
         } else {
-            cpuTempText.text = "CPU Temp: Restricted"
+            cpuTempText.text = getString(R.string.lbl_cpu_temp_restricted)
         }
 
         updateCpuCores(deviceInfoManager.getCpuCoreUsages(), deviceInfoManager.getCpuCoreFrequencies())
@@ -147,7 +147,7 @@ class SystemMonitorActivity : AppCompatActivity() {
         if (gTemp > 0) {
             gpuTempText.text = String.format(Locale.getDefault(), "GPU Temp: %.1f°C", gTemp)
         } else {
-            gpuTempText.text = "GPU Temp: Restricted"
+            gpuTempText.text = getString(R.string.lbl_gpu_temp_restricted)
         }
     }
 
@@ -202,7 +202,7 @@ class SystemMonitorActivity : AppCompatActivity() {
             chargingSpeedText.text = String.format(Locale.getDefault(), "Charging Speed: %d mA", batteryInfo.chargingSpeed)
             timeRemainingText.text = String.format(Locale.getDefault(), "Time to Full: %s", batteryInfo.timeRemaining ?: "--")
         } else {
-            chargingSpeedText.text = "Status: Discharging"
+            chargingSpeedText.text = getString(R.string.lbl_status_discharging)
             timeRemainingText.text = String.format(Locale.getDefault(), "Time Remaining: %s", batteryInfo.timeRemaining ?: "--")
         }
 
@@ -228,7 +228,7 @@ class SystemMonitorActivity : AppCompatActivity() {
             if (lastHealth != -1) {
                 calculatedHealthText.text = String.format(Locale.getDefault(), "Calculated Health: %d%% (Last full charge)", lastHealth)
             } else {
-                calculatedHealthText.text = "Calculated Health: Waiting for 100% charge to calibrate..."
+                calculatedHealthText.text = getString(R.string.lbl_calculated_health_waiting_for_100_charge_to_cali)
             }
         }
     }

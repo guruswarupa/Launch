@@ -60,11 +60,11 @@ class PomodoroSettingsDialog(
         }
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Pomodoro Settings")
+            .setTitle(context.getString(R.string.dlg_pomodoro_settings))
             .setView(scrollView)
-            .setPositiveButton("Save", null)
-            .setNeutralButton("Start", null)
-            .setNegativeButton("Close", null)
+            .setPositiveButton(context.getString(R.string.save_button), null)
+            .setNeutralButton(context.getString(R.string.workout_start), null)
+            .setNegativeButton(context.getString(R.string.support_thank_you_close), null)
             .create()
 
         dialog.setOnShowListener {
@@ -101,12 +101,12 @@ class PomodoroSettingsDialog(
         val longBreakInterval = longBreakIntervalInput.text.toString().toIntOrNull() ?: -1
 
         if (workMinutes !in 1..180 || shortBreakMinutes !in 1..60 || longBreakMinutes !in 1..120 || longBreakInterval !in 2..12) {
-            Toast.makeText(context, "Use work 1-180, short break 1-60, long break 1-120, interval 2-12", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.toast_use_work_1_180_short_break_1_60_long_break_1_120), Toast.LENGTH_LONG).show()
             return false
         }
 
         pomodoroManager.updateConfig(workMinutes, shortBreakMinutes, longBreakMinutes, longBreakInterval)
-        Toast.makeText(context, "Pomodoro settings updated", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_pomodoro_settings_updated), Toast.LENGTH_SHORT).show()
         return true
     }
 

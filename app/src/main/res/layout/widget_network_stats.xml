@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Network Stats"
+            android:text="@string/network_stats"
             android:textColor="@color/widget_text"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -27,7 +27,7 @@
             android:id="@+id/run_speedtest_button"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Run Speedtest"
+            android:text="@string/button_run_speedtest"
             android:textSize="12sp"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple"
@@ -51,7 +51,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Download"
+                android:text="@string/font_download"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -59,7 +59,7 @@
                 android:id="@+id/download_speed_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0.0 Mbps"
+                android:text="@string/s_0_0_mbps"
                 android:textColor="@color/widget_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -68,7 +68,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload"
+                android:text="@string/upload"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -76,7 +76,7 @@
                 android:id="@+id/upload_speed_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0.0 Mbps"
+                android:text="@string/s_0_0_mbps"
                 android:textColor="@color/widget_text"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
@@ -93,7 +93,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ping"
+                android:text="@string/ping"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -109,7 +109,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jitter"
+                android:text="@string/jitter"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -146,7 +146,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mobile Data"
+                android:text="@string/mobile_data"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -169,7 +169,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wi-Fi Data"
+                android:text="@string/wi_fi_data"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -194,7 +194,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wi-Fi IP: "
+            android:text="@string/wi_fi_ip"
             android:textColor="@color/widget_text_secondary"
             android:textSize="12sp"/>
 
@@ -202,7 +202,7 @@
             android:id="@+id/wifi_ip_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Loading..."
+            android:text="@string/support_button_loading"
             android:textColor="@color/widget_text"
             android:textSize="12sp"
             android:textStyle="bold"/>
@@ -212,7 +212,7 @@
         android:id="@+id/network_status_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ready"
+        android:text="@string/ready"
         android:textColor="@color/widget_text_secondary"
         android:textSize="12sp"
         android:gravity="center"

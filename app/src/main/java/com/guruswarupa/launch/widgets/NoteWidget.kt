@@ -177,23 +177,23 @@ class NoteWidget(
         val options = mutableListOf("Edit", "Delete")
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle(note.title.ifEmpty { "Untitled Note" })
+            .setTitle(note.title.ifEmpty { context.getString(R.string.untitled_note) })
             .setItems(options.toTypedArray()) { _, which ->
                 when (options[which]) {
                     "Edit" -> showEditNoteDialog(note)
                     "Delete" -> {
                         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                            .setTitle("Delete Note")
-                            .setMessage("Are you sure you want to delete \"${note.title.ifEmpty { "Untitled Note" }}\"?")
-                            .setPositiveButton("Delete") { _, _ ->
+                            .setTitle(context.getString(R.string.dlg_delete_note))
+                            .setMessage(context.getString(R.string.dlg_delete_note_confirm, note.title.ifEmpty { context.getString(R.string.untitled_note) }))
+                            .setPositiveButton(context.getString(R.string.delete_button)) { _, _ ->
                                 deleteNote(note)
                             }
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(context.getString(R.string.cancel_button), null)
                             .show()
                     }
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
 
         fixDialogTextColors(dialog)
@@ -228,7 +228,7 @@ class NoteWidget(
 
     private fun showAddNoteDialog() {
         val builder = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-        builder.setTitle("New Note")
+        builder.setTitle(context.getString(R.string.new_note))
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_note_edit, null)
         val titleEditText = dialogView.findViewById<EditText>(R.id.note_title_edit_text)
@@ -236,12 +236,12 @@ class NoteWidget(
 
         builder.setView(dialogView)
 
-        builder.setPositiveButton("Save") { _, _ ->
+        builder.setPositiveButton(context.getString(R.string.save_button)) { _, _ ->
             val title = titleEditText.text.toString().trim()
             val content = contentEditText.text.toString().trim()
 
             if (title.isEmpty() && content.isEmpty()) {
-                Toast.makeText(context, "Please enter a title or content", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_please_enter_a_title_or_content), Toast.LENGTH_SHORT).show()
                 return@setPositiveButton
             }
 
@@ -256,13 +256,13 @@ class NoteWidget(
             addNote(note)
         }
 
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton(context.getString(R.string.cancel_button), null)
         builder.show()
     }
 
     private fun showEditNoteDialog(note: NoteItem) {
         val builder = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-        builder.setTitle("Edit Note")
+        builder.setTitle(context.getString(R.string.dlg_edit_note))
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_note_edit, null)
         val titleEditText = dialogView.findViewById<EditText>(R.id.note_title_edit_text)
@@ -273,12 +273,12 @@ class NoteWidget(
 
         builder.setView(dialogView)
 
-        builder.setPositiveButton("Save") { _, _ ->
+        builder.setPositiveButton(context.getString(R.string.save_button)) { _, _ ->
             val title = titleEditText.text.toString().trim()
             val content = contentEditText.text.toString().trim()
 
             if (title.isEmpty() && content.isEmpty()) {
-                Toast.makeText(context, "Please enter a title or content", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_please_enter_a_title_or_content), Toast.LENGTH_SHORT).show()
                 return@setPositiveButton
             }
 
@@ -290,7 +290,7 @@ class NoteWidget(
             updateNote(updatedNote)
         }
 
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton(context.getString(R.string.cancel_button), null)
         builder.show()
     }
 
@@ -364,7 +364,7 @@ class NoteAdapter(
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = notes[position]
-        holder.titleTextView.text = note.title.ifEmpty { "Untitled Note" }
+        holder.titleTextView.text = note.title.ifEmpty { holder.itemView.context.getString(R.string.untitled_note) }
         holder.contentTextView.text = note.content.take(100) + if (note.content.length > 100) "..." else ""
         holder.dateTextView.text = note.getFormattedDate()
 

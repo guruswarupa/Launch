@@ -291,11 +291,7 @@ class ScreenPagerManager(
                 if (service != null) {
                     return service.lockScreen()
                 }
-                Toast.makeText(
-                    activity,
-                    "Enable Accessibility Service to lock screen",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_enable_accessibility_service_to_lock_screen), Toast.LENGTH_SHORT).show()
                 try {
                     activity.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                 } catch (_: Exception) {

@@ -159,7 +159,7 @@ class ScreenRecordingService : Service() {
 
             isRecording = true
             isRunning = true
-            Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_recording_started), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
             stopRecording()
@@ -266,14 +266,14 @@ class ScreenRecordingService : Service() {
         isRecording = false
         isRunning = false
         stopForeground(STOP_FOREGROUND_REMOVE)
-        Toast.makeText(this, "Recording saved to Movies/LaunchRecordings", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, this.getString(R.string.toast_recording_saved_to_movies_launchrecordings), Toast.LENGTH_LONG).show()
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,
-                "Screen Recording",
+                getString(R.string.screen_recording_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
@@ -283,8 +283,8 @@ class ScreenRecordingService : Service() {
 
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Recording Screen")
-            .setContentText("Launch is recording your screen")
+            .setContentTitle(getString(R.string.screen_recording_notification_title))
+            .setContentText(getString(R.string.screen_recording_notification_text))
             .setSmallIcon(android.R.drawable.presence_video_online)
             .setOngoing(true)
             .build()

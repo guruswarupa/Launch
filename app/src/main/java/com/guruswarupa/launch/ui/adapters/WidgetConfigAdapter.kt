@@ -49,12 +49,12 @@ class WidgetConfigAdapter(
         if (widget.isProvider) {
             holder.disabledOverlay.visibility = View.VISIBLE
             holder.disabledText.visibility = View.VISIBLE
-            holder.disabledText.text = "TAP TO ADD"
+            holder.disabledText.text = holder.itemView.context.getString(R.string.widget_config_tap_to_add)
             holder.widgetName.alpha = 0.6f
             holder.previewImage.alpha = 1.0f
         } else {
             updateWidgetState(holder, widget.enabled)
-            holder.disabledText.text = "DISABLED"
+            holder.disabledText.text = holder.itemView.context.getString(R.string.widget_config_disabled)
         }
 
         loadPreviewImage(holder, widget)

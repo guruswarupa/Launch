@@ -39,7 +39,7 @@
                 android:id="@+id/theme_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theme Name"
+                android:text="@string/theme_name"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"

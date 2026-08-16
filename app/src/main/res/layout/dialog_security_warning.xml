@@ -9,7 +9,7 @@
         android:id="@+id/trust_domain_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Trust this domain for the rest of this session"
+        android:text="@string/trust_this_domain_for_the_rest_of_this_session"
         android:textColor="@color/text"
         android:buttonTint="@color/text" />
 

@@ -32,7 +32,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="GitHub Contributions"
+                android:text="@string/github_contributions"
                 android:textStyle="bold"
                 android:textSize="16sp" />
 
@@ -81,7 +81,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Contributions"
+                    android:text="@string/contributions"
                     android:textSize="12sp"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textAlignment="center" />
@@ -109,7 +109,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Current Streak"
+                    android:text="@string/current_streak"
                     android:textSize="12sp"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textAlignment="center" />
@@ -137,7 +137,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Longest Streak"
+                    android:text="@string/longest_streak"
                     android:textSize="12sp"
                     android:textColor="?android:attr/textColorSecondary"
                     android:textAlignment="center" />
@@ -150,7 +150,7 @@
             android:id="@+id/github_graph_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Contribution Activity"
+            android:text="@string/contribution_activity"
             android:textSize="14sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -172,7 +172,7 @@
             android:id="@+id/github_status_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tap to configure GitHub token"
+            android:text="@string/tap_to_configure_github_token"
             android:textAlignment="center"
             android:padding="16dp"
             android:textColor="?android:attr/textColorSecondary" />

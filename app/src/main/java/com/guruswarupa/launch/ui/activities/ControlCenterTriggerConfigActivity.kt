@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Spinner
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
@@ -19,7 +19,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-class ControlCenterTriggerConfigActivity : ComponentActivity() {
+class ControlCenterTriggerConfigActivity : AppCompatActivity() {
 
     private val prefs by lazy { getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE) }
 
@@ -37,7 +37,7 @@ class ControlCenterTriggerConfigActivity : ComponentActivity() {
 
     private fun setupTriggerSettings() {
         val titleText = findViewById<View>(R.id.title_text) as? android.widget.TextView
-        titleText?.text = "Control Center Trigger"
+        titleText?.text = getString(R.string.lbl_control_center_trigger)
 
         val positionSpinner = findViewById<View>(R.id.control_center_trigger_position_spinner) as Spinner
         val lockSwitch = findViewById<View>(R.id.control_center_trigger_lock_switch) as SwitchCompat

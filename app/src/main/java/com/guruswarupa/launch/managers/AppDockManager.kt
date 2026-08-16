@@ -253,7 +253,7 @@ class AppDockManager(
                     if (!isFocusMode) {
                         showFocusModeSettings()
                     } else {
-                        Toast.makeText(context, "Focus mode settings unavailable during focus mode", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_focus_mode_settings_unavailable_during_focus_mod), Toast.LENGTH_SHORT).show()
                     }
                 }
             })
@@ -424,7 +424,7 @@ class AppDockManager(
 
         if (isWorkModeEnabled) {
             if (!workProfileManager.setWorkProfileQuietMode(false)) {
-                Toast.makeText(context, "Unable to pause the work profile", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_unable_to_pause_the_work_profile), Toast.LENGTH_SHORT).show()
                 return
             }
             updateWorkProfileIcon()
@@ -440,7 +440,7 @@ class AppDockManager(
 
         val isProfileRunning = workProfileManager.isWorkProfileAvailableAndEnabled()
         if (!isProfileRunning && !workProfileManager.setWorkProfileQuietMode(true)) {
-            Toast.makeText(context, "Unable to resume the work profile", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_unable_to_resume_the_work_profile), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -606,7 +606,7 @@ class AppDockManager(
             if (modeType == Constants.Prefs.FOCUS_MODE_TYPE_STRICT) {
                 val endTime = sharedPreferences.getLong(focusModeEndTimeKey, 0)
                 val remainingMinutes = (endTime - System.currentTimeMillis()) / (1000 * 60)
-                Toast.makeText(context, "Strict mode active - $remainingMinutes minutes remaining", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.toast_strict_mode_active_minutes_remaining, remainingMinutes), Toast.LENGTH_LONG).show()
                 return
             }
 
@@ -617,18 +617,18 @@ class AppDockManager(
             if (currentTime < endTime) {
                 val remainingMinutes = (endTime - currentTime) / (1000 * 60)
                 val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                    .setTitle("End Focus Mode?")
-                    .setMessage("Casual mode - $remainingMinutes minutes remaining. End early?")
-                    .setPositiveButton("End") { _, _ ->
+                    .setTitle(context.getString(R.string.dlg_end_focus_mode))
+                    .setMessage(context.getString(R.string.dlg_casual_mode_minutes_remaining_end_early, remainingMinutes))
+                    .setPositiveButton(context.getString(R.string.dlg_end)) { _, _ ->
                         disableFocusMode()
                     }
-                    .setNegativeButton("Continue", null)
+                    .setNegativeButton(context.getString(R.string.app_lock_action_continue), null)
                     .create()
                 DialogStyler.styleDialog(dialog)
                 dialog.show()
             } else if (pomodoroManager.isPomodoroActive()) {
                 val state = pomodoroManager.getCurrentState()
-                Toast.makeText(context, "Pomodoro $state session active", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_pomodoro_session_active, state), Toast.LENGTH_SHORT).show()
             } else {
                 disableFocusMode()
             }
@@ -636,10 +636,10 @@ class AppDockManager(
             val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
                 .setTitle(res.getString(R.string.pomodoro_stop_title))
                 .setMessage(res.getString(R.string.pomodoro_stop_message))
-                .setPositiveButton("Stop") { _, _ ->
+                .setPositiveButton(context.getString(R.string.workout_stop)) { _, _ ->
                     pomodoroManager.stopPomodoro()
                 }
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(context.getString(R.string.cancel_button), null)
                 .create()
             DialogStyler.styleDialog(dialog)
             dialog.show()
@@ -717,12 +717,12 @@ class AppDockManager(
 
     private fun showDndPermissionDialog() {
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("DND Access Required")
-            .setMessage("Muting notifications requires Do Not Disturb access. Please grant it in the settings or start Focus Mode without DND.")
-            .setPositiveButton("Grant Access") { _, _ ->
+            .setTitle(context.getString(R.string.dlg_dnd_access_required))
+            .setMessage(context.getString(R.string.dlg_muting_notifications_requires_do_not_disturb_acc))
+            .setPositiveButton(context.getString(R.string.usage_stats_permission_grant)) { _, _ ->
                 context.startActivity(Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         DialogStyler.styleDialog(dialog)

@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter your GitHub Personal Access Token"
+        android:text="@string/enter_your_github_personal_access_token"
         android:textSize="14sp"
         android:layout_marginBottom="16dp"
         android:textColor="@color/dialog_text_secondary" />
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="GitHub Username">
+        android:hint="@string/github_username">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/github_username_input"
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:hint="GitHub Personal Access Token">
+        android:hint="@string/github_personal_access_token">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/github_token_input"
@@ -54,7 +54,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="To create a Personal Access Token:\n1. Go to GitHub Settings\n2. Click Developer settings\n3. Click Personal access tokens\n4. Generate new token with 'read:user' scope"
+        android:text="@string/to_create_a_personal_access_token_1_go_to_github"
         style="@style/DialogHelperText" />
 
 </LinearLayout>

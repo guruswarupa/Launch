@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Physical Activity"
+            android:text="@string/physical_activity"
             android:textColor="@color/widget_text"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -28,7 +28,7 @@
             android:id="@+id/view_toggle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calendar"
+            android:text="@string/calendar_view_calendar"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="12dp"
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Steps Today"
+                android:text="@string/steps_today"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp" />
@@ -63,7 +63,7 @@
                 android:id="@+id/steps_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 steps"
+                android:text="@string/zero_steps"
                 android:textColor="@color/nord7"
                 android:textSize="32sp"
                 android:textStyle="bold" />
@@ -86,7 +86,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Distance Walked"
+                android:text="@string/distance_walked"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp" />
@@ -118,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Walking Time"
+                android:text="@string/walking_time"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="14sp" />
 
@@ -126,7 +126,7 @@
                 android:id="@+id/walking_time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 min"
+                android:text="@string/zero_walking_time"
                 android:textColor="@color/nord10"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -137,7 +137,7 @@
             android:id="@+id/request_permission_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Grant Activity Permission"
+            android:text="@string/grant_activity_permission"
             android:textColor="@color/widget_text"
             android:textSize="14sp"
             android:background="@drawable/button_neutral_ripple"

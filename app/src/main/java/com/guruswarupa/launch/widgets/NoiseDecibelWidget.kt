@@ -183,9 +183,9 @@ class NoiseDecibelWidget(
             ) {
 
                 android.app.AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                    .setTitle("Microphone Permission")
-                    .setMessage("This permission allows the launcher to measure ambient noise levels in decibels. The data is only used locally on your device.")
-                    .setPositiveButton("Grant Permission") { _, _ ->
+                    .setTitle(context.getString(R.string.dlg_microphone_permission))
+                    .setMessage(context.getString(R.string.dlg_this_permission_allows_the_launcher_to_measure_a))
+                    .setPositiveButton(context.getString(R.string.dlg_grant_permission)) { _, _ ->
 
                         androidx.core.app.ActivityCompat.requestPermissions(
                             context,
@@ -193,7 +193,7 @@ class NoiseDecibelWidget(
                             PermissionManager.VOICE_SEARCH_REQUEST
                         )
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(context.getString(R.string.cancel_button), null)
                     .show()
             }
         } else {
@@ -209,7 +209,7 @@ class NoiseDecibelWidget(
             }
             context.startActivity(intent)
         } catch (_: Exception) {
-            Toast.makeText(context, "Could not open settings", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_could_not_open_settings), Toast.LENGTH_SHORT).show()
         }
     }
 

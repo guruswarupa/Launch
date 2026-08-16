@@ -22,7 +22,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.SwitchCompat
@@ -42,7 +42,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class WebAppSettingsActivity : ComponentActivity() {
+class WebAppSettingsActivity : AppCompatActivity() {
     private val prefs by lazy { getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE) }
     private val webAppManager by lazy { WebAppManager(prefs) }
 
@@ -335,7 +335,7 @@ class WebAppSettingsActivity : ComponentActivity() {
                     urlInput.requestFocus()
                     Toast.makeText(
                         this@WebAppSettingsActivity,
-                        if (allowHttp) "Invalid URL format" else getString(R.string.web_app_https_required),
+                        if (allowHttp) getString(R.string.web_app_invalid_url_format) else getString(R.string.web_app_https_required),
                         Toast.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener
@@ -347,13 +347,13 @@ class WebAppSettingsActivity : ComponentActivity() {
                     if (normalizedUrl.startsWith("http://", ignoreCase = true) &&
                         !isLocalhostOrPrivateIp(normalizedUrl)) {
                         AlertDialog.Builder(this@WebAppSettingsActivity, R.style.CustomDialogTheme)
-                            .setTitle("Security Warning")
-                            .setMessage("This web app uses HTTP (unencrypted connection). Your data will not be encrypted during transmission.\n\nThis may be acceptable for local development or trusted intranet environments, but is not recommended for public internet use.\n\nDo you want to continue?")
-                            .setPositiveButton("Add Anyway") { _, _ ->
+                            .setTitle(getString(R.string.dlg_security_warning))
+                            .setMessage(getString(R.string.dlg_this_web_app_uses_http_unencrypted_connection_yo))
+                            .setPositiveButton(getString(R.string.dlg_add_anyway)) { _, _ ->
                                 saveWebApp(existing, name, url, blockRedirects)
                                 dialog.dismiss()
                             }
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(getString(R.string.cancel_button), null)
                             .show()
                     } else {
                         saveWebApp(existing, name, url, blockRedirects)
@@ -448,7 +448,7 @@ class WebAppSettingsActivity : ComponentActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     searchProgress.visibility = View.GONE
-                    searchEmptyText.text = "Search failed. Try again."
+                    searchEmptyText.text = getString(R.string.lbl_search_failed_try_again)
                     searchEmptyText.visibility = View.VISIBLE
                 }
                 return@launch
@@ -489,7 +489,7 @@ class WebAppSettingsActivity : ComponentActivity() {
             nameInput.setText(result.title)
             urlInput.setText(result.url)
             searchDialog.dismiss()
-            Toast.makeText(this, "Selected: ${result.title}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_selected, result.title), Toast.LENGTH_SHORT).show()
         }
 
         container.addView(itemView)

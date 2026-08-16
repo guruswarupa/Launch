@@ -32,6 +32,7 @@
         
         <item name="popupMenuStyle">@style/PopupMenuStyle</item>
         <item name="android:popupMenuStyle">@style/PopupMenuStyle</item>
+        <item name="materialButtonStyle">@style/Widget.Launch.Button</item>
 
         <item name="android:windowAnimationStyle">@style/WindowAnimations</item>
     </style>

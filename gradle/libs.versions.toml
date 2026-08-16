@@ -13,6 +13,7 @@ material = "1.12.0"
 roomKtx = "2.6.1"
 androidxSecurity = "1.1.0-alpha06"
 biometric = "1.1.0"
+appcompat = "1.7.0"
 jsr305 = "3.0.2"
 google-http-client = "1.43.3"
 joda-time = "2.12.7"
@@ -48,6 +49,7 @@ exp4j = { module = "net.objecthunter:exp4j", version = "0.4.8" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidxSecurity" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 findbugs-jsr305 = { group = "com.google.code.findbugs", name = "jsr305", version.ref = "jsr305" }
 google-http-client = { module = "com.google.http-client:google-http-client", version.ref = "google-http-client" }
 google-http-client-android = { module = "com.google.http-client:google-http-client-android", version.ref = "google-http-client" }

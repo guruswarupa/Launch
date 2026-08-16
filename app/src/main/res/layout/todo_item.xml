@@ -93,7 +93,7 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete"
             android:tint="@color/widget_text_secondary"
-            android:contentDescription="Delete todo item"
+            android:contentDescription="@string/delete_todo_item"
             android:padding="6dp" />
 
     </LinearLayout>
@@ -111,37 +111,37 @@
         <TextView
             android:id="@+id/day_sun"
             style="@style/DayBadge"
-            android:text="S" />
+            android:text="@string/day_sun" />
 
         <TextView
             android:id="@+id/day_mon"
             style="@style/DayBadge"
-            android:text="M" />
+            android:text="@string/day_mon" />
 
         <TextView
             android:id="@+id/day_tue"
             style="@style/DayBadge"
-            android:text="T" />
+            android:text="@string/day_tue" />
 
         <TextView
             android:id="@+id/day_wed"
             style="@style/DayBadge"
-            android:text="W" />
+            android:text="@string/day_wed" />
 
         <TextView
             android:id="@+id/day_thu"
             style="@style/DayBadge"
-            android:text="T" />
+            android:text="@string/day_thu" />
 
         <TextView
             android:id="@+id/day_fri"
             style="@style/DayBadge"
-            android:text="F" />
+            android:text="@string/day_fri" />
 
         <TextView
             android:id="@+id/day_sat"
             style="@style/DayBadge"
-            android:text="S" />
+            android:text="@string/day_sat" />
 
     </LinearLayout>
 

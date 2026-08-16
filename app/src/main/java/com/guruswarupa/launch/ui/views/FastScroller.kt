@@ -58,6 +58,9 @@ class FastScroller @JvmOverloads constructor(
 
     private var touchX = 0f
 
+    private val isRtl: Boolean
+        get() = layoutDirection == LAYOUT_DIRECTION_RTL
+
     private var trackTop = 0f
     private var trackBottom = 0f
     private var trackX = 0f
@@ -378,7 +381,11 @@ class FastScroller @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        trackX = width - paddingEnd - 2f * density
+        trackX = if (isRtl) {
+            paddingLeft + 2f * density
+        } else {
+            width - paddingRight - 2f * density
+        }
 
         touchX = trackX
         trackTop = paddingTop + extraVerticalPadding
@@ -389,7 +396,11 @@ class FastScroller @JvmOverloads constructor(
 
     private fun updateWaveShader() {
 
-        val startX = (touchX - maxWaveDepth).coerceAtLeast(0f)
+        val startX = if (isRtl) {
+            (touchX + maxWaveDepth).coerceAtMost(width.toFloat())
+        } else {
+            (touchX - maxWaveDepth).coerceAtLeast(0f)
+        }
 
         val startColor = ColorUtils.setAlphaComponent(currentColor, 120)
         val endColor = ColorUtils.setAlphaComponent(currentColor, 0)
@@ -410,7 +421,7 @@ class FastScroller @JvmOverloads constructor(
         canvas.drawLine(trackX, trackTop, trackX, trackBottom, trackPaint)
 
         val baseOffset = (letterPaint.descent() + letterPaint.ascent()) / 2
-        val textX = trackX - 16f * density
+        val textX = if (isRtl) trackX + 16f * density else trackX - 16f * density
 
         for (i in alphabet.indices) {
             val y = trackTop + letterSpacing * i
@@ -449,11 +460,12 @@ class FastScroller @JvmOverloads constructor(
         val depth = maxWaveDepth * waveProgress
         val height = maxWaveHeight * waveProgress
         wavePaint.alpha = (fadeAlpha * 0.25f).toInt()
+        val waveDepth = if (isRtl) depth else -depth
         wavePath.reset()
         wavePath.moveTo(trackX, centerY - height / 2f)
         wavePath.cubicTo(
-            trackX - depth, centerY - height / 2f,
-            trackX - depth, centerY + height / 2f,
+            trackX + waveDepth, centerY - height / 2f,
+            trackX + waveDepth, centerY + height / 2f,
             trackX, centerY + height / 2f
         )
         wavePath.lineTo(trackX, centerY - height / 2f)
@@ -466,7 +478,8 @@ class FastScroller @JvmOverloads constructor(
         val centerY = (trackTop + letterSpacing * selectedIndex).coerceIn(trackTop, trackBottom)
         val radius = previewRadius * waveProgress
 
-        val bubbleX = trackX - 140f * density - (120f * density * (1f - waveProgress))
+        val bubbleOffset = 140f * density + (120f * density * (1f - waveProgress))
+        val bubbleX = if (isRtl) trackX + bubbleOffset else trackX - bubbleOffset
 
 
         val shadowPaint = Paint(previewPaint).apply {
@@ -501,8 +514,9 @@ class FastScroller @JvmOverloads constructor(
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val touchThreshold = width - 64f * density
-                if (x < touchThreshold) return false
+                val edgeWidth = 64f * density
+                val isNearEdge = if (isRtl) x < edgeWidth else x > width - edgeWidth
+                if (!isNearEdge) return false
 
                 touchX = x
 

@@ -22,7 +22,7 @@
             android:id="@+id/widget_preview_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Widget preview"
+            android:contentDescription="@string/widget_preview_2"
             android:scaleType="fitCenter" />
 
         <ProgressBar
@@ -51,7 +51,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:text="OFF"
+            android:text="@string/off"
             android:textColor="@android:color/white"
             android:textSize="11sp"
             android:textStyle="bold"
@@ -72,7 +72,7 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="6dp"
             android:background="@drawable/drawer_widgets_action_bg"
-            android:contentDescription="Resize widget"
+            android:contentDescription="@string/resize_widget"
             android:padding="6dp"
             android:src="@android:drawable/ic_menu_crop"
             android:tint="@android:color/white"
@@ -88,7 +88,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="2"
-        android:text="Widget Name"
+        android:text="@string/widget_name"
         android:textColor="@color/widget_config_text_primary"
         android:textSize="15sp"
         android:fontFamily="sans-serif-medium"

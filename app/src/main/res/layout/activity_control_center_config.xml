@@ -53,7 +53,7 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="Customize"
+                    android:text="@string/customize"
                     android:textAllCaps="false"
                     android:background="@drawable/settings_card_background"
                     android:textColor="@color/white"/>
@@ -64,7 +64,7 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Handle"
+                    android:text="@string/edge_panel_handle_section_title"
                     android:textAllCaps="false"
                     android:background="@drawable/settings_card_background"
                     android:textColor="@color/white"/>
@@ -93,7 +93,7 @@
                         android:id="@+id/subtitle_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Drag handles to reorder shortcuts. Toggle visibility to customize your control center panel."
+                        android:text="@string/control_center_config_subtitle"
                         android:textSize="13sp"
                         android:textColor="@color/white"
                         android:alpha="0.5"
@@ -141,7 +141,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Customize the trigger line that appears at the corner of the screen"
+                            android:text="@string/customize_the_trigger_line_that_appears_at_the_c"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.5"

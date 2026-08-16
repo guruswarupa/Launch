@@ -11,7 +11,7 @@
         style="@style/DialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Note title (optional)"
+        android:hint="@string/note_title_optional"
         android:inputType="textCapSentences"
         android:layout_marginBottom="16dp" />
 
@@ -21,7 +21,7 @@
         style="@style/DialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Note content (optional)"
+        android:hint="@string/note_content_optional"
         android:inputType="textMultiLine|textCapSentences"
         android:minLines="5"
         android:maxLines="10"

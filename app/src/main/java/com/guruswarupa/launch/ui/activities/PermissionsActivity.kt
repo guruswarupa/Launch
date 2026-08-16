@@ -15,7 +15,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.SwitchCompat
@@ -28,7 +28,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-class PermissionsActivity : ComponentActivity() {
+class PermissionsActivity : AppCompatActivity() {
 
     private val prefs by lazy { getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE) }
     private lateinit var permissionsList: LinearLayout
@@ -123,7 +123,7 @@ class PermissionsActivity : ComponentActivity() {
                     data = Uri.fromParts("package", packageName, null)
                 }
                 startActivity(intent)
-                Toast.makeText(this, "Go to Permissions to revoke access", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_go_to_permissions_to_revoke_access), Toast.LENGTH_SHORT).show()
             }
         }
     }

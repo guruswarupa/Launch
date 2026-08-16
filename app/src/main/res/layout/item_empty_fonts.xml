@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No downloadable fonts available"
+        android:text="@string/no_downloadable_fonts_available"
         android:textSize="14sp"
         android:textColor="@color/text"
         android:alpha="0.7"/>

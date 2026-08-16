@@ -25,7 +25,7 @@ class FocusModeDialogs(
         val durationValues = arrayOf(-2, 15, 30, 60, 120, 240, -1)
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Select Focus Mode Duration")
+            .setTitle(context.getString(R.string.dlg_select_focus_mode_duration))
             .setItems(durations) { _, which ->
                 when (durationValues[which]) {
                     -2 -> pomodoroManager.startPomodoro()
@@ -33,10 +33,10 @@ class FocusModeDialogs(
                     else -> showTypeDialog(durationValues[which])
                 }
             }
-            .setNeutralButton("Pomodoro Settings") { _, _ ->
+            .setNeutralButton(context.getString(R.string.dlg_pomodoro_settings)) { _, _ ->
                 onShowPomodoroSettings()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         DialogStyler.styleDialog(dialog)
@@ -47,14 +47,14 @@ class FocusModeDialogs(
         val modes = arrayOf("Strict Mode", "Casual Mode")
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Select Focus Mode Type")
+            .setTitle(context.getString(R.string.dlg_select_focus_mode_type))
             .setSingleChoiceItems(modes, 0) { dialog, which ->
                 val modeType = if (which == 0) Constants.Prefs.FOCUS_MODE_TYPE_STRICT else Constants.Prefs.FOCUS_MODE_TYPE_CASUAL
                 sharedPreferences.edit { putString(Constants.Prefs.FOCUS_MODE_TYPE, modeType) }
                 dialog.dismiss()
                 promptForDnd(durationMinutes, modeType)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         DialogStyler.styleDialog(dialog)
@@ -69,18 +69,18 @@ class FocusModeDialogs(
         }
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Custom Duration")
-            .setMessage("Enter duration in minutes:")
+            .setTitle(context.getString(R.string.dlg_custom_duration))
+            .setMessage(context.getString(R.string.dlg_enter_duration_in_minutes))
             .setDialogInputView(context, input)
-            .setPositiveButton("Next") { _, _ ->
+            .setPositiveButton(context.getString(R.string.next)) { _, _ ->
                 val minutes = input.text.toString().toIntOrNull()
                 if (minutes != null && minutes in 1..480) {
                     showTypeDialog(minutes)
                 } else {
-                    Toast.makeText(context, "Please enter a duration between 1-480 min", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_enter_a_duration_between_1_480_min), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         DialogStyler.styleDialog(dialog)
@@ -90,15 +90,15 @@ class FocusModeDialogs(
     private fun promptForDnd(durationMinutes: Int, modeType: String) {
         val modeLabel = if (modeType == Constants.Prefs.FOCUS_MODE_TYPE_STRICT) "Strict" else "Casual"
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Enable Do Not Disturb?")
-            .setMessage("$modeLabel Mode - Would you like to enable Do Not Disturb mode to mute notifications during this focus session?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(context.getString(R.string.dlg_enable_do_not_disturb))
+            .setMessage(context.getString(R.string.dlg_mode_would_you_like_to_enable_do_not_disturb_mod, modeLabel))
+            .setPositiveButton(context.getString(R.string.dlg_yes)) { _, _ ->
                 onEnableFocusMode(durationMinutes, true, modeType)
             }
-            .setNegativeButton("No") { _, _ ->
+            .setNegativeButton(context.getString(R.string.dlg_no)) { _, _ ->
                 onEnableFocusMode(durationMinutes, false, modeType)
             }
-            .setNeutralButton("Cancel", null)
+            .setNeutralButton(context.getString(R.string.cancel_button), null)
             .create()
 
         DialogStyler.styleDialog(dialog)

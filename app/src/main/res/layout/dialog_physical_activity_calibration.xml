@@ -12,7 +12,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calibrate your stride length for more accurate distance measurements."
+            android:text="@string/calibrate_your_stride_length_for_more_accurate_d"
             android:textColor="@color/text"
             android:textSize="14sp"
             android:alpha="0.8"
@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Height (cm)"
+            android:text="@string/height_cm"
             style="@style/DialogFieldLabel"
             android:layout_marginBottom="8dp" />
 
@@ -30,14 +30,14 @@
             style="@style/DialogEditText"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:hint="e.g. 175"
+            android:hint="@string/height_input"
             android:inputType="number"
             android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Stride Length (meters)"
+            android:text="@string/stride_length_meters"
             style="@style/DialogFieldLabel"
             android:layout_marginBottom="8dp" />
 
@@ -46,7 +46,7 @@
             style="@style/DialogEditText"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:hint="e.g. 0.75"
+            android:hint="@string/stride_length_input"
             android:inputType="numberDecimal"
             android:layout_marginBottom="12dp" />
 
@@ -54,7 +54,7 @@
             android:id="@+id/current_stride_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Current stride length: 0.75 m"
+            android:text="@string/current_stride_length_0_75_m"
             android:textColor="@color/nord8"
             android:textSize="14sp"
             android:layout_marginBottom="20dp" />
@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button_neutral_ripple"
-            android:text="Reset to Default"
+            android:text="@string/reset_to_default"
             android:textColor="@color/text"
             android:textAllCaps="false"
             android:paddingVertical="12dp" />

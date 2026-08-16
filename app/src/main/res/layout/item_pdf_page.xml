@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:contentDescription="PDF Page" />
+        android:contentDescription="@string/pdf_page" />
 
     <TextView
         android:id="@+id/pdf_page_number"

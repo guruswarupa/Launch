@@ -15,14 +15,14 @@
             style="@style/DialogEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter todo item"
+            android:hint="@string/enter_todo_item"
             android:layout_marginBottom="16dp" />
 
         
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Category:"
+            android:text="@string/category"
             android:textColor="@color/text"
             android:layout_marginBottom="8dp" />
 
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Priority:"
+            android:text="@string/priority"
             android:textColor="@color/text"
             android:layout_marginBottom="8dp" />
 
@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Due Time (Optional):"
+            android:text="@string/due_time_optional"
             android:textColor="@color/text"
             android:layout_marginBottom="8dp" />
 
@@ -58,7 +58,7 @@
             android:id="@+id/enable_time_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set Due Time"
+            android:text="@string/set_due_time"
             android:textColor="@color/text"
             android:buttonTint="@color/text"
             android:layout_marginBottom="8dp" />
@@ -76,7 +76,7 @@
             android:id="@+id/recurring_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recurring Task"
+            android:text="@string/recurring_task"
             android:textColor="@color/text"
             android:buttonTint="@color/text"
             android:layout_marginBottom="8dp" />
@@ -95,7 +95,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Days"
+                android:text="@string/days"
                 android:textColor="@color/text"
                 android:buttonTint="@color/text"
                 android:checked="true" />
@@ -105,7 +105,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Interval"
+                android:text="@string/interval"
                 android:textColor="@color/text"
                 android:buttonTint="@color/text" />
 
@@ -123,7 +123,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Repeat Every:"
+                android:text="@string/repeat_every"
                 android:textColor="@color/text"
                 android:layout_marginBottom="8dp" />
 
@@ -136,7 +136,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start Time:"
+                android:text="@string/start_time"
                 android:textColor="@color/text"
                 android:layout_marginBottom="8dp" />
 
@@ -159,7 +159,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Days:"
+                android:text="@string/select_days"
                 android:textColor="@color/text"
                 android:layout_marginBottom="8dp" />
 
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Sun"
+                    android:text="@string/sun"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"
@@ -191,7 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Mon"
+                    android:text="@string/mon"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"
@@ -205,7 +205,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Tue"
+                    android:text="@string/tue"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"
@@ -219,7 +219,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Wed"
+                    android:text="@string/wed"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"
@@ -233,7 +233,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Thu"
+                    android:text="@string/thu"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"
@@ -247,7 +247,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Fri"
+                    android:text="@string/fri"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"
@@ -261,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:text="Sat"
+                    android:text="@string/sat"
                     android:textColor="@color/text"
                     android:textSize="11sp"
                     android:buttonTint="@color/text"

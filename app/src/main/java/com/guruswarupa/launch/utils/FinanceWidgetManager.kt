@@ -135,10 +135,10 @@ class FinanceWidgetManager(
                 }
                 Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(activity, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_please_enter_a_valid_amount), Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(activity, "Please enter an amount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_please_enter_an_amount), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -175,23 +175,19 @@ class FinanceWidgetManager(
         val adapter =
             TransactionAdapter(currencySymbol) { transactionToDelete ->
                 val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
-                    .setTitle("Delete Transaction")
-                    .setMessage("Are you sure you want to delete this transaction?")
-                    .setPositiveButton("Delete") { _, _ ->
+                    .setTitle(activity.getString(R.string.dlg_delete_transaction))
+                    .setMessage(activity.getString(R.string.dlg_are_you_sure_you_want_to_delete_this_transaction))
+                    .setPositiveButton(activity.getString(R.string.delete_button)) { _, _ ->
                         financeManager.deleteTransaction(transactionToDelete.timestamp)
                         updateDisplay()
 
                         val newList = getLatestTransactions()
                         (recyclerView.adapter as TransactionAdapter).updateData(newList)
                         if (newList.isEmpty()) {
-                            Toast.makeText(
-                                activity,
-                                "No transactions remaining",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(activity, activity.getString(R.string.toast_no_transactions_remaining), Toast.LENGTH_SHORT).show()
                         }
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(activity.getString(R.string.cancel_button), null)
                     .show()
 
                 fixDialogTextColors(dialog)
@@ -209,23 +205,23 @@ class FinanceWidgetManager(
 
         clearAllButton?.setOnClickListener {
             val d = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
-                .setTitle("Reset Finance Data")
-                .setMessage("Are you sure you want to reset all finance data? This will clear your balance, transaction history, and monthly records. This action cannot be undone.")
-                .setPositiveButton("Reset") { _, _ ->
+                .setTitle(activity.getString(R.string.dlg_reset_finance_data))
+                .setMessage(activity.getString(R.string.dlg_are_you_sure_you_want_to_reset_all_finance_data))
+                .setPositiveButton(activity.getString(R.string.reset)) { _, _ ->
                     financeManager.resetData()
                     updateDisplay()
                     (recyclerView.adapter as TransactionAdapter).updateData(mutableListOf())
                     dialog.dismiss()
-                    Toast.makeText(activity, "Finance data reset successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, activity.getString(R.string.toast_finance_data_reset_successfully), Toast.LENGTH_SHORT).show()
                 }
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(activity.getString(R.string.cancel_button), null)
                 .show()
 
             fixDialogTextColors(d)
         }
 
         if (sortedTransactions.isEmpty()) {
-            Toast.makeText(activity, "No transactions found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_no_transactions_found), Toast.LENGTH_SHORT).show()
         }
 
         dialog.show()

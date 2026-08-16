@@ -15,7 +15,7 @@
         android:paddingTop="6dp"
         android:paddingEnd="12dp"
         android:paddingBottom="6dp"
-        android:text="WIDGET PREVIEW"
+        android:text="@string/widget_preview"
         android:textColor="@color/dialog_preview_chip_text"
         android:textSize="10sp"
         android:letterSpacing="0.1"
@@ -33,7 +33,7 @@
             android:id="@+id/dialog_preview_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Widget preview"
+            android:contentDescription="@string/widget_preview_2"
             android:scaleType="fitCenter"
             android:background="@color/widget_background" />
 
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Widget Name"
+        android:text="@string/widget_name"
         android:textColor="@color/dialog_text"
         android:textSize="24sp"
         android:fontFamily="sans-serif-medium" />
@@ -65,7 +65,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginBottom="24dp"
         android:lineSpacingExtra="2dp"
-        android:text="Widget description goes here with some more detail to fill the space."
+        android:text="@string/widget_description_goes_here_with_some_more_deta"
         android:textColor="@color/dialog_text_secondary"
         android:textSize="14sp" />
 
@@ -81,7 +81,7 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_preview_secondary_button"
-            android:text="Close"
+            android:text="@string/support_thank_you_close"
             android:textAllCaps="false"
             android:textColor="@color/dialog_text"
             android:textSize="15sp" />
@@ -93,7 +93,7 @@
             android:layout_marginStart="8dp"
             android:layout_weight="1.2"
             android:background="@drawable/dialog_preview_primary_button"
-            android:text="Enable"
+            android:text="@string/compass_enable"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="15sp"

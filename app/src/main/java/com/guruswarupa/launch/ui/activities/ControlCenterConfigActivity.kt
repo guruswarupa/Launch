@@ -17,7 +17,7 @@ import android.widget.SeekBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.SwitchCompat
@@ -33,7 +33,7 @@ import com.guruswarupa.launch.services.ScreenLockAccessibilityService
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import java.util.Collections
 
-class ControlCenterConfigActivity : ComponentActivity() {
+class ControlCenterConfigActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ShortcutConfigAdapter

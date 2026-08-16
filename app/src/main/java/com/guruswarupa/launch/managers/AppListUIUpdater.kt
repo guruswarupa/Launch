@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.managers
 
+import com.guruswarupa.launch.R
 import android.content.pm.ResolveInfo
 import android.util.Log
 import android.view.View
@@ -230,19 +231,19 @@ class AppListUIUpdater(
                 } catch (e: IllegalStateException) {
                     Log.e(TAG, "Illegal state during filtering - activity may be finishing", e)
                     activity.runOnUiThread {
-                        Toast.makeText(activity, "Unable to filter apps: UI state changed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.toast_unable_to_filter_apps_ui_state_changed), Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: NullPointerException) {
                     Log.e(TAG, "Null reference during filtering - possible data corruption", e)
                     activity.runOnUiThread {
-                        Toast.makeText(activity, "Filtering error: Data inconsistency detected", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.toast_filtering_error_data_inconsistency_detected), Toast.LENGTH_SHORT).show()
                         // Trigger full reload to recover from data corruption
                         appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
                     }
                 } catch (e: IndexOutOfBoundsException) {
                     Log.e(TAG, "Index out of bounds during filtering - list corruption detected", e)
                     activity.runOnUiThread {
-                        Toast.makeText(activity, "Filtering error: List corruption detected", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.toast_filtering_error_list_corruption_detected), Toast.LENGTH_SHORT).show()
                         // Trigger full reload to recover from list corruption
                         appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
                     }
@@ -255,16 +256,16 @@ class AppListUIUpdater(
                             is IllegalStateException -> "State error"
                             else -> "Unknown error"
                         }
-                        Toast.makeText(activity, "Filtering error ($errorType): ${e.message?.take(50) ?: "Unknown"}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.toast_filtering_error, errorType, e.message?.take(50) ?: "Unknown"), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         } catch (e: RejectedExecutionException) {
             Log.w(TAG, "Filtering task rejected by executor: ${e.message}")
-            Toast.makeText(activity, "Unable to filter apps: Task queue full", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_unable_to_filter_apps_task_queue_full), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Log.e(TAG, "Unexpected error executing filtering task", e)
-            Toast.makeText(activity, "Unable to filter apps: Internal error", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_unable_to_filter_apps_internal_error), Toast.LENGTH_SHORT).show()
         }
     }
 

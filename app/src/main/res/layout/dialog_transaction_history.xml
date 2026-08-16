@@ -16,7 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Transaction History"
+            android:text="@string/transaction_history"
             android:textColor="@color/text"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -28,7 +28,7 @@
             android:background="@drawable/button_neutral_ripple"
             android:src="@drawable/ic_delete"
             android:tint="@color/text"
-            android:contentDescription="Clear all transactions"
+            android:contentDescription="@string/clear_all_transactions"
             android:padding="8dp" />
     </LinearLayout>
 
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_neutral_ripple"
-            android:text="Close"
+            android:text="@string/support_thank_you_close"
             android:textColor="@color/text"
             android:paddingHorizontal="32dp"
             android:paddingVertical="12dp"

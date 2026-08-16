@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -25,7 +25,7 @@ import com.guruswarupa.launch.managers.AppLockManager
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-class AppLockSettingsActivity : ComponentActivity() {
+class AppLockSettingsActivity : AppCompatActivity() {
 
     private lateinit var appLockManager: AppLockManager
     private lateinit var appsRecyclerView: RecyclerView
@@ -97,7 +97,7 @@ class AppLockSettingsActivity : ComponentActivity() {
             if (appLockManager.isPinSet()) appLockManager.setFingerprintEnabled(isChecked)
             else {
                 fingerprintSwitch.isChecked = false
-                Toast.makeText(this, "Set PIN first", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_set_pin_first), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -118,9 +118,9 @@ class AppLockSettingsActivity : ComponentActivity() {
 
         resetAppLockButton.setOnClickListener {
             AlertDialog.Builder(this, R.style.CustomDialogTheme)
-                .setTitle("Reset Vault")
-                .setMessage("This will wipe the PIN and unlock everything. Continue?")
-                .setPositiveButton("Reset") { _, _ ->
+                .setTitle(getString(R.string.dlg_reset_vault))
+                .setMessage(getString(R.string.dlg_this_will_wipe_the_pin_and_unlock_everything_con))
+                .setPositiveButton(getString(R.string.reset)) { _, _ ->
                     appLockManager.resetAppLock { success: Boolean ->
                         if (success) {
                             enableAppLockSwitch.isChecked = false
@@ -129,7 +129,7 @@ class AppLockSettingsActivity : ComponentActivity() {
                             recreateAppsList()
                         }
                     }
-                }.setNegativeButton("Cancel", null).show()
+                }.setNegativeButton(getString(R.string.cancel_button), null).show()
         }
     }
 

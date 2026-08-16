@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Location (City, Country)"
+        android:text="@string/location_city_country"
         style="@style/DialogFieldLabel"
         android:layout_marginBottom="4dp" />
 
@@ -26,14 +26,14 @@
         style="@style/DialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="e.g. London, UK"
+        android:hint="@string/e_g_london_uk"
         android:inputType="text"
         android:layout_marginBottom="16dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Temperature Unit"
+        android:text="@string/temperature_unit"
         style="@style/DialogFieldLabel"
         android:layout_marginBottom="4dp" />
 
@@ -48,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Celsius (°C)"
+            android:text="@string/celsius"
             android:textColor="@color/text"
             android:textSize="14sp" />
 
@@ -57,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Fahrenheit (°F)"
+            android:text="@string/fahrenheit"
             android:textColor="@color/text"
             android:textSize="14sp" />
 

@@ -76,7 +76,7 @@ class WidgetManager(
             pickIntent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, true)
             activity.startActivityForResult(pickIntent, requestCode)
         } catch (e: Exception) {
-            Toast.makeText(context, "Error opening widget picker: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_opening_widget_picker, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -87,7 +87,7 @@ class WidgetManager(
             pickIntent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, true)
             launcher.launch(pickIntent)
         } catch (e: Exception) {
-            Toast.makeText(context, "Error opening widget picker: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_opening_widget_picker, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -119,13 +119,13 @@ class WidgetManager(
         val appWidgetId = data?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1) ?: -1
 
         if (appWidgetId == -1) {
-            Toast.makeText(context, "Invalid widget selected", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_invalid_widget_selected), Toast.LENGTH_SHORT).show()
             return
         }
 
         val appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId)
         if (appWidgetInfo == null) {
-            Toast.makeText(context, "Widget info not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_widget_info_not_found), Toast.LENGTH_SHORT).show()
             appWidgetHost.deleteAppWidgetId(appWidgetId)
             return
         }
@@ -188,7 +188,7 @@ class WidgetManager(
 
         if (providerInfo == null) {
             appWidgetHost.deleteAppWidgetId(pendingRequest.appWidgetId)
-            Toast.makeText(context, "Widget provider is no longer available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_widget_provider_is_no_longer_available), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -242,11 +242,7 @@ class WidgetManager(
                 }
 
                 if (!bound) {
-                    Toast.makeText(
-                        context,
-                        "Cannot add this widget. Some widgets require special launcher permissions.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, context.getString(R.string.toast_cannot_add_this_widget_some_widgets_require_spec), Toast.LENGTH_LONG).show()
                     appWidgetHost.deleteAppWidgetId(appWidgetId)
                     return
                 }
@@ -254,14 +250,14 @@ class WidgetManager(
                 try {
                     appWidgetHost.createView(context, appWidgetId, appWidgetInfo)
                 } catch (e2: Exception) {
-                    Toast.makeText(context, "Failed to create widget: ${e2.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_failed_to_create_widget, e2.message), Toast.LENGTH_SHORT).show()
                     appWidgetHost.deleteAppWidgetId(appWidgetId)
                     return
                 }
             }
 
             if (widgetView == null) {
-                Toast.makeText(context, "Failed to create widget view", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_failed_to_create_widget_view), Toast.LENGTH_SHORT).show()
                 appWidgetHost.deleteAppWidgetId(appWidgetId)
                 return
             }
@@ -292,9 +288,9 @@ class WidgetManager(
                 }
             }
 
-            Toast.makeText(context, "Widget added successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_widget_added_successfully), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(context, "Error adding widget: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_adding_widget, e.message), Toast.LENGTH_SHORT).show()
             appWidgetHost.deleteAppWidgetId(appWidgetId)
         }
     }
@@ -385,7 +381,7 @@ class WidgetManager(
                     "Delete" -> showRemoveWidgetDialog(appWidgetId, widgetName.toString())
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
 
         fixDialogTextColors(dialog)
@@ -446,12 +442,12 @@ class WidgetManager(
 
     private fun showRemoveWidgetDialog(appWidgetId: Int, widgetName: String) {
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Remove Widget")
-            .setMessage("Remove \"$widgetName\" widget?")
-            .setPositiveButton("Remove") { _, _ ->
+            .setTitle(context.getString(R.string.dlg_remove_widget))
+            .setMessage(context.getString(R.string.dlg_remove_widget_2, widgetName))
+            .setPositiveButton(context.getString(R.string.font_remove)) { _, _ ->
                 removeWidget(appWidgetId)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
     }
 
@@ -474,9 +470,9 @@ class WidgetManager(
                 putBoolean(PREFS_WIDGETS_CHANGED_KEY, true)
             }
 
-            Toast.makeText(context, "Widget removed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_widget_removed), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(context, "Error removing widget: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_removing_widget, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 

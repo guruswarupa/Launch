@@ -382,10 +382,10 @@ class AppDataDisclosureActivity : AppCompatActivity() {
                     }
                 }
             }
-            Toast.makeText(this, "Settings imported successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_settings_imported_successfully), Toast.LENGTH_SHORT).show()
             startMainActivity(requestPermissions = true)
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to import settings: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_failed_to_import_settings, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 

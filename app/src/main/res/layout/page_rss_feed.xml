@@ -86,7 +86,7 @@
                     android:id="@+id/rss_empty_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No news sources enabled"
+                    android:text="@string/no_news_sources_enabled"
                     android:textColor="@color/widget_text"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -96,7 +96,7 @@
                     android:id="@+id/rss_empty_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Open feed settings and switch on the sources you want to read here."
+                    android:text="@string/open_feed_settings_and_switch_on_the_sources_you"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="14sp"
                     android:gravity="center"
@@ -136,7 +136,7 @@
                 android:id="@+id/rss_header_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="News Feed"
+                android:text="@string/news_feed"
                 android:textColor="@color/widget_text"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -145,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Your headlines in one place"
+                android:text="@string/your_headlines_in_one_place"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -162,7 +162,7 @@
                 android:layout_height="44dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/drawer_widgets_action_bg"
-                android:contentDescription="Refresh RSS feeds"
+                android:contentDescription="@string/refresh_rss_feeds"
                 android:src="@drawable/ic_refresh"
                 android:tint="@color/widget_text" />
 
@@ -171,7 +171,7 @@
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:background="@drawable/drawer_widgets_action_bg"
-                android:contentDescription="Manage RSS feeds"
+                android:contentDescription="@string/manage_rss_feeds"
                 android:src="@drawable/ic_settings_icon"
                 android:tint="@color/widget_text" />
         </LinearLayout>

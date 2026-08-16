@@ -33,7 +33,7 @@ class UsageStatsRefreshManager(
         if (!usageStatsManager.hasUsageStatsPermission()) {
             activity.runOnUiThread {
                 val usageTextView = activity.findViewById<TextView>(R.id.daily_usage_time)
-                usageTextView?.text = "Usage: Tap to setup"
+                usageTextView?.text = activity.getString(R.string.lbl_usage_tap_to_setup)
             }
             return
         }
@@ -52,7 +52,7 @@ class UsageStatsRefreshManager(
 
             activity.runOnUiThread {
                 val usageTextView = activity.findViewById<TextView>(R.id.daily_usage_time)
-                usageTextView?.text = "Usage: $formattedUsage"
+                usageTextView?.text = activity.getString(R.string.app_context_usage_format, formattedUsage)
             }
         }
     }

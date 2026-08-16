@@ -13,7 +13,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.SwitchCompat
@@ -26,7 +26,7 @@ import com.guruswarupa.launch.managers.RssFeedSource
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-class RssFeedSettingsActivity : ComponentActivity() {
+class RssFeedSettingsActivity : AppCompatActivity() {
     private val prefs by lazy { getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE) }
     private val backgroundExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
 
@@ -304,7 +304,7 @@ class RssFeedSettingsActivity : ComponentActivity() {
             .setTitle(if (existingUrl == null) "Add Custom RSS Link" else "Edit Custom RSS Link")
             .setView(dialogView)
             .setPositiveButton(if (existingUrl == null) "Add" else "Save", null)
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .create()
 
         dialog.setOnShowListener {
@@ -323,7 +323,7 @@ class RssFeedSettingsActivity : ComponentActivity() {
                     if (existingUrl != null) {
                         rssFeedManager.addFeedUrl(existingUrl)
                     }
-                    Toast.makeText(this, "Enter a valid, unique feed URL", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_enter_a_valid_unique_feed_url), Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 notifySettingsChanged()

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     
     <View
@@ -36,7 +36,7 @@
                 android:id="@+id/title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Workspaces"
+                android:text="@string/workspaces"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
@@ -58,7 +58,7 @@
                     android:id="@+id/subtitle_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tap to edit, long press to delete"
+                    android:text="@string/tap_to_edit_long_press_to_delete"
                     android:textSize="14sp"
                     android:textColor="#B0B0B0"
                     android:alpha="0.7"
@@ -79,7 +79,7 @@
                 android:id="@+id/create_workspace_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Create New Workspace"
+                android:text="@string/create_new_workspace"
                 android:textAllCaps="false"
                 android:background="@drawable/settings_card_background"
                 android:textColor="@color/white"

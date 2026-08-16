@@ -11,7 +11,7 @@
         android:id="@+id/dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Activity Details"
+        android:text="@string/activity_details"
         android:textColor="@color/text"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -36,7 +36,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Steps"
+                android:text="@string/total_steps"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp" />
@@ -67,7 +67,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Distance"
+                android:text="@string/total_distance"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp" />
@@ -98,7 +98,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Walking Time"
+                android:text="@string/walking_time"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp" />
@@ -107,7 +107,7 @@
                 android:id="@+id/total_walking_time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 min"
+                android:text="@string/zero_walking_time"
                 android:textColor="@color/nord10"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -125,7 +125,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hourly Breakdown"
+        android:text="@string/hourly_breakdown"
         android:textColor="@color/text"
         android:textSize="16sp"
         android:textStyle="bold"

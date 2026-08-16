@@ -19,7 +19,7 @@
             android:id="@+id/transaction_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Income"
+            android:text="@string/income"
             android:textColor="@color/text_secondary"
             android:textSize="10sp"
             android:textAllCaps="true"
@@ -29,7 +29,7 @@
             android:id="@+id/transaction_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description"
+            android:text="@string/description"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
@@ -37,7 +37,7 @@
             android:id="@+id/transaction_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jan 1, 2024"
+            android:text="@string/jan_1_2024"
             android:textColor="@color/text_secondary"
             android:textSize="11sp"
             android:layout_marginTop="2dp" />
@@ -47,7 +47,7 @@
         android:id="@+id/transaction_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="$0.00"
+        android:text="@string/s_0_00"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -61,7 +61,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_delete"
         android:tint="@color/text_secondary"
-        android:contentDescription="Delete transaction"
+        android:contentDescription="@string/delete_transaction"
         android:padding="6dp"
         android:scaleType="centerInside"/>
 

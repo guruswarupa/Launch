@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     
     <View
@@ -39,7 +39,7 @@
                 android:id="@+id/title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="App Timers"
+                android:text="@string/app_timers"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white"
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Set daily time limits for your apps"
+                android:text="@string/set_daily_time_limits_for_your_apps"
                 android:textColor="@color/white"
                 android:alpha="0.5"
                 android:textSize="14sp" />
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Choose an app, set a daily limit, and use the switch to pause or resume the timer."
+                android:text="@string/choose_an_app_set_a_daily_limit_and_use_the_swit"
                 android:textSize="14sp"
                 android:textColor="#B0B0B0"
                 android:alpha="0.7" />
@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="0 apps"
+                android:text="@string/s_0_apps"
                 android:textColor="@color/white"
                 android:textSize="13sp"
                 android:alpha="0.82" />
@@ -94,7 +94,7 @@
                 android:background="@drawable/edit_text_background"
                 android:drawableStart="@android:drawable/ic_menu_search"
                 android:drawablePadding="10dp"
-                android:hint="Search apps"
+                android:hint="@string/search_apps"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:paddingHorizontal="16dp"
@@ -121,7 +121,7 @@
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="32dp"
                     android:gravity="center"
-                    android:text="No apps match your search."
+                    android:text="@string/no_apps_match_your_search"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp"
                     android:visibility="gone" />
@@ -142,7 +142,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/settings_card_background"
                 android:padding="16dp"
-                android:text="Clear Search"
+                android:text="@string/clear_search"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 
@@ -154,7 +154,7 @@
                 android:layout_marginStart="8dp"
                 android:background="@drawable/settings_card_background"
                 android:padding="16dp"
-                android:text="Done"
+                android:text="@string/done"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 

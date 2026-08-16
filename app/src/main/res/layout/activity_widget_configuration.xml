@@ -9,7 +9,7 @@
         android:id="@+id/wallpaper_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="Background"
+        android:contentDescription="@string/background"
         android:scaleType="centerCrop" />
 
     
@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Widgets"
+                    android:text="@string/widgets"
                     android:textSize="32sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/white"
@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Enable, disable, and reorder your widgets"
+                    android:text="@string/enable_disable_and_reorder_your_widgets"
                     android:textColor="@color/white"
                     android:alpha="0.5"
                     android:textSize="14sp" />
@@ -77,7 +77,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_search"
-                android:contentDescription="Search"
+                android:contentDescription="@string/search"
                 android:scaleType="fitCenter"
                 app:tint="@color/white"
                 android:alpha="0.5" />
@@ -88,7 +88,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Search widgets"
+                android:hint="@string/search_widgets"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:paddingStart="12dp"
@@ -106,7 +106,7 @@
             android:id="@+id/widgets_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="0 widgets"
+            android:text="@string/s_0_widgets"
             android:textSize="13sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/nord8"
@@ -131,7 +131,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="24dp"
-            android:text="No widgets match your search."
+            android:text="@string/no_widgets_match_your_search"
             android:textAlignment="center"
             android:textColor="@color/widget_config_text_secondary"
             android:textSize="15sp"

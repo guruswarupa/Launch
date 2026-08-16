@@ -168,9 +168,9 @@ class CalendarEventsWidget(
         }
 
         android.app.AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Events")
+            .setTitle(context.getString(R.string.dlg_events))
             .setView(dialogView)
-            .setPositiveButton("Close", null)
+            .setPositiveButton(context.getString(R.string.support_thank_you_close), null)
             .show()
     }
 
@@ -222,9 +222,9 @@ class CalendarEventsWidget(
             ) {
 
                 android.app.AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                    .setTitle("Calendar Permission")
-                    .setMessage("This permission allows the launcher to display your upcoming calendar events. The data is only used locally on your device.")
-                    .setPositiveButton("Grant Permission") { _, _ ->
+                    .setTitle(context.getString(R.string.dlg_calendar_permission))
+                    .setMessage(context.getString(R.string.dlg_this_permission_allows_the_launcher_to_display_y))
+                    .setPositiveButton(context.getString(R.string.dlg_grant_permission)) { _, _ ->
 
                         if (context is androidx.fragment.app.FragmentActivity) {
                             androidx.core.app.ActivityCompat.requestPermissions(
@@ -234,7 +234,7 @@ class CalendarEventsWidget(
                             )
                         }
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(context.getString(R.string.cancel_button), null)
                     .show()
             }
         } else {
@@ -250,7 +250,7 @@ class CalendarEventsWidget(
             }
             context.startActivity(intent)
         } catch (_: Exception) {
-            Toast.makeText(context, "Could not open settings", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_could_not_open_settings), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -292,7 +292,7 @@ class CalendarEventsWidget(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Error loading calendar events: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_loading_calendar_events, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -423,7 +423,7 @@ class CalendarEventsWidget(
                 context.startActivity(intent)
             }
         } catch (_: Exception) {
-            Toast.makeText(context, "Could not open calendar", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_could_not_open_calendar), Toast.LENGTH_SHORT).show()
         }
     }
 

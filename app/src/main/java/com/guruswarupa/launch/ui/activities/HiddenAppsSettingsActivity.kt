@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
@@ -20,7 +20,7 @@ import com.guruswarupa.launch.managers.HiddenAppManager
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-class HiddenAppsSettingsActivity : ComponentActivity() {
+class HiddenAppsSettingsActivity : AppCompatActivity() {
 
     private lateinit var hiddenAppManager: HiddenAppManager
     private lateinit var appsRecyclerView: RecyclerView

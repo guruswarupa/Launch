@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     
     <View
@@ -30,7 +30,7 @@
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Focus Mode"
+            android:text="@string/focus_mode"
             android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="@color/white"
@@ -52,7 +52,7 @@
                 android:id="@+id/subtitle_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select apps allowed in Focus Mode"
+                android:text="@string/select_apps_allowed_in_focus_mode"
                 android:textSize="14sp"
                 android:textColor="#B0B0B0"
                 android:alpha="0.7"
@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Cancel"
+                android:text="@string/cancel_button"
                 android:textAllCaps="false"
                 android:background="@drawable/settings_card_background"
                 android:textColor="@color/white"
@@ -90,7 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Save"
+                android:text="@string/save_button"
                 android:textAllCaps="false"
                 android:background="@drawable/settings_card_background"
                 android:textColor="@color/white"

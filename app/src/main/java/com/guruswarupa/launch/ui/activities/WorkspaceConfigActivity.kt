@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.content.ContextCompat
@@ -24,7 +24,7 @@ import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import android.graphics.Color
 import com.guruswarupa.launch.models.Constants
 
-class WorkspaceConfigActivity : ComponentActivity() {
+class WorkspaceConfigActivity : AppCompatActivity() {
     private lateinit var workspaceManager: WorkspaceManager
     private lateinit var webAppManager: WebAppManager
     private lateinit var workspaceList: ListView
@@ -138,21 +138,21 @@ class WorkspaceConfigActivity : ComponentActivity() {
 
     private fun showCreateWorkspaceDialog() {
         val input = EditText(this)
-        input.hint = "Workspace name"
+        input.hint = getString(R.string.a11y_workspace_name)
         DialogStyler.styleInput(this, input)
 
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Create Workspace")
+            .setTitle(getString(R.string.create_workspace))
             .setDialogInputView(this, input)
-            .setPositiveButton("Create") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_create)) { _, _ ->
                 val workspaceName = input.text.toString().trim()
                 if (workspaceName.isNotEmpty()) {
                     showAppPickerForWorkspace(workspaceName, null)
                 } else {
-                    Toast.makeText(this, "Please enter a workspace name", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_please_enter_a_workspace_name), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
@@ -175,9 +175,9 @@ class WorkspaceConfigActivity : ComponentActivity() {
 
         if (allApps.isEmpty()) {
             if (appsInOtherWorkspaces.isNotEmpty()) {
-                Toast.makeText(this, "All apps are already assigned to other workspaces", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, this.getString(R.string.toast_all_apps_are_already_assigned_to_other_workspace), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, "No apps found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_no_apps_found), Toast.LENGTH_SHORT).show()
             }
             return
         }
@@ -201,30 +201,30 @@ class WorkspaceConfigActivity : ComponentActivity() {
 
         val positiveLabel = if (existingWorkspaceId != null) "Save" else "Create"
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Select Apps for '$workspaceName'")
+            .setTitle(getString(R.string.dlg_select_apps_for, workspaceName))
             .setView(dialogView)
             .setPositiveButton(positiveLabel, null)
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .create()
 
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 if (selectedApps.isEmpty()) {
-                    Toast.makeText(this, "Please select at least one app", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_please_select_at_least_one_app), Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 try {
                     if (existingWorkspaceId != null) {
                         workspaceManager.updateWorkspace(existingWorkspaceId, workspaceName, selectedApps)
-                        Toast.makeText(this, "Workspace updated", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, this.getString(R.string.toast_workspace_updated), Toast.LENGTH_SHORT).show()
                     } else {
                         workspaceManager.createWorkspace(workspaceName, selectedApps)
-                        Toast.makeText(this, "Workspace created with ${selectedApps.size} apps", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, this.getString(R.string.toast_workspace_created_with_apps, selectedApps.size), Toast.LENGTH_SHORT).show()
                     }
                     loadWorkspaces()
                     dialog.dismiss()
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, this.getString(R.string.toast_error, e.message), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -243,48 +243,48 @@ class WorkspaceConfigActivity : ComponentActivity() {
                     1 -> showRenameWorkspaceDialog(workspace)
                     2 -> {
                         workspaceManager.setActiveWorkspaceId(workspace.id)
-                        Toast.makeText(this, "Workspace '${workspace.name}' activated", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, this.getString(R.string.toast_workspace_activated, workspace.name), Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
     private fun showRenameWorkspaceDialog(workspace: Workspace) {
         val input = EditText(this)
         input.setText(workspace.name)
-        input.hint = "Workspace name"
+        input.hint = getString(R.string.a11y_workspace_name)
         DialogStyler.styleInput(this, input)
 
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Rename Workspace")
+            .setTitle(getString(R.string.dlg_rename_workspace))
             .setDialogInputView(this, input)
-            .setPositiveButton("Rename") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_rename)) { _, _ ->
                 val newName = input.text.toString().trim()
                 if (newName.isNotEmpty()) {
                     workspaceManager.updateWorkspace(workspace.id, newName, workspace.appPackageNames)
-                    Toast.makeText(this, "Workspace renamed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_workspace_renamed), Toast.LENGTH_SHORT).show()
                     loadWorkspaces()
                 } else {
-                    Toast.makeText(this, "Please enter a workspace name", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_please_enter_a_workspace_name), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
     private fun showDeleteWorkspaceDialog(workspace: Workspace) {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Delete Workspace")
-            .setMessage("Are you sure you want to delete '${workspace.name}'?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(getString(R.string.dlg_delete_workspace))
+            .setMessage(getString(R.string.dlg_are_you_sure_you_want_to_delete, workspace.name))
+            .setPositiveButton(getString(R.string.delete_button)) { _, _ ->
                 workspaceManager.deleteWorkspace(workspace.id)
-                Toast.makeText(this, "Workspace deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_workspace_deleted), Toast.LENGTH_SHORT).show()
                 loadWorkspaces()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 

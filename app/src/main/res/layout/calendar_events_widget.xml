@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Calendar Events"
+            android:text="@string/calendar_events"
             android:textColor="@color/widget_text"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -35,7 +35,7 @@
             android:id="@+id/calendar_view_toggle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calendar"
+            android:text="@string/calendar_view_calendar"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="12dp"
@@ -81,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No upcoming events"
+            android:text="@string/no_upcoming_events"
             android:textColor="@color/widget_text_secondary"
             android:textSize="14sp"
             android:layout_marginBottom="8dp" />
@@ -90,7 +90,7 @@
             android:id="@+id/request_calendar_permission_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Grant Calendar Permission"
+            android:text="@string/grant_calendar_permission"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="16dp"

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     <View
         android:id="@+id/settings_overlay"
@@ -45,7 +45,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="System Access"
+                    android:text="@string/system_access"
                     android:textSize="38sp"
                     android:fontFamily="sans-serif-black"
                     android:textColor="@color/white"
@@ -74,7 +74,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Feature Enablement"
+                        android:text="@string/feature_enablement"
                         android:textSize="18sp"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="@color/white"
@@ -83,7 +83,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Review and grant system level permissions required for advanced gestures, screen dimming, and deep automation features."
+                        android:text="@string/review_and_grant_system_level_permissions_requir"
                         android:textSize="14sp"
                         android:textColor="@color/white"
                         android:alpha="0.6"
@@ -102,7 +102,7 @@
                 android:id="@+id/done_button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Finish Setup"
+                android:text="@string/finish_setup"
                 android:textAllCaps="false"
                 android:fontFamily="sans-serif-black"
                 android:background="@drawable/settings_card_background"

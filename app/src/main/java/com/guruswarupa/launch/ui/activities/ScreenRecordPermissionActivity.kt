@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.guruswarupa.launch.services.ScreenRecordingService
 
-class ScreenRecordPermissionActivity : ComponentActivity() {
+class ScreenRecordPermissionActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_SCREEN_CAPTURE = 1002
 

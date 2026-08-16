@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/DialogFieldLabel"
-        android:text="Title"
+        android:text="@string/title"
         android:layout_marginBottom="4dp" />
 
     <EditText
@@ -17,7 +17,7 @@
         style="@style/DialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter countdown title"
+        android:hint="@string/enter_countdown_title"
         android:layout_marginBottom="16dp"
         android:inputType="text" />
 
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/DialogFieldLabel"
-        android:text="Date"
+        android:text="@string/date"
         android:layout_marginBottom="4dp" />
 
     <EditText
@@ -33,7 +33,7 @@
         style="@style/DialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select date"
+        android:hint="@string/select_date"
         android:layout_marginBottom="16dp"
         android:focusable="false"
         android:clickable="true" />
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/DialogFieldLabel"
-        android:text="Time"
+        android:text="@string/time"
         android:layout_marginBottom="4dp" />
 
     <EditText
@@ -50,7 +50,7 @@
         style="@style/DialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Select time"
+        android:hint="@string/select_time"
         android:layout_marginBottom="16dp"
         android:focusable="false"
         android:clickable="true" />
@@ -59,7 +59,7 @@
         android:id="@+id/from_calendar_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select from Calendar"
+        android:text="@string/select_from_calendar"
         android:textColor="@color/text"
         android:background="@drawable/button_neutral_ripple"
         android:paddingHorizontal="16dp"

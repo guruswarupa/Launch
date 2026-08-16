@@ -15,7 +15,7 @@
             style="@style/DialogEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="DNS Name (e.g., My Custom DNS)"
+            android:hint="@string/dns_name_e_g_my_custom_dns"
             android:inputType="textCapSentences"
             android:layout_marginBottom="16dp" />
 
@@ -25,7 +25,7 @@
             style="@style/DialogEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="DNS Hostname (e.g., dns.example.com)"
+            android:hint="@string/dns_hostname_e_g_dns_example_com"
             android:inputType="textNoSuggestions"
             android:layout_marginBottom="16dp" />
 
@@ -35,7 +35,7 @@
             style="@style/DialogEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Description (optional)"
+            android:hint="@string/description_optional"
             android:inputType="textCapSentences"
             android:layout_marginBottom="16dp" />
 
@@ -44,7 +44,7 @@
             android:id="@+id/ad_blocking_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This DNS blocks ads and trackers"
+            android:text="@string/this_dns_blocks_ads_and_trackers"
             android:textColor="@color/text"
             android:buttonTint="@color/text" />
 

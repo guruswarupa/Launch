@@ -245,17 +245,17 @@ class CountdownWidget(
                     }
                     "Delete" -> {
                         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                            .setTitle("Delete Countdown")
-                            .setMessage("Are you sure you want to delete \"${countdown.title}\"?")
-                            .setPositiveButton("Delete") { _, _ ->
+                            .setTitle(context.getString(R.string.dlg_delete_countdown))
+                            .setMessage(context.getString(R.string.dlg_are_you_sure_you_want_to_delete_2, countdown.title))
+                            .setPositiveButton(context.getString(R.string.delete_button)) { _, _ ->
                                 deleteCountdown(countdown)
                             }
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(context.getString(R.string.cancel_button), null)
                             .show()
                     }
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
 
 
@@ -358,18 +358,18 @@ class CountdownWidget(
         timeInput.setText(timeFormat.format(calendar.time))
 
         val addDialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Add Countdown")
+            .setTitle(context.getString(R.string.dlg_add_countdown))
             .setView(dialogView)
-            .setPositiveButton("Add") { _, _ ->
+            .setPositiveButton(context.getString(R.string.add_button)) { _, _ ->
                 val title = titleInput.text.toString().trim()
                 if (title.isEmpty()) {
-                    Toast.makeText(context, "Please enter a title", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_enter_a_title), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
                 val targetTime = calendar.timeInMillis
                 if (targetTime <= System.currentTimeMillis()) {
-                    Toast.makeText(context, "Please select a future date and time", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_select_a_future_date_and_time), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
@@ -381,7 +381,7 @@ class CountdownWidget(
                 )
                 addCountdown(countdown)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         fromCalendarButton.setOnClickListener {
@@ -455,18 +455,18 @@ class CountdownWidget(
         }
 
         val editDialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Edit Countdown")
+            .setTitle(context.getString(R.string.dlg_edit_countdown))
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(context.getString(R.string.save_button)) { _, _ ->
                 val title = titleInput.text.toString().trim()
                 if (title.isEmpty()) {
-                    Toast.makeText(context, "Please enter a title", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_enter_a_title), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
                 val targetTime = calendar.timeInMillis
                 if (targetTime <= System.currentTimeMillis()) {
-                    Toast.makeText(context, "Please select a future date and time", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_select_a_future_date_and_time), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
@@ -476,7 +476,7 @@ class CountdownWidget(
                 )
                 updateCountdown(updatedCountdown)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         fromCalendarButton.setOnClickListener {
@@ -495,7 +495,7 @@ class CountdownWidget(
 
         val events = loadUpcomingCalendarEvents()
         if (events.isEmpty()) {
-            Toast.makeText(context, "No upcoming calendar events found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_no_upcoming_calendar_events_found), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -505,7 +505,7 @@ class CountdownWidget(
         }
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Select Calendar Event")
+            .setTitle(context.getString(R.string.dlg_select_calendar_event))
             .setItems(eventTitles.toTypedArray()) { _, which ->
                 val selectedEvent = events[which]
                 val countdown = CountdownItem(
@@ -517,7 +517,7 @@ class CountdownWidget(
                 )
                 addCountdown(countdown)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
 
 
@@ -634,9 +634,9 @@ class CountdownWidget(
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                    .setTitle("Calendar Permission")
-                    .setMessage("This permission allows you to create countdowns from your calendar events.")
-                    .setPositiveButton("Grant Permission") { _, _ ->
+                    .setTitle(context.getString(R.string.dlg_calendar_permission))
+                    .setMessage(context.getString(R.string.dlg_this_permission_allows_you_to_create_countdowns))
+                    .setPositiveButton(context.getString(R.string.dlg_grant_permission)) { _, _ ->
                         if (context is androidx.fragment.app.FragmentActivity) {
                             androidx.core.app.ActivityCompat.requestPermissions(
                                 context,
@@ -645,7 +645,7 @@ class CountdownWidget(
                             )
                         }
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(context.getString(R.string.cancel_button), null)
                     .show()
 
                 fixDialogTextColors(dialog)

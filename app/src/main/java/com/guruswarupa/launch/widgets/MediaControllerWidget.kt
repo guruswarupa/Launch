@@ -117,8 +117,8 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
     }
 
     private fun showPermissionState() {
-        trackTitle.text = "Permission Required"
-        artistName.text = "To control media, please enable Notification Access for Launch in settings."
+        trackTitle.text = context.getString(R.string.dlg_permission_required)
+        artistName.text = context.getString(R.string.lbl_to_control_media_please_enable_notification_acce)
         controlsLayout.visibility = View.GONE
         permissionButton.visibility = View.VISIBLE
     }
@@ -128,7 +128,7 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
             trackTitle.text = metadata.getString(MediaMetadata.METADATA_KEY_TITLE) ?: "Unknown Track"
             artistName.text = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST) ?: "Unknown Artist"
         } else {
-            trackTitle.text = "Not Playing"
+            trackTitle.text = context.getString(R.string.not_playing)
             artistName.text = ""
         }
     }
@@ -160,9 +160,9 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
             val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
-            Toast.makeText(context, "Enable Launch in the list", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.toast_enable_launch_in_the_list), Toast.LENGTH_LONG).show()
         } catch (_: Exception) {
-            Toast.makeText(context, "Could not open settings", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_could_not_open_settings), Toast.LENGTH_SHORT).show()
         }
     }
 

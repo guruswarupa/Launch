@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     <View
         android:id="@+id/settings_overlay"
@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Privacy Hub"
+                android:text="@string/privacy_hub"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Monitor app permissions and privacy risks"
+                android:text="@string/monitor_app_permissions_and_privacy_risks"
                 android:textColor="@color/white"
                 android:alpha="0.5"
                 android:textSize="14sp" />
@@ -85,7 +85,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Apps"
+                        android:text="@string/search_mode_apps"
                         android:textColor="@color/white"
                         android:alpha="0.5"
                         android:textSize="11sp"/>
@@ -119,7 +119,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Critical"
+                        android:text="@string/critical"
                         android:textColor="#FF6B6B"
                         android:alpha="0.6"
                         android:textSize="11sp"/>
@@ -153,7 +153,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="External"
+                        android:text="@string/external"
                         android:textColor="#FFCC00"
                         android:alpha="0.6"
                         android:textSize="11sp"/>
@@ -174,7 +174,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/settings_card_background"
-                android:hint="Filter applications..."
+                android:hint="@string/filter_applications"
                 android:textColorHint="#66FFFFFF"
                 android:textColor="@color/white"
                 android:paddingHorizontal="16dp"
@@ -201,7 +201,7 @@
                         style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="All"
+                        android:text="@string/search_mode_all"
                         android:checked="true"
                         app:chipBackgroundColor="#33000000"
                         android:textColor="@color/white"
@@ -213,7 +213,7 @@
                         style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Camera"
+                        android:text="@string/perm_camera"
                         app:chipBackgroundColor="#33000000"
                         android:textColor="@color/white"
                         app:checkedIconTint="@color/white"
@@ -224,7 +224,7 @@
                         style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Microphone"
+                        android:text="@string/perm_microphone"
                         app:chipBackgroundColor="#33000000"
                         android:textColor="@color/white"
                         app:checkedIconTint="@color/white"
@@ -235,7 +235,7 @@
                         style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Location"
+                        android:text="@string/perm_location"
                         app:chipBackgroundColor="#33000000"
                         android:textColor="@color/white"
                         app:checkedIconTint="@color/white"
@@ -246,7 +246,7 @@
                         style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sideloaded"
+                        android:text="@string/sideloaded"
                         app:chipBackgroundColor="#33000000"
                         android:textColor="@color/white"
                         app:checkedIconTint="@color/white"

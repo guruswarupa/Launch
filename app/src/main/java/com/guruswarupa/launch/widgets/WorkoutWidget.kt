@@ -119,9 +119,9 @@ class WorkoutWidget(rootView: View) {
         }
 
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Workout Details")
+            .setTitle(context.getString(R.string.dlg_workout_details))
             .setView(dialogView)
-            .setPositiveButton("Close", null)
+            .setPositiveButton(context.getString(R.string.support_thank_you_close), null)
             .show()
     }
 
@@ -244,18 +244,18 @@ class WorkoutWidget(rootView: View) {
         customInput.setHintTextColor(secondaryTextColor)
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Add Exercise")
+            .setTitle(context.getString(R.string.dlg_add_exercise))
             .setView(dialogView)
-            .setPositiveButton("Add Custom") { _, _ ->
+            .setPositiveButton(context.getString(R.string.dlg_add_custom)) { _, _ ->
                 val exerciseName = customInput.text.toString().trim()
                 if (exerciseName.isNotEmpty()) {
                     val type = if (typeTime.isChecked) ExerciseType.TIME else ExerciseType.REPS
                     addExercise(exerciseName, type)
                 } else {
-                    Toast.makeText(context, "Please enter an exercise name", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_enter_an_exercise_name), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .create()
 
         fun updatePresets() {
@@ -362,12 +362,12 @@ class WorkoutWidget(rootView: View) {
                 when (which) {
                     0 -> {
                         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                            .setTitle("Reset Today")
-                            .setMessage("Reset today's count for ${exercise.name}?")
-                            .setPositiveButton("Reset") { _, _ ->
+                            .setTitle(context.getString(R.string.dlg_reset_today))
+                            .setMessage(context.getString(R.string.dlg_reset_today_s_count_for, exercise.name))
+                            .setPositiveButton(context.getString(R.string.reset)) { _, _ ->
                                 resetExerciseToday(exercise)
                             }
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(context.getString(R.string.cancel_button), null)
                             .show()
                     }
                     1 -> showDeleteConfirmDialog(exercise) {
@@ -375,7 +375,7 @@ class WorkoutWidget(rootView: View) {
                     }
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
 
         fixDialogTextColors(dialog)
@@ -398,12 +398,12 @@ class WorkoutWidget(rootView: View) {
 
     private fun showDeleteConfirmDialog(exercise: WorkoutExercise, onConfirm: () -> Unit) {
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Delete Exercise")
-            .setMessage("Delete ${exercise.name}? This cannot be undone.")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(context.getString(R.string.dlg_delete_exercise))
+            .setMessage(context.getString(R.string.dlg_delete_this_cannot_be_undone, exercise.name))
+            .setPositiveButton(context.getString(R.string.delete_button)) { _, _ ->
                 onConfirm()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
     }
 

@@ -192,7 +192,7 @@ class PhysicalActivityWidget(
 
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
             .setView(dialogView)
-            .setPositiveButton("Close", null)
+            .setPositiveButton(context.getString(R.string.support_thank_you_close), null)
             .show()
     }
 
@@ -280,9 +280,9 @@ class PhysicalActivityWidget(
             ) {
 
                 AlertDialog.Builder(context, R.style.CustomDialogTheme)
-                    .setTitle("Physical Activity Permission")
-                    .setMessage("This permission allows the launcher to track your steps and distance walked. The data is stored locally on your device and helps you monitor your daily physical activity.")
-                    .setPositiveButton("Grant Permission") { _, _ ->
+                    .setTitle(context.getString(R.string.dlg_physical_activity_permission))
+                    .setMessage(context.getString(R.string.dlg_this_permission_allows_the_launcher_to_track_you))
+                    .setPositiveButton(context.getString(R.string.dlg_grant_permission)) { _, _ ->
 
                         if (context is FragmentActivity) {
                             ActivityCompat.requestPermissions(
@@ -292,7 +292,7 @@ class PhysicalActivityWidget(
                             )
                         }
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(context.getString(R.string.cancel_button), null)
                     .show()
             }
         }

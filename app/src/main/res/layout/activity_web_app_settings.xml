@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Add and manage your web applications"
+                android:text="@string/add_and_manage_your_web_applications"
                 android:textColor="@color/white"
                 android:alpha="0.5"
                 android:textSize="14sp" />

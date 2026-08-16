@@ -13,7 +13,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
-        android:contentDescription="App Icon" />
+        android:contentDescription="@string/app_icon" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="App Name"
+            android:text="@string/app_name_2"
             android:textColor="@color/text"
             android:textSize="16sp" />
 
@@ -38,7 +38,7 @@
             android:layout_marginTop="3dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Limit: 1h 30m"
+            android:text="@string/limit_1h_30m"
             android:textColor="@color/nord8"
             android:textSize="12sp" />
 
@@ -49,7 +49,7 @@
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Used: 45m"
+            android:text="@string/used_45m"
             android:textColor="#B0B0B0"
             android:textSize="12sp" />
     </LinearLayout>

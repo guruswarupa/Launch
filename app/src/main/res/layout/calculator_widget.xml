@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Calculator"
+        android:text="@string/calculator"
         android:textColor="@color/widget_text"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -35,7 +35,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="History"
+                android:text="@string/history"
                 android:textColor="@color/widget_text"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -44,7 +44,7 @@
                 android:id="@+id/btn_clear_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clear"
+                android:text="@string/weather_condition_clear"
                 android:textSize="12sp"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
@@ -74,7 +74,7 @@
             android:layout_height="36dp"
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
-            android:text="Basic"
+            android:text="@string/basic"
             android:textSize="12sp"
             android:background="@drawable/button_selected_ripple"
             android:textColor="@color/widget_text" />
@@ -85,7 +85,7 @@
             android:layout_height="36dp"
             android:layout_weight="1"
             android:layout_marginHorizontal="4dp"
-            android:text="Scientific"
+            android:text="@string/scientific"
             android:textSize="12sp"
             android:background="@drawable/button_selected_ripple"
             android:textColor="@color/widget_text" />
@@ -96,7 +96,7 @@
             android:layout_height="36dp"
             android:layout_weight="1"
             android:layout_marginStart="4dp"
-            android:text="Converter"
+            android:text="@string/converter"
             android:textSize="12sp"
             android:background="@drawable/button_selected_ripple"
             android:textColor="@color/widget_text" />
@@ -135,7 +135,7 @@
             android:layout_height="50dp"
             android:layout_columnWeight="1"
             android:layout_margin="2dp"
-            android:text="sin"
+            android:text="@string/sin"
             android:textSize="12sp"
             android:background="@drawable/button_neutral_ripple"
             android:textColor="@color/widget_text" />
@@ -146,7 +146,7 @@
             android:layout_height="50dp"
             android:layout_columnWeight="1"
             android:layout_margin="2dp"
-            android:text="cos"
+            android:text="@string/cos"
             android:textSize="12sp"
             android:background="@drawable/button_neutral_ripple"
             android:textColor="@color/widget_text" />
@@ -157,7 +157,7 @@
             android:layout_height="50dp"
             android:layout_columnWeight="1"
             android:layout_margin="2dp"
-            android:text="tan"
+            android:text="@string/tan"
             android:textSize="12sp"
             android:background="@drawable/button_neutral_ripple"
             android:textColor="@color/widget_text" />
@@ -168,7 +168,7 @@
             android:layout_height="50dp"
             android:layout_columnWeight="1"
             android:layout_margin="2dp"
-            android:text="log"
+            android:text="@string/log"
             android:textSize="12sp"
             android:background="@drawable/button_neutral_ripple"
             android:textColor="@color/widget_text" />
@@ -201,7 +201,7 @@
             android:layout_height="50dp"
             android:layout_columnWeight="1"
             android:layout_margin="2dp"
-            android:text="√"
+            android:text="@string/str"
             android:textSize="14sp"
             android:background="@drawable/button_neutral_ripple"
             android:textColor="@color/widget_text" />
@@ -212,7 +212,7 @@
             android:layout_height="50dp"
             android:layout_columnWeight="1"
             android:layout_margin="2dp"
-            android:text="π"
+            android:text="@string/str_2"
             android:textSize="14sp"
             android:background="@drawable/button_neutral_ripple"
             android:textColor="@color/widget_text" />
@@ -263,7 +263,7 @@
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:text="Unit Converter"
+                android:text="@string/unit_converter"
                 android:textSize="12sp"
                 android:background="@drawable/button_selected_ripple"
                 android:textColor="@color/widget_text" />
@@ -274,7 +274,7 @@
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:text="Base Converter"
+                android:text="@string/base_converter"
                 android:textSize="12sp"
                 android:background="@drawable/button_selected_ripple"
                 android:textColor="@color/widget_text" />
@@ -311,7 +311,7 @@
                 android:padding="12dp"
                 android:textSize="16sp"
                 android:textColor="@color/widget_text"
-                android:hint="Value"
+                android:hint="@string/value"
                 android:inputType="numberDecimal"
                 android:layout_marginEnd="8dp" />
 
@@ -367,7 +367,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Number Base Converter"
+                android:text="@string/number_base_converter"
                 android:textColor="@color/widget_text"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -376,7 +376,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Input Base:"
+                android:text="@string/input_base"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp" />
@@ -394,7 +394,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp"
-                    android:text="Decimal"
+                    android:text="@string/decimal"
                     android:textSize="11sp"
                     android:background="@drawable/button_selected_ripple"
                     android:textColor="@color/widget_text" />
@@ -405,7 +405,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    android:text="Binary"
+                    android:text="@string/binary"
                     android:textSize="11sp"
                     android:background="@drawable/button_selected_ripple"
                     android:textColor="@color/widget_text" />
@@ -416,7 +416,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    android:text="Hex"
+                    android:text="@string/hex"
                     android:textSize="11sp"
                     android:background="@drawable/button_selected_ripple"
                     android:textColor="@color/widget_text" />
@@ -427,7 +427,7 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
-                    android:text="Octal"
+                    android:text="@string/octal"
                     android:textSize="11sp"
                     android:background="@drawable/button_selected_ripple"
                     android:textColor="@color/widget_text" />
@@ -441,14 +441,14 @@
                 android:padding="12dp"
                 android:textSize="16sp"
                 android:textColor="@color/widget_text"
-                android:hint="Enter number"
+                android:hint="@string/enter_number"
                 android:inputType="text"
                 android:layout_marginBottom="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Convert To:"
+                android:text="@string/convert_to"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp" />
@@ -465,7 +465,7 @@
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp"
-                    android:text="Decimal"
+                    android:text="@string/decimal"
                     android:textSize="11sp"
                     android:background="@drawable/button_neutral_ripple"
                     android:textColor="@color/widget_text" />
@@ -476,7 +476,7 @@
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    android:text="Binary"
+                    android:text="@string/binary"
                     android:textSize="11sp"
                     android:background="@drawable/button_neutral_ripple"
                     android:textColor="@color/widget_text" />
@@ -487,7 +487,7 @@
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    android:text="Hex"
+                    android:text="@string/hex"
                     android:textSize="11sp"
                     android:background="@drawable/button_neutral_ripple"
                     android:textColor="@color/widget_text" />
@@ -498,7 +498,7 @@
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
-                    android:text="Octal"
+                    android:text="@string/octal"
                     android:textSize="11sp"
                     android:background="@drawable/button_neutral_ripple"
                     android:textColor="@color/widget_text" />
@@ -546,7 +546,7 @@
             android:layout_height="60dp"
             android:layout_columnWeight="1"
             android:layout_margin="4dp"
-            android:text="⌫"
+            android:text="@string/str_3"
             android:textSize="18sp"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple" />
@@ -557,7 +557,7 @@
             android:layout_height="60dp"
             android:layout_columnWeight="1"
             android:layout_margin="4dp"
-            android:text="÷"
+            android:text="@string/str_4"
             android:textSize="18sp"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple" />
@@ -613,7 +613,7 @@
             android:layout_height="60dp"
             android:layout_columnWeight="1"
             android:layout_margin="4dp"
-            android:text="−"
+            android:text="@string/str_5"
             android:textSize="18sp"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple" />
@@ -704,7 +704,7 @@
             android:layout_rowSpan="2"
             android:layout_columnWeight="1"
             android:layout_margin="4dp"
-            android:text="="
+            android:text="@string/str_6"
             android:textSize="20sp"
             android:textColor="@color/widget_text"
             android:background="@drawable/button_neutral_ripple" />

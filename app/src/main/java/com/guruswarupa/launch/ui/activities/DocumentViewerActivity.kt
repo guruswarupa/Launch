@@ -97,7 +97,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
             val manager = EncryptedFolderManager(this)
             vaultManager = manager
             if (!manager.isUnlocked()) {
-                Toast.makeText(this, "Vault is locked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_vault_is_locked), Toast.LENGTH_SHORT).show()
                 finish()
                 return
             }
@@ -438,7 +438,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 pdfNavBar.visibility = View.VISIBLE
 
                 documentPageInfo.visibility = View.VISIBLE
-                documentPageInfo.text = "$totalPages page${if (totalPages != 1) "s" else ""}"
+                documentPageInfo.text = resources.getQuantityString(R.plurals.document_page_count, totalPages, totalPages)
 
                 val layoutManager = LinearLayoutManager(this@DocumentViewerActivity)
                 pdfRecyclerView.layoutManager = layoutManager
@@ -472,7 +472,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
     }
 
     private fun updatePageIndicator(currentPage: Int) {
-        pageIndicator.text = "Page $currentPage of $totalPages"
+        pageIndicator.text = getString(R.string.document_page_indicator, currentPage, totalPages)
         btnPrevPage.alpha = if (currentPage <= 1) 0.3f else 1.0f
         btnNextPage.alpha = if (currentPage >= totalPages) 0.3f else 1.0f
     }
@@ -602,7 +602,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private fun shareDocument() {
         val file = tempFile
         if (file == null || !file.exists()) {
-            Toast.makeText(this, "No document to share", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_no_document_to_share), Toast.LENGTH_SHORT).show()
             return
         }
         try {
@@ -616,14 +616,14 @@ class DocumentViewerActivity : VaultBaseActivity() {
             }
             startActivity(Intent.createChooser(intent, "Share document"))
         } catch (e: Exception) {
-            Toast.makeText(this, "Could not share: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_could_not_share, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun openWithExternalApp() {
         val file = tempFile
         if (file == null || !file.exists()) {
-            Toast.makeText(this, "No document available to open externally", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_no_document_available_to_open_externally), Toast.LENGTH_SHORT).show()
             return
         }
         try {
@@ -636,7 +636,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
             }
             startActivity(Intent.createChooser(intent, "Open with…"))
         } catch (e: Exception) {
-            Toast.makeText(this, "No app available to open this file type", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_no_app_available_to_open_this_file_type), Toast.LENGTH_SHORT).show()
         }
     }
 

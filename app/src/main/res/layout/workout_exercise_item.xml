@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Push-ups"
+            android:text="@string/push_ups"
             android:textColor="@color/widget_text"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -45,7 +45,7 @@
             android:id="@+id/total_count_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total: 0"
+            android:text="@string/total_0"
             android:textColor="@color/widget_text_secondary"
             android:textSize="12sp"
             android:layout_marginEnd="8dp" />
@@ -54,12 +54,12 @@
             android:id="@+id/exercise_menu_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:text="⋮"
+            android:text="@string/str_13"
             android:textColor="@color/widget_text_secondary"
             android:textSize="20sp"
             android:gravity="center"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Exercise options"
+            android:contentDescription="@string/exercise_options"
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>
@@ -91,7 +91,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Today"
+                    android:text="@string/weather_today"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="11sp"
                     android:layout_marginBottom="4dp" />
@@ -117,7 +117,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Best"
+                    android:text="@string/best"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="11sp"
                     android:layout_marginBottom="4dp" />
@@ -126,7 +126,7 @@
                     android:id="@+id/best_day_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Best: 0"
+                    android:text="@string/best_0"
                     android:textColor="@color/nord14"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -184,7 +184,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today"
+                android:text="@string/weather_today"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="11sp"
                 android:layout_marginBottom="4dp" />
@@ -204,7 +204,7 @@
                 android:id="@+id/today_time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recorded: 0:00"
+                android:text="@string/recorded_0_00"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -221,7 +221,7 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_weight="1"
-                android:text="Start"
+                android:text="@string/workout_start"
                 android:textColor="@color/widget_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -233,7 +233,7 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_weight="1"
-                android:text="Reset"
+                android:text="@string/reset"
                 android:textColor="@color/widget_text"
                 android:textSize="16sp"
                 android:background="@drawable/button_neutral_ripple"
@@ -245,7 +245,7 @@
             android:id="@+id/best_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Best: 0:00"
+            android:text="@string/best_0_00"
             android:textColor="@color/nord14"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -257,7 +257,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Drag to reorder • Swipe to delete"
+        android:text="@string/drag_to_reorder_swipe_to_delete"
         android:textColor="@color/widget_text_secondary"
         android:textSize="9sp"
         android:layout_gravity="center"

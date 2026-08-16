@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Habit Tracker"
+            android:text="@string/habit_tracker"
             android:textColor="@color/widget_text"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -30,7 +30,7 @@
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_input_add"
-            android:contentDescription="Add Habit"
+            android:contentDescription="@string/add_habit"
             android:tint="@color/widget_text" />
     </LinearLayout>
 
@@ -39,7 +39,7 @@
         android:id="@+id/habit_empty_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No habits yet. Tap + to add your first habit!"
+        android:text="@string/no_habits_yet_tap_to_add_your_first_habit"
         android:textColor="@color/widget_text_secondary"
         android:textSize="12sp"
         android:gravity="center"

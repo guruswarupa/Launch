@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Device Info"
+        android:text="@string/device_info"
         android:textColor="@color/widget_text"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -37,7 +37,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CPU Model"
+                    android:text="@string/cpu_model"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp"/>
                 
@@ -45,7 +45,7 @@
                     android:id="@+id/cpu_model_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Loading..."
+                    android:text="@string/support_button_loading"
                     android:textColor="@color/widget_text"
                     android:textSize="14sp"
                     android:maxLines="1"
@@ -62,7 +62,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CPU Temp"
+                    android:text="@string/cpu_temp"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp"/>
                 
@@ -93,7 +93,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="RAM Usage"
+                    android:text="@string/ram_usage"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp"/>
                 
@@ -125,7 +125,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Storage"
+                    android:text="@string/perm_storage"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp"/>
                 
@@ -170,7 +170,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Android Version"
+                    android:text="@string/android_version"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -194,7 +194,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="System Uptime"
+                    android:text="@string/system_uptime"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -216,7 +216,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hardware Info"
+                    android:text="@string/hardware_info_2"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -239,7 +239,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kernel Version"
+                    android:text="@string/kernel_version"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 

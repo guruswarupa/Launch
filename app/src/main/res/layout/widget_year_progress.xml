@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Year Progress"
+            android:text="@string/year_progress"
             android:textColor="@color/widget_text"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -60,7 +60,7 @@
                 android:id="@+id/progress_stats_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 days of 365 completed (0%)"
+                android:text="@string/s_0_days_of_365_completed_0"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -71,7 +71,7 @@
                 android:id="@+id/days_remaining_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="365 days remaining"
+                android:text="@string/s_365_days_remaining"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="14sp"
                 android:alpha="0.7" />
@@ -101,7 +101,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Completed"
+                    android:text="@string/completed"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -121,7 +121,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Remaining"
+                    android:text="@string/remaining"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>

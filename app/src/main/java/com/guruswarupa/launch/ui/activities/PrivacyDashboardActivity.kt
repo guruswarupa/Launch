@@ -12,7 +12,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
@@ -27,7 +27,7 @@ import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.ui.adapters.PrivacyDashboardAdapter
 import java.util.concurrent.Executors
 
-class PrivacyDashboardActivity : ComponentActivity() {
+class PrivacyDashboardActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PrivacyDashboardAdapter

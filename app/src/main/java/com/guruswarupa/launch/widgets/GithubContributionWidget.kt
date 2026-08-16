@@ -101,10 +101,10 @@ class GithubContributionWidget(
         val savedToken = sharedPreferences.getString(PREF_GITHUB_TOKEN, "")
 
         if (!savedToken.isNullOrEmpty() && !savedUsername.isNullOrEmpty()) {
-            githubUsername.text = "GitHub: $savedUsername"
+            githubUsername.text = context.getString(R.string.lbl_github, savedUsername)
             loadAvailableYears(savedUsername, savedToken)
         } else {
-            githubStatusText.text = "Tap to configure GitHub token"
+            githubStatusText.text = context.getString(R.string.tap_to_configure_github_token)
 
             availableYears = listOf(currentYear)
             setupYearSpinner()
@@ -124,7 +124,7 @@ class GithubContributionWidget(
             return
         }
 
-        githubStatusText.text = "Loading available years..."
+        githubStatusText.text = context.getString(R.string.lbl_loading_available_years)
 
         try {
             executor.execute {
@@ -145,7 +145,7 @@ class GithubContributionWidget(
                             availableYears = listOf(currentYear)
                             setupYearSpinner()
                         }
-                        githubStatusText.text = "Error loading years: ${e.message}"
+                        githubStatusText.text = context.getString(R.string.lbl_error_loading_years, e.message)
                     }
                 }
             }
@@ -201,9 +201,9 @@ class GithubContributionWidget(
             }
         }
 
-        githubStatusText.text = "Loading $currentYear contributions..."
+        githubStatusText.text = context.getString(R.string.lbl_loading_contributions, currentYear)
         githubStatsContainer.visibility = View.GONE
-        githubGraphTitle.text = "Contribution Activity ($currentYear)"
+        githubGraphTitle.text = context.getString(R.string.lbl_contribution_activity, currentYear)
 
         try {
             executor.execute {
@@ -216,12 +216,12 @@ class GithubContributionWidget(
                         }
                         updateContributionGraph(contributionData.contributions)
                         updateStats(contributionData.totalContributions, contributionData.currentStreak, contributionData.longestStreak)
-                        githubStatusText.text = "Last updated: ${contributionData.lastUpdated}"
+                        githubStatusText.text = context.getString(R.string.lbl_last_updated, contributionData.lastUpdated)
                         githubStatsContainer.visibility = View.VISIBLE
                     }
                 } catch (e: Exception) {
                     handler.post {
-                        githubStatusText.text = "Error: ${e.message}"
+                        githubStatusText.text = context.getString(R.string.toast_error, e.message)
                         githubStatsContainer.visibility = View.GONE
                     }
                 }
@@ -258,9 +258,9 @@ class GithubContributionWidget(
         tokenInput.setText(savedToken)
         usernameInput.setText(savedUsername)
 
-        builder.setTitle("GitHub Token Configuration")
+        builder.setTitle(context.getString(R.string.dlg_github_token_configuration))
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(context.getString(R.string.save_button)) { _, _ ->
                 val token = tokenInput.text.toString().trim()
                 val username = usernameInput.text.toString().trim()
 
@@ -271,13 +271,13 @@ class GithubContributionWidget(
                         putLong(PREF_GITHUB_LAST_FETCH, 0L)
                     }
 
-                    githubUsername.text = "GitHub: $username"
+                    githubUsername.text = context.getString(R.string.lbl_github, username)
                     loadGithubData(force = true)
                 } else {
-                    Toast.makeText(context, "Please enter both token and username", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_please_enter_both_token_and_username), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
     }
 

@@ -14,7 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 
 
-class AppTimerManagementActivity : ComponentActivity() {
+class AppTimerManagementActivity : AppCompatActivity() {
     companion object {
         private val iconCache = ConcurrentHashMap<String, Drawable>()
     }
@@ -197,7 +197,7 @@ class AppTimerManagementActivity : ComponentActivity() {
                     Toast.makeText(this, getString(R.string.daily_usage_invalid_number), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
@@ -259,7 +259,7 @@ class AppTimerManagementActivity : ComponentActivity() {
             bindIcon(h, item.packageName)
             h.name.text = item.name
             h.limit.text = if (item.limitMs > 0) "Limit: ${formatTime(item.limitMs)}" else "No limit"
-            h.usage.text = "Used: ${formatTime(item.usageTimeMs)}"
+            h.usage.text = getString(R.string.lbl_used, formatTime(item.usageTimeMs))
 
             h.sw.setOnCheckedChangeListener(null)
             h.sw.isChecked = item.enabled

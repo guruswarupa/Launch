@@ -149,7 +149,7 @@ class FileSearchResultBinder(
                     try {
                         activity.startActivity(intent)
                     } catch (_: Exception) {
-                        Toast.makeText(activity, "No app found to open this file", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.toast_no_app_found_to_open_this_file), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

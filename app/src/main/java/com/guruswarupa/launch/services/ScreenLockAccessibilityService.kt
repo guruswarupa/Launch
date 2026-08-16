@@ -1578,48 +1578,48 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             when (id) {
                 "wifi" -> {
                     icon.setImageResource(R.drawable.ic_wifi_stat)
-                    icon.contentDescription = "WiFi"
-                    label.text = "WiFi"
+                    icon.contentDescription = getString(R.string.lbl_wifi)
+                    label.text = getString(R.string.lbl_wifi)
                     updateWifiIcon(icon)
                     shortcutContainer.setOnClickListener { toggleWifi(); updateWifiIcon(icon); hideMenu() }
                 }
                 "bluetooth" -> {
                     icon.setImageResource(android.R.drawable.stat_sys_data_bluetooth)
-                    icon.contentDescription = "Bluetooth"
-                    label.text = "Bluetooth"
+                    icon.contentDescription = getString(R.string.lbl_bluetooth)
+                    label.text = getString(R.string.lbl_bluetooth)
                     updateBluetoothIcon(icon)
                     shortcutContainer.setOnClickListener { toggleBluetooth(); hideMenu() }
                 }
                 "airplane" -> {
                     icon.setImageResource(R.drawable.ic_airplane_stat)
-                    icon.contentDescription = "Airplane"
-                    label.text = "Airplane"
+                    icon.contentDescription = getString(R.string.lbl_airplane)
+                    label.text = getString(R.string.lbl_airplane)
                     updateAirplaneIcon(icon)
                     shortcutContainer.setOnClickListener { toggleAirplaneMode(); hideMenu() }
                 }
                 "torch" -> {
                     icon.setImageResource(R.drawable.ic_torch_stat)
-                    icon.contentDescription = "Torch"
-                    label.text = "Torch"
+                    icon.contentDescription = getString(R.string.lbl_torch)
+                    label.text = getString(R.string.lbl_torch)
                     updateTorchIcon(icon)
                     shortcutContainer.setOnClickListener { toggleTorch(); updateTorchIcon(icon) }
                 }
                 "data" -> {
                     icon.setImageResource(R.drawable.ic_mobile_data_stat)
-                    icon.contentDescription = "Data"
-                    label.text = "Data"
+                    icon.contentDescription = getString(R.string.lbl_data)
+                    label.text = getString(R.string.lbl_data)
                     shortcutContainer.setOnClickListener { toggleMobileData() }
                 }
                 "rotation" -> {
                     icon.setImageResource(R.drawable.ic_rotation_stat)
-                    icon.contentDescription = "Auto Rotation"
-                    label.text = "Rotation"
+                    icon.contentDescription = getString(R.string.a11y_auto_rotation)
+                    label.text = getString(R.string.lbl_rotation)
                     updateRotationIcon(icon)
                     shortcutContainer.setOnClickListener { toggleAutoRotation(); updateRotationIcon(icon) }
                 }
                 "sound" -> {
-                    icon.contentDescription = "Sound Mode"
-                    label.text = "Sound"
+                    icon.contentDescription = getString(R.string.a11y_sound_mode)
+                    label.text = getString(R.string.lbl_sound)
                     updateSoundIconOnly(icon)
                     shortcutContainer.setOnClickListener {
                         try {
@@ -1640,15 +1640,15 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 }
                 "dnd" -> {
                     icon.setImageResource(R.drawable.ic_focus_mode_icon)
-                    icon.contentDescription = "Do Not Disturb"
-                    label.text = "DND"
+                    icon.contentDescription = getString(R.string.a11y_do_not_disturb)
+                    label.text = getString(R.string.lbl_dnd)
                     updateDndIconOnly(icon)
                     shortcutContainer.setOnClickListener { toggleDndOnly(icon) }
                 }
                 "location" -> {
                     icon.setImageResource(android.R.drawable.ic_menu_mylocation)
-                    icon.contentDescription = "Location"
-                    label.text = "Location"
+                    icon.contentDescription = getString(R.string.perm_location)
+                    label.text = getString(R.string.perm_location)
                     shortcutContainer.setOnClickListener {
                         try {
                             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
@@ -1660,14 +1660,14 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 }
                 "qr_scan" -> {
                     icon.setImageResource(R.drawable.ic_qr_scan_stat)
-                    icon.contentDescription = "QR Scan"
-                    label.text = "QR Scan"
+                    icon.contentDescription = getString(R.string.lbl_qr_scan)
+                    label.text = getString(R.string.lbl_qr_scan)
                     shortcutContainer.setOnClickListener { launchQrScanner(); hideMenu() }
                 }
                 "camera" -> {
                     icon.setImageResource(android.R.drawable.ic_menu_camera)
-                    icon.contentDescription = "Camera"
-                    label.text = "Camera"
+                    icon.contentDescription = getString(R.string.perm_camera)
+                    label.text = getString(R.string.perm_camera)
                     shortcutContainer.setOnClickListener {
                         startActivity(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                         hideMenu()
@@ -1675,14 +1675,14 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 }
                 "screenshot" -> {
                     icon.setImageResource(R.drawable.ic_screenshot_stat)
-                    icon.contentDescription = "Screenshot"
-                    label.text = "Screenshot"
+                    icon.contentDescription = getString(R.string.lbl_screenshot)
+                    label.text = getString(R.string.lbl_screenshot)
                     shortcutContainer.setOnClickListener { takeScreenshot(); hideMenu() }
                 }
                 "record" -> {
                     icon.setImageResource(android.R.drawable.ic_menu_slideshow)
-                    icon.contentDescription = "Screen Record"
-                    label.text = "Record"
+                    icon.contentDescription = getString(R.string.a11y_screen_record)
+                    label.text = getString(R.string.lbl_record)
                     if (ScreenRecordingService.isRunning) icon.setColorFilter(0xFFF7768E.toInt())
                     shortcutContainer.setOnClickListener {
                         if (ScreenRecordingService.isRunning) {
@@ -1695,28 +1695,28 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 }
                 "lock" -> {
                     icon.setImageResource(android.R.drawable.ic_lock_idle_lock)
-                    icon.contentDescription = "Lock"
-                    label.text = "Lock"
+                    icon.contentDescription = getString(R.string.lbl_lock)
+                    label.text = getString(R.string.lbl_lock)
                     shortcutContainer.setOnClickListener { lockScreen(); hideMenu() }
                 }
                 "power" -> {
                     icon.setImageResource(android.R.drawable.ic_lock_power_off)
                     icon.setColorFilter(0xFFF7768E.toInt())
-                    icon.contentDescription = "Power"
-                    label.text = "Power"
+                    icon.contentDescription = getString(R.string.lbl_power)
+                    label.text = getString(R.string.lbl_power)
                     shortcutContainer.setOnClickListener { performGlobalAction(GLOBAL_ACTION_POWER_DIALOG); hideMenu() }
                 }
                 "hotspot" -> {
                     icon.setImageResource(R.drawable.ic_wifi_stat)
-                    icon.contentDescription = "Hotspot"
-                    label.text = "Hotspot"
+                    icon.contentDescription = getString(R.string.lbl_hotspot)
+                    label.text = getString(R.string.lbl_hotspot)
                     updateHotspotIcon(icon)
                     shortcutContainer.setOnClickListener { toggleHotspot() }
                 }
                 "screen_timeout" -> {
                     icon.setImageResource(R.drawable.ic_settings_icon)
-                    icon.contentDescription = "Screen Timeout"
-                    label.text = "Timeout"
+                    icon.contentDescription = getString(R.string.a11y_screen_timeout)
+                    label.text = getString(R.string.lbl_timeout)
                     updateScreenTimeoutIconOnly(icon)
                     shortcutContainer.setOnClickListener { cycleScreenTimeout(); updateScreenTimeoutIconOnly(icon); hideMenu() }
                 }
@@ -1737,7 +1737,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private fun requestDndPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!notificationManager.isNotificationPolicyAccessGranted) {
-                Toast.makeText(this, "DND Access required to change volume", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_dnd_access_required_to_change_volume), Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -1786,7 +1786,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             try {
                 startActivity(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             } catch (e: Exception) {
-                Toast.makeText(this, "No QR scanner or camera found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_no_qr_scanner_or_camera_found), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -1846,7 +1846,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             isTorchOn = !isTorchOn
             cameraManager.setTorchMode(cameraId, isTorchOn)
         } catch (e: Exception) {
-            Toast.makeText(this, "Torch not available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_torch_not_available), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -1868,7 +1868,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             if (success && newValue == 0) {
                 Settings.System.putInt(contentResolver, Settings.System.USER_ROTATION, Surface.ROTATION_0)
             }
-            Toast.makeText(this, if (newValue == 1) "Auto-rotate ON" else "Portrait Locked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, if (newValue == 1) getString(R.string.toast_auto_rotate_on) else getString(R.string.toast_portrait_locked), Toast.LENGTH_SHORT).show()
         } catch (_: Exception) {}
     }
 
@@ -1884,17 +1884,17 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             AudioManager.RINGER_MODE_NORMAL -> {
                 imageView?.setImageResource(R.drawable.ic_volume_up_stat)
                 imageView?.alpha = 1.0f
-                textView?.text = "Sound"
+                textView?.text = getString(R.string.lbl_sound)
             }
             AudioManager.RINGER_MODE_VIBRATE -> {
                 imageView?.setImageResource(R.drawable.ic_vibrate_stat)
                 imageView?.alpha = 1.0f
-                textView?.text = "Vibrate"
+                textView?.text = getString(R.string.lbl_vibrate)
             }
             AudioManager.RINGER_MODE_SILENT -> {
                 imageView?.setImageResource(android.R.drawable.ic_lock_silent_mode)
                 imageView?.alpha = 0.5f
-                textView?.text = "Muted"
+                textView?.text = getString(R.string.lbl_muted)
             }
         }
     }
@@ -2000,7 +2000,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     startActivity(intent)
                     hideMenu()
                 } catch (_: Exception) {
-                    Toast.makeText(this, "Mobile data settings not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_mobile_data_settings_not_found), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -2026,7 +2026,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     startActivity(intent)
                     hideMenu()
                 } catch (_: Exception) {
-                    Toast.makeText(this, "Hotspot settings not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_hotspot_settings_not_found), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -2061,10 +2061,10 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             val newTimeout = timeouts[nextIndex]
             val success = Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, newTimeout)
             if (success) {
-                Toast.makeText(this, "Screen timeout: ${timeoutLabels[nextIndex]}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_screen_timeout, timeoutLabels[nextIndex]), Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to change screen timeout", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_failed_to_change_screen_timeout), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -2084,7 +2084,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             textView?.text = label
             imageView?.alpha = 1.0f
         } catch (_: Exception) {
-            textView?.text = "Timeout"
+            textView?.text = getString(R.string.lbl_timeout)
             imageView?.alpha = 0.4f
         }
     }
@@ -2183,14 +2183,14 @@ class ScreenLockAccessibilityService : AccessibilityService() {
 
             if (packageName in blockedSettingsPackages) {
                 performGlobalAction(GLOBAL_ACTION_BACK)
-                Toast.makeText(this, "Settings blocked - Strict focus mode is active", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_settings_blocked_strict_focus_mode_is_active), Toast.LENGTH_SHORT).show()
             }
 
 
             if (packageName == "com.guruswarupa.launch" && className != null) {
                 if (className.contains("SettingsActivity")) {
                     performGlobalAction(GLOBAL_ACTION_BACK)
-                    Toast.makeText(this, "Launcher settings blocked - Strict focus mode is active", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_launcher_settings_blocked_strict_focus_mode_is_a), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -2201,7 +2201,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     className.contains("Preference")) {
 
                     performGlobalAction(GLOBAL_ACTION_BACK)
-                    Toast.makeText(this, "Settings blocked - Strict focus mode is active", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_settings_blocked_strict_focus_mode_is_active), Toast.LENGTH_SHORT).show()
                 }
             }
         }

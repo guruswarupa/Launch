@@ -13,7 +13,7 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.SwitchCompat
@@ -25,7 +25,7 @@ import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.adapters.WorkspacesAppsAdapter
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-class EdgePanelConfigActivity : ComponentActivity() {
+class EdgePanelConfigActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var wallpaperBackground: ImageView

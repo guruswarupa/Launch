@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.handlers
 
+import com.guruswarupa.launch.R
 import android.app.Activity
 import android.content.Intent
 import android.speech.RecognizerIntent
@@ -68,7 +69,7 @@ class ActivityResultHandler(
 
     private fun handleWorkProfileResult(resultCode: Int) {
         if (resultCode == Activity.RESULT_OK) {
-            Toast.makeText(activity, "Work profile setup complete!", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_work_profile_setup_complete), Toast.LENGTH_LONG).show()
             if (activity is MainActivity) {
                 val prefs = activity.getSharedPreferences("com.guruswarupa.launch.PREFS", Activity.MODE_PRIVATE)
                 prefs.edit().putBoolean("work_profile_enabled", true).apply()
@@ -77,7 +78,7 @@ class ActivityResultHandler(
                 activity.appDockManager.updateDockIcons()
             }
         } else {
-            Toast.makeText(activity, "Work profile setup failed or cancelled", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_work_profile_setup_failed_or_cancelled), Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.services
 
+import com.guruswarupa.launch.R
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -200,14 +201,14 @@ class WalkDetectionService : Service() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         runCatching { startActivity(intent) }
-            .onFailure { Toast.makeText(this, "No music app available", Toast.LENGTH_SHORT).show() }
+            .onFailure { Toast.makeText(this, this.getString(R.string.toast_no_music_app_available), Toast.LENGTH_SHORT).show() }
     }
 
     private fun launchCustomApp() {
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
         val packageName = prefs.getString(Constants.Prefs.WALK_DETECT_CUSTOM_APP_PACKAGE, null)
         if (packageName.isNullOrBlank()) {
-            Toast.makeText(this, "No app selected for Walk Detection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_no_app_selected_for_walk_detection), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -218,7 +219,7 @@ class WalkDetectionService : Service() {
         if (launchIntent != null) {
             startActivity(launchIntent)
         } else {
-            Toast.makeText(this, "Selected app is unavailable", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_selected_app_is_unavailable), Toast.LENGTH_SHORT).show()
         }
     }
 

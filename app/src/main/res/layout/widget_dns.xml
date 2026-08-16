@@ -21,13 +21,13 @@
             android:src="@drawable/ic_dns"
             android:tint="@color/text"
             android:layout_marginEnd="8dp"
-            android:contentDescription="DNS Icon" />
+            android:contentDescription="@string/dns_icon" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="DNS Provider"
+            android:text="@string/dns_provider"
             android:textColor="@color/text"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -51,7 +51,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Active DNS"
+                android:text="@string/active_dns"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp"/>
@@ -60,7 +60,7 @@
                 android:id="@+id/current_dns_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cloudflare DNS"
+                android:text="@string/cloudflare_dns"
                 android:textColor="@color/text"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
@@ -70,7 +70,7 @@
             android:id="@+id/change_dns_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Change"
+            android:text="@string/change"
             android:textColor="@color/text"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="16dp"
@@ -89,7 +89,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quick switch between DNS providers for privacy, security, and ad-blocking"
+            android:text="@string/quick_switch_between_dns_providers_for_privacy_s"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"/>
     </LinearLayout>

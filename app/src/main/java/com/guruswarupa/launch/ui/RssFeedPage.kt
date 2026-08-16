@@ -157,21 +157,21 @@ class RssFeedPage(
         emptyState.isVisible = filteredArticles.isEmpty()
         when {
             !activity.sharedPreferences.getBoolean(Constants.Prefs.RSS_PAGE_ENABLED, true) -> {
-                emptyStateTitle.text = "News feed is disabled"
-                emptyStateMessage.text = "Turn it back on from Settings whenever you want headlines here again."
+                emptyStateTitle.text = activity.getString(R.string.lbl_news_feed_is_disabled)
+                emptyStateMessage.text = activity.getString(R.string.lbl_turn_it_back_on_from_settings_whenever_you_want)
             }
             !hasFeeds -> {
-                emptyStateTitle.text = "No news sources enabled"
-                emptyStateMessage.text = "Use the settings gear above to switch on the sources you want to read here."
+                emptyStateTitle.text = activity.getString(R.string.no_news_sources_enabled)
+                emptyStateMessage.text = activity.getString(R.string.lbl_use_the_settings_gear_above_to_switch_on_the_sou)
             }
             selectedCategory != null -> {
-                emptyStateTitle.text = "No ${selectedCategory.orEmpty()} articles"
-                emptyStateMessage.text = "Try another topic, refresh the page, or check your enabled feed sources from the gear above."
+                emptyStateTitle.text = activity.getString(R.string.lbl_no_articles, selectedCategory.orEmpty())
+                emptyStateMessage.text = activity.getString(R.string.lbl_try_another_topic_refresh_the_page_or_check_your)
                 return
             }
             else -> {
-                emptyStateTitle.text = "No articles right now"
-                emptyStateMessage.text = "Refresh the page or use the settings gear above to adjust your feed sources."
+                emptyStateTitle.text = activity.getString(R.string.lbl_no_articles_right_now)
+                emptyStateMessage.text = activity.getString(R.string.lbl_refresh_the_page_or_use_the_settings_gear_above)
                 return
             }
         }
@@ -301,22 +301,22 @@ class RssFeedPage(
 
             val dialog = AlertDialog.Builder(context, R.style.Theme_Launch_Settings)
                 .setView(container)
-                .setPositiveButton("Add") { _, _ -> }
-                .setNegativeButton("Close", null)
+                .setPositiveButton(context.getString(R.string.add_button)) { _, _ -> }
+                .setNegativeButton(context.getString(R.string.support_thank_you_close), null)
                 .create()
 
             listView.setOnItemClickListener { _, _, position, _ ->
                 val selectedUrl = urls[position]
                 AlertDialog.Builder(context, R.style.Theme_Launch_Settings)
-                    .setTitle("Remove feed")
+                    .setTitle(context.getString(R.string.dlg_remove_feed))
                     .setMessage(selectedUrl)
-                    .setPositiveButton("Remove") { _, _ ->
+                    .setPositiveButton(context.getString(R.string.font_remove)) { _, _ ->
                         urls.removeAt(position)
                         RssFeedManager.storeFeedUrls(sharedPreferences, urls)
                         rssFeedManager?.removeFeedUrl(selectedUrl)
                         onFeedsChanged?.invoke()
                     }
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(context.getString(R.string.cancel_button), null)
                     .show()
                 dialog.dismiss()
             }
@@ -329,9 +329,9 @@ class RssFeedPage(
                         setSingleLine()
                     }
                     AlertDialog.Builder(context, R.style.Theme_Launch_Settings)
-                        .setTitle("Add RSS Feed")
+                        .setTitle(context.getString(R.string.dlg_add_rss_feed))
                         .setView(input)
-                        .setPositiveButton("Save") { _, _ ->
+                        .setPositiveButton(context.getString(R.string.save_button)) { _, _ ->
                             val success = rssFeedManager?.addFeedUrl(input.text.toString())
                                 ?: run {
                                     val newUrl = input.text.toString().trim()
@@ -351,10 +351,10 @@ class RssFeedPage(
                             if (success) {
                                 onFeedsChanged?.invoke()
                             } else {
-                                Toast.makeText(context, "Enter a valid, unique feed URL", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_enter_a_valid_unique_feed_url), Toast.LENGTH_SHORT).show()
                             }
                         }
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(context.getString(R.string.cancel_button), null)
                         .show()
                 }
             }

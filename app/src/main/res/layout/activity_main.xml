@@ -106,7 +106,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginEnd="8dp"
-                        android:contentDescription="Weather Icon"/>
+                        android:contentDescription="@string/weather_icon"/>
 
                     <TextView
                         android:id="@+id/weather_text"
@@ -130,7 +130,7 @@
                         android:id="@+id/daily_usage_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Usage: --"
+                        android:text="@string/usage"
                         android:textSize="14sp"
                         android:textColor="@color/widget_text"
                         android:fontFamily="sans-serif-light"
@@ -154,7 +154,7 @@
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_search"
-                    android:contentDescription="Search Type"
+                    android:contentDescription="@string/search_type"
                     android:padding="12dp"
                     android:scaleType="fitCenter" />
 
@@ -184,7 +184,7 @@
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_mic"
-                    android:contentDescription="Voice Search" />
+                    android:contentDescription="@string/voice_search" />
             </LinearLayout>
 
             
@@ -306,7 +306,7 @@
                     android:id="@+id/widget_settings_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Widgets"
+                    android:text="@string/widgets"
                     android:textColor="@color/widget_text"
                     android:textSize="20sp"
                     android:textStyle="bold"/>
@@ -315,7 +315,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Your personalized drawer"
+                    android:text="@string/your_personalized_drawer"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -327,7 +327,7 @@
                 android:background="@drawable/drawer_widgets_action_bg"
                 android:src="@drawable/ic_settings_icon"
                 android:tint="@color/widget_text"
-                android:contentDescription="Configure Widgets" />
+                android:contentDescription="@string/configure_widgets" />
         </LinearLayout>
 
         
@@ -384,7 +384,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No widgets enabled"
+                    android:text="@string/no_widgets_enabled"
                     android:textColor="@color/widget_text"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -393,7 +393,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tap Gear icon above to add and configure widgets"
+                    android:text="@string/tap_gear_icon_above_to_add_and_configure_widgets"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="14sp"
                     android:gravity="center"
@@ -568,7 +568,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Weekly Usage"
+                        android:text="@string/weekly_usage"
                         android:textSize="18sp"
                         android:textColor="@color/widget_text"
                         android:textStyle="bold"
@@ -584,7 +584,7 @@
                         android:id="@+id/request_usage_stats_permission_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Grant Usage Access Permission"
+                        android:text="@string/grant_usage_access_permission"
                         android:textColor="@color/widget_text"
                         android:textSize="14sp"
                         android:background="@drawable/button_neutral_ripple"
@@ -666,7 +666,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Todo List"
+                            android:text="@string/todo_list"
                             android:textColor="@color/widget_text"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -677,7 +677,7 @@
                             android:layout_height="40dp"
                             android:background="@drawable/button_neutral_ripple"
                             android:src="@drawable/ic_add"
-                            android:contentDescription="Add todo item"
+                            android:contentDescription="@string/add_todo_item"
                             android:padding="8dp" />
 
                     </LinearLayout>
@@ -722,7 +722,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Finance Tracker"
+                        android:text="@string/finance_tracker"
                         android:textColor="@color/widget_text"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -750,7 +750,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Balance"
+                        android:text="@string/total_balance"
                         android:textColor="@color/widget_text_secondary"
                         android:textSize="12sp"
                         android:layout_marginBottom="4dp" />
@@ -759,7 +759,7 @@
                         android:id="@+id/balance_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$0.00"
+                        android:text="@string/s_0_00"
                         android:textColor="@color/widget_text"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -775,7 +775,7 @@
                             android:id="@+id/monthly_spent_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="This Month: -$0.00"
+                            android:text="@string/this_month_0_00"
                             android:textColor="@color/widget_text_secondary"
                             android:textSize="13sp" />
                     </LinearLayout>
@@ -793,7 +793,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:background="@drawable/input_field_background"
-                        android:hint="Enter amount"
+                        android:hint="@string/enter_amount"
                         android:inputType="numberDecimal"
                         android:paddingStart="18dp"
                         android:paddingEnd="18dp"
@@ -807,7 +807,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:background="@drawable/input_field_background"
-                        android:hint="Description (optional)"
+                        android:hint="@string/description_optional"
                         android:inputType="text"
                         android:paddingStart="18dp"
                         android:paddingEnd="18dp"
@@ -831,7 +831,7 @@
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/button_neutral_ripple"
-                        android:text="Add Income"
+                        android:text="@string/add_income"
                         android:textColor="@color/widget_text"
                         android:textSize="15sp"
                         android:textStyle="bold"
@@ -844,7 +844,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_neutral_ripple"
-                        android:text="Add Expense"
+                        android:text="@string/add_expense"
                         android:textColor="@color/widget_text"
                         android:textSize="15sp"
                         android:textStyle="bold"
@@ -911,7 +911,7 @@
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="2"
-                android:text="MONDAY, 01 JAN"/>
+                android:text="@string/monday_01_jan"/>
         </LinearLayout>
     </FrameLayout>
 

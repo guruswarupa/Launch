@@ -130,7 +130,7 @@ class PomodoroManager(
         focusModeManager.setFocusModeEnabled(true)
         onStateChanged?.invoke(STATE_WORK, true)
         startTimer(duration, STATE_WORK)
-        Toast.makeText(context, "${context.getString(R.string.pomodoro_work)} session started (${getConfig().workMinutes}m)", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_session_started_m, context.getString(R.string.pomodoro_work), getConfig().workMinutes), Toast.LENGTH_SHORT).show()
     }
 
     private fun startBreakSession(isLongBreak: Boolean) {
@@ -147,7 +147,7 @@ class PomodoroManager(
         onStateChanged?.invoke(state, false)
         startTimer(breakMinutes * 60 * 1000L, state)
         val label = if (isLongBreak) context.getString(R.string.pomodoro_long_break) else context.getString(R.string.pomodoro_break)
-        Toast.makeText(context, "$label session started (${breakMinutes}m)", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_session_started_m, label, breakMinutes), Toast.LENGTH_SHORT).show()
     }
 
     fun stopPomodoro() {

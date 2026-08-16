@@ -235,7 +235,7 @@ class ActivityInitializer(
             try {
                 searchBox.context.startActivity(intent)
             } catch (_: Exception) {
-                android.widget.Toast.makeText(searchBox.context, "No browser found!", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(searchBox.context, searchBox.context.getString(R.string.toast_no_browser_found), android.widget.Toast.LENGTH_SHORT).show()
             }
             true
         }
@@ -406,7 +406,7 @@ class ActivityInitializer(
                     || launchIntentDirect(Intent(AlarmClock.ACTION_SET_ALARM))
                     || launchLikelyClockLauncherApp()
                 if (!openedClock) {
-                    Toast.makeText(activity, "No clock app found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, activity.getString(R.string.toast_no_clock_app_found), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -421,7 +421,7 @@ class ActivityInitializer(
                     Intent(Intent.ACTION_VIEW).setData(CalendarContract.CONTENT_URI)
                 )
                 if (!openedCalendar) {
-                    Toast.makeText(activity, "No calendar app found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, activity.getString(R.string.toast_no_calendar_app_found), Toast.LENGTH_SHORT).show()
                 }
             }
         }

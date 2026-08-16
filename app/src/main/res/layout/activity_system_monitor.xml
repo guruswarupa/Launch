@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     <View
         android:id="@+id/settings_overlay"
@@ -36,7 +36,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="System Monitor"
+                android:text="@string/system_monitor_title"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white"
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Real-time system performance and hardware info"
+                android:text="@string/real_time_system_performance_and_hardware_info"
                 android:textColor="@color/white"
                 android:alpha="0.5"
                 android:textSize="14sp" />
@@ -68,7 +68,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="CPU PERFORMANCE"
+                    android:text="@string/cpu_performance"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/nord8"
@@ -96,7 +96,7 @@
                             android:id="@+id/cpu_status"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="CPU: Loading..."
+                            android:text="@string/cpu_loading"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"/>
@@ -105,7 +105,7 @@
                             android:id="@+id/cpu_temp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="CPU Temp: --°C"
+                            android:text="@string/cpu_temp_c"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -120,7 +120,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Individual Cores"
+                            android:text="@string/individual_cores"
                             android:textSize="11sp"
                             android:textColor="@color/white"
                             android:alpha="0.5"
@@ -145,7 +145,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="GPU PERFORMANCE"
+                    android:text="@string/gpu_performance"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/nord8"
@@ -173,7 +173,7 @@
                             android:id="@+id/gpu_status"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="GPU: Loading..."
+                            android:text="@string/gpu_loading"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"/>
@@ -182,7 +182,7 @@
                             android:id="@+id/gpu_temp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="GPU Temp: --°C"
+                            android:text="@string/gpu_temp_c"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -210,7 +210,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="HARDWARE INFO"
+                    android:text="@string/hardware_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/nord8"
@@ -241,7 +241,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="BATTERY &amp; POWER"
+                    android:text="@string/battery_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/nord8"
@@ -269,7 +269,7 @@
                             android:id="@+id/battery_health"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Health: Loading..."
+                            android:text="@string/health_loading"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"/>
@@ -278,7 +278,7 @@
                             android:id="@+id/battery_capacity"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Capacity: Loading..."
+                            android:text="@string/capacity_loading"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -288,7 +288,7 @@
                             android:id="@+id/battery_calculated_health"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Calculated Health: --"
+                            android:text="@string/calculated_health"
                             android:textColor="@color/nord8"
                             android:textSize="13sp"
                             android:layout_marginTop="8dp"/>
@@ -297,7 +297,7 @@
                             android:id="@+id/battery_voltage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Voltage: --"
+                            android:text="@string/voltage"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -307,7 +307,7 @@
                             android:id="@+id/battery_temp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Temperature: --"
+                            android:text="@string/temperature"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -317,7 +317,7 @@
                             android:id="@+id/battery_charging_speed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Charging Speed: --"
+                            android:text="@string/charging_speed"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -327,7 +327,7 @@
                             android:id="@+id/battery_time_remaining"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Time Remaining: --"
+                            android:text="@string/time_remaining"
                             android:textColor="@color/white"
                             android:alpha="0.7"
                             android:textSize="14sp"
@@ -339,7 +339,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="NETWORK &amp; CONNECTIVITY"
+                    android:text="@string/network_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/nord8"
@@ -370,7 +370,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="CAMERA &amp; SENSORS"
+                    android:text="@string/camera_sensors_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/nord8"

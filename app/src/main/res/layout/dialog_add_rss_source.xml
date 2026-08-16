@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Paste a valid RSS or Atom feed URL."
+        android:text="@string/paste_a_valid_rss_or_atom_feed_url"
         android:textColor="@color/text_secondary"
         android:textSize="13sp" />
 
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:hint="https://example.com/feed.xml"
+        android:hint="@string/https_example_com_feed_xml"
         android:inputType="textUri"
         android:maxLines="1" />
 
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Examples: BBC, Reuters, Hacker News, blogs, podcasts, and newsletters with feed URLs."
+        android:text="@string/examples_bbc_reuters_hacker_news_blogs_podcasts"
         android:textColor="@color/text_secondary"
         android:textSize="12sp" />
 </LinearLayout>

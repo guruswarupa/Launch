@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     <View
         android:id="@+id/settings_overlay"
@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hidden Apps"
+                android:text="@string/hidden_apps"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Manage apps hidden from your home screen"
+                android:text="@string/manage_apps_hidden_from_your_home_screen"
                 android:textColor="@color/white"
                 android:alpha="0.5"
                 android:textSize="14sp" />
@@ -98,7 +98,7 @@
                         android:id="@+id/empty_state_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Privacy vault is empty"
+                        android:text="@string/privacy_vault_is_empty"
                         android:textSize="16sp"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="@color/white"

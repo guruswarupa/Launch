@@ -143,7 +143,7 @@ class AppTimerManager(private val context: Context) {
         val currentLimitStr = if (currentLimit > 0) " (Current: ${usageStatsManager.formatUsageTime(currentLimit)})" else ""
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Daily limit for $appName$currentLimitStr")
+            .setTitle(context.getString(R.string.dlg_daily_limit_for, appName, currentLimitStr))
             .setItems(options) { _, which ->
                 currentDialog = null
                 when (which) {
@@ -155,7 +155,7 @@ class AppTimerManager(private val context: Context) {
                     5 -> { setDailyLimit(packageName, NO_TIMER); onLimitSet() }
                 }
             }
-            .setNegativeButton("Cancel") { d, _ ->
+            .setNegativeButton(context.getString(R.string.cancel_button)) { d, _ ->
                 currentDialog = null
                 d.dismiss()
             }
@@ -170,14 +170,14 @@ class AppTimerManager(private val context: Context) {
 
     private fun showCustomDailyLimitDialog(packageName: String, onLimitSet: () -> Unit) {
         val input = EditText(context)
-        input.hint = "Enter minutes"
+        input.hint = context.getString(R.string.a11y_enter_minutes)
         DialogStyler.styleInput(context, input)
 
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Custom Daily Limit")
-            .setMessage("Enter time in minutes:")
+            .setTitle(context.getString(R.string.dlg_custom_daily_limit))
+            .setMessage(context.getString(R.string.dlg_enter_time_in_minutes))
             .setDialogInputView(context, input)
-            .setPositiveButton("Set") { _, _ ->
+            .setPositiveButton(context.getString(R.string.daily_usage_action_set)) { _, _ ->
                 try {
                     val minutesString = input.text.toString()
                     if (minutesString.isNotEmpty()) {
@@ -186,14 +186,14 @@ class AppTimerManager(private val context: Context) {
                             setDailyLimit(packageName, minutes * 60000L)
                             onLimitSet()
                         } else {
-                            Toast.makeText(context, "Please enter a valid time", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_please_enter_a_valid_time), Toast.LENGTH_SHORT).show()
                         }
                     }
                 } catch (_: NumberFormatException) {
-                    Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.daily_usage_invalid_number), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(context.getString(R.string.cancel_button)) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -208,7 +208,7 @@ class AppTimerManager(private val context: Context) {
         val options = arrayOf("1 minute", "5 minutes", "10 minutes", "Custom", "No timer")
 
         val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Set timer for $appName")
+            .setTitle(context.getString(R.string.dlg_set_timer_for, appName))
             .setItems(options) { _, which ->
                 currentDialog = null
                 when (which) {
@@ -219,7 +219,7 @@ class AppTimerManager(private val context: Context) {
                     4 -> onTimerSet(NO_TIMER)
                 }
             }
-            .setNegativeButton("Cancel") { d, _ ->
+            .setNegativeButton(context.getString(R.string.cancel_button)) { d, _ ->
                 currentDialog = null
                 d.dismiss()
             }
@@ -292,14 +292,14 @@ class AppTimerManager(private val context: Context) {
 
     private fun showCustomTimerDialog(onTimerSet: (Long) -> Unit) {
         val input = EditText(context)
-        input.hint = "Enter minutes"
+        input.hint = context.getString(R.string.a11y_enter_minutes)
         DialogStyler.styleInput(context, input)
 
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle("Custom Timer")
-            .setMessage("Enter time in minutes:")
+            .setTitle(context.getString(R.string.dlg_custom_timer))
+            .setMessage(context.getString(R.string.dlg_enter_time_in_minutes))
             .setDialogInputView(context, input)
-            .setPositiveButton("Set") { _, _ ->
+            .setPositiveButton(context.getString(R.string.daily_usage_action_set)) { _, _ ->
                 try {
                     val minutesString = input.text.toString()
                     if (minutesString.isNotEmpty()) {
@@ -307,14 +307,14 @@ class AppTimerManager(private val context: Context) {
                         if (minutes > 0) {
                             onTimerSet(minutes * 60000L)
                         } else {
-                            Toast.makeText(context, "Please enter a valid time", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_please_enter_a_valid_time), Toast.LENGTH_SHORT).show()
                         }
                     }
                 } catch (_: NumberFormatException) {
-                    Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.daily_usage_invalid_number), Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(context.getString(R.string.cancel_button)) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -347,7 +347,7 @@ class AppTimerManager(private val context: Context) {
 
 
                 mainHandler.post {
-                    Toast.makeText(context, "Time's up! Closing app and returning to launcher", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_time_s_up_closing_app_and_returning_to_launcher), Toast.LENGTH_SHORT).show()
                     returnToLauncher(packageName)
                     currentTimer = null
                     currentPackageName = null
@@ -367,7 +367,7 @@ class AppTimerManager(private val context: Context) {
                 context.startActivity(intent)
             }
         } catch (_: Exception) {
-            Toast.makeText(context, "Error launching app", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_launching_app), Toast.LENGTH_SHORT).show()
         }
     }
 

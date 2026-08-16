@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.utils
 
+import com.guruswarupa.launch.R
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -50,7 +51,7 @@ class VoiceCommandHandler(
                         searchBox.text.clear()
                         true
                     } ?: run {
-                        Toast.makeText(activity, "Contact not found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, activity.getString(R.string.toast_contact_not_found), Toast.LENGTH_SHORT).show()
                         false
                     }
                 } else false
@@ -150,7 +151,7 @@ class VoiceCommandHandler(
                             searchBox.text.clear()
                             true
                         } catch (_: Exception) {
-                            Toast.makeText(activity, "Google Maps not installed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, activity.getString(R.string.toast_google_maps_not_installed), Toast.LENGTH_SHORT).show()
                             false
                         }
                     } else false
@@ -219,7 +220,7 @@ class VoiceCommandHandler(
             }
             activity.startActivity(intent)
         } catch (_: Exception) {
-            Toast.makeText(activity, "WhatsApp not installed or failed to open message.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_whatsapp_not_installed_or_failed_to_open_message), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -248,10 +249,10 @@ class VoiceCommandHandler(
                     }
                     activity.startActivity(intent)
                 } catch (_: Exception) {
-                    Toast.makeText(activity, "WhatsApp not installed.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, activity.getString(R.string.toast_whatsapp_not_installed), Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(activity, "Contact not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_contact_not_found), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -268,10 +269,10 @@ class VoiceCommandHandler(
             if (intent.resolveActivity(packageManager) != null) {
                 activity.startActivity(intent)
             } else {
-                Toast.makeText(activity, "No SMS app installed!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, activity.getString(R.string.toast_no_sms_app_installed), Toast.LENGTH_SHORT).show()
             }
         } catch (_: Exception) {
-            Toast.makeText(activity, "Failed to open messaging app.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.toast_failed_to_open_messaging_app), Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background"/>
+        android:contentDescription="@string/background"/>
 
     
     <View
@@ -51,7 +51,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Settings"
+                    android:text="@string/settings"
                     android:textSize="38sp"
                     android:fontFamily="sans-serif-black"
                     android:textColor="@color/white"
@@ -65,7 +65,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="APPEARANCE"
+                android:text="@string/appearance"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/nord8"
@@ -113,7 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Layout &amp; Grid"
+                            android:text="@string/layout_and_grid"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -150,7 +150,7 @@
                                 android:layout_height="52dp"
                                 android:layout_weight="1"
                                 android:layout_marginEnd="6dp"
-                                android:text="Grid"
+                                android:text="@string/grid"
                                 android:textColor="@color/white"
                                 android:background="@drawable/settings_card_background"
                                 android:textAllCaps="false"/>
@@ -162,7 +162,7 @@
                                 android:layout_height="52dp"
                                 android:layout_weight="1"
                                 android:layout_marginStart="6dp"
-                                android:text="List"
+                                android:text="@string/calendar_view_list"
                                 android:textColor="@color/white"
                                 android:background="@drawable/settings_card_background"
                                 android:textAllCaps="false"/>
@@ -180,7 +180,7 @@
                                 android:id="@+id/grid_columns_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="4 items per row"
+                                android:text="@string/s_4_items_per_row"
                                 android:textSize="13sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.6"/>
@@ -209,7 +209,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Show app names in grid"
+                                android:text="@string/show_app_names_in_grid"
                                 android:textSize="14sp"
                                 android:textColor="@color/white"
                                 android:fontFamily="sans-serif-medium"/>
@@ -232,7 +232,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Icon Shape"
+                                android:text="@string/icon_shape"
                                 android:textSize="13sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.6"
@@ -248,7 +248,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Icon Size"
+                                android:text="@string/icon_size"
                                 android:textSize="13sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.6"
@@ -302,7 +302,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="24 Hour Format"
+                                android:text="@string/s_24_hour_format"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -325,7 +325,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Disable Fast Scroller"
+                                android:text="@string/disable_fast_scroller"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -348,7 +348,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Enable Landscape Orientation"
+                                android:text="@string/enable_landscape_orientation"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -376,14 +376,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Minimal Mode"
+                                    android:text="@string/minimal_mode"
                                     android:textColor="@color/white"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Pitch black background everywhere"
+                                    android:text="@string/pitch_black_background_everywhere"
                                     android:textColor="@color/white"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
@@ -408,7 +408,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Default Home Screen"
+                                android:text="@string/default_home_screen"
                                 android:textSize="13sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.6"
@@ -421,7 +421,31 @@
                                 android:layout_height="48dp"/>
                         </LinearLayout>
 
-                        
+
+                        <LinearLayout
+                            android:id="@+id/language_section"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="20dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_language_label"
+                                android:textSize="13sp"
+                                android:textColor="@color/white"
+                                android:alpha="0.6"
+                                android:layout_marginBottom="8dp"/>
+
+                            <Spinner
+                                android:id="@+id/language_spinner"
+                                style="@style/TranslucentSpinnerStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"/>
+                        </LinearLayout>
+
+
                         <LinearLayout
                             android:id="@+id/background_translucency_section"
                             android:layout_width="match_parent"
@@ -439,7 +463,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Background Translucency"
+                                    android:text="@string/background_translucency"
                                     android:textSize="15sp"
                                     android:textColor="@color/white"/>
 
@@ -507,7 +531,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Themes &amp; Wallpaper"
+                            android:text="@string/themes_and_wallpaper"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -534,7 +558,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Choose Theme"
+                            android:text="@string/choose_theme"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.6"
@@ -557,7 +581,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
                             android:layout_marginTop="16dp"
-                            android:text="Set Theme Wallpaper"
+                            android:text="@string/set_theme_wallpaper"
                             android:textAllCaps="false"
                             app:cornerRadius="12dp"
                             android:backgroundTint="#66000000"
@@ -578,7 +602,7 @@
                             android:id="@+id/change_wallpaper_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Custom System Wallpaper"
+                            android:text="@string/custom_system_wallpaper"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"/>
@@ -626,7 +650,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Typography"
+                            android:text="@string/typography"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -653,7 +677,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Text Scale"
+                            android:text="@string/text_scale"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.6"
@@ -689,7 +713,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Font Family"
+                            android:text="@string/font_family"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.6"
@@ -705,7 +729,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Font Intensity"
+                            android:text="@string/font_intensity"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.6"
@@ -721,7 +745,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Theme Color"
+                            android:text="@string/theme_color"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.6"
@@ -756,7 +780,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Get External Fonts"
+                                android:text="@string/get_external_fonts"
                                 android:textSize="13sp"
                                 android:fontFamily="sans-serif-medium"
                                 android:textColor="@color/nord8"
@@ -812,7 +836,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Icon Packs"
+                            android:text="@string/icon_packs"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"
@@ -846,7 +870,7 @@
                             android:id="@+id/icon_pack_toggle_switch"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Enable Icon Pack"
+                            android:text="@string/enable_icon_pack"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.8"
@@ -864,7 +888,7 @@
                             android:id="@+id/icon_pack_empty_state"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="No icon packs installed"
+                            android:text="@string/no_icon_packs_installed"
                             android:textSize="12sp"
                             android:textColor="@color/white"
                             android:alpha="0.5"
@@ -876,7 +900,7 @@
                             android:id="@+id/browse_icon_packs_button"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Browse Icon Packs on Play Store"
+                            android:text="@string/browse_icon_packs_on_play_store"
                             android:textSize="12sp"
                             android:textColor="@color/white"
                             android:fontFamily="sans-serif-medium"
@@ -930,7 +954,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Search Engine"
+                            android:text="@string/search_engine"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -967,7 +991,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FEATURES"
+                android:text="@string/features"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/nord8"
@@ -1015,7 +1039,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Gestures &amp; shortcuts"
+                            android:text="@string/gestures_and_shortcuts"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -1055,14 +1079,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Edge Panel"
+                                    android:text="@string/edge_panel_config_title"
                                     android:textColor="@color/white"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Corner handle with recent and pinned apps"
+                                    android:text="@string/corner_handle_with_recent_and_pinned_apps"
                                     android:textColor="@color/white"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
@@ -1081,7 +1105,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
                             android:layout_marginTop="16dp"
-                            android:text="Customize Edge Panel"
+                            android:text="@string/customize_edge_panel"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -1109,14 +1133,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Walk to Play"
+                                    android:text="@string/walk_to_play"
                                     android:textColor="@color/white"
                                     android:textSize="15sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Launch an action after sustained walking"
+                                    android:text="@string/launch_an_action_after_sustained_walking"
                                     android:textColor="@color/white"
                                     android:alpha="0.5"
                                     android:textSize="11sp" />
@@ -1148,7 +1172,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="48dp"
                                 android:layout_marginTop="12dp"
-                                android:text="Choose App"
+                                android:text="@string/choose_app"
                                 android:textAllCaps="false"
                                 android:textColor="@color/white"
                                 android:background="@drawable/settings_card_background"
@@ -1159,7 +1183,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="No app selected"
+                                android:text="@string/no_app_selected"
                                 android:textSize="12sp"
                                 android:textColor="@color/nord8"
                                 android:visibility="gone" />
@@ -1167,7 +1191,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Step Threshold"
+                                android:text="@string/step_threshold"
                                 android:textSize="12sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.5"
@@ -1194,7 +1218,7 @@
                                     android:id="@+id/walk_detect_threshold_value"
                                     android:layout_width="72dp"
                                     android:layout_height="wrap_content"
-                                    android:text="10 steps"
+                                    android:text="@string/s_10_steps"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
                                     android:textColor="@color/nord8"
@@ -1204,7 +1228,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Time Window"
+                                android:text="@string/time_window"
                                 android:textSize="12sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.5"
@@ -1231,7 +1255,7 @@
                                     android:id="@+id/walk_detect_time_window_value"
                                     android:layout_width="72dp"
                                     android:layout_height="wrap_content"
-                                    android:text="15 sec"
+                                    android:text="@string/s_15_sec"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
                                     android:textColor="@color/nord8"
@@ -1241,7 +1265,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Cooldown"
+                                android:text="@string/cooldown"
                                 android:textSize="12sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.5"
@@ -1268,7 +1292,7 @@
                                     android:id="@+id/walk_detect_cooldown_value"
                                     android:layout_width="72dp"
                                     android:layout_height="wrap_content"
-                                    android:text="5 min"
+                                    android:text="@string/s_5_min"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
                                     android:textColor="@color/nord8"
@@ -1293,14 +1317,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Control Center Shortcut"
+                                    android:text="@string/control_center_shortcut"
                                     android:textColor="@color/white"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="System control overlay"
+                                    android:text="@string/system_control_overlay"
                                     android:textColor="@color/white"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
@@ -1319,7 +1343,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
                             android:layout_marginTop="16dp"
-                            android:text="Customize Control Center"
+                            android:text="@string/customize_control_center"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -1343,7 +1367,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Back Tap Action"
+                                android:text="@string/back_tap_action"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -1371,7 +1395,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Tap Sensitivity"
+                                android:text="@string/tap_sensitivity"
                                 android:textSize="12sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.5"
@@ -1424,7 +1448,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Shake for Torch"
+                                android:text="@string/shake_for_torch"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -1446,7 +1470,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Shake Sensitivity"
+                                android:text="@string/shake_sensitivity"
                                 android:textSize="12sp"
                                 android:textColor="@color/white"
                                 android:alpha="0.5"
@@ -1503,14 +1527,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Extra Screen Dimmer"
+                                    android:text="@string/extra_screen_dimmer"
                                     android:textColor="@color/white"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="System level overlay"
+                                    android:text="@string/system_level_overlay"
                                     android:textColor="@color/white"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
@@ -1568,7 +1592,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Night Mode Intensity"
+                                android:text="@string/night_mode_intensity"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -1624,7 +1648,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Flip to DND"
+                                android:text="@string/flip_to_dnd"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"/>
 
@@ -1659,14 +1683,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Grayscale Mode"
+                                    android:text="@string/grayscale_mode"
                                     android:textColor="@color/white"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Turn entire screen gray"
+                                    android:text="@string/turn_entire_screen_gray"
                                     android:textColor="@color/white"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
@@ -1724,7 +1748,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="App Timer"
+                            android:text="@string/app_timer"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -1752,7 +1776,7 @@
                             android:id="@+id/manage_app_timers_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Manage App Timers"
+                            android:text="@string/manage_app_timers"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"/>
@@ -1800,7 +1824,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Security &amp; Privacy"
+                            android:text="@string/category_security_privacy"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -1828,7 +1852,7 @@
                             android:id="@+id/app_lock_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="App Lock &amp; Vault"
+                            android:text="@string/app_lock_and_vault"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -1838,7 +1862,7 @@
                             android:id="@+id/hidden_apps_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Hidden Applications"
+                            android:text="@string/hidden_applications"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -1848,7 +1872,7 @@
                             android:id="@+id/privacy_dashboard_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Privacy Dashboard"
+                            android:text="@string/privacy_dashboard"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"/>
@@ -1896,7 +1920,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Widgets"
+                            android:text="@string/widgets"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -1931,7 +1955,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Enable widgets page"
+                                android:text="@string/enable_widgets_page"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
@@ -1955,7 +1979,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Show widgets above search bar"
+                                android:text="@string/show_widgets_above_search_bar"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
@@ -1972,7 +1996,7 @@
                             android:id="@+id/configure_widgets_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Configure Home Widgets"
+                            android:text="@string/configure_home_widgets"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"/>
@@ -2019,7 +2043,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="News Feed"
+                            android:text="@string/news_feed"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium" />
@@ -2053,7 +2077,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Enable news page"
+                                android:text="@string/enable_news_page"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
@@ -2072,7 +2096,7 @@
                             android:layout_height="52dp"
                             android:layout_marginTop="16dp"
                             android:background="@drawable/settings_card_background"
-                            android:text="Manage News Feed Sources"
+                            android:text="@string/manage_news_feed_sources"
                             android:textAllCaps="false"
                             android:textColor="@color/white" />
 
@@ -2119,7 +2143,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Web Apps"
+                            android:text="@string/web_apps_title"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2147,7 +2171,7 @@
                             android:id="@+id/web_apps_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Manage Web Apps"
+                            android:text="@string/manage_web_apps"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"/>
@@ -2194,7 +2218,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Dock Controls"
+                            android:text="@string/dock_controls"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2229,7 +2253,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Hide Work Profile"
+                                android:text="@string/hide_work_profile"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
@@ -2253,7 +2277,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Hide Focus Mode"
+                                android:text="@string/hide_focus_mode"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
@@ -2277,7 +2301,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Hide Workspaces"
+                                android:text="@string/hide_workspaces"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
@@ -2293,7 +2317,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Hiding all three will remove the dock entirely"
+                            android:text="@string/hiding_all_three_will_remove_the_dock_entirely"
                             android:textColor="@color/white"
                             android:textSize="12sp"
                             android:alpha="0.5"
@@ -2341,7 +2365,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="System Monitor"
+                            android:text="@string/system_monitor_title"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2369,7 +2393,7 @@
                             android:id="@+id/system_monitor_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="View System Diagnostics"
+                            android:text="@string/view_system_diagnostics"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"/>
@@ -2380,7 +2404,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="MAINTENANCE"
+                android:text="@string/maintenance"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/nord8"
@@ -2428,7 +2452,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Backup &amp; Restore"
+                            android:text="@string/backup_and_restore"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2463,7 +2487,7 @@
                                 android:layout_height="52dp"
                                 android:layout_weight="1"
                                 android:layout_marginEnd="6dp"
-                                android:text="Export All Data"
+                                android:text="@string/export_all_data"
                                 android:textAllCaps="false"
                                 android:background="@drawable/settings_card_background"
                                 android:textColor="@color/white"/>
@@ -2474,7 +2498,7 @@
                                 android:layout_height="52dp"
                                 android:layout_weight="1"
                                 android:layout_marginStart="6dp"
-                                android:text="Import All Data"
+                                android:text="@string/import_all_data"
                                 android:textAllCaps="false"
                                 android:background="@drawable/settings_card_background"
                                 android:textColor="@color/white"/>
@@ -2510,7 +2534,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="System Actions"
+                            android:text="@string/system_actions"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2538,7 +2562,7 @@
                             android:id="@+id/restart_launcher_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Restart Launcher"
+                            android:text="@string/restart_launcher"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -2548,7 +2572,7 @@
                             android:id="@+id/clear_cache_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Clear Temporary Cache"
+                            android:text="@string/clear_temporary_cache"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -2558,7 +2582,7 @@
                             android:id="@+id/clear_data_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Factory Reset Launcher"
+                            android:text="@string/factory_reset_launcher"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="#FF6B6B"/>
@@ -2606,7 +2630,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Launcher Info"
+                            android:text="@string/launcher_info"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2634,7 +2658,7 @@
                             android:id="@+id/check_permissions_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Manage System Permissions"
+                            android:text="@string/manage_system_permissions"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -2644,7 +2668,7 @@
                             android:id="@+id/app_info_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="System App Settings"
+                            android:text="@string/system_app_settings"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -2694,7 +2718,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="Support &amp; Projects"
+                            android:text="@string/support_and_projects"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="@color/white"/>
@@ -2736,7 +2760,7 @@
                             android:id="@+id/feedback_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
-                            android:text="Send Feedback / Bug Report"
+                            android:text="@string/send_feedback_bug_report"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="@color/white"
@@ -2787,7 +2811,7 @@
                                 android:layout_marginEnd="6dp"
                                 android:background="@drawable/settings_card_background"
                                 android:enabled="false"
-                                android:text="Loading..."
+                                android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
                                 android:textColor="@color/white"/>
 
@@ -2799,7 +2823,7 @@
                                 android:layout_marginStart="6dp"
                                 android:background="@drawable/settings_card_background"
                                 android:enabled="false"
-                                android:text="Loading..."
+                                android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
                                 android:textColor="@color/white"/>
                         </LinearLayout>
@@ -2818,7 +2842,7 @@
                                 android:layout_marginEnd="6dp"
                                 android:background="@drawable/settings_card_background"
                                 android:enabled="false"
-                                android:text="Loading..."
+                                android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
                                 android:textColor="@color/white"/>
 
@@ -2830,7 +2854,7 @@
                                 android:layout_marginStart="6dp"
                                 android:background="@drawable/settings_card_background"
                                 android:enabled="false"
-                                android:text="Loading..."
+                                android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
                                 android:textColor="@color/white"/>
                         </LinearLayout>
@@ -2846,7 +2870,7 @@
                             android:id="@+id/github_links_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Project Source"
+                            android:text="@string/project_source"
                             android:textSize="13sp"
                             android:textColor="@color/white"
                             android:alpha="0.6"
@@ -2871,7 +2895,7 @@
                     android:paddingTop="6dp"
                     android:paddingEnd="14dp"
                     android:paddingBottom="6dp"
-                    android:text="Developed by Guru Swarupa"
+                    android:text="@string/developed_by_guru_swarupa"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textSize="11sp"/>

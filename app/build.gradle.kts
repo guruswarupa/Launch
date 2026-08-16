@@ -69,6 +69,10 @@ android {
         compose = true
         viewBinding = true
     }
+
+    androidResources {
+        generateLocaleConfig = true
+    }
 }
 
 
@@ -105,6 +109,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.biometric)
+    implementation(libs.androidx.appcompat)
     implementation(libs.google.play.billing)
     implementation(libs.google.play.review)
     implementation(libs.hilt.android)

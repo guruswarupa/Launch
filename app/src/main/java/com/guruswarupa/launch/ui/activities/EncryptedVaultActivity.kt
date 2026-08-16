@@ -74,13 +74,9 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                                     vaultManager.decryptToOutputStream(file.name, outputStream)
                                 } ?: throw IllegalStateException("Unable to open destination")
                             }
-                            Toast.makeText(this@EncryptedVaultActivity, "File decrypted and saved", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@EncryptedVaultActivity, this@EncryptedVaultActivity.getString(R.string.toast_file_decrypted_and_saved), Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
-                            Toast.makeText(
-                                this@EncryptedVaultActivity,
-                                "Decryption failed: ${e.message}",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            Toast.makeText(this@EncryptedVaultActivity, this@EncryptedVaultActivity.getString(R.string.toast_decryption_failed, e.message), Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -94,13 +90,13 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                 try {
                     contentResolver.openOutputStream(uri)?.use { outputStream ->
                         if (vaultManager.exportVault(outputStream)) {
-                            Toast.makeText(this, "Vault exported successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, this.getString(R.string.toast_vault_exported_successfully), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this, "Export failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, this.getString(R.string.toast_export_failed), Toast.LENGTH_SHORT).show()
                         }
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Export failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_export_failed_2, e.message), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -111,14 +107,14 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             try {
                 contentResolver.openInputStream(it)?.use { inputStream ->
                     if (vaultManager.importVault(inputStream)) {
-                        Toast.makeText(this, "Vault imported successfully. Please unlock to see files.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, this.getString(R.string.toast_vault_imported_successfully_please_unlock_to_see), Toast.LENGTH_SHORT).show()
                         loadFiles()
                     } else {
-                        Toast.makeText(this, "Import failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, this.getString(R.string.toast_import_failed), Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(this, "Import failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_import_failed_2, e.message), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -182,20 +178,20 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         }
         val horizontalInset = dp(20)
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Setup Vault")
-            .setMessage("Set a password to encrypt your vault. Remember it carefully, it cannot be recovered.")
+            .setTitle(getString(R.string.dlg_setup_vault))
+            .setMessage(getString(R.string.dlg_set_a_password_to_encrypt_your_vault_remember_it))
             .setView(input, horizontalInset, 0, horizontalInset, 0)
-            .setPositiveButton("Set Password") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_set_password)) { _, _ ->
                 val password = input.text.toString()
                 if (password.length >= 4) {
                     showConfirmPasswordDialog(password)
                 } else {
-                    Toast.makeText(this, "Password must be at least 4 characters", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_password_must_be_at_least_4_characters), Toast.LENGTH_SHORT).show()
                     showSetupDialog()
                 }
             }
-            .setNegativeButton("Cancel") { _, _ -> finish() }
-            .setNeutralButton("Import Existng") { _, _ -> importVaultLauncher.launch(arrayOf("application/zip", "application/octet-stream", "*/*")) }
+            .setNegativeButton(getString(R.string.cancel_button)) { _, _ -> finish() }
+            .setNeutralButton(getString(R.string.dlg_import_existng)) { _, _ -> importVaultLauncher.launch(arrayOf("application/zip", "application/octet-stream", "*/*")) }
             .setCancelable(false)
             .create()
             
@@ -211,24 +207,24 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         }
         val horizontalInset = dp(20)
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Confirm Password")
-            .setMessage("Please re-enter your password to confirm.")
+            .setTitle(getString(R.string.dlg_confirm_password))
+            .setMessage(getString(R.string.dlg_please_re_enter_your_password_to_confirm))
             .setView(input, horizontalInset, 0, horizontalInset, 0)
-            .setPositiveButton("Confirm") { _, _ ->
+            .setPositiveButton(getString(R.string.app_lock_action_confirm)) { _, _ ->
                 val confirmedPassword = input.text.toString()
                 if (password == confirmedPassword) {
                     if (vaultManager.setupVault(password)) {
                         loadFiles()
                     } else {
-                        Toast.makeText(this, "Setup failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, this.getString(R.string.toast_setup_failed), Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 } else {
-                    Toast.makeText(this, "Passwords do not match. Start over.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_passwords_do_not_match_start_over), Toast.LENGTH_SHORT).show()
                     showSetupDialog()
                 }
             }
-            .setNegativeButton("Back") { _, _ -> showSetupDialog() }
+            .setNegativeButton(getString(R.string.back_button)) { _, _ -> showSetupDialog() }
             .setCancelable(false)
             .create()
             
@@ -245,18 +241,18 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         val horizontalInset = dp(20)
         val topInset = dp(12)
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Vault Locked")
+            .setTitle(getString(R.string.dlg_vault_locked))
             .setView(input, horizontalInset, topInset, horizontalInset, 0)
-            .setPositiveButton("Unlock") { _, _ ->
+            .setPositiveButton(getString(R.string.app_lock_action_unlock)) { _, _ ->
                 val password = input.text.toString()
                 if (vaultManager.unlock(password)) {
                     loadFiles()
                 } else {
-                    Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_incorrect_password), Toast.LENGTH_SHORT).show()
                     showUnlockDialog()
                 }
             }
-            .setNegativeButton("Cancel") { _, _ -> finish() }
+            .setNegativeButton(getString(R.string.cancel_button)) { _, _ -> finish() }
             .setCancelable(false)
             .create()
             
@@ -326,9 +322,9 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                 } catch (e: Exception) {}
             }
             loadFiles()
-            Toast.makeText(this, if (deleted) "File moved to vault" else "Encrypted. Delete original manually.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, if (deleted) getString(R.string.toast_file_moved_to_vault) else getString(R.string.toast_encrypted_delete_manually), Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
-            Toast.makeText(this, "Encryption failed: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, this.getString(R.string.toast_encryption_failed, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -381,16 +377,12 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                         }
                         startActivity(Intent.createChooser(intent, "Open with..."))
                     } catch (e: Exception) {
-                        Toast.makeText(
-                            this@EncryptedVaultActivity,
-                            "Failed to open file: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@EncryptedVaultActivity, this@EncryptedVaultActivity.getString(R.string.toast_failed_to_open_file, e.message), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to open file: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_failed_to_open_file, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -421,14 +413,14 @@ class EncryptedVaultActivity : VaultBaseActivity() {
 
     private fun deleteFile(file: File) {
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Delete File")
-            .setMessage("Delete ${file.name} from vault?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(getString(R.string.dlg_delete_file))
+            .setMessage(getString(R.string.dlg_delete_from_vault, file.name))
+            .setPositiveButton(getString(R.string.delete_button)) { _, _ ->
                 if (vaultManager.deleteFile(file.name)) {
                     loadFiles()
-                    Toast.makeText(this, "File deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.toast_file_deleted), Toast.LENGTH_SHORT).show()
                 }
-            }.setNegativeButton("Cancel", null).create()
+            }.setNegativeButton(getString(R.string.cancel_button), null).create()
         DialogStyler.styleDialog(dialog)
         dialog.show()
     }
@@ -436,7 +428,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
     private fun showAddFileOptions() {
         val options = arrayOf("Add File", "Create Note")
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Add to Vault")
+            .setTitle(getString(R.string.dlg_add_to_vault))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> pickFile.launch(arrayOf("*/*"))
@@ -453,7 +445,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
     private fun showVaultSettings() {
         val options = arrayOf("Export Vault", "Import Vault", "Change Password", "Auto-Lock Settings")
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Vault Settings")
+            .setTitle(getString(R.string.dlg_vault_settings))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> {
@@ -483,15 +475,15 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         timeoutSwitch.isChecked = prefs.getBoolean(Constants.Prefs.VAULT_TIMEOUT_ENABLED, false)
 
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Auto-Lock Settings")
+            .setTitle(getString(R.string.dlg_auto_lock_settings))
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(getString(R.string.save_button)) { _, _ ->
                 prefs.edit()
                     .putBoolean(Constants.Prefs.VAULT_TIMEOUT_ENABLED, timeoutSwitch.isChecked)
                     .putInt(Constants.Prefs.VAULT_TIMEOUT_DURATION, 1)
                     .apply()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .create()
 
         DialogStyler.styleDialog(dialog)

@@ -21,7 +21,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="dB"
+        android:text="@string/widget_noise_decibel_preview_label_1"
         android:textColor="@color/widget_text_secondary"
         android:textSize="16sp"
         android:layout_marginBottom="8dp" />
@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Normal"
+        android:text="@string/normal"
         android:textColor="@color/nord14"
         android:textSize="12sp"
         android:textStyle="bold" />

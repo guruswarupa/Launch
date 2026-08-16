@@ -1,5 +1,6 @@
 package com.guruwarupa.launch.ui.activities
 
+import com.guruswarupa.launch.R
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
@@ -55,9 +56,9 @@ object SettingsBackupHelper {
                     }
                 }
             }
-            Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_saved), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -156,7 +157,7 @@ object SettingsBackupHelper {
             }
             onImported()
         } catch (e: Exception) {
-            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
         }
     }
 

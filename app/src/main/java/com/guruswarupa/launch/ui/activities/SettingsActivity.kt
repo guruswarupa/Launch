@@ -26,7 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -69,6 +69,7 @@ import com.guruswarupa.launch.services.WalkDetectionService
 import com.guruswarupa.launch.ui.views.SafeHorizontalScrollView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.IconPackManager
+import com.guruswarupa.launch.utils.AppLanguage
 import com.guruwarupa.launch.ui.activities.SettingsBackupHelper
 import org.json.JSONArray
 import org.json.JSONObject
@@ -78,7 +79,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
-class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
+class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     companion object {
         const val EXTRA_OPEN_SUPPORT_SECTION = "open_support_section"
         private const val STATE_WIDGETS_SECTION_EXPANDED = "state_widgets_section_expanded"
@@ -184,7 +185,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
     private fun triggerWallpaperPicker(themeId: String) {
         val theme = ThemeOption.PREDEFINED_THEMES.find { it.id == themeId } ?: return
 
-        Toast.makeText(this, "Preparing wallpaper picker...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, this.getString(R.string.toast_preparing_wallpaper_picker), Toast.LENGTH_SHORT).show()
 
         Glide.with(this as android.app.Activity)
             .asFile()
@@ -217,9 +218,9 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                             startActivity(Intent.createChooser(intent, "Set System Wallpaper"))
                         }
 
-                        Toast.makeText(this@SettingsActivity, "Use the system dialog to set your wallpaper.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@SettingsActivity, this@SettingsActivity.getString(R.string.toast_use_the_system_dialog_to_set_your_wallpaper), Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {
-                        Toast.makeText(this@SettingsActivity, "Failed to prepare wallpaper: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@SettingsActivity, this@SettingsActivity.getString(R.string.toast_failed_to_prepare_wallpaper, e.message), Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -363,10 +364,10 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         val rssEnabled = prefs.getBoolean(Constants.Prefs.RSS_PAGE_ENABLED, true)
         val widgetsEnabled = prefs.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
         val pageEntries = buildList {
-            add("Wallpaper (Left)" to "wallpaper")
-            add("Home (Center)" to "center")
-            if (widgetsEnabled) add("Widgets (Right)" to "widgets")
-            if (rssEnabled) add("News Feed (Far Right)" to "rss")
+            add(getString(R.string.home_page_wallpaper_left) to "wallpaper")
+            add(getString(R.string.home_page_home_center) to "center")
+            if (widgetsEnabled) add(getString(R.string.home_page_widgets_right) to "widgets")
+            if (rssEnabled) add(getString(R.string.home_page_news_far_right) to "rss")
         }
         val pages = pageEntries.map { it.first }.toTypedArray()
         homePageSpinner.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, pages).apply {
@@ -387,6 +388,8 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             }
             override fun onNothingSelected(p: AdapterView<*>) {}
         }
+
+        setupLanguageSpinner()
 
 
         val wallHeader = findViewById<LinearLayout>(R.id.wallpaper_header)
@@ -496,6 +499,26 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             override fun onStartTrackingTouch(s: SeekBar?) {}
             override fun onStopTrackingTouch(s: SeekBar?) {}
         })
+    }
+
+    private fun setupLanguageSpinner() {
+        val languageSpinner = findViewById<Spinner>(R.id.language_spinner)
+        val labels = AppLanguage.options.map { option ->
+            if (option.tag.isEmpty()) getString(R.string.language_system_default) else option.autonym
+        }.toTypedArray()
+        languageSpinner.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, labels).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        languageSpinner.setSelection(AppLanguage.indexOf(AppLanguage.current()))
+        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p: AdapterView<*>, v: View?, pos: Int, id: Long) {
+                val tag = AppLanguage.options[pos].tag
+                if (tag != AppLanguage.current()) {
+                    AppLanguage.apply(tag)
+                }
+            }
+            override fun onNothingSelected(p: AdapterView<*>) {}
+        }
     }
 
     private fun setupThemeSelection() {
@@ -856,7 +879,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             }
             startActivity(intent)
         } catch (_: Exception) {
-            Toast.makeText(this, "Failed to open app info", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_failed_to_open_app_info), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -1361,17 +1384,17 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
         val curThreshold = prefs.getInt(Constants.Prefs.WALK_DETECT_STEP_THRESHOLD, 10).coerceIn(5, 30)
         thresholdSeek.max = 25
         thresholdSeek.progress = curThreshold - 5
-        thresholdVal.text = "$curThreshold steps"
+        thresholdVal.text = getString(R.string.steps_format, curThreshold)
 
         val curTimeWindow = prefs.getInt(Constants.Prefs.WALK_DETECT_TIME_WINDOW_SECONDS, 15).coerceIn(5, 60)
         timeWindowSeek.max = 55
         timeWindowSeek.progress = curTimeWindow - 5
-        timeWindowVal.text = "$curTimeWindow sec"
+        timeWindowVal.text = getString(R.string.lbl_sec, curTimeWindow)
 
         val curCooldown = prefs.getInt(Constants.Prefs.WALK_DETECT_COOLDOWN_MINUTES, 5).coerceIn(1, 30)
         cooldownSeek.max = 29
         cooldownSeek.progress = curCooldown - 1
-        cooldownVal.text = "$curCooldown min"
+        cooldownVal.text = getString(R.string.walking_time_minutes_format, curCooldown)
 
         sw.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -1404,7 +1427,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
         thresholdSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                thresholdVal.text = "${progress + 5} steps"
+                thresholdVal.text = getString(R.string.steps_format, progress + 5)
                 if (fromUser) {
                     prefs.edit { putInt(Constants.Prefs.WALK_DETECT_STEP_THRESHOLD, progress + 5) }
                     notifySettingsChanged()
@@ -1417,7 +1440,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
         timeWindowSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                timeWindowVal.text = "${progress + 5} sec"
+                timeWindowVal.text = getString(R.string.lbl_sec, progress + 5)
                 if (fromUser) {
                     prefs.edit { putInt(Constants.Prefs.WALK_DETECT_TIME_WINDOW_SECONDS, progress + 5) }
                     notifySettingsChanged()
@@ -1430,7 +1453,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
         cooldownSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                cooldownVal.text = "${progress + 1} min"
+                cooldownVal.text = getString(R.string.walking_time_minutes_format, progress + 1)
                 if (fromUser) {
                     prefs.edit { putInt(Constants.Prefs.WALK_DETECT_COOLDOWN_MINUTES, progress + 1) }
                     notifySettingsChanged()
@@ -1555,17 +1578,17 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
     private fun showProtectedPermissionDialog() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Permission Required")
-            .setMessage("This feature requires the WRITE_SECURE_SETTINGS permission.\n\n" +
+            .setTitle(getString(R.string.dlg_permission_required))
+            .setMessage(getString(R.string.dlg_this_feature_requires_the_write_secure_settings) +
                     "Please run this command via ADB:\n\n" +
                     "adb shell pm grant $packageName android.permission.WRITE_SECURE_SETTINGS")
-            .setPositiveButton("Copy Command") { _, _ ->
+            .setPositiveButton(getString(R.string.dlg_copy_command)) { _, _ ->
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
                 val clip = android.content.ClipData.newPlainText("ADB Command", "adb shell pm grant $packageName android.permission.WRITE_SECURE_SETTINGS")
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_command_copied_to_clipboard), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Close", null)
+            .setNegativeButton(getString(R.string.support_thank_you_close), null)
             .show()
     }
 
@@ -1748,7 +1771,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                     setupTypographySettings()
                     updateDownloadableFontsList(cont)
                 } else {
-                    btn.text = "Fetching…"
+                    btn.text = getString(R.string.lbl_fetching)
                     DownloadableFontManager.requestFont(this, opt.styleKey) {
                         handler.post {
 
@@ -1823,7 +1846,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                     }
                     radio.isChecked = true
                     notifySettingsChanged()
-                    Toast.makeText(this, "Icon pack applied: ${pack.name}\nIcons will update when you return to home screen", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, this.getString(R.string.toast_icon_pack_applied_icons_will_update_when_you_ret, pack.name), Toast.LENGTH_LONG).show()
                 }
                 
                 listContainer.addView(view)
@@ -1845,7 +1868,7 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
     }
 
     private fun showPermissionDialog(t: String, m: String, onP: () -> Unit) {
-        AlertDialog.Builder(this, R.style.CustomDialogTheme).setTitle(t).setMessage(m).setPositiveButton("Settings") { _, _ -> onP() }.setNegativeButton("Cancel", null).show()
+        AlertDialog.Builder(this, R.style.CustomDialogTheme).setTitle(t).setMessage(m).setPositiveButton(getString(R.string.settings)) { _, _ -> onP() }.setNegativeButton(getString(R.string.cancel_button), null).show()
     }
 
     private fun showWalkDetectionAppPicker(onAppSelected: () -> Unit) {
@@ -1862,17 +1885,17 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
             .sortedBy { it.second.lowercase() }
 
         if (apps.isEmpty()) {
-            Toast.makeText(this, "No launchable apps found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_no_launchable_apps_found), Toast.LENGTH_SHORT).show()
             return
         }
 
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Choose App")
+            .setTitle(getString(R.string.choose_app))
             .setItems(apps.map { it.second }.toTypedArray()) { _, which ->
                 prefs.edit { putString(Constants.Prefs.WALK_DETECT_CUSTOM_APP_PACKAGE, apps[which].first) }
                 onAppSelected()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
@@ -1903,9 +1926,9 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
     private fun restartLauncher() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Restart Launcher")
-            .setMessage("Are you sure you want to restart the launcher?")
-            .setPositiveButton("Restart") { _, _ ->
+            .setTitle(getString(R.string.restart_launcher))
+            .setMessage(getString(R.string.dlg_are_you_sure_you_want_to_restart_the_launcher))
+            .setPositiveButton(getString(R.string.dlg_restart)) { _, _ ->
                 packageManager.getLaunchIntentForPackage(packageName)?.let { intent ->
                     intent.component?.let { component ->
                         startActivity(Intent.makeRestartActivityTask(component))
@@ -1913,31 +1936,31 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
                     }
                 }
             }
-            .setNegativeButton("Later", null)
+            .setNegativeButton(getString(R.string.dlg_later), null)
             .show()
     }
 
     private fun clearCache() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Clear Temporary Cache")
-            .setMessage("This will remove temporary app data and cached icons. Your settings and organization will remain intact. Proceed?")
-            .setPositiveButton("Clear") { _, _ ->
+            .setTitle(getString(R.string.clear_temporary_cache))
+            .setMessage(getString(R.string.dlg_this_will_remove_temporary_app_data_and_cached_i))
+            .setPositiveButton(getString(R.string.weather_condition_clear)) { _, _ ->
                 cacheDir.deleteRecursively()
                 externalCacheDir?.deleteRecursively()
-                Toast.makeText(this, "Cache cleared successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.getString(R.string.toast_cache_cleared_successfully), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 
     private fun clearData() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Factory Reset Launcher")
-            .setMessage("WARNING: This will permanently delete all your settings, custom workspaces, and configuration. The app will return to its initial state. Are you absolutely sure?")
-            .setPositiveButton("Reset Everything") { _, _ ->
+            .setTitle(getString(R.string.factory_reset_launcher))
+            .setMessage(getString(R.string.dlg_warning_this_will_permanently_delete_all_your_se))
+            .setPositiveButton(getString(R.string.dlg_reset_everything)) { _, _ ->
                 (getSystemService(ACTIVITY_SERVICE) as android.app.ActivityManager).clearApplicationUserData()
             }
-            .setNegativeButton("Keep Data", null)
+            .setNegativeButton(getString(R.string.dlg_keep_data), null)
             .show()
     }
 
@@ -1958,10 +1981,10 @@ class SettingsActivity : ComponentActivity(), PurchasesUpdatedListener {
 
     private fun showUnsavedChangesDialog(onConfirm: () -> Unit) {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle("Unsaved Changes")
-            .setMessage("You have selected a new theme but haven't applied it yet. Are you sure you want to leave without applying?")
-            .setPositiveButton("Leave Without Applying") { _, _ -> onConfirm() }
-            .setNegativeButton("Cancel", null)
+            .setTitle(getString(R.string.dlg_unsaved_changes))
+            .setMessage(getString(R.string.dlg_you_have_selected_a_new_theme_but_haven_t_applie))
+            .setPositiveButton(getString(R.string.dlg_leave_without_applying)) { _, _ -> onConfirm() }
+            .setNegativeButton(getString(R.string.cancel_button), null)
             .show()
     }
 

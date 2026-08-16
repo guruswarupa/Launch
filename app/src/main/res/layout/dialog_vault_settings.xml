@@ -10,7 +10,7 @@
         android:id="@+id/timeout_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Auto-lock after 1 minute of inactivity"
+        android:text="@string/auto_lock_after_1_minute_of_inactivity"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:paddingVertical="12dp"
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="View Recovery Phrase"
+        android:text="@string/view_recovery_phrase"
         android:textColor="@color/white" />
 
 </LinearLayout>

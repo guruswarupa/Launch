@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Battery Health"
+        android:text="@string/battery_health"
         android:textColor="@color/widget_text"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Battery Level"
+                android:text="@string/battery_level"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="12sp"/>
 
@@ -63,7 +63,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time Remaining"
+                    android:text="@string/time_remaining_2"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Charging Speed"
+                    android:text="@string/charging_speed_2"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -116,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Voltage"
+                    android:text="@string/voltage_2"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -139,7 +139,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Temperature"
+                    android:text="@string/temperature_2"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
                 
@@ -169,7 +169,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Design Capacity"
+                    android:text="@string/design_capacity"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
 
@@ -192,7 +192,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Current Charge"
+                    android:text="@string/current_charge"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
 
@@ -215,7 +215,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Full Capacity"
+                    android:text="@string/full_capacity"
                     android:textColor="@color/widget_text_secondary"
                     android:textSize="10sp"/>
 
@@ -240,7 +240,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Calculated Health"
+                android:text="@string/calculated_health_2"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="10sp"/>
 
@@ -248,7 +248,7 @@
                 android:id="@+id/health_prediction_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="*Predicted"
+                android:text="@string/predicted"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="10sp"
                 android:layout_marginEnd="8dp"
@@ -274,7 +274,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Health Status"
+                android:text="@string/health_status"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="10sp"/>
 
@@ -282,7 +282,7 @@
                 android:id="@+id/health_status_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Good"
+                android:text="@string/good"
                 android:textColor="@color/nord14"
                 android:textSize="14sp"
                 android:textStyle="bold"/>

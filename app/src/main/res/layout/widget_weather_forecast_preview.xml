@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Forecast"
+                android:text="@string/forecast"
                 android:textColor="@color/widget_text"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="Bengaluru, IN"
+                android:text="@string/bengaluru_in"
                 android:textColor="@color/widget_text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -54,7 +54,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Clear skies"
+        android:text="@string/clear_skies"
         android:textColor="@color/widget_text"
         android:textSize="13sp"
         android:textStyle="bold" />
@@ -65,7 +65,7 @@
         android:layout_marginTop="12dp"
         android:background="@drawable/widget_item_background"
         android:padding="8dp"
-        android:text="Rain ahead later today"
+        android:text="@string/rain_ahead_later_today"
         android:textColor="@color/widget_text_secondary"
         android:textSize="11sp" />
 
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="31°                                  24°"
+            android:text="@string/s_31_24"
             android:textColor="@color/widget_text_secondary"
             android:textSize="10sp" />
 
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:gravity="center"
-            android:text="Now     2p     5p     8p     11p"
+            android:text="@string/now_2p_5p_8p_11p"
             android:textColor="@color/widget_text_secondary"
             android:textSize="10sp" />
     </FrameLayout>
@@ -103,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:text="Today 29°/21°"
+        android:text="@string/today_29_21"
         android:textColor="@color/widget_text"
         android:textSize="12sp"
         android:textStyle="bold" />
@@ -112,7 +112,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Wed 30°/22°"
+        android:text="@string/wed_30_22"
         android:textColor="@color/widget_text_secondary"
         android:textSize="12sp" />
 
@@ -120,7 +120,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Thu 28°/20°"
+        android:text="@string/thu_28_20"
         android:textColor="@color/widget_text_secondary"
         android:textSize="12sp" />
 

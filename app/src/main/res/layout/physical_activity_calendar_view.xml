@@ -17,7 +17,7 @@
             android:id="@+id/prev_month_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:text="‹"
+            android:text="@string/str_7"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:background="@drawable/button_neutral_ripple"
@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="January 2024"
+            android:text="@string/january_2024"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -38,7 +38,7 @@
             android:id="@+id/next_month_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:text="›"
+            android:text="@string/str_8"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:background="@drawable/button_neutral_ripple"
@@ -56,7 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sun"
+            android:text="@string/sun"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -65,7 +65,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Mon"
+            android:text="@string/mon"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -74,7 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tue"
+            android:text="@string/tue"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -83,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Wed"
+            android:text="@string/wed"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -92,7 +92,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Thu"
+            android:text="@string/thu"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -101,7 +101,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Fri"
+            android:text="@string/fri"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -110,7 +110,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sat"
+            android:text="@string/sat"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -147,7 +147,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Activity recorded"
+                android:text="@string/activity_recorded"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -167,7 +167,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today"
+                android:text="@string/weather_today"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>

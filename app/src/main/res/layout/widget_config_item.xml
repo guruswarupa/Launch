@@ -17,7 +17,7 @@
         android:layout_height="24dp"
         android:src="@android:drawable/ic_menu_sort_by_size"
         android:tint="@color/text_secondary"
-        android:contentDescription="Drag to reorder"
+        android:contentDescription="@string/drag_to_reorder"
         android:layout_marginEnd="16dp"/>
 
     
@@ -26,7 +26,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Widget Name"
+        android:text="@string/widget_name"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:textStyle="bold"/>

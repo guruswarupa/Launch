@@ -131,14 +131,14 @@ class WebAppActivity : AppCompatActivity() {
             setOnLongClickListener {
                 if (trustedDomains.isNotEmpty()) {
                     android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
-                        .setTitle("Clear Trusted Domains")
-                        .setMessage("Clear ${trustedDomains.size} trusted domain(s) for this session?")
-                        .setPositiveButton("Clear") { _, _ ->
+                        .setTitle(getString(R.string.dlg_clear_trusted_domains))
+                        .setMessage(getString(R.string.dlg_clear_trusted_domain_s_for_this_session, trustedDomains.size))
+                        .setPositiveButton(getString(R.string.weather_condition_clear)) { _, _ ->
                             trustedDomains.clear()
-                            Toast.makeText(this@WebAppActivity, "Trusted domains cleared", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@WebAppActivity, this@WebAppActivity.getString(R.string.toast_trusted_domains_cleared), Toast.LENGTH_SHORT).show()
                             Log.i(TAG, "Manually cleared trusted domains")
                         }
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(getString(R.string.cancel_button), null)
                         .show()
                     true
                 } else {
@@ -267,16 +267,16 @@ class WebAppActivity : AppCompatActivity() {
 
                     val shouldOpen = try {
                         android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
-                            .setTitle("Open External App?")
-                            .setMessage("This will open an external app: $scheme")
-                            .setPositiveButton("Open") { _, _ ->
+                            .setTitle(getString(R.string.dlg_open_external_app))
+                            .setMessage(getString(R.string.dlg_this_will_open_an_external_app, scheme))
+                            .setPositiveButton(getString(R.string.dlg_open)) { _, _ ->
                                 try {
                                     startActivity(Intent(Intent.ACTION_VIEW, targetUrl.toUri()))
                                 } catch (e: Exception) {
-                                    Toast.makeText(this@WebAppActivity, "No app available", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@WebAppActivity, this@WebAppActivity.getString(R.string.toast_no_app_available), Toast.LENGTH_SHORT).show()
                                 }
                             }
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(getString(R.string.cancel_button), null)
                             .show()
                         false
                     } catch (e: Exception) {
@@ -300,11 +300,7 @@ class WebAppActivity : AppCompatActivity() {
                     }
 
                     if (blockRedirects) {
-                        Toast.makeText(
-                            this@WebAppActivity,
-                            "Navigation blocked: Redirecting to external domain is not allowed",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(this@WebAppActivity, this@WebAppActivity.getString(R.string.toast_navigation_blocked_redirecting_to_external_domai), Toast.LENGTH_LONG).show()
                         return true
                     }
 
@@ -317,17 +313,17 @@ class WebAppActivity : AppCompatActivity() {
                         val trustCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.trust_domain_checkbox)
                         
                         android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
-                            .setTitle("Security Warning")
+                            .setTitle(getString(R.string.dlg_security_warning))
                             .setView(dialogView)
-                            .setMessage("You are about to navigate to an external domain:\n\n$targetDomainSafe\n\nThis is different from the original domain: $allowedDomain\n\nContinue only if you trust this destination.")
-                            .setPositiveButton("Continue") { _, _ ->
+                            .setMessage(getString(R.string.dlg_you_are_about_to_navigate_to_an_external_domain, targetDomainSafe, allowedDomain))
+                            .setPositiveButton(getString(R.string.app_lock_action_continue)) { _, _ ->
                                 if (trustCheckbox.isChecked) {
                                     trustedDomains.add(targetDomainSafe)
                                     Log.i(TAG, "User trusted external domain: $targetDomainSafe")
                                 }
                                 Log.i(TAG, "User allowed navigation to: $targetDomainSafe")
                             }
-                            .setNegativeButton("Cancel") { _, _ ->
+                            .setNegativeButton(getString(R.string.cancel_button)) { _, _ ->
                                 Log.i(TAG, "User cancelled navigation to: $targetDomainSafe")
                             }
                             .show()
@@ -335,13 +331,13 @@ class WebAppActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                         // Fallback to simple dialog if custom view fails
                         android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
-                            .setTitle("Security Warning")
-                            .setMessage("You are about to navigate to an external domain:\n\n$targetDomainSafe\n\nThis is different from the original domain: $allowedDomain\n\nContinue only if you trust this destination.")
-                            .setPositiveButton("Continue") { _, _ ->
+                            .setTitle(getString(R.string.dlg_security_warning))
+                            .setMessage(getString(R.string.dlg_you_are_about_to_navigate_to_an_external_domain, targetDomainSafe, allowedDomain))
+                            .setPositiveButton(getString(R.string.app_lock_action_continue)) { _, _ ->
                                 trustedDomains.add(targetDomainSafe)
                                 Log.i(TAG, "User trusted external domain: $targetDomainSafe (fallback dialog)")
                             }
-                            .setNegativeButton("Cancel") { _, _ ->
+                            .setNegativeButton(getString(R.string.cancel_button)) { _, _ ->
                                 Log.i(TAG, "User cancelled navigation to: $targetDomainSafe (fallback dialog)")
                             }
                             .show()
@@ -389,11 +385,7 @@ class WebAppActivity : AppCompatActivity() {
 
                     // Show toast after multiple sub-resource errors to avoid spam
                     if (subResourceErrorCount == 5) {
-                        Toast.makeText(
-                            this@WebAppActivity,
-                            "$subResourceErrorCount resource loading errors occurred. Some page content may be missing.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(this@WebAppActivity, this@WebAppActivity.getString(R.string.toast_resource_loading_errors_occurred_some_page_conte, subResourceErrorCount), Toast.LENGTH_LONG).show()
                     }
                 }
             }

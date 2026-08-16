@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +20,7 @@ import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.ui.adapters.FocusModeAppAdapter
 import java.util.concurrent.Executors
 
-class FocusModeConfigActivity : ComponentActivity() {
+class FocusModeConfigActivity : AppCompatActivity() {
 
     private lateinit var focusModeManager: FocusModeManager
     private lateinit var webAppManager: WebAppManager
@@ -78,7 +78,7 @@ class FocusModeConfigActivity : ComponentActivity() {
 
             focusModeManager.updateAllowedApps(adapter.getSelectedApps())
 
-            Toast.makeText(this, "Focus mode configuration saved", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_focus_mode_configuration_saved), Toast.LENGTH_SHORT).show()
 
 
             val intent = Intent("com.guruswarupa.launch.SETTINGS_UPDATED")

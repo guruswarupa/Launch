@@ -332,7 +332,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         val widget = allWidgets.find { it.id == widgetId }
         if (widget != null) {
             val action = if (enabled) "enabled" else "disabled"
-            Toast.makeText(this, "${widget.name} $action!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_str, widget.name, action), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -412,7 +412,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         }
 
         if (alreadyExists) {
-            Toast.makeText(this, "${widget.name} is already added!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.toast_is_already_added, widget.name), Toast.LENGTH_SHORT).show()
             return
         }
 
