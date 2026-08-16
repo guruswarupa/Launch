@@ -2,6 +2,7 @@ package com.guruswarupa.launch.utils
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import java.util.Locale
 
 /**
  * Per-app language selection, backed by [AppCompatDelegate.setApplicationLocales].
@@ -35,11 +36,25 @@ object AppLanguage {
         Option("kn", "ಕನ್ನಡ"),
     )
 
+    /**
+     * ICU only renders native digit glyphs in numbers and dates (via [String.format],
+     * [java.text.SimpleDateFormat], etc.) when the locale carries an explicit "nu"
+     * (numbering system) extension - the plain language tag alone defaults to Latin
+     * digits for most locales. Arabic is the one language here where CLDR's own
+     * default numbering system is already non-Latin, so it needs no override.
+     */
+    private val numberingSystemOverrides = mapOf(
+        "hi" to "hi-u-nu-deva",
+        "kn" to "kn-u-nu-knda",
+    )
+
     /** The currently applied tag, or "" when following the system default. */
     fun current(): String {
         val locales = AppCompatDelegate.getApplicationLocales()
         if (locales.isEmpty) return ""
-        return locales.toLanguageTags().substringBefore(',')
+        // Strip any "-u-nu-..." numbering-system extension so this matches the
+        // plain tags in [options] regardless of which locale was actually applied.
+        return Locale.Builder().setLocale(locales[0]).clearExtensions().build().toLanguageTag()
     }
 
     fun indexOf(tag: String): Int {
@@ -52,7 +67,8 @@ object AppLanguage {
         val locales = if (tag.isEmpty()) {
             LocaleListCompat.getEmptyLocaleList()
         } else {
-            LocaleListCompat.forLanguageTags(tag)
+            val resolvedTag = numberingSystemOverrides[tag] ?: tag
+            LocaleListCompat.forLanguageTags(resolvedTag)
         }
         AppCompatDelegate.setApplicationLocales(locales)
     }
