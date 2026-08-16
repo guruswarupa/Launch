@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import android.provider.ContactsContract
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executor
@@ -18,6 +20,7 @@ class ContactManager(
     private val backgroundExecutor: Executor
 ) {
     private val contactsList: MutableList<String> = mutableListOf()
+    private val mainHandler = Handler(Looper.getMainLooper())
     @Volatile
     private var contactsLoaded = false
     @Volatile
@@ -27,20 +30,28 @@ class ContactManager(
 
 
 
+    /** Guarantees [onComplete] always runs on the main thread, regardless of which
+     *  path in [loadContacts] triggers it - callers touch RecyclerView/UI state
+     *  from this callback and must never receive it on a background thread. */
+    private fun complete(onComplete: ((List<String>) -> Unit)?, result: List<String>) {
+        if (onComplete == null) return
+        mainHandler.post { onComplete(result) }
+    }
+
     fun loadContacts(onComplete: ((List<String>) -> Unit)? = null) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS)
             != PackageManager.PERMISSION_GRANTED) {
-            onComplete?.invoke(emptyList())
+            complete(onComplete, emptyList())
             return
         }
 
         if (contactsLoaded && contactsList.isNotEmpty()) {
-            onComplete?.invoke(ArrayList(contactsList))
+            complete(onComplete, ArrayList(contactsList))
             return
         }
 
         if (contactsLoading) {
-            onComplete?.invoke(ArrayList(contactsList))
+            complete(onComplete, ArrayList(contactsList))
             return
         }
 
@@ -74,11 +85,11 @@ class ContactManager(
                 contactsLoaded = true
                 contactsLoading = false
 
-                onComplete?.invoke(ArrayList(contactsList))
+                complete(onComplete, ArrayList(contactsList))
             } catch (e: Exception) {
                 e.printStackTrace()
                 contactsLoading = false
-                onComplete?.invoke(emptyList())
+                complete(onComplete, emptyList())
             }
         }
     }
