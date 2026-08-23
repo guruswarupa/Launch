@@ -363,6 +363,7 @@ class WidgetVisibilityManager(
     }
 
     private fun finalizeOrderFromLayout(layout: LinearLayout, viewMap: Map<String, View>) {
+        widgetConfigurationManager.forceRefresh()
         val allWidgets = widgetConfigurationManager.getWidgetOrder().toMutableList()
         val enabledWidgetsInOrder = mutableListOf<String>()
         

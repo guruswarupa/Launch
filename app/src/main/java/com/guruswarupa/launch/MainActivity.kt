@@ -421,12 +421,22 @@ class MainActivity : AppCompatActivity() {
         widgetSetupManager.setupWeather(views.weatherIcon, views.weatherText)
     }
 
+    // deferredWidgetsInitialized (below) lives in the ViewModel's SavedStateHandle, so it
+    // survives an Activity recreate - including the one AppCompatDelegate.setApplicationLocales()
+    // triggers on language change, since MainActivity doesn't declare "locale" in its manifest
+    // configChanges. But widgetLifecycleCoordinator/todoManager/financeWidgetManager etc. are all
+    // fresh, uninitialized objects on the new instance. Without this instance-local flag, the
+    // ViewModel's stale "already initialized" would make initializeDeferredWidgets() skip
+    // DeferredWidgetInitializer forever for that instance, leaving every in-app widget's content
+    // unpopulated even though their containers still get toggled visible.
+    private var deferredWidgetsReadyForThisInstance = false
+
     internal fun initializeDeferredWidgets() {
         if (!sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)) {
             return
         }
 
-        if (deferredWidgetsInitialized) {
+        if (deferredWidgetsInitialized && deferredWidgetsReadyForThisInstance) {
             // Always update widget visibility to ensure all enabled widgets are shown
             widgetVisibilityManager.update(
                 if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
@@ -459,12 +469,13 @@ class MainActivity : AppCompatActivity() {
 
         initializer.initialize()
         viewModel.markDeferredWidgetsInitialized()
+        deferredWidgetsReadyForThisInstance = true
         updateRegistryDependencies()
     }
 
     private fun scheduleDeferredWidgetPrewarm() {
         if (widgetPrewarmScheduled ||
-            deferredWidgetsInitialized ||
+            deferredWidgetsReadyForThisInstance ||
             !sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
         ) {
             return
@@ -475,7 +486,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 delay(1200L)
                 widgetPrewarmScheduled = false
-                if (!isFinishing && !isDestroyed && !deferredWidgetsInitialized) {
+                if (!isFinishing && !isDestroyed && !deferredWidgetsReadyForThisInstance) {
                     initializeDeferredWidgets()
                 }
             } finally {

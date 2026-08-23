@@ -172,6 +172,19 @@ class AppInitializer(private val activity: MainActivity) {
     private fun MainActivity.setupWidgets() {
         val drawerContentLayout = findViewById<LinearLayout>(R.id.drawer_content_layout)
         widgetManager = WidgetManager(activity, drawerContentLayout)
+        widgetManager.onWidgetsRefreshed = {
+            // Guard against running before the in-app widgets have been set up for the first
+            // time: update() detaches disabled in-app widget containers from the view tree, and
+            // DeferredWidgetInitializer's first pass needs them still attached to find them via
+            // findViewById. Once deferred widgets are initialized, its own onComplete already
+            // calls update() - this just keeps things in sync afterwards.
+            if (deferredWidgetsInitialized) {
+                widgetVisibilityManager.update(
+                    if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
+                    if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
+                )
+            }
+        }
 
         findViewById<View?>(R.id.rss_feed_page)?.let { rssPageView ->
             RssFeedPage(activity, rssPageView).setup()

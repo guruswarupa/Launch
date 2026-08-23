@@ -22,3 +22,5 @@ kotlin-profile/
 jdks/
 app/release/app-release
 .kotlin/
+.claude/
+.specify/

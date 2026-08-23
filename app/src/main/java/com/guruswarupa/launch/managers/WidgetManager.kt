@@ -44,6 +44,10 @@ class WidgetManager(
     private val widgetOptionsCache = mutableMapOf<Int, String>()
     private var pendingConfigureWidgetId: Int? = null
     private var pendingBindRequest: PendingSystemWidgetBindRequest? = null
+    private var startRetryAttempts = 0
+
+    /** Invoked after system widget views have been (re)created, including after retries. */
+    var onWidgetsRefreshed: (() -> Unit)? = null
 
     private val containerFactory = WidgetContainerFactory(
         context = context,
@@ -60,6 +64,8 @@ class WidgetManager(
         private const val TAG = "WidgetManager"
         private const val PREFS_WIDGETS_KEY = "saved_widgets"
         private const val PREFS_WIDGETS_CHANGED_KEY = "saved_widgets_changed"
+        private const val MAX_START_RETRY_ATTEMPTS = 5
+        private const val START_RETRY_DELAY_MS = 400L
     }
 
     init {
@@ -516,6 +522,7 @@ class WidgetManager(
             val widgetsJson = prefs.getString(PREFS_WIDGETS_KEY, null) ?: return
             val jsonArray = JSONArray(widgetsJson)
 
+            var prunedAny = false
             for (i in 0 until jsonArray.length()) {
                 val json = jsonArray.getJSONObject(i)
                 val appWidgetId = json.getInt("appWidgetId")
@@ -531,27 +538,82 @@ class WidgetManager(
                         customHeightDp = if (json.has("customHeightDp")) json.optInt("customHeightDp") else null
                     )
                     widgets.add(widgetInfo)
-                    recreateWidgetView(widgetInfo, appWidgetInfo)
                 } else {
+                    // The widget id itself is gone (provider uninstalled or id revoked by the
+                    // system) - this is a genuine removal, not a transient failure, so it's safe
+                    // to prune here.
                     appWidgetHost.deleteAppWidgetId(appWidgetId)
+                    prunedAny = true
                 }
             }
 
-            if (widgets.size != jsonArray.length()) {
+            if (prunedAny) {
                 saveWidgets()
             }
+
+            refreshSystemWidgetViews()
         } catch (_: Exception) {
         }
     }
 
-    private fun recreateWidgetView(widgetInfo: SystemWidgetInfo, appWidgetInfo: AppWidgetProviderInfo) {
-        try {
+    /**
+     * (Re)creates the AppWidgetHostView for every entry in [widgets] and adds it to
+     * [widgetContainer]. If a view fails to be created - e.g. right after boot or resume, when
+     * the AppWidgetService/host binder may not be fully ready yet - the widget is left in place
+     * (never deleted) and a bounded, backed-off retry is scheduled instead of silently dropping it.
+     */
+    private fun refreshSystemWidgetViews() {
+        if (widgets.isEmpty()) {
+            startRetryAttempts = 0
+            return
+        }
+
+        val viewsToRemove = mutableListOf<View>()
+        for (i in 0 until widgetContainer.childCount) {
+            val child = widgetContainer.getChildAt(i)
+            if (child.tag is Int) {
+                viewsToRemove.add(child)
+            }
+        }
+        viewsToRemove.forEach { widgetContainer.removeView(it) }
+
+        var anyMissing = false
+        widgets.forEach { widgetInfo ->
+            val appWidgetInfo = appWidgetManager.getAppWidgetInfo(widgetInfo.appWidgetId)
+            if (appWidgetInfo != null) {
+                if (!recreateWidgetView(widgetInfo, appWidgetInfo)) {
+                    anyMissing = true
+                }
+            } else {
+                // Transient lookup failure - retry instead of assuming the widget is gone.
+                anyMissing = true
+            }
+        }
+
+        if (anyMissing && startRetryAttempts < MAX_START_RETRY_ATTEMPTS) {
+            startRetryAttempts++
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
+                { refreshSystemWidgetViews() },
+                START_RETRY_DELAY_MS * startRetryAttempts
+            )
+        } else {
+            startRetryAttempts = 0
+        }
+
+        onWidgetsRefreshed?.invoke()
+    }
+
+    private fun recreateWidgetView(widgetInfo: SystemWidgetInfo, appWidgetInfo: AppWidgetProviderInfo): Boolean {
+        return try {
             val widgetView = appWidgetHost.createView(context, widgetInfo.appWidgetId, appWidgetInfo)
             val widgetContainerView = createWidgetContainer(widgetView, widgetInfo, appWidgetInfo)
             widgetContainer.addView(widgetContainerView)
-        } catch (_: Exception) {
-            widgets.remove(widgetInfo)
-            appWidgetHost.deleteAppWidgetId(widgetInfo.appWidgetId)
+            true
+        } catch (e: Exception) {
+            // Don't delete the widget on a transient view-creation failure - just leave it for
+            // the next retry/lifecycle event instead of silently losing it forever.
+            Log.w(TAG, "Failed to recreate view for widget ${widgetInfo.appWidgetId}, will retry", e)
+            false
         }
     }
 
@@ -566,24 +628,7 @@ class WidgetManager(
     fun onStart() {
         try {
             appWidgetHost.startListening()
-            
-            if (widgets.isNotEmpty()) {
-                val viewsToRemove = mutableListOf<View>()
-                for (i in 0 until widgetContainer.childCount) {
-                    val child = widgetContainer.getChildAt(i)
-                    if (child.tag is Int) {
-                        viewsToRemove.add(child)
-                    }
-                }
-                viewsToRemove.forEach { widgetContainer.removeView(it) }
-                
-                widgets.forEach { widgetInfo ->
-                    val appWidgetInfo = appWidgetManager.getAppWidgetInfo(widgetInfo.appWidgetId)
-                    if (appWidgetInfo != null) {
-                        recreateWidgetView(widgetInfo, appWidgetInfo)
-                    }
-                }
-            }
+            refreshSystemWidgetViews()
         } catch (e: Exception) {
             Log.w(TAG, "Error starting widget host listening", e)
         }
@@ -600,6 +645,7 @@ class WidgetManager(
         viewsToRemove.forEach { widgetContainer.removeView(it) }
         widgets.clear()
         widgetOptionsCache.clear()
+        startRetryAttempts = 0
         loadWidgets()
     }
 
