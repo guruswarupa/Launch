@@ -142,9 +142,9 @@ class AppInitializer(private val activity: MainActivity) {
 
         if (!appDockManager.getCurrentMode()) {
             refreshAppsForFocusMode()
+        } else {
+            appListLoader.loadApps(forceRefresh = false, fullAppList, appList, adapter)
         }
-
-        appListLoader.loadApps(forceRefresh = false, fullAppList, appList, adapter)
 
         views.recyclerView.doOnLayout {
             if (!isFinishing && !isDestroyed) {

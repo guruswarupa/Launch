@@ -200,6 +200,12 @@ class AppSearchManager @Inject constructor(
 
     private fun buildFilteredList(query: String): ArrayList<ResolveInfo> {
         val queryLower = query.lowercase().trim()
+        val cacheKey = "$currentSearchMode|$queryLower"
+
+        synchronized(dataLock) {
+            searchCache[cacheKey]?.let { return ArrayList(it) }
+        }
+
         val newFilteredList = ArrayList<ResolveInfo>()
 
         val fullAppListSnapshot: List<ResolveInfo>
@@ -325,6 +331,13 @@ class AppSearchManager @Inject constructor(
                 SearchMode.YOUTUBE -> newFilteredList.add(createYoutubeSearchOption(""))
             }
         }
+
+        synchronized(dataLock) {
+            if (searchCache.size > MAX_SEARCH_CACHE_SIZE) {
+                searchCache.clear()
+            }
+            searchCache[cacheKey] = ArrayList(newFilteredList)
+        }
         return newFilteredList
     }
 
@@ -337,6 +350,7 @@ class AppSearchManager @Inject constructor(
 
     companion object {
         private const val MAX_CACHE_SIZE = 100
+        private const val MAX_SEARCH_CACHE_SIZE = 50
     }
 
     private fun evaluateMathExpression(expression: String): String? {

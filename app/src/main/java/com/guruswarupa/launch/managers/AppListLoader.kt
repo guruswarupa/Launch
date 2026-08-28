@@ -60,6 +60,7 @@ class AppListLoader(
     private var lastWorkProfileEnabledState = false
     @Volatile
     private var lastWorkProfileRetryTime = 0L
+    private val loadGeneration = java.util.concurrent.atomic.AtomicLong(0)
     private val currentUserSerial by lazy {
         val userManager = activity.getSystemService(Context.USER_SERVICE) as UserManager
         userManager.getSerialNumberForUser(Process.myUserHandle()).toInt()
@@ -90,6 +91,10 @@ class AppListLoader(
         val isGridMode = viewPreference == Constants.Prefs.VIEW_PREFERENCE_GRID
 
         val currentTime = System.currentTimeMillis()
+        val myGeneration = loadGeneration.incrementAndGet()
+        val isCurrentGeneration = { myGeneration == loadGeneration.get() }
+
+        safeExecute loadTask@{
         if (forceRefresh) {
             cachedUnsortedList = null
             cacheManager?.clearCache()
@@ -118,7 +123,9 @@ class AppListLoader(
                         generalEmptyRetryCount = 0
                         val sorted = cachedFinalList
                         handler.post {
-                            onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
+                            if (isCurrentGeneration()) {
+                                onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
+                            }
                         }
 
                         safeExecute {
@@ -131,8 +138,7 @@ class AppListLoader(
                             }
                         }
 
-                        updateSearchVisibility()
-                        return
+                        return@loadTask
                     }
                 } catch (e: Exception) {
                     Log.w(TAG, "Error checking work profile app list availability", e)
@@ -157,7 +163,9 @@ class AppListLoader(
                     }
                     val sorted = cachedFinalList
                     handler.post {
-                        onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
+                        if (isCurrentGeneration()) {
+                            onAppListUpdated?.invoke(sorted, cachedAppsWithWebApps, false)
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -238,7 +246,9 @@ class AppListLoader(
                 if (fullList.isEmpty()) {
                     handler.post {
                         if (activity.isFinishing || activity.isDestroyed) return@post
-                        onAppListUpdated?.invoke(emptyList(), emptyList(), true)
+                        if (isCurrentGeneration()) {
+                            onAppListUpdated?.invoke(emptyList(), emptyList(), true)
+                        }
                         if (adapter == null) {
                             onAdapterNeedsUpdate?.invoke(isGridMode)
                         }
@@ -294,7 +304,9 @@ class AppListLoader(
                             val sortedApps = finalAppList
                             handler.post {
                                 if (activity.isFinishing || activity.isDestroyed) return@post
-                                onAppListUpdated?.invoke(sortedApps, fullList, true)
+                                if (isCurrentGeneration()) {
+                                    onAppListUpdated?.invoke(sortedApps, fullList, true)
+                                }
                                 if (adapter == null) {
                                     onAdapterNeedsUpdate?.invoke(isGridMode)
                                 } else if (recyclerView.adapter != adapter) {
@@ -358,6 +370,7 @@ class AppListLoader(
                     recyclerView.visibility = View.VISIBLE
                 }
             }
+        }
         }
         updateSearchVisibility()
     }

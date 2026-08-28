@@ -260,24 +260,9 @@ class IconLoader(
     }
 
     fun getCachedIcon(cacheKey: String): Drawable? {
-        // Check in-memory cache first
-        val memCached = iconCache[cacheKey]
-        if (memCached != null) {
-            return memCached
-        }
-
-        // Check disk cache if in-memory cache miss
-        if (cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
-            val version = cacheManager.getIconCacheKey(currentIconStyle, currentIconSize)
-            val diskCached = cacheManager.getCachedIcon(cacheKey, version)
-            if (diskCached != null) {
-                // Put into in-memory cache for faster access next time
-                iconCache.put(cacheKey, diskCached)
-                return diskCached
-            }
-        }
-
-        return null
+        // In-memory only: disk lookups are decoded off the UI thread in submitIconLoadTask
+        // to avoid blocking RecyclerView binds/scrolling on synchronous file I/O.
+        return iconCache[cacheKey]
     }
 
     fun getShapeAppearanceModel(): ShapeAppearanceModel {
@@ -384,25 +369,34 @@ class IconLoader(
         val priorityRunnable = PriorityRunnable(priority) {
             try {
                 if (iconCache[cacheKey] == null) {
-                    // Try to load from icon pack first
-                    var icon = loadIconFromPack(packageName, app.activityInfo.name)
-                    
-                    // Fallback to default icon if pack doesn't have it
-                    if (icon == null) {
-                        icon = app.loadIcon(activity.packageManager)
+                    // Check disk cache first (cheap decode) before regenerating from scratch
+                    var shapedIcon: Drawable? = null
+                    if (cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
+                        shapedIcon = cacheManager.getCachedIcon(cacheKey, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                     }
-                    
-                    if (app.preferredOrder != mainUserSerial) {
-                        val userHandle = userManager.getUserForSerialNumber(app.preferredOrder.toLong())
-                        if (userHandle != null) {
-                            icon = activity.packageManager.getUserBadgedIcon(icon, userHandle)
+
+                    if (shapedIcon == null) {
+                        // Try to load from icon pack first
+                        var icon = loadIconFromPack(packageName, app.activityInfo.name)
+
+                        // Fallback to default icon if pack doesn't have it
+                        if (icon == null) {
+                            icon = app.loadIcon(activity.packageManager)
                         }
+
+                        if (app.preferredOrder != mainUserSerial) {
+                            val userHandle = userManager.getUserForSerialNumber(app.preferredOrder.toLong())
+                            if (userHandle != null) {
+                                icon = activity.packageManager.getUserBadgedIcon(icon, userHandle)
+                            }
+                        }
+                        shapedIcon = shapeIconDrawable(icon)
+
+                        // Save to disk cache for persistence
+                        cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                     }
-                    val shapedIcon = shapeIconDrawable(icon)
+
                     iconCache.put(cacheKey, shapedIcon)
-                    
-                    // Save to disk cache for persistence
-                    cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                 }
 
                 val readyIcon = iconCache[cacheKey] ?: return@PriorityRunnable
