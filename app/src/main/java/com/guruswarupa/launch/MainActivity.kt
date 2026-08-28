@@ -631,7 +631,10 @@ class MainActivity : AppCompatActivity() {
         if (::screenPagerManager.isInitialized) {
             screenPagerManager.setOnPageChanged { page ->
                 viewModel.updateCurrentPage(page)
-                systemBarManager.updateSystemBars(page == ScreenPagerManager.Page.WALLPAPER)
+                val isFullyTransparentPage = page == ScreenPagerManager.Page.WALLPAPER ||
+                        page == ScreenPagerManager.Page.WIDGETS ||
+                        page == ScreenPagerManager.Page.RSS
+                systemBarManager.updateSystemBars(isFullyTransparentPage)
                 if (page == ScreenPagerManager.Page.WIDGETS) {
                     initializeDeferredWidgets()
                 }
@@ -639,7 +642,11 @@ class MainActivity : AppCompatActivity() {
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
                 initializeDeferredWidgets()
             }
-            systemBarManager.updateSystemBars(screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WALLPAPER)
+            val currentPage = screenPagerManager.getCurrentPage()
+            val isCurrentFullyTransparent = currentPage == ScreenPagerManager.Page.WALLPAPER ||
+                    currentPage == ScreenPagerManager.Page.WIDGETS ||
+                    currentPage == ScreenPagerManager.Page.RSS
+            systemBarManager.updateSystemBars(isCurrentFullyTransparent)
         }
     }
 

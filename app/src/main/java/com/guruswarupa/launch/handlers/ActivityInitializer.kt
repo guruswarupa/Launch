@@ -108,6 +108,7 @@ class ActivityInitializer(
             drawerLayout = activity.findViewById(R.id.drawer_layout)
             backgroundTranslucencyOverlay = activity.findViewById(R.id.background_translucency_overlay)
             widgetsDrawerTranslucencyOverlay = activity.findViewById(R.id.widgets_drawer_translucency_overlay)
+            wallpaperDrawerTranslucencyOverlay = activity.findViewById(R.id.wallpaper_drawer_translucency_overlay)
 
             setupSearchBox(searchBox)
             setupLayoutManager(recyclerView)
@@ -488,29 +489,20 @@ class ActivityInitializer(
                 params.width = targetWidth
                 it.layoutParams = params
 
-                val header = activity.findViewById<LinearLayout>(R.id.rss_header)
-                val swipeRefresh = activity.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.rss_swipe_refresh)
-                if (header != null && swipeRefresh != null) {
-                    val headerParams = header.layoutParams as FrameLayout.LayoutParams
-                    val initialHeaderTopMargin = (header.getTag(R.id.rss_header) as? Int) ?: headerParams.topMargin.also {
-                        header.setTag(R.id.rss_header, it)
-                    }
-                    val initialSwipeTopPadding = (swipeRefresh.getTag(R.id.rss_swipe_refresh) as? Int) ?: swipeRefresh.paddingTop.also {
-                        swipeRefresh.setTag(R.id.rss_swipe_refresh, it)
+                val appBar = activity.findViewById<View>(R.id.rss_app_bar)
+                if (appBar != null) {
+                    val initialAppBarTopPadding = (appBar.getTag(R.id.rss_app_bar) as? Int) ?: appBar.paddingTop.also {
+                        appBar.setTag(R.id.rss_app_bar, it)
                     }
 
                     ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                         val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
-                        val updatedHeaderParams = header.layoutParams as FrameLayout.LayoutParams
-                        updatedHeaderParams.topMargin = initialHeaderTopMargin + topInset
-                        header.layoutParams = updatedHeaderParams
-
-                        swipeRefresh.setPadding(
-                            swipeRefresh.paddingLeft,
-                            initialSwipeTopPadding + topInset,
-                            swipeRefresh.paddingRight,
-                            swipeRefresh.paddingBottom
+                        appBar.setPadding(
+                            appBar.paddingLeft,
+                            initialAppBarTopPadding + topInset,
+                            appBar.paddingRight,
+                            appBar.paddingBottom
                         )
                         insets
                     }
@@ -525,29 +517,20 @@ class ActivityInitializer(
                 params.width = targetWidth
                 it.layoutParams = params
 
-                val header = activity.findViewById<LinearLayout>(R.id.widget_settings_header)
-                val drawerScroll = activity.findViewById<androidx.core.widget.NestedScrollView>(R.id.widgets_drawer_scroll)
-                if (header != null && drawerScroll != null) {
-                    val headerParams = header.layoutParams as FrameLayout.LayoutParams
-                    val initialHeaderTopMargin = (header.getTag(R.id.widget_settings_header) as? Int) ?: headerParams.topMargin.also {
-                        header.setTag(R.id.widget_settings_header, it)
-                    }
-                    val initialScrollTopPadding = (drawerScroll.getTag(R.id.widgets_drawer_scroll) as? Int) ?: drawerScroll.paddingTop.also {
-                        drawerScroll.setTag(R.id.widgets_drawer_scroll, it)
+                val appBar = activity.findViewById<View>(R.id.widgets_app_bar)
+                if (appBar != null) {
+                    val initialAppBarTopPadding = (appBar.getTag(R.id.widgets_app_bar) as? Int) ?: appBar.paddingTop.also {
+                        appBar.setTag(R.id.widgets_app_bar, it)
                     }
 
                     ViewCompat.setOnApplyWindowInsetsListener(it) { _, insets ->
                         val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
-                        val updatedHeaderParams = header.layoutParams as FrameLayout.LayoutParams
-                        updatedHeaderParams.topMargin = initialHeaderTopMargin + topInset
-                        header.layoutParams = updatedHeaderParams
-
-                        drawerScroll.setPadding(
-                            drawerScroll.paddingLeft,
-                            initialScrollTopPadding + topInset,
-                            drawerScroll.paddingRight,
-                            drawerScroll.paddingBottom
+                        appBar.setPadding(
+                            appBar.paddingLeft,
+                            initialAppBarTopPadding + topInset,
+                            appBar.paddingRight,
+                            appBar.paddingBottom
                         )
                         insets
                     }

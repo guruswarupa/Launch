@@ -38,6 +38,7 @@ class MainActivityViews {
     lateinit var drawerLayout: DrawerLayout
     lateinit var backgroundTranslucencyOverlay: View
     lateinit var widgetsDrawerTranslucencyOverlay: View
+    lateinit var wallpaperDrawerTranslucencyOverlay: View
 
     fun isSearchBoxInitialized() = ::searchBox.isInitialized
     fun isSearchContainerInitialized() = ::searchContainer.isInitialized
@@ -46,5 +47,5 @@ class MainActivityViews {
     fun isRightDrawerWallpaperInitialized() = ::rightDrawerWallpaper.isInitialized
     fun isRecyclerViewInitialized() = ::recyclerView.isInitialized
     fun isFastScrollerInitialized() = ::fastScroller.isInitialized
-    fun areTranslucencyOverlaysInitialized() = ::backgroundTranslucencyOverlay.isInitialized && ::widgetsDrawerTranslucencyOverlay.isInitialized
+    fun areTranslucencyOverlaysInitialized() = ::backgroundTranslucencyOverlay.isInitialized && ::widgetsDrawerTranslucencyOverlay.isInitialized && ::wallpaperDrawerTranslucencyOverlay.isInitialized
 }

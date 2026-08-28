@@ -64,7 +64,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val systemBarManager = SystemBarManager(this)
+        val systemBarManager = SystemBarManager(this, prefs)
         window.decorView.post {
             systemBarManager.makeSystemBarsTransparent()
 

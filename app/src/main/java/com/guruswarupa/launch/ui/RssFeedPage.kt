@@ -62,10 +62,6 @@ class RssFeedPage(
         swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
             recyclerView.canScrollVertically(-1)
         }
-        updateContentTopPadding()
-        topicChips.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updateContentTopPadding()
-        }
 
         refreshButton.setOnClickListener {
             refresh()
@@ -99,25 +95,6 @@ class RssFeedPage(
         
         TypographyManager.applyToViewTree(rootView.findViewById(R.id.rss_header), scale, style, intensity, color)
         TypographyManager.applyToViewTree(emptyState, scale, style, intensity, color)
-    }
-
-    private fun updateContentTopPadding() {
-        rootView.post {
-            val extraSpacing = (8 * activity.resources.displayMetrics.density).toInt()
-            val topPadding = if (topicChips.isVisible && topicChips.height > 0) {
-                topicChips.bottom + extraSpacing
-            } else {
-                headerButton.bottom + extraSpacing
-            }
-            if (swipeRefreshLayout.paddingTop != topPadding) {
-                swipeRefreshLayout.setPadding(
-                    swipeRefreshLayout.paddingLeft,
-                    topPadding,
-                    swipeRefreshLayout.paddingRight,
-                    swipeRefreshLayout.paddingBottom
-                )
-            }
-        }
     }
 
     fun refresh() {
@@ -200,7 +177,6 @@ class RssFeedPage(
         if (categories.isEmpty()) {
             selectedCategory = null
             topicChips.removeAllViews()
-            updateContentTopPadding()
             return
         }
         if (selectedCategory !in categories) {
@@ -242,7 +218,6 @@ class RssFeedPage(
             val chip = group.findViewById<Chip>(checkedId) ?: return@setOnCheckedStateChangeListener
             applySelectedCategory(chip.text.toString())
         }
-        updateContentTopPadding()
     }
 
     private fun filterArticles(): List<RssArticle> {

@@ -34,7 +34,10 @@ object ActivityManagersModule {
 
     @Provides
     @ActivityScoped
-    fun provideSystemBarManager(activity: FragmentActivity): SystemBarManager = SystemBarManager(activity)
+    fun provideSystemBarManager(
+        activity: FragmentActivity,
+        sharedPreferences: SharedPreferences
+    ): SystemBarManager = SystemBarManager(activity, sharedPreferences)
 
     @Provides
     @ActivityScoped
