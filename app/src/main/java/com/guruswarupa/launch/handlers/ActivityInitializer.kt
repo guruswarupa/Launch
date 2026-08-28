@@ -74,12 +74,8 @@ class ActivityInitializer(
             fastScroller.setRecyclerView(recyclerView)
 
             val mainContentStack = activity.findViewById<LinearLayout>(R.id.main_content_stack)
-            ViewCompat.setOnApplyWindowInsetsListener(mainContentStack) { v, insets ->
-                val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-                v.setPadding(v.paddingLeft, statusBarHeight, v.paddingRight, v.paddingBottom)
-                insets
-            }
-            ViewCompat.requestApplyInsets(mainContentStack)
+            val mainContentStackTopPadding = activity.resources.getDimensionPixelSize(R.dimen.main_content_stack_top_padding)
+            mainContentStack.setPadding(mainContentStack.paddingLeft, mainContentStackTopPadding, mainContentStack.paddingRight, mainContentStack.paddingBottom)
 
             recyclerView.setHasFixedSize(true)
             applyFastScrollerLayout()
