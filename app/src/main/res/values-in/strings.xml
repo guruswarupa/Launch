@@ -22,7 +22,6 @@
     <string name="web_app_search_title">Hasil Pencarian</string>
     <string name="web_app_search_empty">Tidak ada hasil ditemukan</string>
     <string name="web_app_search_hint">Cari situs web di Google…</string>
-    <string name="web_app_fetching_title">Mengambil judul halaman…</string>
     <string name="add_button">Tambah</string>
     <string name="save_button">Simpan</string>
     <string name="delete_button">Hapus</string>
@@ -33,7 +32,6 @@
     <string name="add_to_favorites_plain">Tambah ke favorit</string>
     <string name="unhide_app_plain">Tampilkan aplikasi</string>
     <string name="hide_app_plain">Sembunyikan aplikasi</string>
-    <string name="grid_columns_title">Aplikasi per baris</string>
     <string name="apps_per_row_format">%1$d aplikasi per baris</string>
     <string name="search_text"> Cari…</string>
     
@@ -71,7 +69,6 @@
     <string name="google_maps_not_installed">Google Maps tidak terinstal.</string>
     <string name="youtube_not_installed_opening_browser">Aplikasi YouTube tidak terinstal. Membuka di browser.</string>
     <string name="cannot_launch_app">Tidak dapat meluncurkan aplikasi</string>
-    <string name="cannot_open_vault">Tidak dapat membuka brankas: aplikasi tidak ditemukan</string>
     <string name="hidden_apps_feature_not_available">Fitur aplikasi tersembunyi tidak tersedia</string>
     
     
@@ -79,26 +76,18 @@
     <string name="search_mode_apps">Aplikasi</string>
     <string name="search_mode_contacts">Kontak</string>
     <string name="search_mode_files">File</string>
-    <string name="search_mode_maps">Peta</string>
-    <string name="search_mode_web">Web</string>
-    <string name="search_mode_playstore">Play Store</string>
-    <string name="search_mode_youtube">YouTube</string>
     <string name="removed_from_favorites">%1$s dihapus dari favorit</string>
     <string name="added_to_favorites">%1$s ditambahkan ke favorit</string>
     <string name="application_restored">Aplikasi dipulihkan</string>
     <string name="unable_to_open_app">Tidak dapat membuka aplikasi</string>
     <string name="unhid_app">%1$s ditampilkan</string>
     <string name="hid_app">%1$s disembunyikan</string>
-    <string name="call_contact_title">Telepon %1$s?</string>
-    <string name="call_contact_message">Telepon: %1$s\nApakah Anda ingin melanjutkan?</string>
     <string name="call_button">Telepon</string>
     <string name="cancel_button">Batal</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="sms">SMS</string>
 
     
-    <string name="set_pin">Atur PIN</string>
-    <string name="change_pin">Ubah PIN</string>
     <string name="set_access_pin">Atur PIN Akses</string>
     <string name="change_access_pin">Ubah PIN Akses</string>
     <string name="app_lock_hint_enter_pin_range">Masukkan PIN 4-6 digit</string>
@@ -174,13 +163,10 @@
     <string name="cpu_temp_format">%1$.1f°C</string>
 
     
-    <string name="screen_time_format">Waktu layar: %1$s</string>
     <string name="widget_section_enabled">Widget Diaktifkan</string>
     <string name="widget_section_custom_disabled">Widget Tersedia</string>
-    <string name="widget_section_system_disabled">Widget Sistem (Dinonaktifkan)</string>
 
     
-    <string name="no_hidden_apps">Tidak ada aplikasi tersembunyi. Tahan aplikasi di daftar untuk menyembunyikannya.</string>
 
     
     <string name="mbps_format">%1$.1f Mbps</string>
@@ -200,24 +186,12 @@
     <string name="noise_button_enable">Aktifkan</string>
 
     <string name="create_workspace">Buat Ruang Kerja</string>
-    <string name="update_workspace">Perbarui Ruang Kerja</string>
-    <string name="workspace_edit_description">Edit ruang kerja</string>
-    <string name="workspace_delete_description">Hapus ruang kerja</string>
     <string name="font_download">Unduh</string>
-    <string name="font_downloading">Mengunduh…</string>
-    <string name="font_installed">Terinstal</string>
-    <string name="font_downloaded_message">%1$s diunduh</string>
     <string name="font_remove">Hapus</string>
-    <string name="font_removed_message">%1$s dihapus</string>
-    <string name="font_removing">Menghapus…</string>
-    <string name="font_download_failed">Gagal mengunduh %1$s</string>
     <string name="font_download_failed_with_name">Gagal mengunduh font: %1$s</string>
-    <string name="font_install">Instal</string>
-    <string name="font_uninstall">Copot pemasangan</string>
 
     
     <string name="distance_km_format">%1$s km</string>
-    <string name="steps_distance_format">%1$d langkah • %2$s km</string>
     <string name="steps_distance_time_format">%1$d langkah • %2$s km • %3$s</string>
     <string name="stats">Statistik</string>
     <string name="calendar">Kalender</string>
@@ -384,22 +358,16 @@
     <string name="workout_recorded_format">Tercatat: %1$s</string>
     <string name="workout_total_format">Total: %1$s</string>
     <string name="workout_best_format">Terbaik: %1$s</string>
-    <string name="workout_type_reps">REPETISI</string>
     <string name="workout_type_time">WAKTU</string>
 
     
-    <string name="workspace_app_count_format">%1$d aplikasi</string>
 
     
-    <string name="accessibility_shortcut">Pintasan Aksesibilitas</string>
-    <string name="accessibility_shortcut_description">Tampilkan tombol mengambang untuk akses cepat ke kontrol sistem</string>
     <string name="edge_panel_permission_usage_title">Akses Penggunaan Diperlukan</string>
     <string name="edge_panel_permission_usage_message">Izinkan Launch membaca akses penggunaan sehingga panel tepi dapat menampilkan aplikasi terbaru Anda.</string>
     <string name="edge_panel_config_title">Panel Tepi</string>
     <string name="edge_panel_config_subtitle">Pilih aplikasi yang disematkan yang tetap ada di panel samping Anda. Aplikasi terbaru muncul secara otomatis di atasnya.</string>
     <string name="edge_panel_config_saved">Aplikasi panel tepi diperbarui</string>
-    <string name="edge_panel_no_recent_apps">Gunakan beberapa aplikasi terlebih dahulu, lalu aplikasi terbaru Anda akan muncul di sini.</string>
-    <string name="edge_panel_grant_usage_access">Berikan akses penggunaan untuk menampilkan aplikasi terbaru</string>
     <string name="edge_panel_handle_section_title">Pegangan</string>
     <string name="edge_panel_handle_position">Posisi</string>
     <string name="edge_panel_handle_lock">Kunci posisi panel</string>
@@ -411,7 +379,6 @@
     <string name="edge_panel_position_right">Kanan</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">Garis Pemicu</string>
     <string name="control_center_trigger_position">Posisi</string>
     <string name="control_center_trigger_lock">Kunci posisi pemicu</string>
     <string name="control_center_trigger_transparency">Transparansi</string>
@@ -426,23 +393,17 @@
     <string name="control_center_config_saved">Tata letak pusat kontrol diperbarui</string>
     
     
-    <string name="year_progress_enable">Aktifkan</string>
-    <string name="year_progress_disable">Nonaktifkan</string>
     <string name="year_progress_stats_format">%1$d dari %2$d hari selesai (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">%1$d hari tersisa</string>
 
     
-    <string name="support_project_title">Dukung Proyek</string>
     <string name="support_project_intro">Dukungan Anda membantu menjaga Launch tetap bebas iklan, sumber terbuka, dan aktif dipelihara dalam jangka panjang.</string>
     <string name="support_project_commitment">Saya berkomitmen untuk menjaga setiap fitur tetap gratis, menghindari langganan, dan menggunakan dukungan untuk meningkatkan stabilitas, merilis pembaruan yang bijaksana, dan memelihara aplikasi selama bertahun-tahun.</string>
     <string name="support_project_prompt">Dukung Proyek</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;Sponsori di GitHub&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;Belikan Saya Kopi&lt;/a&gt;</string>
     <string name="support_button_loading">Memuat...</string>
     <string name="support_button_buy">Dukung %1$s</string>
     <string name="support_button_unavailable">Tidak tersedia</string>
     <string name="support_button_pending">Tertunda</string>
-    <string name="support_thank_you">Terima kasih atas dukungan Anda ❤️</string>
     <string name="support_thank_you_title">Terima Kasih Banyak</string>
     <string name="support_thank_you_message">Terima kasih telah mendukung Launch. Kontribusi Anda membantu menjaga aplikasi tetap bebas iklan, sumber terbuka, dan tanpa model langganan, sambil saya terus memeliharanya dalam jangka panjang.</string>
     <string name="support_thank_you_chip_adfree">Bebas Iklan Selamanya</string>
@@ -462,22 +423,16 @@
     <string name="donation_prompt_not_now">Tidak Sekarang</string>
     
     
-    <string name="category_appearance">TAMPILAN</string>
-    <string name="category_features">FITUR</string>
     <string name="category_security_privacy">Keamanan &amp; Privasi</string>
-    <string name="category_system">Sistem</string>
-    <string name="category_about">Tentang</string>
     
     
     <string name="pomodoro_work">Kerja</string>
     <string name="pomodoro_break">Istirahat</string>
     <string name="pomodoro_long_break">Istirahat Panjang</string>
-    <string name="pomodoro_mode">Pomodoro</string>
     <string name="pomodoro_stop_title">Hentikan Pomodoro?</string>
     <string name="pomodoro_stop_message">Sesi Pomodoro sedang aktif. Apakah Anda ingin menghentikannya?</string>
 
     
-    <string name="note_icon_description">Ikon catatan</string>
     <string name="notes_title">Catatan</string>
     <string name="meeting_notes_title">Catatan Rapat</string>
     <string name="meeting_notes_desc">Diskusikan peta jalan proyek dan…</string>
@@ -493,7 +448,6 @@
 
     <string name="system_monitor_title">Monitor Sistem</string>
     <string name="view_system_diagnostics">Lihat Diagnostik Sistem</string>
-    <string name="performance_category">PERFORMA</string>
     <string name="hardware_category">INFO PERANGKAT KERAS</string>
     <string name="battery_category">BATERAI &amp; DAYA</string>
     <string name="network_category">JARINGAN &amp; KONEKTIVITAS</string>
@@ -752,21 +706,7 @@
     <string name="add">+ Tambah</string>
     <string name="no_countdowns_yet">Belum ada hitung mundur</string>
     <string name="tap_add_to_create_a_countdown">Ketuk + Tambah untuk membuat hitung mundur</string>
-    <string name="habit_name">Nama Kebiasaan</string>
-    <string name="e_g_exercise_read_meditate">mis., olahraga, membaca, meditasi</string>
-    <string name="description_optional_2">Deskripsi (opsional)</string>
-    <string name="brief_description_of_your_habit">Deskripsi singkat kebiasaan Anda</string>
-    <string name="frequency">Frekuensi</string>
     <string name="select_days">Pilih hari:</string>
-    <string name="sunday">Minggu</string>
-    <string name="monday">Senin</string>
-    <string name="tuesday">Selasa</string>
-    <string name="wednesday">Rabu</string>
-    <string name="thursday">Kamis</string>
-    <string name="friday">Jumat</string>
-    <string name="saturday">Sabtu</string>
-    <string name="enable_reminder">Aktifkan Pengingat</string>
-    <string name="set_reminder_time">Atur Waktu Pengingat</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">Tempel URL feed RSS atau Atom yang valid.</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">Contoh: BBC, Reuters, Hacker News, blog, podcast, dan buletin dengan URL feed.</string>
     <string name="enter_todo_item">Masukkan Tugas</string>
@@ -794,13 +734,6 @@
     <string name="hourly_breakdown">Rincian Per Jam</string>
     <string name="note_title_optional">Judul Catatan (opsional)</string>
     <string name="note_content_optional">Konten Catatan (opsional)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">Kalibrasi panjang langkah Anda untuk pengukuran jarak yang lebih akurat.</string>
-    <string name="height_cm">Tinggi (cm)</string>
-    <string name="height_input">mis., 175</string>
-    <string name="stride_length_meters">Panjang Langkah (meter)</string>
-    <string name="stride_length_input">mis., 0,75</string>
-    <string name="current_stride_length_0_75_m">Panjang langkah saat ini: 0,75 m</string>
-    <string name="reset_to_default">Setel Ulang ke Default</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">Percayai domain ini untuk sisa sesi ini</string>
     <string name="transaction_history">Riwayat Transaksi</string>
     <string name="clear_all_transactions">Hapus Semua Transaksi</string>
@@ -819,8 +752,6 @@
     <string name="app_icon">Ikon Aplikasi</string>
     <string name="limit_1h_30m">Batas: 1j 30mnt</string>
     <string name="used_45m">Digunakan: 45mnt</string>
-    <string name="no_downloadable_fonts_available">Tidak ada font yang dapat diunduh tersedia</string>
-    <string name="daily">Harian</string>
     <string name="pdf_page">Halaman PDF</string>
     <string name="permission_name">Nama Izin</string>
     <string name="permission_description">Deskripsi Izin</string>
@@ -831,7 +762,6 @@
     <string name="description">Deskripsi</string>
     <string name="jan_1_2024">1 Jan 2024</string>
     <string name="delete_transaction">Hapus Transaksi</string>
-    <string name="file_icon">Ikon File</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">Pintasan Launch</string>
     <string name="recent">Terbaru</string>
@@ -842,13 +772,6 @@
     <string name="play_pause">Putar/Jeda</string>
     <string name="next">Berikutnya</string>
     <string name="grant_notification_access">Berikan Akses Notifikasi</string>
-    <string name="notification_title">Judul Notifikasi</string>
-    <string name="notification_text_content">Konten Teks Notifikasi</string>
-    <string name="s_2m_ago">2 mnt yang lalu</string>
-    <string name="type_a_reply">Ketik balasan...</string>
-    <string name="media_title">Judul Media</string>
-    <string name="artist_name">Nama Artis</string>
-    <string name="send">Kirim</string>
     <string name="no_news_sources_enabled">Tidak ada sumber berita yang diaktifkan</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">Buka pengaturan feed dan aktifkan sumber yang ingin Anda baca di sini.</string>
     <string name="your_headlines_in_one_place">Berita utama Anda di satu tempat</string>
@@ -876,7 +799,6 @@
     <string name="predicted">*Prediksi</string>
     <string name="health_status">Status Kesehatan</string>
     <string name="good">Baik</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">Baterai</string>
     <string name="time_left">Waktu Tersisa</string>
     <string name="charging">Mengisi Daya</string>
@@ -895,7 +817,6 @@
     <string name="direction_text">U</string>
     <string name="compass_sensors_not_available">Sensor kompas tidak tersedia</string>
     <string name="widget_compass_preview_label_1">U</string>
-    <string name="drag_to_reorder">Seret untuk mengatur ulang</string>
     <string name="new_year_2024">Tahun Baru 2024</string>
     <string name="widget">Widget</string>
     <string name="preview">Pratinjau</string>
@@ -927,9 +848,6 @@
     <string name="longest_streak">Rentetan Terpanjang</string>
     <string name="contribution_activity">Aktivitas Kontribusi</string>
     <string name="tap_to_configure_github_token">Ketuk untuk mengonfigurasi token GitHub</string>
-    <string name="habit_tracker">Pelacak Kebiasaan</string>
-    <string name="add_habit">Tambah Kebiasaan</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">Belum ada kebiasaan. Ketuk + untuk menambahkan kebiasaan pertama Anda!</string>
     <string name="summer_vibes">Suasana Musim Panas</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">Statistik Jaringan</string>

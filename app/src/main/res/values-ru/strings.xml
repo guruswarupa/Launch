@@ -22,7 +22,6 @@
     <string name="web_app_search_title">Результаты поиска</string>
     <string name="web_app_search_empty">Результаты не найдены</string>
     <string name="web_app_search_hint">Поиск сайта в Google…</string>
-    <string name="web_app_fetching_title">Получение заголовка страницы…</string>
     <string name="add_button">Добавить</string>
     <string name="save_button">Сохранить</string>
     <string name="delete_button">Удалить</string>
@@ -33,7 +32,6 @@
     <string name="add_to_favorites_plain">Добавить в избранное</string>
     <string name="unhide_app_plain">Показать приложение</string>
     <string name="hide_app_plain">Скрыть приложение</string>
-    <string name="grid_columns_title">Приложений в ряду</string>
     <string name="apps_per_row_format">%1$d приложений в ряду</string>
     <string name="search_text"> Поиск…</string>
     
@@ -71,7 +69,6 @@
     <string name="google_maps_not_installed">Google Карты не установлены.</string>
     <string name="youtube_not_installed_opening_browser">Приложение YouTube не установлено. Открывается в браузере.</string>
     <string name="cannot_launch_app">Не удалось запустить приложение</string>
-    <string name="cannot_open_vault">Не удалось открыть хранилище: приложение не найдено</string>
     <string name="hidden_apps_feature_not_available">Функция скрытых приложений недоступна</string>
     
     
@@ -79,26 +76,18 @@
     <string name="search_mode_apps">Приложения</string>
     <string name="search_mode_contacts">Контакты</string>
     <string name="search_mode_files">Файлы</string>
-    <string name="search_mode_maps">Карты</string>
-    <string name="search_mode_web">Веб</string>
-    <string name="search_mode_playstore">Play Store</string>
-    <string name="search_mode_youtube">YouTube</string>
     <string name="removed_from_favorites">%1$s удалено из избранного</string>
     <string name="added_to_favorites">%1$s добавлено в избранное</string>
     <string name="application_restored">Приложение восстановлено</string>
     <string name="unable_to_open_app">Не удалось открыть приложение</string>
     <string name="unhid_app">%1$s показано</string>
     <string name="hid_app">%1$s скрыто</string>
-    <string name="call_contact_title">Позвонить %1$s?</string>
-    <string name="call_contact_message">Телефон: %1$s\nПродолжить?</string>
     <string name="call_button">Позвонить</string>
     <string name="cancel_button">Отмена</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="sms">SMS</string>
 
     
-    <string name="set_pin">Установить PIN-код</string>
-    <string name="change_pin">Изменить PIN-код</string>
     <string name="set_access_pin">Установить PIN-код доступа</string>
     <string name="change_access_pin">Изменить PIN-код доступа</string>
     <string name="app_lock_hint_enter_pin_range">Введите PIN-код из 4-6 цифр</string>
@@ -174,13 +163,10 @@
     <string name="cpu_temp_format">%1$.1f°C</string>
 
     
-    <string name="screen_time_format">Экранное время: %1$s</string>
     <string name="widget_section_enabled">Включённые виджеты</string>
     <string name="widget_section_custom_disabled">Доступные виджеты</string>
-    <string name="widget_section_system_disabled">Системные виджеты (отключены)</string>
 
     
-    <string name="no_hidden_apps">Нет скрытых приложений. Удерживайте приложение в списке, чтобы скрыть его.</string>
 
     
     <string name="mbps_format">%1$.1f Мбит/с</string>
@@ -200,24 +186,12 @@
     <string name="noise_button_enable">Включить</string>
 
     <string name="create_workspace">Создать рабочее пространство</string>
-    <string name="update_workspace">Обновить рабочее пространство</string>
-    <string name="workspace_edit_description">Изменить рабочее пространство</string>
-    <string name="workspace_delete_description">Удалить рабочее пространство</string>
     <string name="font_download">Скачать</string>
-    <string name="font_downloading">Скачивание…</string>
-    <string name="font_installed">Установлен</string>
-    <string name="font_downloaded_message">%1$s скачан</string>
     <string name="font_remove">Удалить</string>
-    <string name="font_removed_message">%1$s удалён</string>
-    <string name="font_removing">Удаление…</string>
-    <string name="font_download_failed">Не удалось скачать %1$s</string>
     <string name="font_download_failed_with_name">Не удалось скачать шрифт: %1$s</string>
-    <string name="font_install">Установить</string>
-    <string name="font_uninstall">Удалить</string>
 
     
     <string name="distance_km_format">%1$s км</string>
-    <string name="steps_distance_format">%1$d шагов • %2$s км</string>
     <string name="steps_distance_time_format">%1$d шагов • %2$s км • %3$s</string>
     <string name="stats">Статистика</string>
     <string name="calendar">Календарь</string>
@@ -384,22 +358,16 @@
     <string name="workout_recorded_format">Записано: %1$s</string>
     <string name="workout_total_format">Всего: %1$s</string>
     <string name="workout_best_format">Лучший: %1$s</string>
-    <string name="workout_type_reps">ПОВТОРЕНИЯ</string>
     <string name="workout_type_time">ВРЕМЯ</string>
 
     
-    <string name="workspace_app_count_format">%1$d приложений</string>
 
     
-    <string name="accessibility_shortcut">Ярлык специальных возможностей</string>
-    <string name="accessibility_shortcut_description">Показать плавающую кнопку для быстрого доступа к системным элементам управления</string>
     <string name="edge_panel_permission_usage_title">Требуется доступ к использованию</string>
     <string name="edge_panel_permission_usage_message">Разрешите Launch читать доступ к использованию, чтобы боковая панель могла показывать недавние приложения.</string>
     <string name="edge_panel_config_title">Боковая панель</string>
     <string name="edge_panel_config_subtitle">Выберите закреплённые приложения, которые останутся на боковой панели. Недавние приложения появляются автоматически над ними.</string>
     <string name="edge_panel_config_saved">Приложения боковой панели обновлены</string>
-    <string name="edge_panel_no_recent_apps">Сначала используйте несколько приложений, затем здесь появятся недавние приложения.</string>
-    <string name="edge_panel_grant_usage_access">Предоставить доступ к использованию для показа недавних приложений</string>
     <string name="edge_panel_handle_section_title">Ручка</string>
     <string name="edge_panel_handle_position">Позиция</string>
     <string name="edge_panel_handle_lock">Заблокировать позицию панели</string>
@@ -411,7 +379,6 @@
     <string name="edge_panel_position_right">Справа</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">Линия активации</string>
     <string name="control_center_trigger_position">Позиция</string>
     <string name="control_center_trigger_lock">Заблокировать позицию активации</string>
     <string name="control_center_trigger_transparency">Прозрачность</string>
@@ -426,23 +393,17 @@
     <string name="control_center_config_saved">Макет центра управления обновлён</string>
     
     
-    <string name="year_progress_enable">Включить</string>
-    <string name="year_progress_disable">Выключить</string>
     <string name="year_progress_stats_format">Завершено %1$d из %2$d дней (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">Осталось %1$d дней</string>
 
     
-    <string name="support_project_title">Поддержать проект</string>
     <string name="support_project_intro">Ваша поддержка помогает поддерживать Launch без рекламы, с открытым исходным кодом и активной поддержкой в долгосрочной перспективе.</string>
     <string name="support_project_commitment">Я обязуюсь сохранять все функции бесплатными, избегать подписок и использовать поддержку для повышения стабильности, выпуска продуманных обновлений и поддержки приложения долгие годы.</string>
     <string name="support_project_prompt">Поддержать проект</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;Спонсировать на GitHub&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;Угостить кофе&lt;/a&gt;</string>
     <string name="support_button_loading">Загрузка...</string>
     <string name="support_button_buy">Поддержать %1$s</string>
     <string name="support_button_unavailable">Недоступно</string>
     <string name="support_button_pending">В обработке</string>
-    <string name="support_thank_you">Спасибо за вашу поддержку ❤️</string>
     <string name="support_thank_you_title">Большое спасибо</string>
     <string name="support_thank_you_message">Спасибо за поддержку Launch. Ваш вклад помогает поддерживать приложение без рекламы, с открытым исходным кодом и без модели подписки, пока я продолжаю поддерживать его в долгосрочной перспективе.</string>
     <string name="support_thank_you_chip_adfree">Навсегда без рекламы</string>
@@ -462,22 +423,16 @@
     <string name="donation_prompt_not_now">Не сейчас</string>
     
     
-    <string name="category_appearance">Внешний вид</string>
-    <string name="category_features">Функции</string>
     <string name="category_security_privacy">Безопасность и конфиденциальность</string>
-    <string name="category_system">Система</string>
-    <string name="category_about">О приложении</string>
     
     
     <string name="pomodoro_work">Работа</string>
     <string name="pomodoro_break">Перерыв</string>
     <string name="pomodoro_long_break">Длинный перерыв</string>
-    <string name="pomodoro_mode">Помодоро</string>
     <string name="pomodoro_stop_title">Остановить Помодоро?</string>
     <string name="pomodoro_stop_message">Сейчас активна сессия Помодоро. Остановить её?</string>
 
     
-    <string name="note_icon_description">Значок заметки</string>
     <string name="notes_title">Заметки</string>
     <string name="meeting_notes_title">Заметки о встрече</string>
     <string name="meeting_notes_desc">Обсудить дорожную карту проекта и…</string>
@@ -493,7 +448,6 @@
 
     <string name="system_monitor_title">Монитор системы</string>
     <string name="view_system_diagnostics">Просмотр диагностики системы</string>
-    <string name="performance_category">ПРОИЗВОДИТЕЛЬНОСТЬ</string>
     <string name="hardware_category">ИНФОРМАЦИЯ ОБ ОБОРУДОВАНИИ</string>
     <string name="battery_category">БАТАРЕЯ И ПИТАНИЕ</string>
     <string name="network_category">СЕТЬ И ПОДКЛЮЧЕНИЕ</string>
@@ -752,21 +706,7 @@
     <string name="add">+ Добавить</string>
     <string name="no_countdowns_yet">Пока нет обратных отсчётов</string>
     <string name="tap_add_to_create_a_countdown">Нажмите «+ Добавить», чтобы создать обратный отсчёт</string>
-    <string name="habit_name">Название привычки</string>
-    <string name="e_g_exercise_read_meditate">напр., упражнения, чтение, медитация</string>
-    <string name="description_optional_2">Описание (необязательно)</string>
-    <string name="brief_description_of_your_habit">Краткое описание вашей привычки</string>
-    <string name="frequency">Частота</string>
     <string name="select_days">Выберите дни:</string>
-    <string name="sunday">Воскресенье</string>
-    <string name="monday">Понедельник</string>
-    <string name="tuesday">Вторник</string>
-    <string name="wednesday">Среда</string>
-    <string name="thursday">Четверг</string>
-    <string name="friday">Пятница</string>
-    <string name="saturday">Суббота</string>
-    <string name="enable_reminder">Включить напоминание</string>
-    <string name="set_reminder_time">Установить время напоминания</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">Вставьте корректный URL RSS- или Atom-ленты.</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">Примеры: BBC, Reuters, Hacker News, блоги, подкасты и рассылки с URL-адресами лент.</string>
     <string name="enter_todo_item">Введите задачу</string>
@@ -794,13 +734,6 @@
     <string name="hourly_breakdown">Почасовая разбивка</string>
     <string name="note_title_optional">Заголовок заметки (необязательно)</string>
     <string name="note_content_optional">Содержимое заметки (необязательно)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">Откалибруйте длину шага для более точных измерений расстояния.</string>
-    <string name="height_cm">Рост (см)</string>
-    <string name="height_input">напр., 175</string>
-    <string name="stride_length_meters">Длина шага (метры)</string>
-    <string name="stride_length_input">напр., 0,75</string>
-    <string name="current_stride_length_0_75_m">Текущая длина шага: 0,75 м</string>
-    <string name="reset_to_default">Сбросить до стандартных</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">Доверять этому домену до конца сессии</string>
     <string name="transaction_history">История транзакций</string>
     <string name="clear_all_transactions">Очистить все транзакции</string>
@@ -819,8 +752,6 @@
     <string name="app_icon">Значок приложения</string>
     <string name="limit_1h_30m">Лимит: 1ч 30мин</string>
     <string name="used_45m">Использовано: 45мин</string>
-    <string name="no_downloadable_fonts_available">Нет доступных шрифтов для скачивания</string>
-    <string name="daily">Ежедневно</string>
     <string name="pdf_page">Страница PDF</string>
     <string name="permission_name">Название разрешения</string>
     <string name="permission_description">Описание разрешения</string>
@@ -831,7 +762,6 @@
     <string name="description">Описание</string>
     <string name="jan_1_2024">1 янв 2024</string>
     <string name="delete_transaction">Удалить транзакцию</string>
-    <string name="file_icon">Значок файла</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">Ярлык Launch</string>
     <string name="recent">Недавние</string>
@@ -842,13 +772,6 @@
     <string name="play_pause">Воспроизвести/Пауза</string>
     <string name="next">Далее</string>
     <string name="grant_notification_access">Предоставить доступ к уведомлениям</string>
-    <string name="notification_title">Заголовок уведомления</string>
-    <string name="notification_text_content">Текст уведомления</string>
-    <string name="s_2m_ago">2 мин назад</string>
-    <string name="type_a_reply">Введите ответ...</string>
-    <string name="media_title">Название медиа</string>
-    <string name="artist_name">Имя исполнителя</string>
-    <string name="send">Отправить</string>
     <string name="no_news_sources_enabled">Нет включённых источников новостей</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">Откройте настройки лент и включите источники, которые хотите читать здесь.</string>
     <string name="your_headlines_in_one_place">Ваши заголовки в одном месте</string>
@@ -876,7 +799,6 @@
     <string name="predicted">*Прогноз</string>
     <string name="health_status">Состояние</string>
     <string name="good">Хорошее</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">Батарея</string>
     <string name="time_left">Осталось времени</string>
     <string name="charging">Заряжается</string>
@@ -895,7 +817,6 @@
     <string name="direction_text">С</string>
     <string name="compass_sensors_not_available">Датчики компаса недоступны</string>
     <string name="widget_compass_preview_label_1">С</string>
-    <string name="drag_to_reorder">Перетащите для изменения порядка</string>
     <string name="new_year_2024">Новый год 2024</string>
     <string name="widget">Виджет</string>
     <string name="preview">Предпросмотр</string>
@@ -927,9 +848,6 @@
     <string name="longest_streak">Самая длинная серия</string>
     <string name="contribution_activity">Активность вкладов</string>
     <string name="tap_to_configure_github_token">Нажмите, чтобы настроить токен GitHub</string>
-    <string name="habit_tracker">Трекер привычек</string>
-    <string name="add_habit">Добавить привычку</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">Пока нет привычек. Нажмите «+», чтобы добавить первую привычку!</string>
     <string name="summer_vibes">Летнее настроение</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">Статистика сети</string>

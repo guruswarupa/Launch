@@ -22,7 +22,6 @@
     <string name="web_app_search_title">Suchergebnisse</string>
     <string name="web_app_search_empty">Keine Ergebnisse gefunden</string>
     <string name="web_app_search_hint">Bei Google nach einer Website suchen…</string>
-    <string name="web_app_fetching_title">Seitentitel wird abgerufen…</string>
     <string name="add_button">Hinzufügen</string>
     <string name="save_button">Speichern</string>
     <string name="delete_button">Löschen</string>
@@ -33,7 +32,6 @@
     <string name="add_to_favorites_plain">Zu Favoriten hinzufügen</string>
     <string name="unhide_app_plain">App einblenden</string>
     <string name="hide_app_plain">App ausblenden</string>
-    <string name="grid_columns_title">Apps pro Reihe</string>
     <string name="apps_per_row_format">%1$d Apps pro Reihe</string>
     <string name="search_text"> Suchen…</string>
     
@@ -71,7 +69,6 @@
     <string name="google_maps_not_installed">Google Maps ist nicht installiert.</string>
     <string name="youtube_not_installed_opening_browser">YouTube-App nicht installiert. Wird im Browser geöffnet.</string>
     <string name="cannot_launch_app">App kann nicht gestartet werden</string>
-    <string name="cannot_open_vault">Tresor kann nicht geöffnet werden: App nicht gefunden</string>
     <string name="hidden_apps_feature_not_available">Funktion für versteckte Apps nicht verfügbar</string>
     
     
@@ -79,26 +76,18 @@
     <string name="search_mode_apps">Apps</string>
     <string name="search_mode_contacts">Kontakte</string>
     <string name="search_mode_files">Dateien</string>
-    <string name="search_mode_maps">Karten</string>
-    <string name="search_mode_web">Web</string>
-    <string name="search_mode_playstore">Play Store</string>
-    <string name="search_mode_youtube">YouTube</string>
     <string name="removed_from_favorites">%1$s aus Favoriten entfernt</string>
     <string name="added_to_favorites">%1$s zu Favoriten hinzugefügt</string>
     <string name="application_restored">App wiederhergestellt</string>
     <string name="unable_to_open_app">App kann nicht geöffnet werden</string>
     <string name="unhid_app">%1$s eingeblendet</string>
     <string name="hid_app">%1$s ausgeblendet</string>
-    <string name="call_contact_title">%1$s anrufen?</string>
-    <string name="call_contact_message">Telefon: %1$s\nMöchtest du fortfahren?</string>
     <string name="call_button">Anrufen</string>
     <string name="cancel_button">Abbrechen</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="sms">SMS</string>
 
     
-    <string name="set_pin">PIN festlegen</string>
-    <string name="change_pin">PIN ändern</string>
     <string name="set_access_pin">Zugriffs-PIN festlegen</string>
     <string name="change_access_pin">Zugriffs-PIN ändern</string>
     <string name="app_lock_hint_enter_pin_range">4-6-stellige PIN eingeben</string>
@@ -174,13 +163,10 @@
     <string name="cpu_temp_format">%1$.1f°C</string>
 
     
-    <string name="screen_time_format">Bildschirmzeit: %1$s</string>
     <string name="widget_section_enabled">Aktivierte Widgets</string>
     <string name="widget_section_custom_disabled">Verfügbare Widgets</string>
-    <string name="widget_section_system_disabled">Systemwidgets (deaktiviert)</string>
 
     
-    <string name="no_hidden_apps">Keine versteckten Apps. Halte eine App in der Liste gedrückt, um sie zu verstecken.</string>
 
     
     <string name="mbps_format">%1$.1f Mbit/s</string>
@@ -200,24 +186,12 @@
     <string name="noise_button_enable">Aktivieren</string>
 
     <string name="create_workspace">Arbeitsbereich erstellen</string>
-    <string name="update_workspace">Arbeitsbereich aktualisieren</string>
-    <string name="workspace_edit_description">Arbeitsbereich bearbeiten</string>
-    <string name="workspace_delete_description">Arbeitsbereich löschen</string>
     <string name="font_download">Herunterladen</string>
-    <string name="font_downloading">Wird heruntergeladen…</string>
-    <string name="font_installed">Installiert</string>
-    <string name="font_downloaded_message">%1$s heruntergeladen</string>
     <string name="font_remove">Entfernen</string>
-    <string name="font_removed_message">%1$s entfernt</string>
-    <string name="font_removing">Wird entfernt…</string>
-    <string name="font_download_failed">Herunterladen von %1$s fehlgeschlagen</string>
     <string name="font_download_failed_with_name">Herunterladen der Schrift fehlgeschlagen: %1$s</string>
-    <string name="font_install">Installieren</string>
-    <string name="font_uninstall">Deinstallieren</string>
 
     
     <string name="distance_km_format">%1$s km</string>
-    <string name="steps_distance_format">%1$d Schritte • %2$s km</string>
     <string name="steps_distance_time_format">%1$d Schritte • %2$s km • %3$s</string>
     <string name="stats">Statistiken</string>
     <string name="calendar">Kalender</string>
@@ -384,22 +358,16 @@
     <string name="workout_recorded_format">Erfasst: %1$s</string>
     <string name="workout_total_format">Gesamt: %1$s</string>
     <string name="workout_best_format">Beste: %1$s</string>
-    <string name="workout_type_reps">WIEDERHOLUNGEN</string>
     <string name="workout_type_time">ZEIT</string>
 
     
-    <string name="workspace_app_count_format">%1$d Apps</string>
 
     
-    <string name="accessibility_shortcut">Bedienungshilfen-Verknüpfung</string>
-    <string name="accessibility_shortcut_description">Schwebende Schaltfläche für schnellen Zugriff auf Systemsteuerungen anzeigen</string>
     <string name="edge_panel_permission_usage_title">Nutzungszugriff erforderlich</string>
     <string name="edge_panel_permission_usage_message">Erlaube Launch, den Nutzungszugriff zu lesen, damit das Randpanel deine letzten Apps anzeigen kann.</string>
     <string name="edge_panel_config_title">Randpanel</string>
     <string name="edge_panel_config_subtitle">Wähle die angehefteten Apps, die in deinem Seitenpanel bleiben. Letzte Apps erscheinen automatisch darüber.</string>
     <string name="edge_panel_config_saved">Randpanel-Apps aktualisiert</string>
-    <string name="edge_panel_no_recent_apps">Verwende zuerst einige Apps, dann erscheinen deine letzten Apps hier.</string>
-    <string name="edge_panel_grant_usage_access">Nutzungszugriff erteilen, um letzte Apps anzuzeigen</string>
     <string name="edge_panel_handle_section_title">Griff</string>
     <string name="edge_panel_handle_position">Position</string>
     <string name="edge_panel_handle_lock">Panel-Position sperren</string>
@@ -411,7 +379,6 @@
     <string name="edge_panel_position_right">Rechts</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">Auslöselinie</string>
     <string name="control_center_trigger_position">Position</string>
     <string name="control_center_trigger_lock">Auslöseposition sperren</string>
     <string name="control_center_trigger_transparency">Transparenz</string>
@@ -426,23 +393,17 @@
     <string name="control_center_config_saved">Kontrollzentrum-Layout aktualisiert</string>
     
     
-    <string name="year_progress_enable">Aktivieren</string>
-    <string name="year_progress_disable">Deaktivieren</string>
     <string name="year_progress_stats_format">%1$d von %2$d Tagen abgeschlossen (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">%1$d Tage verbleibend</string>
 
     
-    <string name="support_project_title">Projekt unterstützen</string>
     <string name="support_project_intro">Deine Unterstützung hilft dabei, Launch werbefrei, quelloffen und langfristig aktiv gepflegt zu halten.</string>
     <string name="support_project_commitment">Ich verpflichte mich, jede Funktion kostenlos zu halten, Abonnements zu vermeiden und die Unterstützung zu nutzen, um Stabilität zu verbessern, durchdachte Updates zu veröffentlichen und die App über Jahre zu pflegen.</string>
     <string name="support_project_prompt">Projekt unterstützen</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;Auf GitHub sponsern&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;Spendiere mir einen Kaffee&lt;/a&gt;</string>
     <string name="support_button_loading">Wird geladen...</string>
     <string name="support_button_buy">%1$s unterstützen</string>
     <string name="support_button_unavailable">Nicht verfügbar</string>
     <string name="support_button_pending">Ausstehend</string>
-    <string name="support_thank_you">Danke für deine Unterstützung ❤️</string>
     <string name="support_thank_you_title">Vielen Dank</string>
     <string name="support_thank_you_message">Danke, dass du Launch unterstützt. Dein Beitrag hilft dabei, die App werbefrei, quelloffen und ohne Abonnementmodell zu halten, während ich sie langfristig weiter pflege.</string>
     <string name="support_thank_you_chip_adfree">Für immer werbefrei</string>
@@ -462,22 +423,16 @@
     <string name="donation_prompt_not_now">Nicht jetzt</string>
     
     
-    <string name="category_appearance">Erscheinungsbild</string>
-    <string name="category_features">Funktionen</string>
     <string name="category_security_privacy">Sicherheit &amp; Datenschutz</string>
-    <string name="category_system">System</string>
-    <string name="category_about">Über</string>
     
     
     <string name="pomodoro_work">Arbeit</string>
     <string name="pomodoro_break">Pause</string>
     <string name="pomodoro_long_break">Lange Pause</string>
-    <string name="pomodoro_mode">Pomodoro</string>
     <string name="pomodoro_stop_title">Pomodoro stoppen?</string>
     <string name="pomodoro_stop_message">Eine Pomodoro-Sitzung ist derzeit aktiv. Möchtest du sie stoppen?</string>
 
     
-    <string name="note_icon_description">Notiz-Symbol</string>
     <string name="notes_title">Notizen</string>
     <string name="meeting_notes_title">Besprechungsnotizen</string>
     <string name="meeting_notes_desc">Projektfahrplan besprechen und…</string>
@@ -493,7 +448,6 @@
 
     <string name="system_monitor_title">Systemmonitor</string>
     <string name="view_system_diagnostics">Systemdiagnose anzeigen</string>
-    <string name="performance_category">LEISTUNG</string>
     <string name="hardware_category">HARDWARE-INFO</string>
     <string name="battery_category">AKKU &amp; ENERGIE</string>
     <string name="network_category">NETZWERK &amp; VERBINDUNG</string>
@@ -752,21 +706,7 @@
     <string name="add">+ Hinzufügen</string>
     <string name="no_countdowns_yet">Noch keine Countdowns</string>
     <string name="tap_add_to_create_a_countdown">Tippe auf + Hinzufügen, um einen Countdown zu erstellen</string>
-    <string name="habit_name">Name der Gewohnheit</string>
-    <string name="e_g_exercise_read_meditate">z. B. Sport, Lesen, Meditieren</string>
-    <string name="description_optional_2">Beschreibung (optional)</string>
-    <string name="brief_description_of_your_habit">Kurze Beschreibung deiner Gewohnheit</string>
-    <string name="frequency">Häufigkeit</string>
     <string name="select_days">Tage auswählen:</string>
-    <string name="sunday">Sonntag</string>
-    <string name="monday">Montag</string>
-    <string name="tuesday">Dienstag</string>
-    <string name="wednesday">Mittwoch</string>
-    <string name="thursday">Donnerstag</string>
-    <string name="friday">Freitag</string>
-    <string name="saturday">Samstag</string>
-    <string name="enable_reminder">Erinnerung aktivieren</string>
-    <string name="set_reminder_time">Erinnerungszeit festlegen</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">Füge eine gültige RSS- oder Atom-Feed-URL ein.</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">Beispiele: BBC, Reuters, Hacker News, Blogs, Podcasts und Newsletter mit Feed-URLs.</string>
     <string name="enter_todo_item">Aufgabe eingeben</string>
@@ -794,13 +734,6 @@
     <string name="hourly_breakdown">Stündliche Aufschlüsselung</string>
     <string name="note_title_optional">Notiztitel (optional)</string>
     <string name="note_content_optional">Notizinhalt (optional)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">Kalibriere deine Schrittlänge für genauere Entfernungsmessungen.</string>
-    <string name="height_cm">Größe (cm)</string>
-    <string name="height_input">z. B. 175</string>
-    <string name="stride_length_meters">Schrittlänge (Meter)</string>
-    <string name="stride_length_input">z. B. 0,75</string>
-    <string name="current_stride_length_0_75_m">Aktuelle Schrittlänge: 0,75 m</string>
-    <string name="reset_to_default">Auf Standard zurücksetzen</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">Dieser Domain für den Rest dieser Sitzung vertrauen</string>
     <string name="transaction_history">Transaktionsverlauf</string>
     <string name="clear_all_transactions">Alle Transaktionen löschen</string>
@@ -819,8 +752,6 @@
     <string name="app_icon">App-Symbol</string>
     <string name="limit_1h_30m">Limit: 1h 30m</string>
     <string name="used_45m">Genutzt: 45m</string>
-    <string name="no_downloadable_fonts_available">Keine herunterladbaren Schriften verfügbar</string>
-    <string name="daily">Täglich</string>
     <string name="pdf_page">PDF-Seite</string>
     <string name="permission_name">Berechtigungsname</string>
     <string name="permission_description">Berechtigungsbeschreibung</string>
@@ -831,7 +762,6 @@
     <string name="description">Beschreibung</string>
     <string name="jan_1_2024">1. Jan. 2024</string>
     <string name="delete_transaction">Transaktion löschen</string>
-    <string name="file_icon">Dateisymbol</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">Launch-Verknüpfung</string>
     <string name="recent">Zuletzt</string>
@@ -842,13 +772,6 @@
     <string name="play_pause">Wiedergabe/Pause</string>
     <string name="next">Weiter</string>
     <string name="grant_notification_access">Benachrichtigungszugriff erteilen</string>
-    <string name="notification_title">Benachrichtigungstitel</string>
-    <string name="notification_text_content">Benachrichtigungstextinhalt</string>
-    <string name="s_2m_ago">Vor 2 Min.</string>
-    <string name="type_a_reply">Antwort eingeben...</string>
-    <string name="media_title">Medientitel</string>
-    <string name="artist_name">Künstlername</string>
-    <string name="send">Senden</string>
     <string name="no_news_sources_enabled">Keine Nachrichtenquellen aktiviert</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">Öffne die Feed-Einstellungen und aktiviere die Quellen, die du hier lesen möchtest.</string>
     <string name="your_headlines_in_one_place">Deine Schlagzeilen an einem Ort</string>
@@ -876,7 +799,6 @@
     <string name="predicted">*Vorhergesagt</string>
     <string name="health_status">Zustandsstatus</string>
     <string name="good">Gut</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">Akku</string>
     <string name="time_left">Verbleibende Zeit</string>
     <string name="charging">Wird geladen</string>
@@ -895,7 +817,6 @@
     <string name="direction_text">N</string>
     <string name="compass_sensors_not_available">Kompasssensoren nicht verfügbar</string>
     <string name="widget_compass_preview_label_1">N</string>
-    <string name="drag_to_reorder">Zum Neuanordnen ziehen</string>
     <string name="new_year_2024">Neujahr 2024</string>
     <string name="widget">Widget</string>
     <string name="preview">Vorschau</string>
@@ -927,9 +848,6 @@
     <string name="longest_streak">Längste Serie</string>
     <string name="contribution_activity">Beitragsaktivität</string>
     <string name="tap_to_configure_github_token">Tippen, um GitHub-Token zu konfigurieren</string>
-    <string name="habit_tracker">Gewohnheits-Tracker</string>
-    <string name="add_habit">Gewohnheit hinzufügen</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">Noch keine Gewohnheiten. Tippe auf +, um deine erste Gewohnheit hinzuzufügen!</string>
     <string name="summer_vibes">Sommergefühle</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">Netzwerkstatistiken</string>

@@ -79,7 +79,6 @@ class WidgetVisibilityManager(
             "device_info_widget_container" to com.guruswarupa.launch.R.id.device_info_widget_container,
             "weekly_usage_widget" to com.guruswarupa.launch.R.id.weekly_usage_widget,
             "github_contributions_widget_container" to com.guruswarupa.launch.R.id.github_contributions_widget_container,
-            "habit_tracker_widget_container" to com.guruswarupa.launch.R.id.habit_tracker_widget_container
         )
 
         simpleWidgets.forEach { (widgetId, _) ->
@@ -442,7 +441,6 @@ class WidgetVisibilityManager(
             "network_stats_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.network_stats_widget_container)
             "device_info_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.device_info_widget_container)
             "year_progress_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.year_progress_widget_container)
-            "habit_tracker_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.habit_tracker_widget_container)
             else -> {
                 Log.w(TAG, "Unknown widget ID: $widgetId")
                 null

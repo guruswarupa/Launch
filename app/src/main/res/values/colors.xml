@@ -5,23 +5,14 @@
     <color name="text_secondary">#B0B0B0</color> 
     <color name="text_tertiary">#808080</color> 
     <color name="card_background">#80000000</color> 
-    <color name="card_elevation">#333333</color>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="colorButtonBackground">#6200EE</color>
-    <color name="colorButtonText">#FFFFFF</color>
     <color name="button_primary">#81A1C1</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="squircle_stroke">#8e8e8e</color>
-    <color name="group_overlay">#80000000</color>
-    <color name="nord0">#2E3440</color>
-    <color name="nord1">#3B4252</color>
     <color name="nord2">#434C5E</color>
     <color name="nord3">#4C566A</color>
-    <color name="nord4">#D8DEE9</color>
-    <color name="nord5">#E5E9F0</color>
     <color name="nord6">#ECEFF4</color>
     <color name="nord7">#8FBCBB</color>
     <color name="nord8">#88C0D0</color>
@@ -31,22 +22,13 @@
     <color name="nord12">#D08770</color>
     <color name="nord13">#EBCB8B</color>
     <color name="nord14">#A3BE8C</color>
-    <color name="nord15">#B48EAD</color>
     <color name="surfaceColor">#121212</color>
     <color name="outlineColor">#3A3A3A</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="green">#FF44FF44</color>
     <color name="gray_light">#FFCCCCCC</color>
-    <color name="gray">#808080</color>
     <color name="red">#FF5252</color>
     <color name="icon_color">#FFFFFF</color>
     
     
-    <color name="settings_overlay_color">#66000000</color>
-    <color name="button_glass_bg">#33FFFFFF</color>
-    <color name="button_glass_stroke">#20FFFFFF</color>
-    <color name="chip_glass_bg">#33000000</color>
-    <color name="scrim_background">#66000000</color>
 
     
     <color name="dialog_background">#80000000</color>
@@ -54,22 +36,9 @@
     <color name="menu_background_color">#80000000</color>
     <color name="dialog_text">#FFFFFF</color>
     <color name="dialog_text_secondary">#B0B0B0</color>
-    <color name="dialog_preview_surface_start">#C61D1D26</color>
-    <color name="dialog_preview_surface_end">#B3121218</color>
-    <color name="dialog_preview_surface_stroke">#52FFFFFF</color>
-    <color name="dialog_preview_chip_bg">#29000000</color>
-    <color name="dialog_preview_chip_stroke">#66FFFFFF</color>
     <color name="dialog_preview_chip_text">#E6FFFFFF</color>
-    <color name="dialog_preview_frame_start">#26000000</color>
-    <color name="dialog_preview_frame_end">#33000000</color>
-    <color name="dialog_preview_frame_stroke">#4DFFFFFF</color>
-    <color name="dialog_preview_secondary_fill">#2EFFFFFF</color>
-    <color name="dialog_preview_secondary_stroke">#66FFFFFF</color>
     <color name="widget_config_text_primary">@color/widget_text</color>
     <color name="widget_config_text_secondary">@color/widget_text_secondary</color>
-    <color name="widget_config_text_hint">@color/widget_text_secondary</color>
-    <color name="widget_config_chip_text">@color/widget_text</color>
-    <color name="widget_config_secondary_button_text">@color/widget_text</color>
     
     
     <color name="widget_config_surface">#33000000</color>
@@ -85,27 +54,17 @@
     
     
     <color name="settings_overlay">@android:color/transparent</color>
-    <color name="settings_header_text">@color/text</color>
 
     
     <color name="grid_item_background">#80000000</color>
-    <color name="grid_item_background_dark">#80000000</color>
 
     
-    <color name="note_editor_gradient_start">#0F1119</color>
-    <color name="note_editor_gradient_end">#161A24</color>
-    <color name="note_editor_title_text">#F5F6FF</color>
-    <color name="note_editor_subtitle_text">#B6BCE0</color>
-    <color name="note_editor_label_text">#8B95B7</color>
-    <color name="note_editor_helper_text">#8B95B7</color>
-    <color name="note_editor_card_surface">#1D2231</color>
     <color name="note_editor_card_stroke">#2E364A</color>
     <color name="note_editor_card_surface_translucent">#C0111626</color>
     <color name="note_editor_card_stroke_translucent">#88FFFFFF</color>
     <color name="note_editor_input_stroke">#2E364A</color>
     <color name="note_editor_input_surface">#1E2431</color>
     <color name="note_editor_icon_tint">@color/white</color>
-    <color name="divider">#3A3A3A</color>
     <color name="text_hint">#B0B0B0</color>
     <color name="note_editor_overlay">#66000000</color>
 </resources>

@@ -22,7 +22,6 @@
     <string name="web_app_search_title">نتائج البحث</string>
     <string name="web_app_search_empty">لم يتم العثور على نتائج</string>
     <string name="web_app_search_hint">ابحث في Google عن موقع…</string>
-    <string name="web_app_fetching_title">جارٍ جلب عنوان الصفحة…</string>
     <string name="add_button">إضافة</string>
     <string name="save_button">حفظ</string>
     <string name="delete_button">حذف</string>
@@ -33,7 +32,6 @@
     <string name="add_to_favorites_plain">إضافة إلى المفضلة</string>
     <string name="unhide_app_plain">إظهار التطبيق</string>
     <string name="hide_app_plain">إخفاء التطبيق</string>
-    <string name="grid_columns_title">تطبيقات لكل صف</string>
     <string name="apps_per_row_format">%1$d تطبيقات لكل صف</string>
     <string name="search_text"> بحث…</string>
     
@@ -71,7 +69,6 @@
     <string name="google_maps_not_installed">خرائط Google غير مثبتة.</string>
     <string name="youtube_not_installed_opening_browser">تطبيق YouTube غير مثبت. جارٍ الفتح في المتصفح.</string>
     <string name="cannot_launch_app">تعذر تشغيل التطبيق</string>
-    <string name="cannot_open_vault">تعذر فتح الخزنة: التطبيق غير موجود</string>
     <string name="hidden_apps_feature_not_available">ميزة التطبيقات المخفية غير متوفرة</string>
     
     
@@ -79,26 +76,18 @@
     <string name="search_mode_apps">التطبيقات</string>
     <string name="search_mode_contacts">جهات الاتصال</string>
     <string name="search_mode_files">الملفات</string>
-    <string name="search_mode_maps">الخرائط</string>
-    <string name="search_mode_web">الويب</string>
-    <string name="search_mode_playstore">متجر Play</string>
-    <string name="search_mode_youtube">يوتيوب</string>
     <string name="removed_from_favorites">تمت إزالة %1$s من المفضلة</string>
     <string name="added_to_favorites">تمت إضافة %1$s إلى المفضلة</string>
     <string name="application_restored">تمت استعادة التطبيق</string>
     <string name="unable_to_open_app">تعذر فتح التطبيق</string>
     <string name="unhid_app">تم إظهار %1$s</string>
     <string name="hid_app">تم إخفاء %1$s</string>
-    <string name="call_contact_title">اتصال بـ %1$s؟</string>
-    <string name="call_contact_message">الهاتف: %1$s\nهل تريد المتابعة؟</string>
     <string name="call_button">اتصال</string>
     <string name="cancel_button">إلغاء</string>
     <string name="whatsapp">واتساب</string>
     <string name="sms">رسالة نصية</string>
 
     
-    <string name="set_pin">تعيين رمز PIN</string>
-    <string name="change_pin">تغيير رمز PIN</string>
     <string name="set_access_pin">تعيين رمز الوصول</string>
     <string name="change_access_pin">تغيير رمز الوصول</string>
     <string name="app_lock_hint_enter_pin_range">أدخل رمز PIN من 4-6 أرقام</string>
@@ -174,13 +163,10 @@
     <string name="cpu_temp_format">%1$.1f°م</string>
 
     
-    <string name="screen_time_format">وقت الشاشة: %1$s</string>
     <string name="widget_section_enabled">الأدوات المفعّلة</string>
     <string name="widget_section_custom_disabled">الأدوات المتاحة</string>
-    <string name="widget_section_system_disabled">أدوات النظام (معطّلة)</string>
 
     
-    <string name="no_hidden_apps">لا توجد تطبيقات مخفية. اضغط مطولًا على تطبيق في القائمة لإخفائه.</string>
 
     
     <string name="mbps_format">%1$.1f ميجابت/ث</string>
@@ -200,24 +186,12 @@
     <string name="noise_button_enable">تفعيل</string>
 
     <string name="create_workspace">إنشاء مساحة عمل</string>
-    <string name="update_workspace">تحديث مساحة العمل</string>
-    <string name="workspace_edit_description">تعديل مساحة العمل</string>
-    <string name="workspace_delete_description">حذف مساحة العمل</string>
     <string name="font_download">تنزيل</string>
-    <string name="font_downloading">جارٍ التنزيل…</string>
-    <string name="font_installed">مثبّت</string>
-    <string name="font_downloaded_message">تم تنزيل %1$s</string>
     <string name="font_remove">إزالة</string>
-    <string name="font_removed_message">تمت إزالة %1$s</string>
-    <string name="font_removing">جارٍ الإزالة…</string>
-    <string name="font_download_failed">فشل تنزيل %1$s</string>
     <string name="font_download_failed_with_name">فشل تنزيل الخط: %1$s</string>
-    <string name="font_install">تثبيت</string>
-    <string name="font_uninstall">إلغاء التثبيت</string>
 
     
     <string name="distance_km_format">%1$s كم</string>
-    <string name="steps_distance_format">%1$d خطوة • %2$s كم</string>
     <string name="steps_distance_time_format">%1$d خطوة • %2$s كم • %3$s</string>
     <string name="stats">إحصائيات</string>
     <string name="calendar">التقويم</string>
@@ -384,22 +358,16 @@
     <string name="workout_recorded_format">مسجّل: %1$s</string>
     <string name="workout_total_format">الإجمالي: %1$s</string>
     <string name="workout_best_format">الأفضل: %1$s</string>
-    <string name="workout_type_reps">تكرارات</string>
     <string name="workout_type_time">الوقت</string>
 
     
-    <string name="workspace_app_count_format">%1$d تطبيقات</string>
 
     
-    <string name="accessibility_shortcut">اختصار إمكانية الوصول</string>
-    <string name="accessibility_shortcut_description">إظهار زر عائم للوصول السريع إلى عناصر التحكم في النظام</string>
     <string name="edge_panel_permission_usage_title">مطلوب الوصول إلى الاستخدام</string>
     <string name="edge_panel_permission_usage_message">اسمح لـ Launch بقراءة الوصول إلى الاستخدام حتى تتمكن اللوحة الجانبية من عرض تطبيقاتك الأخيرة.</string>
     <string name="edge_panel_config_title">اللوحة الجانبية</string>
     <string name="edge_panel_config_subtitle">اختر التطبيقات المثبتة التي تبقى في لوحتك الجانبية. تظهر التطبيقات الأخيرة تلقائيًا فوقها.</string>
     <string name="edge_panel_config_saved">تم تحديث تطبيقات اللوحة الجانبية</string>
-    <string name="edge_panel_no_recent_apps">استخدم بعض التطبيقات أولاً وستظهر تطبيقاتك الأخيرة هنا.</string>
-    <string name="edge_panel_grant_usage_access">امنح إذن الوصول إلى الاستخدام لعرض التطبيقات الأخيرة</string>
     <string name="edge_panel_handle_section_title">المقبض</string>
     <string name="edge_panel_handle_position">الموضع</string>
     <string name="edge_panel_handle_lock">قفل موضع اللوحة</string>
@@ -411,7 +379,6 @@
     <string name="edge_panel_position_right">يمين</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">خط التفعيل</string>
     <string name="control_center_trigger_position">الموضع</string>
     <string name="control_center_trigger_lock">قفل موضع خط التفعيل</string>
     <string name="control_center_trigger_transparency">الشفافية</string>
@@ -426,23 +393,17 @@
     <string name="control_center_config_saved">تم تحديث تخطيط مركز التحكم</string>
     
     
-    <string name="year_progress_enable">تفعيل</string>
-    <string name="year_progress_disable">تعطيل</string>
     <string name="year_progress_stats_format">اكتمل %1$d يومًا من %2$d (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">%1$d يومًا متبقيًا</string>
 
     
-    <string name="support_project_title">دعم المشروع</string>
     <string name="support_project_intro">يساعد دعمك في إبقاء Launch خاليًا من الإعلانات ومفتوح المصدر ومُدارًا بفعالية على المدى الطويل.</string>
     <string name="support_project_commitment">أنا ملتزم بإبقاء كل ميزة مجانية، وتجنب الاشتراكات، واستخدام الدعم لتحسين الاستقرار وإصدار تحديثات مدروسة وصيانة التطبيق لسنوات قادمة.</string>
     <string name="support_project_prompt">دعم المشروع</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;الرعاية على GitHub&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;اشترِ لي قهوة&lt;/a&gt;</string>
     <string name="support_button_loading">جارٍ التحميل...</string>
     <string name="support_button_buy">دعم %1$s</string>
     <string name="support_button_unavailable">غير متوفر</string>
     <string name="support_button_pending">قيد الانتظار</string>
-    <string name="support_thank_you">شكرًا لدعمك ❤️</string>
     <string name="support_thank_you_title">شكرًا لك</string>
     <string name="support_thank_you_message">شكرًا لدعمك Launch. تساهم مساهمتك في إبقاء التطبيق خاليًا من الإعلانات ومفتوح المصدر وخاليًا من نماذج الاشتراك بينما أستمر في صيانته على المدى الطويل.</string>
     <string name="support_thank_you_chip_adfree">خالٍ من الإعلانات إلى الأبد</string>
@@ -462,22 +423,16 @@
     <string name="donation_prompt_not_now">ليس الآن</string>
     
     
-    <string name="category_appearance">المظهر</string>
-    <string name="category_features">الميزات</string>
     <string name="category_security_privacy">الأمان والخصوصية</string>
-    <string name="category_system">النظام</string>
-    <string name="category_about">حول</string>
     
     
     <string name="pomodoro_work">عمل</string>
     <string name="pomodoro_break">استراحة</string>
     <string name="pomodoro_long_break">استراحة طويلة</string>
-    <string name="pomodoro_mode">بومودورو</string>
     <string name="pomodoro_stop_title">إيقاف بومودورو؟</string>
     <string name="pomodoro_stop_message">جلسة بومودورو نشطة حاليًا. هل تريد إيقافها؟</string>
 
     
-    <string name="note_icon_description">أيقونة الملاحظة</string>
     <string name="notes_title">الملاحظات</string>
     <string name="meeting_notes_title">ملاحظات الاجتماع</string>
     <string name="meeting_notes_desc">مناقشة خارطة طريق المشروع و…</string>
@@ -493,7 +448,6 @@
 
     <string name="system_monitor_title">مراقب النظام</string>
     <string name="view_system_diagnostics">عرض تشخيصات النظام</string>
-    <string name="performance_category">الأداء</string>
     <string name="hardware_category">معلومات الأجهزة</string>
     <string name="battery_category">البطارية والطاقة</string>
     <string name="network_category">الشبكة والاتصال</string>
@@ -752,21 +706,7 @@
     <string name="add">+ إضافة</string>
     <string name="no_countdowns_yet">لا توجد عدادات تنازلية بعد</string>
     <string name="tap_add_to_create_a_countdown">اضغط على + إضافة لإنشاء عد تنازلي</string>
-    <string name="habit_name">اسم العادة</string>
-    <string name="e_g_exercise_read_meditate">مثال: تمرين، قراءة، تأمل</string>
-    <string name="description_optional_2">الوصف (اختياري)</string>
-    <string name="brief_description_of_your_habit">وصف موجز لعادتك</string>
-    <string name="frequency">التكرار</string>
     <string name="select_days">اختر الأيام:</string>
-    <string name="sunday">الأحد</string>
-    <string name="monday">الاثنين</string>
-    <string name="tuesday">الثلاثاء</string>
-    <string name="wednesday">الأربعاء</string>
-    <string name="thursday">الخميس</string>
-    <string name="friday">الجمعة</string>
-    <string name="saturday">السبت</string>
-    <string name="enable_reminder">تفعيل التذكير</string>
-    <string name="set_reminder_time">تعيين وقت التذكير</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">الصق رابط موجز RSS أو Atom صالح.</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">أمثلة: BBC، Reuters، Hacker News، المدونات، البودكاست، والنشرات الإخبارية ذات روابط الموجزات.</string>
     <string name="enter_todo_item">أدخل عنصر مهمة</string>
@@ -794,13 +734,6 @@
     <string name="hourly_breakdown">التفصيل بالساعة</string>
     <string name="note_title_optional">عنوان الملاحظة (اختياري)</string>
     <string name="note_content_optional">محتوى الملاحظة (اختياري)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">عاير طول خطوتك للحصول على قياسات مسافة أكثر دقة.</string>
-    <string name="height_cm">الطول (سم)</string>
-    <string name="height_input">مثال 175</string>
-    <string name="stride_length_meters">طول الخطوة (متر)</string>
-    <string name="stride_length_input">مثال 0.75</string>
-    <string name="current_stride_length_0_75_m">طول الخطوة الحالي: 0.75 م</string>
-    <string name="reset_to_default">إعادة التعيين إلى الافتراضي</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">الوثوق بهذا النطاق لبقية هذه الجلسة</string>
     <string name="transaction_history">سجل المعاملات</string>
     <string name="clear_all_transactions">مسح جميع المعاملات</string>
@@ -819,8 +752,6 @@
     <string name="app_icon">أيقونة التطبيق</string>
     <string name="limit_1h_30m">الحد: 1س 30د</string>
     <string name="used_45m">المستخدم: 45د</string>
-    <string name="no_downloadable_fonts_available">لا توجد خطوط قابلة للتنزيل متاحة</string>
-    <string name="daily">يوميًا</string>
     <string name="pdf_page">صفحة PDF</string>
     <string name="permission_name">اسم الإذن</string>
     <string name="permission_description">وصف الإذن</string>
@@ -831,7 +762,6 @@
     <string name="description">الوصف</string>
     <string name="jan_1_2024">1 يناير 2024</string>
     <string name="delete_transaction">حذف المعاملة</string>
-    <string name="file_icon">أيقونة الملف</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">اختصار Launch</string>
     <string name="recent">الأخيرة</string>
@@ -842,13 +772,6 @@
     <string name="play_pause">تشغيل/إيقاف مؤقت</string>
     <string name="next">التالي</string>
     <string name="grant_notification_access">منح الوصول إلى الإشعارات</string>
-    <string name="notification_title">عنوان الإشعار</string>
-    <string name="notification_text_content">محتوى نص الإشعار</string>
-    <string name="s_2m_ago">منذ دقيقتين</string>
-    <string name="type_a_reply">اكتب ردًا...</string>
-    <string name="media_title">عنوان الوسائط</string>
-    <string name="artist_name">اسم الفنان</string>
-    <string name="send">إرسال</string>
     <string name="no_news_sources_enabled">لا توجد مصادر أخبار مفعّلة</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">افتح إعدادات الموجز وفعّل المصادر التي تريد قراءتها هنا.</string>
     <string name="your_headlines_in_one_place">عناوينك الرئيسية في مكان واحد</string>
@@ -876,7 +799,6 @@
     <string name="predicted">*متوقع</string>
     <string name="health_status">حالة الصحة</string>
     <string name="good">جيد</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">البطارية</string>
     <string name="time_left">الوقت المتبقي</string>
     <string name="charging">جارٍ الشحن</string>
@@ -895,7 +817,6 @@
     <string name="direction_text">ش</string>
     <string name="compass_sensors_not_available">مستشعرات البوصلة غير متوفرة</string>
     <string name="widget_compass_preview_label_1">ش</string>
-    <string name="drag_to_reorder">اسحب لإعادة الترتيب</string>
     <string name="new_year_2024">رأس السنة 2024</string>
     <string name="widget">الأداة</string>
     <string name="preview">معاينة</string>
@@ -927,9 +848,6 @@
     <string name="longest_streak">أطول سلسلة</string>
     <string name="contribution_activity">نشاط المساهمات</string>
     <string name="tap_to_configure_github_token">اضغط لتكوين رمز GitHub</string>
-    <string name="habit_tracker">متتبع العادات</string>
-    <string name="add_habit">إضافة عادة</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">لا توجد عادات بعد. اضغط على + لإضافة عادتك الأولى!</string>
     <string name="summer_vibes">أجواء الصيف</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">إحصائيات الشبكة</string>

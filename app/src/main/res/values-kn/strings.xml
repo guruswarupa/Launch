@@ -22,7 +22,6 @@
     <string name="web_app_search_title">ಹುಡುಕಾಟ ಫಲಿತಾಂಶಗಳು</string>
     <string name="web_app_search_empty">ಯಾವುದೇ ಫಲಿತಾಂಶ ಸಿಗಲಿಲ್ಲ</string>
     <string name="web_app_search_hint">Google ನಲ್ಲಿ ವೆಬ್‌ಸೈಟ್ ಹುಡುಕಿ…</string>
-    <string name="web_app_fetching_title">ಪುಟದ ಶೀರ್ಷಿಕೆ ಪಡೆಯಲಾಗುತ್ತಿದೆ…</string>
     <string name="add_button">ಸೇರಿಸಿ</string>
     <string name="save_button">ಉಳಿಸಿ</string>
     <string name="delete_button">ಅಳಿಸಿ</string>
@@ -33,7 +32,6 @@
     <string name="add_to_favorites_plain">ಮೆಚ್ಚಿನವುಗಳಿಗೆ ಸೇರಿಸಿ</string>
     <string name="unhide_app_plain">ಆ್ಯಪ್ ತೋರಿಸಿ</string>
     <string name="hide_app_plain">ಆ್ಯಪ್ ಮರೆಮಾಡಿ</string>
-    <string name="grid_columns_title">ಪ್ರತಿ ಸಾಲಿಗೆ ಆ್ಯಪ್‌ಗಳು</string>
     <string name="apps_per_row_format">ಪ್ರತಿ ಸಾಲಿಗೆ %1$d ಆ್ಯಪ್‌ಗಳು</string>
     <string name="search_text"> ಹುಡುಕಿ…</string>
     
@@ -71,7 +69,6 @@
     <string name="google_maps_not_installed">Google ನಕ್ಷೆಗಳು ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿಲ್ಲ.</string>
     <string name="youtube_not_installed_opening_browser">YouTube ಆ್ಯಪ್ ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿಲ್ಲ. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ತೆರೆಯಲಾಗುತ್ತಿದೆ.</string>
     <string name="cannot_launch_app">ಆ್ಯಪ್ ಪ್ರಾರಂಭಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ</string>
-    <string name="cannot_open_vault">ವಾಲ್ಟ್ ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ: ಆ್ಯಪ್ ಸಿಗಲಿಲ್ಲ</string>
     <string name="hidden_apps_feature_not_available">ಮರೆಮಾಡಿದ ಆ್ಯಪ್‌ಗಳ ವೈಶಿಷ್ಟ್ಯ ಲಭ್ಯವಿಲ್ಲ</string>
     
     
@@ -79,26 +76,18 @@
     <string name="search_mode_apps">ಆ್ಯಪ್‌ಗಳು</string>
     <string name="search_mode_contacts">ಸಂಪರ್ಕಗಳು</string>
     <string name="search_mode_files">ಫೈಲ್‌ಗಳು</string>
-    <string name="search_mode_maps">ನಕ್ಷೆಗಳು</string>
-    <string name="search_mode_web">ವೆಬ್</string>
-    <string name="search_mode_playstore">Play Store</string>
-    <string name="search_mode_youtube">YouTube</string>
     <string name="removed_from_favorites">%1$s ಮೆಚ್ಚಿನವುಗಳಿಂದ ತೆಗೆದುಹಾಕಲಾಗಿದೆ</string>
     <string name="added_to_favorites">%1$s ಮೆಚ್ಚಿನವುಗಳಿಗೆ ಸೇರಿಸಲಾಗಿದೆ</string>
     <string name="application_restored">ಆ್ಯಪ್ ಮರುಸ್ಥಾಪಿಸಲಾಗಿದೆ</string>
     <string name="unable_to_open_app">ಆ್ಯಪ್ ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ</string>
     <string name="unhid_app">%1$s ತೋರಿಸಲಾಗಿದೆ</string>
     <string name="hid_app">%1$s ಮರೆಮಾಡಲಾಗಿದೆ</string>
-    <string name="call_contact_title">%1$s ಗೆ ಕರೆ ಮಾಡಬೇಕೇ?</string>
-    <string name="call_contact_message">ಫೋನ್: %1$s\nನೀವು ಮುಂದುವರಿಯಲು ಬಯಸುವಿರಾ?</string>
     <string name="call_button">ಕರೆ ಮಾಡಿ</string>
     <string name="cancel_button">ರದ್ದುಮಾಡಿ</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="sms">SMS</string>
 
     
-    <string name="set_pin">ಪಿನ್ ಹೊಂದಿಸಿ</string>
-    <string name="change_pin">ಪಿನ್ ಬದಲಾಯಿಸಿ</string>
     <string name="set_access_pin">ಪ್ರವೇಶ ಪಿನ್ ಹೊಂದಿಸಿ</string>
     <string name="change_access_pin">ಪ್ರವೇಶ ಪಿನ್ ಬದಲಾಯಿಸಿ</string>
     <string name="app_lock_hint_enter_pin_range">4-6 ಅಂಕಿಗಳ ಪಿನ್ ನಮೂದಿಸಿ</string>
@@ -174,13 +163,10 @@
     <string name="cpu_temp_format">%1$.1f°C</string>
 
     
-    <string name="screen_time_format">ಪರದೆ ಸಮಯ: %1$s</string>
     <string name="widget_section_enabled">ಸಕ್ರಿಯಗೊಳಿಸಿದ ವಿಜೆಟ್‌ಗಳು</string>
     <string name="widget_section_custom_disabled">ಲಭ್ಯವಿರುವ ವಿಜೆಟ್‌ಗಳು</string>
-    <string name="widget_section_system_disabled">ಸಿಸ್ಟಂ ವಿಜೆಟ್‌ಗಳು (ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ)</string>
 
     
-    <string name="no_hidden_apps">ಯಾವುದೇ ಮರೆಮಾಡಿದ ಆ್ಯಪ್‌ಗಳಿಲ್ಲ. ಮರೆಮಾಡಲು ಪಟ್ಟಿಯಲ್ಲಿ ಆ್ಯಪ್ ಒತ್ತಿ ಹಿಡಿಯಿರಿ.</string>
 
     
     <string name="mbps_format">%1$.1f Mbps</string>
@@ -200,24 +186,12 @@
     <string name="noise_button_enable">ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
 
     <string name="create_workspace">ಕಾರ್ಯಸ್ಥಳ ರಚಿಸಿ</string>
-    <string name="update_workspace">ಕಾರ್ಯಸ್ಥಳ ನವೀಕರಿಸಿ</string>
-    <string name="workspace_edit_description">ಕಾರ್ಯಸ್ಥಳ ಸಂಪಾದಿಸಿ</string>
-    <string name="workspace_delete_description">ಕಾರ್ಯಸ್ಥಳ ಅಳಿಸಿ</string>
     <string name="font_download">ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
-    <string name="font_downloading">ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ…</string>
-    <string name="font_installed">ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿದೆ</string>
-    <string name="font_downloaded_message">%1$s ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ</string>
     <string name="font_remove">ತೆಗೆದುಹಾಕಿ</string>
-    <string name="font_removed_message">%1$s ತೆಗೆದುಹಾಕಲಾಗಿದೆ</string>
-    <string name="font_removing">ತೆಗೆದುಹಾಕಲಾಗುತ್ತಿದೆ…</string>
-    <string name="font_download_failed">%1$s ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ</string>
     <string name="font_download_failed_with_name">ಫಾಂಟ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ: %1$s</string>
-    <string name="font_install">ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ</string>
-    <string name="font_uninstall">ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ</string>
 
     
     <string name="distance_km_format">%1$s km</string>
-    <string name="steps_distance_format">%1$d ಹೆಜ್ಜೆಗಳು • %2$s km</string>
     <string name="steps_distance_time_format">%1$d ಹೆಜ್ಜೆಗಳು • %2$s km • %3$s</string>
     <string name="stats">ಅಂಕಿಅಂಶಗಳು</string>
     <string name="calendar">ಕ್ಯಾಲೆಂಡರ್</string>
@@ -384,22 +358,16 @@
     <string name="workout_recorded_format">ದಾಖಲಿಸಲಾಗಿದೆ: %1$s</string>
     <string name="workout_total_format">ಒಟ್ಟು: %1$s</string>
     <string name="workout_best_format">ಅತ್ಯುತ್ತಮ: %1$s</string>
-    <string name="workout_type_reps">ಪುನರಾವರ್ತನೆಗಳು</string>
     <string name="workout_type_time">ಸಮಯ</string>
 
     
-    <string name="workspace_app_count_format">%1$d ಆ್ಯಪ್‌ಗಳು</string>
 
     
-    <string name="accessibility_shortcut">ಸುಲಭಪ್ರವೇಶ ಶಾರ್ಟ್‌ಕಟ್</string>
-    <string name="accessibility_shortcut_description">ಸಿಸ್ಟಂ ನಿಯಂತ್ರಣಗಳಿಗೆ ತ್ವರಿತ ಪ್ರವೇಶಕ್ಕಾಗಿ ತೇಲುವ ಬಟನ್ ತೋರಿಸಿ</string>
     <string name="edge_panel_permission_usage_title">ಬಳಕೆ ಪ್ರವೇಶ ಅಗತ್ಯವಿದೆ</string>
     <string name="edge_panel_permission_usage_message">ಎಡ್ಜ್ ಪ್ಯಾನೆಲ್ ನಿಮ್ಮ ಇತ್ತೀಚಿನ ಆ್ಯಪ್‌ಗಳನ್ನು ತೋರಿಸಲು Launch ಬಳಕೆ ಪ್ರವೇಶ ಓದಲು ಅನುಮತಿಸಿ.</string>
     <string name="edge_panel_config_title">ಎಡ್ಜ್ ಪ್ಯಾನೆಲ್</string>
     <string name="edge_panel_config_subtitle">ನಿಮ್ಮ ಸೈಡ್ ಪ್ಯಾನೆಲ್‌ನಲ್ಲಿ ಉಳಿಯುವ ಪಿನ್ ಮಾಡಿದ ಆ್ಯಪ್‌ಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಇತ್ತೀಚಿನ ಆ್ಯಪ್‌ಗಳು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಅವುಗಳ ಮೇಲೆ ಕಾಣಿಸುತ್ತವೆ.</string>
     <string name="edge_panel_config_saved">ಎಡ್ಜ್ ಪ್ಯಾನೆಲ್ ಆ್ಯಪ್‌ಗಳನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ</string>
-    <string name="edge_panel_no_recent_apps">ಮೊದಲು ಕೆಲವು ಆ್ಯಪ್‌ಗಳನ್ನು ಬಳಸಿ, ನಂತರ ನಿಮ್ಮ ಇತ್ತೀಚಿನ ಆ್ಯಪ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.</string>
-    <string name="edge_panel_grant_usage_access">ಇತ್ತೀಚಿನ ಆ್ಯಪ್‌ಗಳನ್ನು ತೋರಿಸಲು ಬಳಕೆ ಪ್ರವೇಶ ನೀಡಿ</string>
     <string name="edge_panel_handle_section_title">ಹಿಡಿ</string>
     <string name="edge_panel_handle_position">ಸ್ಥಾನ</string>
     <string name="edge_panel_handle_lock">ಪ್ಯಾನೆಲ್ ಸ್ಥಾನ ಲಾಕ್ ಮಾಡಿ</string>
@@ -411,7 +379,6 @@
     <string name="edge_panel_position_right">ಬಲ</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">ಟ್ರಿಗರ್ ಗೆರೆ</string>
     <string name="control_center_trigger_position">ಸ್ಥಾನ</string>
     <string name="control_center_trigger_lock">ಟ್ರಿಗರ್ ಸ್ಥಾನ ಲಾಕ್ ಮಾಡಿ</string>
     <string name="control_center_trigger_transparency">ಪಾರದರ್ಶಕತೆ</string>
@@ -426,23 +393,17 @@
     <string name="control_center_config_saved">ನಿಯಂತ್ರಣ ಕೇಂದ್ರ ವಿನ್ಯಾಸ ನವೀಕರಿಸಲಾಗಿದೆ</string>
     
     
-    <string name="year_progress_enable">ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
-    <string name="year_progress_disable">ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</string>
     <string name="year_progress_stats_format">%2$d ರಲ್ಲಿ %1$d ದಿನಗಳು ಪೂರ್ಣಗೊಂಡಿವೆ (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">%1$d ದಿನಗಳು ಉಳಿದಿವೆ</string>
 
     
-    <string name="support_project_title">ಪ್ರಾಜೆಕ್ಟ್ ಬೆಂಬಲಿಸಿ</string>
     <string name="support_project_intro">ನಿಮ್ಮ ಬೆಂಬಲ Launch ಅನ್ನು ಜಾಹೀರಾತು-ಮುಕ್ತ, ಓಪನ್ ಸೋರ್ಸ್ ಮತ್ತು ದೀರ್ಘಾವಧಿಯಲ್ಲಿ ಸಕ್ರಿಯವಾಗಿ ನಿರ್ವಹಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.</string>
     <string name="support_project_commitment">ಪ್ರತಿ ವೈಶಿಷ್ಟ್ಯವನ್ನು ಉಚಿತವಾಗಿ ಇಡಲು, ಚಂದಾದಾರಿಕೆಗಳನ್ನು ತಪ್ಪಿಸಲು ಮತ್ತು ಸ್ಥಿರತೆ ಸುಧಾರಿಸಲು, ಚಿಂತನಶೀಲ ನವೀಕರಣಗಳನ್ನು ಬಿಡುಗಡೆ ಮಾಡಲು ಮತ್ತು ವರ್ಷಗಳ ಕಾಲ ಆ್ಯಪ್ ನಿರ್ವಹಿಸಲು ಬೆಂಬಲ ಬಳಸಲು ನಾನು ಬದ್ಧನಾಗಿದ್ದೇನೆ.</string>
     <string name="support_project_prompt">ಪ್ರಾಜೆಕ್ಟ್ ಬೆಂಬಲಿಸಿ</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;GitHub ನಲ್ಲಿ ಪ್ರಾಯೋಜಿಸಿ&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;ನನಗೆ ಕಾಫಿ ಕೊಡಿಸಿ&lt;/a&gt;</string>
     <string name="support_button_loading">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</string>
     <string name="support_button_buy">%1$s ಬೆಂಬಲಿಸಿ</string>
     <string name="support_button_unavailable">ಲಭ್ಯವಿಲ್ಲ</string>
     <string name="support_button_pending">ಬಾಕಿ ಇದೆ</string>
-    <string name="support_thank_you">ನಿಮ್ಮ ಬೆಂಬಲಕ್ಕೆ ಧನ್ಯವಾದಗಳು ❤️</string>
     <string name="support_thank_you_title">ತುಂಬಾ ಧನ್ಯವಾದಗಳು</string>
     <string name="support_thank_you_message">Launch ಅನ್ನು ಬೆಂಬಲಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು. ನಾನು ಇದನ್ನು ದೀರ್ಘಾವಧಿಯಲ್ಲಿ ನಿರ್ವಹಿಸುತ್ತಿರುವಾಗ, ಆ್ಯಪ್ ಅನ್ನು ಜಾಹೀರಾತು-ಮುಕ್ತ, ಓಪನ್ ಸೋರ್ಸ್ ಮತ್ತು ಚಂದಾದಾರಿಕೆ ಮಾದರಿ ಇಲ್ಲದೆ ಇಡಲು ನಿಮ್ಮ ಕೊಡುಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ.</string>
     <string name="support_thank_you_chip_adfree">ಶಾಶ್ವತವಾಗಿ ಜಾಹೀರಾತು-ಮುಕ್ತ</string>
@@ -462,22 +423,16 @@
     <string name="donation_prompt_not_now">ಈಗ ಬೇಡ</string>
     
     
-    <string name="category_appearance">ನೋಟ</string>
-    <string name="category_features">ವೈಶಿಷ್ಟ್ಯಗಳು</string>
     <string name="category_security_privacy">ಭದ್ರತೆ ಮತ್ತು ಗೌಪ್ಯತೆ</string>
-    <string name="category_system">ಸಿಸ್ಟಂ</string>
-    <string name="category_about">ಬಗ್ಗೆ</string>
     
     
     <string name="pomodoro_work">ಕೆಲಸ</string>
     <string name="pomodoro_break">ವಿರಾಮ</string>
     <string name="pomodoro_long_break">ದೀರ್ಘ ವಿರಾಮ</string>
-    <string name="pomodoro_mode">ಪೊಮೊಡೊರೊ</string>
     <string name="pomodoro_stop_title">ಪೊಮೊಡೊರೊ ನಿಲ್ಲಿಸಬೇಕೇ?</string>
     <string name="pomodoro_stop_message">ಒಂದು ಪೊಮೊಡೊರೊ ಅವಧಿ ಪ್ರಸ್ತುತ ಸಕ್ರಿಯವಾಗಿದೆ. ಅದನ್ನು ನಿಲ್ಲಿಸಲು ಬಯಸುವಿರಾ?</string>
 
     
-    <string name="note_icon_description">ಟಿಪ್ಪಣಿ ಐಕಾನ್</string>
     <string name="notes_title">ಟಿಪ್ಪಣಿಗಳು</string>
     <string name="meeting_notes_title">ಸಭೆ ಟಿಪ್ಪಣಿಗಳು</string>
     <string name="meeting_notes_desc">ಪ್ರಾಜೆಕ್ಟ್ ರೋಡ್‌ಮ್ಯಾಪ್ ಚರ್ಚಿಸಿ ಮತ್ತು…</string>
@@ -493,7 +448,6 @@
 
     <string name="system_monitor_title">ಸಿಸ್ಟಂ ಮಾನಿಟರ್</string>
     <string name="view_system_diagnostics">ಸಿಸ್ಟಂ ಡಯಗ್ನಾಸ್ಟಿಕ್ಸ್ ವೀಕ್ಷಿಸಿ</string>
-    <string name="performance_category">ಕಾರ್ಯಕ್ಷಮತೆ</string>
     <string name="hardware_category">ಹಾರ್ಡ್‌ವೇರ್ ಮಾಹಿತಿ</string>
     <string name="battery_category">ಬ್ಯಾಟರಿ ಮತ್ತು ಶಕ್ತಿ</string>
     <string name="network_category">ನೆಟ್‌ವರ್ಕ್ ಮತ್ತು ಸಂಪರ್ಕ</string>
@@ -752,21 +706,7 @@
     <string name="add">+ ಸೇರಿಸಿ</string>
     <string name="no_countdowns_yet">ಇನ್ನೂ ಯಾವುದೇ ಕೌಂಟ್‌ಡೌನ್ ಇಲ್ಲ</string>
     <string name="tap_add_to_create_a_countdown">ಕೌಂಟ್‌ಡೌನ್ ರಚಿಸಲು + ಸೇರಿಸಿ ಟ್ಯಾಪ್ ಮಾಡಿ</string>
-    <string name="habit_name">ಅಭ್ಯಾಸದ ಹೆಸರು</string>
-    <string name="e_g_exercise_read_meditate">ಉದಾ., ವ್ಯಾಯಾಮ, ಓದುವಿಕೆ, ಧ್ಯಾನ</string>
-    <string name="description_optional_2">ವಿವರಣೆ (ಐಚ್ಛಿಕ)</string>
-    <string name="brief_description_of_your_habit">ನಿಮ್ಮ ಅಭ್ಯಾಸದ ಸಂಕ್ಷಿಪ್ತ ವಿವರಣೆ</string>
-    <string name="frequency">ಆವರ್ತನ</string>
     <string name="select_days">ದಿನಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ:</string>
-    <string name="sunday">ಭಾನುವಾರ</string>
-    <string name="monday">ಸೋಮವಾರ</string>
-    <string name="tuesday">ಮಂಗಳವಾರ</string>
-    <string name="wednesday">ಬುಧವಾರ</string>
-    <string name="thursday">ಗುರುವಾರ</string>
-    <string name="friday">ಶುಕ್ರವಾರ</string>
-    <string name="saturday">ಶನಿವಾರ</string>
-    <string name="enable_reminder">ಜ್ಞಾಪನೆ ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
-    <string name="set_reminder_time">ಜ್ಞಾಪನೆ ಸಮಯ ಹೊಂದಿಸಿ</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">ಮಾನ್ಯ RSS ಅಥವಾ Atom ಫೀಡ್ URL ಅಂಟಿಸಿ.</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">ಉದಾಹರಣೆಗಳು: BBC, Reuters, Hacker News, ಬ್ಲಾಗ್‌ಗಳು, ಪಾಡ್‌ಕಾಸ್ಟ್‌ಗಳು ಮತ್ತು ಫೀಡ್ URL ಗಳೊಂದಿಗೆ ಸುದ್ದಿಪತ್ರಗಳು.</string>
     <string name="enter_todo_item">ಕಾರ್ಯ ನಮೂದಿಸಿ</string>
@@ -794,13 +734,6 @@
     <string name="hourly_breakdown">ಗಂಟೆಯ ವಿಭಜನೆ</string>
     <string name="note_title_optional">ಟಿಪ್ಪಣಿ ಶೀರ್ಷಿಕೆ (ಐಚ್ಛಿಕ)</string>
     <string name="note_content_optional">ಟಿಪ್ಪಣಿ ವಿಷಯ (ಐಚ್ಛಿಕ)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">ಹೆಚ್ಚು ನಿಖರವಾದ ದೂರ ಅಳತೆಗಳಿಗಾಗಿ ನಿಮ್ಮ ಹೆಜ್ಜೆ ಉದ್ದವನ್ನು ಮಾಪನಾಂಕ ಮಾಡಿ.</string>
-    <string name="height_cm">ಎತ್ತರ (ಸೆಂ.ಮೀ)</string>
-    <string name="height_input">ಉದಾ., 175</string>
-    <string name="stride_length_meters">ಹೆಜ್ಜೆ ಉದ್ದ (ಮೀಟರ್)</string>
-    <string name="stride_length_input">ಉದಾ., 0.75</string>
-    <string name="current_stride_length_0_75_m">ಪ್ರಸ್ತುತ ಹೆಜ್ಜೆ ಉದ್ದ: 0.75 ಮೀ</string>
-    <string name="reset_to_default">ಡೀಫಾಲ್ಟ್‌ಗೆ ಮರುಹೊಂದಿಸಿ</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">ಈ ಅವಧಿಯ ಉಳಿದ ಭಾಗಕ್ಕೆ ಈ ಡೊಮೇನ್ ಅನ್ನು ನಂಬಿ</string>
     <string name="transaction_history">ವಹಿವಾಟು ಇತಿಹಾಸ</string>
     <string name="clear_all_transactions">ಎಲ್ಲಾ ವಹಿವಾಟುಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ</string>
@@ -819,8 +752,6 @@
     <string name="app_icon">ಆ್ಯಪ್ ಐಕಾನ್</string>
     <string name="limit_1h_30m">ಮಿತಿ: 1ಗಂ 30ನಿ</string>
     <string name="used_45m">ಬಳಸಲಾಗಿದೆ: 45ನಿ</string>
-    <string name="no_downloadable_fonts_available">ಯಾವುದೇ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದಾದ ಫಾಂಟ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ</string>
-    <string name="daily">ದೈನಂದಿನ</string>
     <string name="pdf_page">PDF ಪುಟ</string>
     <string name="permission_name">ಅನುಮತಿ ಹೆಸರು</string>
     <string name="permission_description">ಅನುಮತಿ ವಿವರಣೆ</string>
@@ -831,7 +762,6 @@
     <string name="description">ವಿವರಣೆ</string>
     <string name="jan_1_2024">1 ಜನ 2024</string>
     <string name="delete_transaction">ವಹಿವಾಟು ಅಳಿಸಿ</string>
-    <string name="file_icon">ಫೈಲ್ ಐಕಾನ್</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">Launch ಶಾರ್ಟ್‌ಕಟ್</string>
     <string name="recent">ಇತ್ತೀಚಿನ</string>
@@ -842,13 +772,6 @@
     <string name="play_pause">ಪ್ಲೇ/ವಿರಾಮ</string>
     <string name="next">ಮುಂದಿನದು</string>
     <string name="grant_notification_access">ಅಧಿಸೂಚನೆ ಪ್ರವೇಶ ನೀಡಿ</string>
-    <string name="notification_title">ಅಧಿಸೂಚನೆ ಶೀರ್ಷಿಕೆ</string>
-    <string name="notification_text_content">ಅಧಿಸೂಚನೆ ಪಠ್ಯ ವಿಷಯ</string>
-    <string name="s_2m_ago">2 ನಿಮಿಷಗಳ ಹಿಂದೆ</string>
-    <string name="type_a_reply">ಪ್ರತ್ಯುತ್ತರ ಟೈಪ್ ಮಾಡಿ...</string>
-    <string name="media_title">ಮಾಧ್ಯಮ ಶೀರ್ಷಿಕೆ</string>
-    <string name="artist_name">ಕಲಾವಿದನ ಹೆಸರು</string>
-    <string name="send">ಕಳುಹಿಸಿ</string>
     <string name="no_news_sources_enabled">ಯಾವುದೇ ಸುದ್ದಿ ಮೂಲಗಳು ಸಕ್ರಿಯಗೊಂಡಿಲ್ಲ</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">ಫೀಡ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ ಮತ್ತು ಇಲ್ಲಿ ಓದಲು ಬಯಸುವ ಮೂಲಗಳನ್ನು ಆನ್ ಮಾಡಿ.</string>
     <string name="your_headlines_in_one_place">ನಿಮ್ಮ ಶೀರ್ಷಿಕೆಗಳು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ</string>
@@ -876,7 +799,6 @@
     <string name="predicted">*ಊಹಿಸಲಾಗಿದೆ</string>
     <string name="health_status">ಆರೋಗ್ಯ ಸ್ಥಿತಿ</string>
     <string name="good">ಉತ್ತಮ</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">ಬ್ಯಾಟರಿ</string>
     <string name="time_left">ಉಳಿದ ಸಮಯ</string>
     <string name="charging">ಚಾರ್ಜ್ ಆಗುತ್ತಿದೆ</string>
@@ -895,7 +817,6 @@
     <string name="direction_text">ಉ</string>
     <string name="compass_sensors_not_available">ದಿಕ್ಸೂಚಿ ಸಂವೇದಕಗಳು ಲಭ್ಯವಿಲ್ಲ</string>
     <string name="widget_compass_preview_label_1">ಉ</string>
-    <string name="drag_to_reorder">ಮರುಜೋಡಿಸಲು ಎಳೆಯಿರಿ</string>
     <string name="new_year_2024">ಹೊಸ ವರ್ಷ 2024</string>
     <string name="widget">ವಿಜೆಟ್</string>
     <string name="preview">ಪೂರ್ವವೀಕ್ಷಣೆ</string>
@@ -927,9 +848,6 @@
     <string name="longest_streak">ದೀರ್ಘ ಸರಣಿ</string>
     <string name="contribution_activity">ಕೊಡುಗೆ ಚಟುವಟಿಕೆ</string>
     <string name="tap_to_configure_github_token">GitHub ಟೋಕನ್ ಕಾನ್ಫಿಗರ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ</string>
-    <string name="habit_tracker">ಅಭ್ಯಾಸ ಟ್ರ್ಯಾಕರ್</string>
-    <string name="add_habit">ಅಭ್ಯಾಸ ಸೇರಿಸಿ</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">ಇನ್ನೂ ಯಾವುದೇ ಅಭ್ಯಾಸಗಳಿಲ್ಲ. ನಿಮ್ಮ ಮೊದಲ ಅಭ್ಯಾಸ ಸೇರಿಸಲು + ಟ್ಯಾಪ್ ಮಾಡಿ!</string>
     <string name="summer_vibes">ಬೇಸಿಗೆಯ ಅನುಭವ</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">ನೆಟ್‌ವರ್ಕ್ ಅಂಕಿಅಂಶಗಳು</string>

@@ -26,7 +26,6 @@
     <string name="web_app_search_title">Search Results</string>
     <string name="web_app_search_empty">No results found</string>
     <string name="web_app_search_hint">Search Google for a website…</string>
-    <string name="web_app_fetching_title">Fetching page title…</string>
     <string name="add_button">Add</string>
     <string name="save_button">Save</string>
     <string name="delete_button">Delete</string>
@@ -37,7 +36,6 @@
     <string name="add_to_favorites_plain">Add to Favorites</string>
     <string name="unhide_app_plain">Unhide App</string>
     <string name="hide_app_plain">Hide App</string>
-    <string name="grid_columns_title">Apps per row</string>
     <string name="apps_per_row_format">%1$d apps per row</string>
     <string name="search_text"> Search…</string>
     
@@ -75,7 +73,6 @@
     <string name="google_maps_not_installed">Google Maps not installed.</string>
     <string name="youtube_not_installed_opening_browser">YouTube app not installed. Opening in browser.</string>
     <string name="cannot_launch_app">Cannot launch app</string>
-    <string name="cannot_open_vault">Cannot open vault: App not found</string>
     <string name="hidden_apps_feature_not_available">Hidden apps feature not available</string>
     
     
@@ -83,18 +80,12 @@
     <string name="search_mode_apps">Apps</string>
     <string name="search_mode_contacts">Contacts</string>
     <string name="search_mode_files">Files</string>
-    <string name="search_mode_maps">Maps</string>
-    <string name="search_mode_web">Web</string>
-    <string name="search_mode_playstore">Play Store</string>
-    <string name="search_mode_youtube">YouTube</string>
     <string name="removed_from_favorites">Removed %1$s from favorites</string>
     <string name="added_to_favorites">Added %1$s to favorites</string>
     <string name="application_restored">Application restored</string>
     <string name="unable_to_open_app">Unable to open app</string>
     <string name="unhid_app">Unhid %1$s</string>
     <string name="hid_app">Hid %1$s</string>
-    <string name="call_contact_title">Call %1$s?</string>
-    <string name="call_contact_message">Phone: %1$s\nDo you want to proceed?</string>
     <string name="call_button">Call</string>
     <string name="cancel_button">Cancel</string>
     <string name="timer_zero" translatable="false">00:00</string>
@@ -102,8 +93,6 @@
     <string name="sms">SMS</string>
 
     
-    <string name="set_pin">Set PIN</string>
-    <string name="change_pin">Change PIN</string>
     <string name="set_access_pin">Set Access PIN</string>
     <string name="change_access_pin">Change Access PIN</string>
     <string name="app_lock_hint_enter_pin_range">Enter 4-6 digit PIN</string>
@@ -180,13 +169,10 @@
     <string name="cpu_temp_format">%1$.1f°C</string>
 
     
-    <string name="screen_time_format">Screen Time: %1$s</string>
     <string name="widget_section_enabled">Enabled widgets</string>
     <string name="widget_section_custom_disabled">Available widgets</string>
-    <string name="widget_section_system_disabled">System widgets (disabled)</string>
 
     
-    <string name="no_hidden_apps">No hidden apps. Long press an app in the app list to hide it.</string>
 
     
     <string name="mbps_format">%1$.1f Mbps</string>
@@ -206,24 +192,12 @@
     <string name="noise_button_enable">Enable</string>
 
     <string name="create_workspace">Create Workspace</string>
-    <string name="update_workspace">Update Workspace</string>
-    <string name="workspace_edit_description">Edit workspace</string>
-    <string name="workspace_delete_description">Delete workspace</string>
     <string name="font_download">Download</string>
-    <string name="font_downloading">Downloading…</string>
-    <string name="font_installed">Installed</string>
-    <string name="font_downloaded_message">%1$s downloaded</string>
     <string name="font_remove">Remove</string>
-    <string name="font_removed_message">%1$s removed</string>
-    <string name="font_removing">Removing…</string>
-    <string name="font_download_failed">Failed to download %1$s</string>
     <string name="font_download_failed_with_name">Failed to download font: %1$s</string>
-    <string name="font_install">Install</string>
-    <string name="font_uninstall">Uninstall</string>
 
     
     <string name="distance_km_format">%1$s km</string>
-    <string name="steps_distance_format">%1$d steps • %2$s km</string>
     <string name="steps_distance_time_format">%1$d steps • %2$s km • %3$s</string>
     <string name="stats">Stats</string>
     <string name="calendar">Calendar</string>
@@ -391,22 +365,16 @@
     <string name="workout_recorded_format">Recorded: %1$s</string>
     <string name="workout_total_format">Total: %1$s</string>
     <string name="workout_best_format">Best: %1$s</string>
-    <string name="workout_type_reps">REPS</string>
     <string name="workout_type_time">TIME</string>
 
     
-    <string name="workspace_app_count_format">%1$d apps</string>
 
     
-    <string name="accessibility_shortcut">Accessibility Shortcut</string>
-    <string name="accessibility_shortcut_description">Show a floating button for quick access to system controls</string>
     <string name="edge_panel_permission_usage_title">Usage Access Required</string>
     <string name="edge_panel_permission_usage_message">Allow Launch to read usage access so the edge panel can show your recent apps.</string>
     <string name="edge_panel_config_title">Edge Panel</string>
     <string name="edge_panel_config_subtitle">Pick the pinned apps that stay in your side panel. Recent apps appear automatically above them.</string>
     <string name="edge_panel_config_saved">Edge panel apps updated</string>
-    <string name="edge_panel_no_recent_apps">Use a few apps first and your recent apps will appear here.</string>
-    <string name="edge_panel_grant_usage_access">Grant usage access to show recent apps</string>
     <string name="edge_panel_handle_section_title">Handle</string>
     <string name="edge_panel_handle_position">Position</string>
     <string name="edge_panel_handle_lock">Lock panel position</string>
@@ -418,7 +386,6 @@
     <string name="edge_panel_position_right">Right</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">Trigger Line</string>
     <string name="control_center_trigger_position">Position</string>
     <string name="control_center_trigger_lock">Lock trigger position</string>
     <string name="control_center_trigger_transparency">Transparency</string>
@@ -433,23 +400,17 @@
     <string name="control_center_config_saved">Control center layout updated</string>
     
     
-    <string name="year_progress_enable">Enable</string>
-    <string name="year_progress_disable">Disable</string>
     <string name="year_progress_stats_format">%1$d days of %2$d completed (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">%1$d days remaining</string>
 
     
-    <string name="support_project_title">Support the Project</string>
     <string name="support_project_intro">Your support helps keep Launch ad-free, open source, and actively maintained for the long term.</string>
     <string name="support_project_commitment">I am committed to keeping every feature free, avoiding subscriptions, and using support to improve stability, ship thoughtful updates, and maintain the app for years to come.</string>
     <string name="support_project_prompt">Support the project</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;Sponsor on GitHub&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;Buy Me a Coffee&lt;/a&gt;</string>
     <string name="support_button_loading">Loading...</string>
     <string name="support_button_buy">Support %1$s</string>
     <string name="support_button_unavailable">Unavailable</string>
     <string name="support_button_pending">Pending</string>
-    <string name="support_thank_you">Thank you for supporting ❤️</string>
     <string name="support_thank_you_title">Thank You</string>
     <string name="support_thank_you_message">Thank you for supporting Launch. Your contribution helps keep the app ad-free, open source, and free of subscriptions while I continue maintaining it long term.</string>
     <string name="support_thank_you_chip_adfree">Ad-free forever</string>
@@ -469,22 +430,16 @@
     <string name="donation_prompt_not_now">Not now</string>
     
     
-    <string name="category_appearance">Appearance</string>
-    <string name="category_features">Features</string>
     <string name="category_security_privacy">Security &amp; Privacy</string>
-    <string name="category_system">System</string>
-    <string name="category_about">About</string>
     
     
     <string name="pomodoro_work">Work</string>
     <string name="pomodoro_break">Break</string>
     <string name="pomodoro_long_break">Long Break</string>
-    <string name="pomodoro_mode">Pomodoro</string>
     <string name="pomodoro_stop_title">Stop Pomodoro?</string>
     <string name="pomodoro_stop_message">A Pomodoro session is currently active. Do you want to stop it?</string>
 
     
-    <string name="note_icon_description">Note Icon</string>
     <string name="notes_title">Notes</string>
     <string name="meeting_notes_title">Meeting Notes</string>
     <string name="meeting_notes_desc">Discuss project roadmap and…</string>
@@ -500,7 +455,6 @@
 
     <string name="system_monitor_title">System Monitor</string>
     <string name="view_system_diagnostics">View System Diagnostics</string>
-    <string name="performance_category">PERFORMANCE</string>
     <string name="hardware_category">HARDWARE INFO</string>
     <string name="battery_category">BATTERY &amp; POWER</string>
     <string name="network_category">NETWORK &amp; CONNECTIVITY</string>
@@ -768,21 +722,7 @@
     <string name="add">+ Add</string>
     <string name="no_countdowns_yet">No countdowns yet</string>
     <string name="tap_add_to_create_a_countdown">Tap + Add to create a countdown</string>
-    <string name="habit_name">Habit Name</string>
-    <string name="e_g_exercise_read_meditate">e.g., Exercise, Read, Meditate</string>
-    <string name="description_optional_2">Description (Optional)</string>
-    <string name="brief_description_of_your_habit">Brief description of your habit</string>
-    <string name="frequency">Frequency</string>
     <string name="select_days">Select Days:</string>
-    <string name="sunday">Sunday</string>
-    <string name="monday">Monday</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="wednesday">Wednesday</string>
-    <string name="thursday">Thursday</string>
-    <string name="friday">Friday</string>
-    <string name="saturday">Saturday</string>
-    <string name="enable_reminder">Enable Reminder</string>
-    <string name="set_reminder_time">Set reminder time</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">Paste a valid RSS or Atom feed URL.</string>
     <string name="https_example_com_feed_xml" translatable="false">https://example.com/feed.xml</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">Examples: BBC, Reuters, Hacker News, blogs, podcasts, and newsletters with feed URLs.</string>
@@ -811,13 +751,6 @@
     <string name="hourly_breakdown">Hourly Breakdown</string>
     <string name="note_title_optional">Note title (optional)</string>
     <string name="note_content_optional">Note content (optional)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">Calibrate your stride length for more accurate distance measurements.</string>
-    <string name="height_cm">Height (cm)</string>
-    <string name="height_input">e.g. 175</string>
-    <string name="stride_length_meters">Stride Length (meters)</string>
-    <string name="stride_length_input">e.g. 0.75</string>
-    <string name="current_stride_length_0_75_m">Current stride length: 0.75 m</string>
-    <string name="reset_to_default">Reset to Default</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">Trust this domain for the rest of this session</string>
     <string name="transaction_history">Transaction History</string>
     <string name="clear_all_transactions">Clear all transactions</string>
@@ -836,9 +769,6 @@
     <string name="app_icon">App Icon</string>
     <string name="limit_1h_30m">Limit: 1h 30m</string>
     <string name="used_45m">Used: 45m</string>
-    <string name="no_downloadable_fonts_available">No downloadable fonts available</string>
-    <string name="str_9" translatable="false">🔥</string>
-    <string name="daily">Daily</string>
     <string name="pdf_page">PDF Page</string>
     <string name="permission_name">Permission Name</string>
     <string name="permission_description">Permission description</string>
@@ -849,7 +779,6 @@
     <string name="description">Description</string>
     <string name="jan_1_2024">Jan 1, 2024</string>
     <string name="delete_transaction">Delete transaction</string>
-    <string name="file_icon">File Icon</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">Launch Shortcut</string>
     <string name="recent">Recent</string>
@@ -860,13 +789,6 @@
     <string name="play_pause">Play/Pause</string>
     <string name="next">Next</string>
     <string name="grant_notification_access">Grant Notification Access</string>
-    <string name="notification_title">Notification Title</string>
-    <string name="notification_text_content">Notification text content</string>
-    <string name="s_2m_ago">2m ago</string>
-    <string name="type_a_reply">Type a reply...</string>
-    <string name="media_title">Media Title</string>
-    <string name="artist_name">Artist Name</string>
-    <string name="send">Send</string>
     <string name="no_news_sources_enabled">No news sources enabled</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">Open feed settings and switch on the sources you want to read here.</string>
     <string name="your_headlines_in_one_place">Your headlines in one place</string>
@@ -894,7 +816,6 @@
     <string name="predicted">*Predicted</string>
     <string name="health_status">Health Status</string>
     <string name="good">Good</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">Battery</string>
     <string name="time_left">Time Left</string>
     <string name="charging">Charging</string>
@@ -914,7 +835,6 @@
     <string name="s_0" translatable="false">0°</string>
     <string name="compass_sensors_not_available">Compass sensors not available</string>
     <string name="widget_compass_preview_label_1">N</string>
-    <string name="drag_to_reorder">Drag to reorder</string>
     <string name="new_year_2024">New Year 2024</string>
     <string name="widget">Widget</string>
     <string name="preview">Preview</string>
@@ -953,9 +873,6 @@
     <string name="longest_streak">Longest Streak</string>
     <string name="contribution_activity">Contribution Activity</string>
     <string name="tap_to_configure_github_token">Tap to configure GitHub token</string>
-    <string name="habit_tracker">Habit Tracker</string>
-    <string name="add_habit">Add Habit</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">No habits yet. Tap + to add your first habit!</string>
     <string name="summer_vibes">Summer Vibes</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">Network Stats</string>

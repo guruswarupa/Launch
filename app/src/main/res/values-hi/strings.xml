@@ -22,7 +22,6 @@
     <string name="web_app_search_title">खोज परिणाम</string>
     <string name="web_app_search_empty">कोई परिणाम नहीं मिला</string>
     <string name="web_app_search_hint">Google पर वेबसाइट खोजें…</string>
-    <string name="web_app_fetching_title">पेज शीर्षक प्राप्त किया जा रहा है…</string>
     <string name="add_button">जोड़ें</string>
     <string name="save_button">सहेजें</string>
     <string name="delete_button">हटाएं</string>
@@ -33,7 +32,6 @@
     <string name="add_to_favorites_plain">पसंदीदा में जोड़ें</string>
     <string name="unhide_app_plain">ऐप दिखाएं</string>
     <string name="hide_app_plain">ऐप छिपाएं</string>
-    <string name="grid_columns_title">प्रति पंक्ति ऐप्स</string>
     <string name="apps_per_row_format">%1$d प्रति पंक्ति ऐप्स</string>
     <string name="search_text"> खोजें…</string>
     
@@ -71,7 +69,6 @@
     <string name="google_maps_not_installed">Google मानचित्र इंस्टॉल नहीं है।</string>
     <string name="youtube_not_installed_opening_browser">YouTube ऐप इंस्टॉल नहीं है। ब्राउज़र में खोला जा रहा है।</string>
     <string name="cannot_launch_app">ऐप लॉन्च नहीं किया जा सकता</string>
-    <string name="cannot_open_vault">वॉल्ट नहीं खोला जा सकता: ऐप नहीं मिला</string>
     <string name="hidden_apps_feature_not_available">छिपे हुए ऐप्स सुविधा उपलब्ध नहीं है</string>
     
     
@@ -79,26 +76,18 @@
     <string name="search_mode_apps">ऐप्स</string>
     <string name="search_mode_contacts">संपर्क</string>
     <string name="search_mode_files">फ़ाइलें</string>
-    <string name="search_mode_maps">मानचित्र</string>
-    <string name="search_mode_web">वेब</string>
-    <string name="search_mode_playstore">Play Store</string>
-    <string name="search_mode_youtube">YouTube</string>
     <string name="removed_from_favorites">%1$s पसंदीदा से हटाया गया</string>
     <string name="added_to_favorites">%1$s पसंदीदा में जोड़ा गया</string>
     <string name="application_restored">ऐप पुनर्स्थापित किया गया</string>
     <string name="unable_to_open_app">ऐप खोलने में असमर्थ</string>
     <string name="unhid_app">%1$s दिखाया गया</string>
     <string name="hid_app">%1$s छिपाया गया</string>
-    <string name="call_contact_title">%1$s को कॉल करें?</string>
-    <string name="call_contact_message">फ़ोन: %1$s\nक्या आप जारी रखना चाहते हैं?</string>
     <string name="call_button">कॉल करें</string>
     <string name="cancel_button">रद्द करें</string>
     <string name="whatsapp">WhatsApp</string>
     <string name="sms">SMS</string>
 
     
-    <string name="set_pin">पिन सेट करें</string>
-    <string name="change_pin">पिन बदलें</string>
     <string name="set_access_pin">एक्सेस पिन सेट करें</string>
     <string name="change_access_pin">एक्सेस पिन बदलें</string>
     <string name="app_lock_hint_enter_pin_range">4-6 अंकों का पिन दर्ज करें</string>
@@ -174,13 +163,10 @@
     <string name="cpu_temp_format">%1$.1f°C</string>
 
     
-    <string name="screen_time_format">स्क्रीन समय: %1$s</string>
     <string name="widget_section_enabled">सक्षम विजेट</string>
     <string name="widget_section_custom_disabled">उपलब्ध विजेट</string>
-    <string name="widget_section_system_disabled">सिस्टम विजेट (अक्षम)</string>
 
     
-    <string name="no_hidden_apps">कोई छिपे हुए ऐप्स नहीं। किसी ऐप को छिपाने के लिए सूची में उसे दबाकर रखें।</string>
 
     
     <string name="mbps_format">%1$.1f Mbps</string>
@@ -200,24 +186,12 @@
     <string name="noise_button_enable">सक्षम करें</string>
 
     <string name="create_workspace">वर्कस्पेस बनाएं</string>
-    <string name="update_workspace">वर्कस्पेस अपडेट करें</string>
-    <string name="workspace_edit_description">वर्कस्पेस संपादित करें</string>
-    <string name="workspace_delete_description">वर्कस्पेस हटाएं</string>
     <string name="font_download">डाउनलोड करें</string>
-    <string name="font_downloading">डाउनलोड हो रहा है…</string>
-    <string name="font_installed">इंस्टॉल किया गया</string>
-    <string name="font_downloaded_message">%1$s डाउनलोड किया गया</string>
     <string name="font_remove">हटाएं</string>
-    <string name="font_removed_message">%1$s हटाया गया</string>
-    <string name="font_removing">हटाया जा रहा है…</string>
-    <string name="font_download_failed">%1$s डाउनलोड करने में विफल</string>
     <string name="font_download_failed_with_name">फ़ॉन्ट डाउनलोड करने में विफल: %1$s</string>
-    <string name="font_install">इंस्टॉल करें</string>
-    <string name="font_uninstall">अनइंस्टॉल करें</string>
 
     
     <string name="distance_km_format">%1$s km</string>
-    <string name="steps_distance_format">%1$d कदम • %2$s km</string>
     <string name="steps_distance_time_format">%1$d कदम • %2$s km • %3$s</string>
     <string name="stats">आंकड़े</string>
     <string name="calendar">कैलेंडर</string>
@@ -384,22 +358,16 @@
     <string name="workout_recorded_format">रिकॉर्ड किया गया: %1$s</string>
     <string name="workout_total_format">कुल: %1$s</string>
     <string name="workout_best_format">सर्वश्रेष्ठ: %1$s</string>
-    <string name="workout_type_reps">दोहराव</string>
     <string name="workout_type_time">समय</string>
 
     
-    <string name="workspace_app_count_format">%1$d ऐप्स</string>
 
     
-    <string name="accessibility_shortcut">एक्सेसिबिलिटी शॉर्टकट</string>
-    <string name="accessibility_shortcut_description">सिस्टम नियंत्रणों तक त्वरित पहुंच के लिए फ्लोटिंग बटन दिखाएं</string>
     <string name="edge_panel_permission_usage_title">उपयोग एक्सेस आवश्यक है</string>
     <string name="edge_panel_permission_usage_message">Launch को उपयोग एक्सेस पढ़ने की अनुमति दें ताकि एज पैनल आपके हाल के ऐप्स दिखा सके।</string>
     <string name="edge_panel_config_title">एज पैनल</string>
     <string name="edge_panel_config_subtitle">वे पिन किए गए ऐप्स चुनें जो आपके साइड पैनल में रहते हैं। हाल के ऐप्स स्वचालित रूप से उनके ऊपर दिखाई देते हैं।</string>
     <string name="edge_panel_config_saved">एज पैनल ऐप्स अपडेट किए गए</string>
-    <string name="edge_panel_no_recent_apps">पहले कुछ ऐप्स का उपयोग करें, फिर आपके हाल के ऐप्स यहां दिखाई देंगे।</string>
-    <string name="edge_panel_grant_usage_access">हाल के ऐप्स दिखाने के लिए उपयोग एक्सेस दें</string>
     <string name="edge_panel_handle_section_title">हैंडल</string>
     <string name="edge_panel_handle_position">स्थिति</string>
     <string name="edge_panel_handle_lock">पैनल स्थिति लॉक करें</string>
@@ -411,7 +379,6 @@
     <string name="edge_panel_position_right">दाएं</string>
     
     <!-- Control Center Trigger -->
-    <string name="control_center_trigger_section_title">ट्रिगर लाइन</string>
     <string name="control_center_trigger_position">स्थिति</string>
     <string name="control_center_trigger_lock">ट्रिगर स्थिति लॉक करें</string>
     <string name="control_center_trigger_transparency">पारदर्शिता</string>
@@ -426,23 +393,17 @@
     <string name="control_center_config_saved">नियंत्रण केंद्र लेआउट अपडेट किया गया</string>
     
     
-    <string name="year_progress_enable">सक्षम करें</string>
-    <string name="year_progress_disable">अक्षम करें</string>
     <string name="year_progress_stats_format">%2$d में से %1$d दिन पूर्ण (%3$d%%)</string>
     <string name="year_progress_days_remaining_format">%1$d दिन शेष</string>
 
     
-    <string name="support_project_title">प्रोजेक्ट का समर्थन करें</string>
     <string name="support_project_intro">आपका समर्थन Launch को विज्ञापन-मुक्त, ओपन सोर्स और लंबे समय तक सक्रिय रूप से बनाए रखने में मदद करता है।</string>
     <string name="support_project_commitment">मैं हर सुविधा को मुफ़्त रखने, सब्सक्रिप्शन से बचने और स्थिरता में सुधार, विचारशील अपडेट जारी करने और वर्षों तक ऐप को बनाए रखने के लिए समर्थन का उपयोग करने का वचन देता हूं।</string>
     <string name="support_project_prompt">प्रोजेक्ट का समर्थन करें</string>
-    <string name="sponsor_github_link">&lt;a href="https://github.com/sponsors/guruswarupa"&gt;GitHub पर प्रायोजित करें&lt;/a&gt;</string>
-    <string name="buy_me_a_coffee_link">&lt;a href="https://buymeacoffee.com/guruswarupa"&gt;मुझे एक कॉफ़ी खरीदें&lt;/a&gt;</string>
     <string name="support_button_loading">लोड हो रहा है...</string>
     <string name="support_button_buy">%1$s का समर्थन करें</string>
     <string name="support_button_unavailable">अनुपलब्ध</string>
     <string name="support_button_pending">लंबित</string>
-    <string name="support_thank_you">आपके समर्थन के लिए धन्यवाद ❤️</string>
     <string name="support_thank_you_title">बहुत धन्यवाद</string>
     <string name="support_thank_you_message">Launch का समर्थन करने के लिए धन्यवाद। आपका योगदान ऐप को विज्ञापन-मुक्त, ओपन सोर्स और बिना सब्सक्रिप्शन मॉडल के बनाए रखने में मदद करता है, जबकि मैं इसे लंबे समय तक बनाए रखना जारी रखता हूं।</string>
     <string name="support_thank_you_chip_adfree">हमेशा के लिए विज्ञापन-मुक्त</string>
@@ -462,22 +423,16 @@
     <string name="donation_prompt_not_now">अभी नहीं</string>
     
     
-    <string name="category_appearance">दिखावट</string>
-    <string name="category_features">सुविधाएं</string>
     <string name="category_security_privacy">सुरक्षा और गोपनीयता</string>
-    <string name="category_system">सिस्टम</string>
-    <string name="category_about">परिचय</string>
     
     
     <string name="pomodoro_work">कार्य</string>
     <string name="pomodoro_break">विराम</string>
     <string name="pomodoro_long_break">लंबा विराम</string>
-    <string name="pomodoro_mode">पोमोडोरो</string>
     <string name="pomodoro_stop_title">पोमोडोरो रोकें?</string>
     <string name="pomodoro_stop_message">एक पोमोडोरो सत्र वर्तमान में सक्रिय है। क्या आप इसे रोकना चाहते हैं?</string>
 
     
-    <string name="note_icon_description">नोट आइकन</string>
     <string name="notes_title">नोट्स</string>
     <string name="meeting_notes_title">बैठक नोट्स</string>
     <string name="meeting_notes_desc">प्रोजेक्ट रोडमैप पर चर्चा करें और…</string>
@@ -493,7 +448,6 @@
 
     <string name="system_monitor_title">सिस्टम मॉनिटर</string>
     <string name="view_system_diagnostics">सिस्टम डायग्नोस्टिक्स देखें</string>
-    <string name="performance_category">प्रदर्शन</string>
     <string name="hardware_category">हार्डवेयर जानकारी</string>
     <string name="battery_category">बैटरी और पावर</string>
     <string name="network_category">नेटवर्क और कनेक्टिविटी</string>
@@ -752,21 +706,7 @@
     <string name="add">+ जोड़ें</string>
     <string name="no_countdowns_yet">अभी तक कोई काउंटडाउन नहीं</string>
     <string name="tap_add_to_create_a_countdown">काउंटडाउन बनाने के लिए + जोड़ें पर टैप करें</string>
-    <string name="habit_name">आदत का नाम</string>
-    <string name="e_g_exercise_read_meditate">जैसे, व्यायाम, पढ़ना, ध्यान</string>
-    <string name="description_optional_2">विवरण (वैकल्पिक)</string>
-    <string name="brief_description_of_your_habit">आपकी आदत का संक्षिप्त विवरण</string>
-    <string name="frequency">आवृत्ति</string>
     <string name="select_days">दिन चुनें:</string>
-    <string name="sunday">रविवार</string>
-    <string name="monday">सोमवार</string>
-    <string name="tuesday">मंगलवार</string>
-    <string name="wednesday">बुधवार</string>
-    <string name="thursday">गुरुवार</string>
-    <string name="friday">शुक्रवार</string>
-    <string name="saturday">शनिवार</string>
-    <string name="enable_reminder">रिमाइंडर सक्षम करें</string>
-    <string name="set_reminder_time">रिमाइंडर समय सेट करें</string>
     <string name="paste_a_valid_rss_or_atom_feed_url">एक मान्य RSS या Atom फ़ीड URL पेस्ट करें।</string>
     <string name="examples_bbc_reuters_hacker_news_blogs_podcasts">उदाहरण: BBC, Reuters, Hacker News, ब्लॉग, पॉडकास्ट और फ़ीड URL वाले न्यूज़लेटर।</string>
     <string name="enter_todo_item">टास्क दर्ज करें</string>
@@ -794,13 +734,6 @@
     <string name="hourly_breakdown">प्रति घंटा विवरण</string>
     <string name="note_title_optional">नोट शीर्षक (वैकल्पिक)</string>
     <string name="note_content_optional">नोट सामग्री (वैकल्पिक)</string>
-    <string name="calibrate_your_stride_length_for_more_accurate_d">अधिक सटीक दूरी माप के लिए अपनी कदम लंबाई कैलिब्रेट करें।</string>
-    <string name="height_cm">ऊंचाई (सेमी)</string>
-    <string name="height_input">जैसे, 175</string>
-    <string name="stride_length_meters">कदम लंबाई (मीटर)</string>
-    <string name="stride_length_input">जैसे, 0.75</string>
-    <string name="current_stride_length_0_75_m">वर्तमान कदम लंबाई: 0.75 मी</string>
-    <string name="reset_to_default">डिफ़ॉल्ट पर रीसेट करें</string>
     <string name="trust_this_domain_for_the_rest_of_this_session">इस सत्र के शेष समय के लिए इस डोमेन पर भरोसा करें</string>
     <string name="transaction_history">लेनदेन इतिहास</string>
     <string name="clear_all_transactions">सभी लेनदेन साफ़ करें</string>
@@ -819,8 +752,6 @@
     <string name="app_icon">ऐप आइकन</string>
     <string name="limit_1h_30m">सीमा: 1घं 30मि</string>
     <string name="used_45m">उपयोग किया गया: 45मि</string>
-    <string name="no_downloadable_fonts_available">कोई डाउनलोड करने योग्य फ़ॉन्ट उपलब्ध नहीं है</string>
-    <string name="daily">दैनिक</string>
     <string name="pdf_page">PDF पेज</string>
     <string name="permission_name">अनुमति नाम</string>
     <string name="permission_description">अनुमति विवरण</string>
@@ -831,7 +762,6 @@
     <string name="description">विवरण</string>
     <string name="jan_1_2024">1 जन 2024</string>
     <string name="delete_transaction">लेनदेन हटाएं</string>
-    <string name="file_icon">फ़ाइल आइकन</string>
     <string name="alm">ALM</string>
     <string name="launch_shortcut">Launch शॉर्टकट</string>
     <string name="recent">हाल के</string>
@@ -842,13 +772,6 @@
     <string name="play_pause">चलाएं/रोकें</string>
     <string name="next">अगला</string>
     <string name="grant_notification_access">सूचना एक्सेस दें</string>
-    <string name="notification_title">सूचना शीर्षक</string>
-    <string name="notification_text_content">सूचना टेक्स्ट सामग्री</string>
-    <string name="s_2m_ago">2 मिनट पहले</string>
-    <string name="type_a_reply">एक जवाब टाइप करें...</string>
-    <string name="media_title">मीडिया शीर्षक</string>
-    <string name="artist_name">कलाकार का नाम</string>
-    <string name="send">भेजें</string>
     <string name="no_news_sources_enabled">कोई समाचार स्रोत सक्षम नहीं है</string>
     <string name="open_feed_settings_and_switch_on_the_sources_you">फ़ीड सेटिंग्स खोलें और वे स्रोत चालू करें जिन्हें आप यहां पढ़ना चाहते हैं।</string>
     <string name="your_headlines_in_one_place">आपकी हेडलाइंस एक जगह पर</string>
@@ -876,7 +799,6 @@
     <string name="predicted">*अनुमानित</string>
     <string name="health_status">स्वास्थ्य स्थिति</string>
     <string name="good">अच्छा</string>
-    <string name="galaxy_buds">Galaxy Buds</string>
     <string name="battery">बैटरी</string>
     <string name="time_left">शेष समय</string>
     <string name="charging">चार्ज हो रहा है</string>
@@ -895,7 +817,6 @@
     <string name="direction_text">उ</string>
     <string name="compass_sensors_not_available">कंपास सेंसर उपलब्ध नहीं हैं</string>
     <string name="widget_compass_preview_label_1">उ</string>
-    <string name="drag_to_reorder">पुनर्व्यवस्थित करने के लिए खींचें</string>
     <string name="new_year_2024">नया साल 2024</string>
     <string name="widget">विजेट</string>
     <string name="preview">पूर्वावलोकन</string>
@@ -927,9 +848,6 @@
     <string name="longest_streak">सबसे लंबी स्ट्रीक</string>
     <string name="contribution_activity">योगदान गतिविधि</string>
     <string name="tap_to_configure_github_token">GitHub टोकन कॉन्फ़िगर करने के लिए टैप करें</string>
-    <string name="habit_tracker">आदत ट्रैकर</string>
-    <string name="add_habit">आदत जोड़ें</string>
-    <string name="no_habits_yet_tap_to_add_your_first_habit">अभी तक कोई आदत नहीं। अपनी पहली आदत जोड़ने के लिए + पर टैप करें!</string>
     <string name="summer_vibes">गर्मियों का माहौल</string>
     <string name="the_sunshine_band">The Sunshine Band</string>
     <string name="network_stats">नेटवर्क आंकड़े</string>
