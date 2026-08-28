@@ -25,6 +25,16 @@
 
 <!-- Alternative / OSS-friendly -->
 <p align="center">
+  <a href="https://f-droid.org/packages/com.guruswarupa.launchh/">
+    <img
+      src="https://f-droid.org/badge/get-it-on.png"
+      height="80"
+      alt="Get it on F-Droid"
+    />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.guruswarupa.launch%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fguruswarupa%2Flaunch%22%2C%22author%22%3A%22guruswarupa%22%2C%22name%22%3A%22Launch%22%2C%22preferredApkIndex%22%3A0%2C%22overrideSource%22%3A%22GitHub%22%7D">
     <img
       src="https://github.com/user-attachments/assets/54fbe89c-d3ad-4bba-b613-2686688e567f"
