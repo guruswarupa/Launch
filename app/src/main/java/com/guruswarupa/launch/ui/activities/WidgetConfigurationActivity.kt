@@ -271,6 +271,9 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (::widgetManager.isInitialized) {
+            widgetManager.onDestroy()
+        }
         if (::wallpaperManagerHelper.isInitialized) {
             wallpaperManagerHelper.cleanup()
         }
