@@ -551,6 +551,7 @@
     <string name="layout_and_grid">ವಿನ್ಯಾಸ ಮತ್ತು ಗ್ರಿಡ್</string>
     <string name="s_4_items_per_row">ಪ್ರತಿ ಸಾಲಿಗೆ 4 ಐಟಂಗಳು</string>
     <string name="show_app_names_in_grid">ಗ್ರಿಡ್‌ನಲ್ಲಿ ಆ್ಯಪ್ ಹೆಸರುಗಳನ್ನು ತೋರಿಸಿ</string>
+    <string name="hide_app_icons_in_list">ಪಟ್ಟಿಯಲ್ಲಿ ಆ್ಯಪ್ ಐಕಾನ್‌ಗಳನ್ನು ಮರೆಮಾಡಿ</string>
     <string name="icon_shape">ಐಕಾನ್ ಆಕಾರ</string>
     <string name="icon_size">ಐಕಾನ್ ಗಾತ್ರ</string>
     <string name="s_24_hour_format">24-ಗಂಟೆ ಸ್ವರೂಪ</string>

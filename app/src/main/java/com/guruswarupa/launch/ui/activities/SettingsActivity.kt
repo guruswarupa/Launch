@@ -308,11 +308,24 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
         }
 
+        val hideAppIconInListSection = findViewById<LinearLayout>(R.id.hide_app_icon_in_list_section)
+        val hideAppIconInListSwitch = findViewById<SwitchCompat>(R.id.hide_app_icon_in_list_switch)
+        hideAppIconInListSection.isVisible = selectedStyle == Constants.Prefs.VIEW_PREFERENCE_LIST
+
+        val hideAppIconInList = prefs.getBoolean(Constants.Prefs.HIDE_APP_ICON_IN_LIST, false)
+        hideAppIconInListSwitch.isChecked = hideAppIconInList
+
+        hideAppIconInListSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit { putBoolean(Constants.Prefs.HIDE_APP_ICON_IN_LIST, isChecked) }
+            notifySettingsChanged()
+        }
+
 
         gridBtn.setOnClickListener {
             updateDisplayStyleButtons(gridBtn, listBtn, Constants.Prefs.VIEW_PREFERENCE_GRID)
             gridSection.isVisible = true
             showAppNameInSection.isVisible = true
+            hideAppIconInListSection.isVisible = false
             prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_GRID) }
             notifySettingsChanged()
         }
@@ -321,6 +334,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             updateDisplayStyleButtons(gridBtn, listBtn, Constants.Prefs.VIEW_PREFERENCE_LIST)
             gridSection.isVisible = false
             showAppNameInSection.isVisible = false
+            hideAppIconInListSection.isVisible = true
             prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_LIST) }
             notifySettingsChanged()
         }

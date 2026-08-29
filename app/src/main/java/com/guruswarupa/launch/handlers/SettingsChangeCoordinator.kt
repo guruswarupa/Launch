@@ -191,6 +191,9 @@ class SettingsChangeCoordinator(
         val showAppNamesInGrid = sharedPreferences.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
         adapter?.updateShowAppNamesInGrid(showAppNamesInGrid)
 
+        val hideAppIconInList = sharedPreferences.getBoolean(Constants.Prefs.HIDE_APP_ICON_IN_LIST, false)
+        adapter?.updateHideAppIconInList(hideAppIconInList)
+
         activity.updateFastScrollerVisibility()
 
 

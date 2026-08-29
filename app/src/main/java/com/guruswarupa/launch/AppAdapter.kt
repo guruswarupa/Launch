@@ -95,6 +95,7 @@ class AppAdapter(
     private var currentIconStyle = prefs.getString(Constants.Prefs.ICON_STYLE, "squircle") ?: "round"
     private var currentIconSize = prefs.getInt(Constants.Prefs.ICON_SIZE, 40)
     private var currentShowAppNamesInGrid = prefs.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
+    private var currentHideAppIconInList = prefs.getBoolean(Constants.Prefs.HIDE_APP_ICON_IN_LIST, false)
 
     private var currentFontScale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100) / 100f
     private var currentFontStyle = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
@@ -248,6 +249,15 @@ class AppAdapter(
         }
     }
 
+    fun updateHideAppIconInList(hide: Boolean) {
+        if (currentHideAppIconInList != hide) {
+            currentHideAppIconInList = hide
+            if (!isGridMode) {
+                notifyItemRangeChanged(0, currentList.size, PAYLOAD_VIEW_MODE)
+            }
+        }
+    }
+
     fun getItemAtPosition(position: Int): ResolveInfo? {
         if (position < 0 || position >= currentList.size) return null
         return getItem(position)
@@ -386,6 +396,7 @@ class AppAdapter(
                     PAYLOAD_ICON_VISUAL_STATE -> applyIconVisualState(packageName, holder.appIcon)
                     PAYLOAD_VIEW_MODE -> {
                         configureLabelVisibility(holder)
+                        configureIconVisibility(holder)
                     }
                     PAYLOAD_USAGE -> {
                         bindUsageTime(holder, packageName)
@@ -429,6 +440,7 @@ class AppAdapter(
         iconLoader.applyShapeAppearance(holder.appIcon)
         bindCachedOrAsyncIcon(holder, appInfo, packageName)
         configureLabelVisibility(holder)
+        configureIconVisibility(holder)
         applyIconVisualState(packageName, holder.appIcon)
 
         holder.itemView.setOnClickListener {
@@ -447,6 +459,10 @@ class AppAdapter(
         } else {
             holder.appName?.visibility = View.VISIBLE
         }
+    }
+
+    private fun configureIconVisibility(holder: ViewHolder) {
+        holder.appIcon?.visibility = if (!isGridMode && currentHideAppIconInList) View.GONE else View.VISIBLE
     }
 
     private fun bindUsageTime(holder: ViewHolder, packageName: String) {
@@ -532,6 +548,7 @@ class AppAdapter(
         holder.appName?.text = appInfo.activityInfo.name
         holder.appUsageTime?.visibility = View.GONE
         configureLabelVisibility(holder)
+        configureIconVisibility(holder)
         applyIconVisualState(packageName, holder.appIcon)
 
         val siteUrl = appInfo.activityInfo.nonLocalizedLabel?.toString().orEmpty()

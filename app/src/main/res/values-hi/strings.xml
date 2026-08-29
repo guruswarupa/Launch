@@ -551,6 +551,7 @@
     <string name="layout_and_grid">लेआउट और ग्रिड</string>
     <string name="s_4_items_per_row">प्रति पंक्ति 4 आइटम</string>
     <string name="show_app_names_in_grid">ग्रिड में ऐप नाम दिखाएं</string>
+    <string name="hide_app_icons_in_list">सूची में ऐप आइकन छिपाएं</string>
     <string name="icon_shape">आइकन आकार</string>
     <string name="icon_size">आइकन साइज़</string>
     <string name="s_24_hour_format">24 घंटे का प्रारूप</string>

@@ -551,6 +551,7 @@
     <string name="layout_and_grid">Disposition &amp; grille</string>
     <string name="s_4_items_per_row">4 éléments par ligne</string>
     <string name="show_app_names_in_grid">Afficher les noms des applications dans la grille</string>
+    <string name="hide_app_icons_in_list">Masquer les icônes des applications dans la liste</string>
     <string name="icon_shape">Forme des icônes</string>
     <string name="icon_size">Taille des icônes</string>
     <string name="s_24_hour_format">Format 24 heures</string>

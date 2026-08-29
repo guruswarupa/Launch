@@ -559,6 +559,7 @@
     <string name="layout_and_grid">Layout &amp; Grid</string>
     <string name="s_4_items_per_row">4 items per row</string>
     <string name="show_app_names_in_grid">Show app names in grid</string>
+    <string name="hide_app_icons_in_list">Hide app icons in list</string>
     <string name="icon_shape">Icon Shape</string>
     <string name="icon_size">Icon Size</string>
     <string name="s_24_hour_format">24 Hour Format</string>

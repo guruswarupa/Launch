@@ -62,6 +62,7 @@ object Constants {
         const val SHOW_FAST_SCROLLER = "show_fast_scroller"
         const val GRID_COLUMNS = "grid_columns"
         const val SHOW_APP_NAME_IN_GRID = "show_app_name_in_grid"
+        const val HIDE_APP_ICON_IN_LIST = "hide_app_icon_in_list"
         const val ICON_STYLE = "icon_style"
         const val ICON_SIZE = "icon_size"
         const val ICON_PACK_PACKAGE = "icon_pack_package"
