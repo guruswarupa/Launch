@@ -161,17 +161,6 @@ class RssFeedPage(
         applyEmptyState(filteredArticles)
     }
 
-    private fun updateTopicChips() {
-        activity.backgroundExecutor.execute {
-            val categories = activity.rssFeedManager.getEnabledCategories()
-            activity.runOnUiThread {
-                if (!activity.isFinishing && !activity.isDestroyed) {
-                    updateTopicChipsWithCategories(categories)
-                }
-            }
-        }
-    }
-
     private fun updateTopicChipsWithCategories(categories: List<String>) {
         topicChips.isVisible = categories.isNotEmpty()
         if (categories.isEmpty()) {

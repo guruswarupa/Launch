@@ -460,11 +460,6 @@
     <string name="welcome">Добро пожаловать</string>
     <string name="to_launch">В LAUNCH</string>
     <string name="resources">РЕСУРСЫ</string>
-    <string name="discover_launch">ОТКРОЙТЕ LAUNCH</string>
-    <string name="search_focus_make_the_launcher_work_for_you">Ищите. Сосредоточьтесь. Пусть лаунчер работает на вас.</string>
-    <string name="everything_important_is_right_on_the_home_screen">Всё важное прямо на главном экране</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch помогает искать быстрее, лучше управлять приложениями и открывать действия без копания в настройках.</string>
-    <string name="you_can_still_customize_everything_later">Вы всё ещё можете всё настроить позже.</string>
     <string name="import_data">Импорт данных</string>
     <string name="restore_your_previous_configuration_from_a_backu">Восстановите предыдущую конфигурацию из файла резервной копии или начните заново со стандартными настройками.</string>
     <string name="choose_backup_file">Выбрать файл резервной копии</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">Режим %1$s - Хотите включить «Не беспокоить», чтобы отключить звук уведомлений во время этой сессии фокусировки?</string>
     <string name="dlg_yes">Да</string>
     <string name="dlg_no">Нет</string>
-    <string name="dlg_remove_widget">Удалить виджет</string>
-    <string name="dlg_remove_widget_2">Удалить виджет «%1$s»?</string>
     <string name="dlg_work_profile">Рабочий профиль</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">Создайте рабочий профиль, чтобы отделить рабочие приложения от личных. Рабочие профили изолируют и защищают ваши данные.</string>
     <string name="dlg_create_work_profile">Создать рабочий профиль</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">Питание</string>
     <string name="lbl_hotspot">Точка доступа</string>
     <string name="lbl_timeout">Тайм-аут</string>
-    <string name="lbl_vibrate">Вибрация</string>
-    <string name="lbl_muted">Без звука</string>
     <string name="lbl_used">Использовано: %1$s</string>
     <string name="lbl_control_center_trigger">Активатор центра управления</string>
     <string name="lbl_sec">%1$s сек</string>

@@ -23,7 +23,6 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.activities.FocusModeConfigActivity
 import com.guruswarupa.launch.ui.activities.WorkspaceConfigActivity
-import com.guruswarupa.launch.ui.activities.EncryptedVaultActivity
 import com.guruswarupa.launch.utils.DialogStyler
 import java.util.Locale
 import kotlin.math.abs
@@ -33,10 +32,6 @@ class AppDockManager(
     private val sharedPreferences: SharedPreferences,
     private val appDock: LinearLayout
 ) {
-    companion object {
-        private const val TAG = "AppDockManager"
-    }
-
     private val context: Context = activity
     private val dockIconSizePx = (Constants.Dimensions.DOCK_ICON_SIZE_DP * context.resources.displayMetrics.density).toInt()
     private val focusModeKey = "focus_mode_enabled"
@@ -144,15 +139,6 @@ class AppDockManager(
                 disableFocusMode()
             }
         }
-    }
-
-    private fun ensureVaultButton() {
-
-    }
-
-    private fun openVault() {
-        val intent = Intent(context, EncryptedVaultActivity::class.java)
-        context.startActivity(intent)
     }
 
     private fun refreshDock() {
@@ -450,11 +436,6 @@ class AppDockManager(
         activity.refreshAppsForWorkspace()
     }
 
-    private fun showWorkProfileSettings() {
-        val intent = Intent(context, WorkspaceConfigActivity::class.java)
-        context.startActivity(intent)
-    }
-
     private fun showWorkProfileManagementDialog() {
         workspaceProfileDialogs.showWorkProfileManagementDialog()
     }
@@ -589,9 +570,6 @@ class AppDockManager(
     }
 
 
-
-    private fun ensureSettingsButton() {
-    }
 
     private fun saveFocusMode() {
         sharedPreferences.edit { putBoolean(focusModeKey, isFocusMode) }

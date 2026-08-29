@@ -9,14 +9,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
-import com.guruswarupa.launch.managers.AppUsageStatsManager
 
 
 
 
 class WidgetSetupManager(
     private val activity: MainActivity,
-    private val usageStatsManager: AppUsageStatsManager,
     private val weatherManager: com.guruswarupa.launch.utils.WeatherManager,
     private val permissionManager: com.guruswarupa.launch.core.PermissionManager,
     private val secureStorageManager: com.guruswarupa.launch.core.SecureStorageManager
@@ -178,8 +176,8 @@ class WidgetSetupManager(
         }
 
     fun setupYearProgressWidget(sharedPreferences: android.content.SharedPreferences): YearProgressWidget =
-        setupWidgetWithPrefs(R.id.year_progress_widget_container, sharedPreferences) { act, container, prefs ->
-            YearProgressWidget(act, container, prefs)
+        setupWidgetWithPrefs(R.id.year_progress_widget_container, sharedPreferences) { act, container, _ ->
+            YearProgressWidget(act, container)
         }
 
     // TODO: Implement weekly usage widget setup

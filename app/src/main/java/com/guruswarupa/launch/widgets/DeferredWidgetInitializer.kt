@@ -3,13 +3,11 @@ package com.guruswarupa.launch.widgets
 import android.content.SharedPreferences
 import android.util.Log
 import com.guruswarupa.launch.core.LifecycleManager
-import com.guruswarupa.launch.managers.WidgetConfigurationManager
 
 class DeferredWidgetInitializer(
     private val widgetSetupManager: WidgetSetupManager,
     private val sharedPreferences: SharedPreferences,
     private val lifecycleManager: LifecycleManager,
-    private val widgetConfigurationManager: WidgetConfigurationManager,
     private val widgetLifecycleCoordinator: WidgetLifecycleCoordinator,
     private val onComplete: () -> Unit
 ) {

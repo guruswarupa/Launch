@@ -460,11 +460,6 @@
     <string name="welcome">ಸ್ವಾಗತ</string>
     <string name="to_launch">LAUNCH ಗೆ</string>
     <string name="resources">ಸಂಪನ್ಮೂಲಗಳು</string>
-    <string name="discover_launch">LAUNCH ಅನ್ವೇಷಿಸಿ</string>
-    <string name="search_focus_make_the_launcher_work_for_you">ಹುಡುಕಿ. ಗಮನ ಕೇಂದ್ರೀಕರಿಸಿ. ಲಾಂಚರ್ ನಿಮಗಾಗಿ ಕೆಲಸ ಮಾಡಲಿ.</string>
-    <string name="everything_important_is_right_on_the_home_screen">ಮುಖ್ಯವಾದ ಎಲ್ಲವೂ ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿಯೇ ಇದೆ</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch ನಿಮಗೆ ವೇಗವಾಗಿ ಹುಡುಕಲು, ಆ್ಯಪ್‌ಗಳನ್ನು ಉತ್ತಮವಾಗಿ ನಿರ್ವಹಿಸಲು ಮತ್ತು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಹುಡುಕಾಡದೆ ಕ್ರಿಯೆಗಳನ್ನು ತೆರೆಯಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.</string>
-    <string name="you_can_still_customize_everything_later">ನೀವು ಇನ್ನೂ ನಂತರ ಎಲ್ಲವನ್ನೂ ಕಸ್ಟಮೈಸ್ ಮಾಡಬಹುದು.</string>
     <string name="import_data">ಡೇಟಾ ಆಮದು ಮಾಡಿ</string>
     <string name="restore_your_previous_configuration_from_a_backu">ಬ್ಯಾಕಪ್ ಫೈಲ್‌ನಿಂದ ನಿಮ್ಮ ಹಿಂದಿನ ಸಂರಚನೆಯನ್ನು ಮರುಸ್ಥಾಪಿಸಿ, ಅಥವಾ ಡೀಫಾಲ್ಟ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳೊಂದಿಗೆ ಹೊಸದಾಗಿ ಪ್ರಾರಂಭಿಸಿ.</string>
     <string name="choose_backup_file">ಬ್ಯಾಕಪ್ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">%1$s ಮೋಡ್ - ಈ ಫೋಕಸ್ ಅವಧಿಯಲ್ಲಿ ಅಧಿಸೂಚನೆಗಳನ್ನು ಮ್ಯೂಟ್ ಮಾಡಲು ತೊಂದರೆ ಕೊಡಬೇಡಿ ಮೋಡ್ ಸಕ್ರಿಯಗೊಳಿಸಲು ಬಯಸುವಿರಾ?</string>
     <string name="dlg_yes">ಹೌದು</string>
     <string name="dlg_no">ಇಲ್ಲ</string>
-    <string name="dlg_remove_widget">ವಿಜೆಟ್ ತೆಗೆದುಹಾಕಿ</string>
-    <string name="dlg_remove_widget_2">"%1$s" ವಿಜೆಟ್ ತೆಗೆದುಹಾಕಬೇಕೇ?</string>
     <string name="dlg_work_profile">ಕೆಲಸದ ಪ್ರೊಫೈಲ್</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">ನಿಮ್ಮ ಕೆಲಸದ ಆ್ಯಪ್‌ಗಳನ್ನು ವೈಯಕ್ತಿಕ ಆ್ಯಪ್‌ಗಳಿಂದ ಬೇರ್ಪಡಿಸಲು ಕೆಲಸದ ಪ್ರೊಫೈಲ್ ರಚಿಸಿ. ಕೆಲಸದ ಪ್ರೊಫೈಲ್‌ಗಳು ನಿಮ್ಮ ಡೇಟಾವನ್ನು ಪ್ರತ್ಯೇಕ ಮತ್ತು ಸುರಕ್ಷಿತವಾಗಿ ಇಡುತ್ತವೆ.</string>
     <string name="dlg_create_work_profile">ಕೆಲಸದ ಪ್ರೊಫೈಲ್ ರಚಿಸಿ</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">ಪವರ್</string>
     <string name="lbl_hotspot">ಹಾಟ್‌ಸ್ಪಾಟ್</string>
     <string name="lbl_timeout">ಕಾಲಾವಧಿ</string>
-    <string name="lbl_vibrate">ವೈಬ್ರೇಟ್</string>
-    <string name="lbl_muted">ಮ್ಯೂಟ್ ಮಾಡಲಾಗಿದೆ</string>
     <string name="lbl_used">ಬಳಸಲಾಗಿದೆ: %1$s</string>
     <string name="lbl_control_center_trigger">ನಿಯಂತ್ರಣ ಕೇಂದ್ರ ಟ್ರಿಗರ್</string>
     <string name="lbl_sec">%1$s ಸೆಕೆಂಡ್</string>

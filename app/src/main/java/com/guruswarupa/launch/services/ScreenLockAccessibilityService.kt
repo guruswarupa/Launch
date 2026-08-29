@@ -1879,26 +1879,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         } catch (_: Exception) {}
     }
 
-    private fun updateSoundIcon(imageView: ImageView?, textView: TextView?) {
-        when (audioManager.ringerMode) {
-            AudioManager.RINGER_MODE_NORMAL -> {
-                imageView?.setImageResource(R.drawable.ic_volume_up_stat)
-                imageView?.alpha = 1.0f
-                textView?.text = getString(R.string.lbl_sound)
-            }
-            AudioManager.RINGER_MODE_VIBRATE -> {
-                imageView?.setImageResource(R.drawable.ic_vibrate_stat)
-                imageView?.alpha = 1.0f
-                textView?.text = getString(R.string.lbl_vibrate)
-            }
-            AudioManager.RINGER_MODE_SILENT -> {
-                imageView?.setImageResource(android.R.drawable.ic_lock_silent_mode)
-                imageView?.alpha = 0.5f
-                textView?.text = getString(R.string.lbl_muted)
-            }
-        }
-    }
-
     private fun updateSoundIconOnly(imageView: ImageView?) {
         when (audioManager.ringerMode) {
             AudioManager.RINGER_MODE_NORMAL -> {
@@ -1912,28 +1892,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             AudioManager.RINGER_MODE_SILENT -> {
                 imageView?.setImageResource(android.R.drawable.ic_lock_silent_mode)
                 imageView?.alpha = 0.5f
-            }
-        }
-    }
-
-    private fun toggleDnd(icon: ImageView?, label: TextView?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (notificationManager.isNotificationPolicyAccessGranted) {
-                val currentFilter = notificationManager.currentInterruptionFilter
-                val isOff = currentFilter == NotificationManager.INTERRUPTION_FILTER_ALL ||
-                            currentFilter == NotificationManager.INTERRUPTION_FILTER_UNKNOWN
-
-                val newFilter = if (isOff) NotificationManager.INTERRUPTION_FILTER_PRIORITY
-                                else NotificationManager.INTERRUPTION_FILTER_ALL
-
-                notificationManager.setInterruptionFilter(newFilter)
-
-
-                val enabled = isOff
-                icon?.alpha = if (enabled) 1.0f else 0.4f
-                label?.text = if (enabled) "DND On" else "DND Off"
-            } else {
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
         }
     }
@@ -1955,18 +1913,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             } else {
                 startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
-        }
-    }
-
-    private fun updateDndIcon(imageView: ImageView?, textView: TextView?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val filter = notificationManager.currentInterruptionFilter
-            val enabled = filter != NotificationManager.INTERRUPTION_FILTER_ALL &&
-                         filter != NotificationManager.INTERRUPTION_FILTER_UNKNOWN
-
-            imageView?.setImageResource(R.drawable.ic_focus_mode_icon)
-            imageView?.alpha = if (enabled) 1.0f else 0.4f
-            textView?.text = if (enabled) "DND On" else "DND Off"
         }
     }
 
@@ -2065,27 +2011,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             }
         } catch (e: Exception) {
             Toast.makeText(this, this.getString(R.string.toast_failed_to_change_screen_timeout), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateScreenTimeoutIcon(imageView: ImageView?, textView: TextView?) {
-        try {
-            val currentTimeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
-            val labels = mapOf(
-                15000 to "15s",
-                30000 to "30s",
-                60000 to "1min",
-                120000 to "2min",
-                300000 to "5min",
-                600000 to "10min",
-                2147483647 to "Never"
-            )
-            val label = labels[currentTimeout] ?: "Timeout"
-            textView?.text = label
-            imageView?.alpha = 1.0f
-        } catch (_: Exception) {
-            textView?.text = getString(R.string.lbl_timeout)
-            imageView?.alpha = 0.4f
         }
     }
 

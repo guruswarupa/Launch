@@ -460,11 +460,6 @@
     <string name="welcome">مرحبًا</string>
     <string name="to_launch">في Launch</string>
     <string name="resources">الموارد</string>
-    <string name="discover_launch">اكتشف Launch</string>
-    <string name="search_focus_make_the_launcher_work_for_you">ابحث. ركّز. اجعل المشغل يعمل لصالحك.</string>
-    <string name="everything_important_is_right_on_the_home_screen">كل ما هو مهم موجود على الشاشة الرئيسية</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">تساعدك Launch على البحث بشكل أسرع وإدارة التطبيقات بشكل أفضل وفتح الإجراءات دون البحث في الإعدادات.</string>
-    <string name="you_can_still_customize_everything_later">لا يزال بإمكانك تخصيص كل شيء لاحقًا.</string>
     <string name="import_data">استيراد البيانات</string>
     <string name="restore_your_previous_configuration_from_a_backu">استعد تكوينك السابق من ملف نسخ احتياطي، أو ابدأ من جديد بالإعدادات الافتراضية.</string>
     <string name="choose_backup_file">اختر ملف النسخ الاحتياطي</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">وضع %1$s - هل ترغب في تفعيل وضع عدم الإزعاج لكتم الإشعارات أثناء جلسة التركيز هذه؟</string>
     <string name="dlg_yes">نعم</string>
     <string name="dlg_no">لا</string>
-    <string name="dlg_remove_widget">إزالة الأداة</string>
-    <string name="dlg_remove_widget_2">إزالة أداة \"%1$s\"؟</string>
     <string name="dlg_work_profile">ملف العمل</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">أنشئ ملف عمل لفصل تطبيقات عملك عن تطبيقاتك الشخصية. تحافظ ملفات تعريف العمل على عزل بياناتك وأمانها.</string>
     <string name="dlg_create_work_profile">إنشاء ملف عمل</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">الطاقة</string>
     <string name="lbl_hotspot">نقطة الاتصال</string>
     <string name="lbl_timeout">المهلة</string>
-    <string name="lbl_vibrate">اهتزاز</string>
-    <string name="lbl_muted">مكتوم</string>
     <string name="lbl_used">المستخدم: %1$s</string>
     <string name="lbl_control_center_trigger">مشغّل مركز التحكم</string>
     <string name="lbl_sec">%1$s ثانية</string>

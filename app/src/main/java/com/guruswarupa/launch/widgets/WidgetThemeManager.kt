@@ -12,11 +12,8 @@ import com.guruswarupa.launch.managers.AppDockManager
 import com.guruswarupa.launch.managers.TypographyManager
 
 class WidgetThemeManager(
-    private val activity: Activity,
-    private val getCurrentUiMode: () -> Int
+    private val activity: Activity
 ) {
-    private var currentUiMode: Int = 0
-
     fun apply(
         searchBox: EditText? = null,
         searchContainer: View? = null,

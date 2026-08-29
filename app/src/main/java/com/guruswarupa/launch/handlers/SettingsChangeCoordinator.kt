@@ -7,7 +7,6 @@ import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.AppAdapter
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.managers.AppDockManager
-import com.guruswarupa.launch.widgets.WidgetSetupManager
 import com.guruswarupa.launch.widgets.WidgetThemeManager
 import com.guruswarupa.launch.managers.TypographyManager
 
@@ -19,7 +18,6 @@ class SettingsChangeCoordinator(
     private val activity: MainActivity,
     private val adapterProvider: () -> AppAdapter?,
     private val appDockManagerProvider: () -> AppDockManager?,
-    private val widgetSetupManagerProvider: () -> WidgetSetupManager?,
     private val widgetThemeManagerProvider: () -> WidgetThemeManager?
 ) {
 

@@ -467,11 +467,6 @@
     <string name="welcome">Welcome</string>
     <string name="to_launch">TO LAUNCH</string>
     <string name="resources">RESOURCES</string>
-    <string name="discover_launch">DISCOVER LAUNCH</string>
-    <string name="search_focus_make_the_launcher_work_for_you">Search. Focus. Make the launcher work for you.</string>
-    <string name="everything_important_is_right_on_the_home_screen">Everything important is right on the home screen</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch helps you search faster, manage apps better, and open actions without digging through settings.</string>
-    <string name="you_can_still_customize_everything_later">You can still customize everything later.</string>
     <string name="import_data">Import Data</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restore your previous configuration from a backup file, or start fresh with default settings.</string>
     <string name="choose_backup_file">Choose Backup File</string>
@@ -1178,8 +1173,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">%1$s Mode - Would you like to enable Do Not Disturb mode to mute notifications during this focus session?</string>
     <string name="dlg_yes">Yes</string>
     <string name="dlg_no">No</string>
-    <string name="dlg_remove_widget">Remove Widget</string>
-    <string name="dlg_remove_widget_2">Remove \"%1$s\" widget?</string>
     <string name="dlg_work_profile">Work Profile</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">Create a work profile to separate your work apps from personal apps. Work profiles keep your data isolated and secure.</string>
     <string name="dlg_create_work_profile">Create Work Profile</string>
@@ -1241,8 +1234,6 @@
     <string name="lbl_power">Power</string>
     <string name="lbl_hotspot">Hotspot</string>
     <string name="lbl_timeout">Timeout</string>
-    <string name="lbl_vibrate">Vibrate</string>
-    <string name="lbl_muted">Muted</string>
     <string name="lbl_used">Used: %1$s</string>
     <string name="lbl_control_center_trigger">Control Center Trigger</string>
     <string name="lbl_sec">%1$s sec</string>

@@ -460,11 +460,6 @@
     <string name="welcome">Selamat Datang</string>
     <string name="to_launch">DI LAUNCH</string>
     <string name="resources">SUMBER DAYA</string>
-    <string name="discover_launch">TEMUKAN LAUNCH</string>
-    <string name="search_focus_make_the_launcher_work_for_you">Cari. Fokus. Biarkan launcher bekerja untuk Anda.</string>
-    <string name="everything_important_is_right_on_the_home_screen">Semua yang penting ada tepat di layar utama</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch membantu Anda mencari lebih cepat, mengelola aplikasi dengan lebih baik, dan membuka tindakan tanpa harus menggali pengaturan.</string>
-    <string name="you_can_still_customize_everything_later">Anda masih dapat menyesuaikan semuanya nanti.</string>
     <string name="import_data">Impor Data</string>
     <string name="restore_your_previous_configuration_from_a_backu">Pulihkan konfigurasi sebelumnya dari file cadangan, atau mulai baru dengan pengaturan default.</string>
     <string name="choose_backup_file">Pilih File Cadangan</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">Mode %1$s - Apakah Anda ingin mengaktifkan mode Jangan Ganggu untuk mematikan suara notifikasi selama sesi fokus ini?</string>
     <string name="dlg_yes">Ya</string>
     <string name="dlg_no">Tidak</string>
-    <string name="dlg_remove_widget">Hapus Widget</string>
-    <string name="dlg_remove_widget_2">Hapus widget "%1$s"?</string>
     <string name="dlg_work_profile">Profil Kerja</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">Buat profil kerja untuk memisahkan aplikasi kerja Anda dari aplikasi pribadi. Profil kerja menjaga data Anda terisolasi dan aman.</string>
     <string name="dlg_create_work_profile">Buat Profil Kerja</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">Daya</string>
     <string name="lbl_hotspot">Hotspot</string>
     <string name="lbl_timeout">Batas Waktu</string>
-    <string name="lbl_vibrate">Getar</string>
-    <string name="lbl_muted">Bisu</string>
     <string name="lbl_used">Digunakan: %1$s</string>
     <string name="lbl_control_center_trigger">Pemicu Pusat Kontrol</string>
     <string name="lbl_sec">%1$s dtk</string>

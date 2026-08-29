@@ -5,9 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import com.guruswarupa.launch.handlers.GestureCoordinator
 import kotlin.math.abs
 import kotlin.math.sqrt
@@ -34,7 +31,6 @@ class BackTapDetector(
 
     private var lastTapTime = 0L
     private var tapCount = 0
-    private val handler = Handler(Looper.getMainLooper())
 
     private var lastUpdateTime = 0L
     private var isListening = false
@@ -44,10 +40,6 @@ class BackTapDetector(
     private var lastX = 0f
     private var lastY = 0f
     private var lastZ = 0f
-
-    companion object {
-        private const val TAG = "BackTapDetector"
-    }
 
     fun start() {
         if (isListening) return

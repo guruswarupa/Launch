@@ -58,12 +58,6 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
     }
 
     @Synchronized
-    private fun invalidateCache() {
-        cacheValid = false
-        favoritesCache = null
-    }
-
-    @Synchronized
     fun addFavoriteApp(packageName: String) {
         val favorites = getFavoriteAppsInternal().toMutableSet()
         favorites.add(packageName)

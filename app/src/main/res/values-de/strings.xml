@@ -460,11 +460,6 @@
     <string name="welcome">Willkommen</string>
     <string name="to_launch">BEI LAUNCH</string>
     <string name="resources">RESSOURCEN</string>
-    <string name="discover_launch">LAUNCH ENTDECKEN</string>
-    <string name="search_focus_make_the_launcher_work_for_you">Suchen. Fokussieren. Lass den Launcher für dich arbeiten.</string>
-    <string name="everything_important_is_right_on_the_home_screen">Alles Wichtige ist direkt auf dem Startbildschirm</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch hilft dir, schneller zu suchen, Apps besser zu verwalten und Aktionen zu öffnen, ohne in den Einstellungen zu graben.</string>
-    <string name="you_can_still_customize_everything_later">Du kannst später noch alles anpassen.</string>
     <string name="import_data">Daten importieren</string>
     <string name="restore_your_previous_configuration_from_a_backu">Stelle deine vorherige Konfiguration aus einer Sicherungsdatei wieder her oder beginne mit den Standardeinstellungen neu.</string>
     <string name="choose_backup_file">Sicherungsdatei auswählen</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">%1$s-Modus - Möchtest du den Nicht-stören-Modus aktivieren, um Benachrichtigungen während dieser Fokussitzung stummzuschalten?</string>
     <string name="dlg_yes">Ja</string>
     <string name="dlg_no">Nein</string>
-    <string name="dlg_remove_widget">Widget entfernen</string>
-    <string name="dlg_remove_widget_2">Widget \"%1$s\" entfernen?</string>
     <string name="dlg_work_profile">Arbeitsprofil</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">Erstelle ein Arbeitsprofil, um deine Arbeits-Apps von persönlichen Apps zu trennen. Arbeitsprofile halten deine Daten isoliert und sicher.</string>
     <string name="dlg_create_work_profile">Arbeitsprofil erstellen</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">Ein/Aus</string>
     <string name="lbl_hotspot">Hotspot</string>
     <string name="lbl_timeout">Zeitlimit</string>
-    <string name="lbl_vibrate">Vibrieren</string>
-    <string name="lbl_muted">Stummgeschaltet</string>
     <string name="lbl_used">Genutzt: %1$s</string>
     <string name="lbl_control_center_trigger">Kontrollzentrum-Auslöser</string>
     <string name="lbl_sec">%1$s Sek.</string>

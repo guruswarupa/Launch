@@ -22,11 +22,6 @@
         android:layout_height="match_parent"
         android:background="#00000000" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/drawer_widgets_overlay" />
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

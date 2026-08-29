@@ -460,11 +460,6 @@
     <string name="welcome">स्वागत है</string>
     <string name="to_launch">LAUNCH में</string>
     <string name="resources">संसाधन</string>
-    <string name="discover_launch">LAUNCH की खोज करें</string>
-    <string name="search_focus_make_the_launcher_work_for_you">खोजें। ध्यान केंद्रित करें। लॉन्चर को अपने लिए काम करने दें।</string>
-    <string name="everything_important_is_right_on_the_home_screen">हर महत्वपूर्ण चीज़ सीधे होम स्क्रीन पर है</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch आपको तेज़ी से खोजने, ऐप्स को बेहतर तरीके से प्रबंधित करने और सेटिंग्स में खोदे बिना कार्रवाई खोलने में मदद करता है।</string>
-    <string name="you_can_still_customize_everything_later">आप बाद में भी सब कुछ अनुकूलित कर सकते हैं।</string>
     <string name="import_data">डेटा आयात करें</string>
     <string name="restore_your_previous_configuration_from_a_backu">बैकअप फ़ाइल से अपनी पिछली कॉन्फ़िगरेशन पुनर्स्थापित करें, या डिफ़ॉल्ट सेटिंग्स के साथ नई शुरुआत करें।</string>
     <string name="choose_backup_file">बैकअप फ़ाइल चुनें</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">%1$s मोड - क्या आप इस फोकस सत्र के दौरान सूचनाओं को म्यूट करने के लिए परेशान न करें मोड सक्षम करना चाहेंगे?</string>
     <string name="dlg_yes">हां</string>
     <string name="dlg_no">नहीं</string>
-    <string name="dlg_remove_widget">विजेट हटाएं</string>
-    <string name="dlg_remove_widget_2">विजेट "%1$s" हटाएं?</string>
     <string name="dlg_work_profile">वर्क प्रोफ़ाइल</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">अपने कार्य ऐप्स को व्यक्तिगत ऐप्स से अलग करने के लिए एक वर्क प्रोफ़ाइल बनाएं। वर्क प्रोफ़ाइल आपके डेटा को अलग और सुरक्षित रखती है।</string>
     <string name="dlg_create_work_profile">वर्क प्रोफ़ाइल बनाएं</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">पावर</string>
     <string name="lbl_hotspot">हॉटस्पॉट</string>
     <string name="lbl_timeout">टाइमआउट</string>
-    <string name="lbl_vibrate">वाइब्रेट</string>
-    <string name="lbl_muted">म्यूट</string>
     <string name="lbl_used">उपयोग किया गया: %1$s</string>
     <string name="lbl_control_center_trigger">नियंत्रण केंद्र ट्रिगर</string>
     <string name="lbl_sec">%1$s सेकंड</string>

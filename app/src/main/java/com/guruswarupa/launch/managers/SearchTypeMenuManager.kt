@@ -15,8 +15,7 @@ import com.guruswarupa.launch.R
 class SearchTypeMenuManager(
     private val context: Context,
     private val searchTypeButton: ImageButton,
-    private val appSearchManagerProvider: () -> AppSearchManager?,
-    private val isFocusModeActive: () -> Boolean
+    private val appSearchManagerProvider: () -> AppSearchManager?
 ) {
 
 

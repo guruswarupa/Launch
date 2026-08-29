@@ -5,8 +5,7 @@ import com.guruswarupa.launch.R
 
 class YearProgressWidget(
     private val context: Context,
-    private val container: android.widget.LinearLayout,
-    private val sharedPreferences: android.content.SharedPreferences
+    private val container: android.widget.LinearLayout
 ) : InitializableWidget {
 
     private lateinit var yearProgressView: YearProgressView

@@ -314,8 +314,7 @@ class MainActivity : AppCompatActivity() {
         searchTypeMenuManager = SearchTypeMenuManager(
             context = this,
             searchTypeButton = views.searchTypeButton,
-            appSearchManagerProvider = { appSearchManager },
-            isFocusModeActive = { appDockManager.getCurrentMode() }
+            appSearchManagerProvider = { appSearchManager }
         )
         searchTypeMenuManager.setup()
     }
@@ -417,7 +416,7 @@ class MainActivity : AppCompatActivity() {
         )
         timeDateManager.startUpdates()
 
-        widgetSetupManager = WidgetSetupManager(this, usageStatsManager, weatherManager, permissionManager, secureStorageManager)
+        widgetSetupManager = WidgetSetupManager(this, weatherManager, permissionManager, secureStorageManager)
         widgetSetupManager.setupWeather(views.weatherIcon, views.weatherText)
     }
 
@@ -449,7 +448,6 @@ class MainActivity : AppCompatActivity() {
             widgetSetupManager = widgetSetupManager,
             sharedPreferences = sharedPreferences,
             lifecycleManager = lifecycleManager,
-            widgetConfigurationManager = widgetConfigurationManager,
             widgetLifecycleCoordinator = widgetLifecycleCoordinator,
             onComplete = {
                 initializeFinanceWidgetIfNeeded()
@@ -496,7 +494,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeFinanceWidgetIfNeeded() {
-        FinanceWidgetInitializer(this, sharedPreferences, secureStorageManager, 0)
+        FinanceWidgetInitializer(this, secureStorageManager, 0)
             .onInitialized { manager ->
                 financeWidgetManager = manager
             }

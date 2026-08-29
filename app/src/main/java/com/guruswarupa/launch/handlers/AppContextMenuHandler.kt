@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.handlers
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
@@ -24,7 +23,6 @@ import java.util.concurrent.ExecutorService
 
 class AppContextMenuHandler(
     private val activity: MainActivity,
-    private val context: Context,
     private val executor: ExecutorService,
     private val labelResolver: (String, ResolveInfo) -> String,
     private val onAppModified: () -> Unit,

@@ -85,7 +85,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         private const val STATE_WIDGETS_SECTION_EXPANDED = "state_widgets_section_expanded"
         private const val STATE_NEWS_SECTION_EXPANDED = "state_news_section_expanded"
         private const val STATE_SYSTEM_MONITOR_SECTION_EXPANDED = "state_system_monitor_section_expanded"
-        private const val PHYSICAL_ACTIVITY_PREFS_NAME = "physical_activity_prefs"
     }
 
     private val prefs by lazy { getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE) }

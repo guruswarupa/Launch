@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.widgets
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Handler
 import android.widget.EditText
 import android.widget.TextView
@@ -15,7 +14,6 @@ import com.guruswarupa.launch.utils.FinanceWidgetManager
 
 class FinanceWidgetInitializer(
     private val context: Context,
-    private val sharedPreferences: SharedPreferences,
     private val secureStorageManager: com.guruswarupa.launch.core.SecureStorageManager,
     private val delay: Long
 ) {

@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.managers
 
 import android.annotation.SuppressLint
-import android.os.Handler
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.view.doOnLayout
@@ -27,8 +26,7 @@ class UsageStatsDisplayManager(
     private val usageStatsManager: AppUsageStatsManager,
     private val weeklyUsageGraph: WeeklyUsageGraphView,
     private val adapter: AppAdapter,
-    private val recyclerView: RecyclerView,
-    private val handler: Handler
+    private val recyclerView: RecyclerView
 ) {
     private var lastUpdateDate: String = ""
     private val weeklyLoadInProgress = AtomicBoolean(false)

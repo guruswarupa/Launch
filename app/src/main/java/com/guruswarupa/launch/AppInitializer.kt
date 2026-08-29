@@ -76,13 +76,12 @@ class AppInitializer(private val activity: MainActivity) {
 
     private fun MainActivity.setupAppList() {
         appDockManager = AppDockManager(activity, sharedPreferences, views.appDock)
-        widgetThemeManager = WidgetThemeManager(activity) { resources.configuration.uiMode }
+        widgetThemeManager = WidgetThemeManager(activity)
 
         settingsChangeCoordinator = SettingsChangeCoordinator(
             activity = activity,
             adapterProvider = { activity.adapter },
             appDockManagerProvider = { activity.appDockManager },
-            widgetSetupManagerProvider = { activity.widgetSetupManager },
             widgetThemeManagerProvider = { activity.widgetThemeManager },
         )
 
@@ -138,7 +137,7 @@ class AppInitializer(private val activity: MainActivity) {
         appListUIUpdater.setupCallbacks()
         appListUIUpdater.setAdapter(adapter)
 
-        usageStatsDisplayManager = UsageStatsDisplayManager(activity, usageStatsManager, views.weeklyUsageGraph, adapter, views.recyclerView, handler)
+        usageStatsDisplayManager = UsageStatsDisplayManager(activity, usageStatsManager, views.weeklyUsageGraph, adapter, views.recyclerView)
 
         if (!appDockManager.getCurrentMode()) {
             refreshAppsForFocusMode()

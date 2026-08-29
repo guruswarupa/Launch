@@ -92,7 +92,6 @@ class AppAdapter(
     private var itemsRendered = 0
     private var isFastScrolling = false
     private val fastScrollDebounceHandler = Handler(Looper.getMainLooper())
-    private var fastScrollDebounceRunnable: Runnable? = null
     private var currentIconStyle = prefs.getString(Constants.Prefs.ICON_STYLE, "squircle") ?: "round"
     private var currentIconSize = prefs.getInt(Constants.Prefs.ICON_SIZE, 40)
     private var currentShowAppNamesInGrid = prefs.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
@@ -137,7 +136,6 @@ class AppAdapter(
 
     private val appContextMenuHandler = AppContextMenuHandler(
         activity = activity,
-        context = context,
         executor = activity.backgroundExecutor,
         labelResolver = { packageName: String, appInfo: ResolveInfo ->
             labelCache["${packageName}|${appInfo.preferredOrder}"] ?: packageName

@@ -460,11 +460,6 @@
     <string name="welcome">Bienvenue</string>
     <string name="to_launch">SUR LAUNCH</string>
     <string name="resources">RESSOURCES</string>
-    <string name="discover_launch">DÉCOUVRIR LAUNCH</string>
-    <string name="search_focus_make_the_launcher_work_for_you">Recherchez. Concentrez-vous. Laissez le lanceur travailler pour vous.</string>
-    <string name="everything_important_is_right_on_the_home_screen">Tout ce qui est important est directement sur l\'écran d\'accueil</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">Launch vous aide à rechercher plus rapidement, à mieux gérer vos applications et à ouvrir des actions sans fouiller dans les paramètres.</string>
-    <string name="you_can_still_customize_everything_later">Vous pouvez toujours tout personnaliser plus tard.</string>
     <string name="import_data">Importer des données</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restaurez votre configuration précédente à partir d\'un fichier de sauvegarde, ou recommencez avec les paramètres par défaut.</string>
     <string name="choose_backup_file">Choisir un fichier de sauvegarde</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">Mode %1$s - Souhaitez-vous activer le mode Ne pas déranger pour couper les notifications pendant cette session de concentration ?</string>
     <string name="dlg_yes">Oui</string>
     <string name="dlg_no">Non</string>
-    <string name="dlg_remove_widget">Supprimer le widget</string>
-    <string name="dlg_remove_widget_2">Supprimer le widget « %1$s » ?</string>
     <string name="dlg_work_profile">Profil professionnel</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">Créez un profil professionnel pour séparer vos applications professionnelles de vos applications personnelles. Les profils professionnels gardent vos données isolées et sécurisées.</string>
     <string name="dlg_create_work_profile">Créer un profil professionnel</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">Alimentation</string>
     <string name="lbl_hotspot">Point d\'accès</string>
     <string name="lbl_timeout">Délai d\'expiration</string>
-    <string name="lbl_vibrate">Vibrer</string>
-    <string name="lbl_muted">Muet</string>
     <string name="lbl_used">Utilisé : %1$s</string>
     <string name="lbl_control_center_trigger">Déclencheur du centre de contrôle</string>
     <string name="lbl_sec">%1$s sec</string>

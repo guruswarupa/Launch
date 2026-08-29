@@ -460,11 +460,6 @@
     <string name="welcome">Bem-vindo</string>
     <string name="to_launch">AO LAUNCH</string>
     <string name="resources">RECURSOS</string>
-    <string name="discover_launch">DESCUBRA O LAUNCH</string>
-    <string name="search_focus_make_the_launcher_work_for_you">Pesquise. Concentre-se. Deixe o launcher trabalhar para você.</string>
-    <string name="everything_important_is_right_on_the_home_screen">Tudo o que é importante está bem na tela inicial</string>
-    <string name="launch_helps_you_search_faster_manage_apps_bette">O Launch ajuda você a pesquisar mais rápido, gerenciar aplicativos melhor e abrir ações sem precisar mexer nas configurações.</string>
-    <string name="you_can_still_customize_everything_later">Você ainda pode personalizar tudo depois.</string>
     <string name="import_data">Importar dados</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restaure sua configuração anterior de um arquivo de backup ou comece do zero com as configurações padrão.</string>
     <string name="choose_backup_file">Escolher arquivo de backup</string>
@@ -1150,8 +1145,6 @@
     <string name="dlg_mode_would_you_like_to_enable_do_not_disturb_mod">Modo %1$s - Deseja ativar o modo Não perturbe para silenciar notificações durante esta sessão de foco?</string>
     <string name="dlg_yes">Sim</string>
     <string name="dlg_no">Não</string>
-    <string name="dlg_remove_widget">Remover widget</string>
-    <string name="dlg_remove_widget_2">Remover o widget "%1$s"?</string>
     <string name="dlg_work_profile">Perfil de trabalho</string>
     <string name="dlg_create_a_work_profile_to_separate_your_work_apps">Crie um perfil de trabalho para separar seus aplicativos de trabalho dos pessoais. Perfis de trabalho mantêm seus dados isolados e seguros.</string>
     <string name="dlg_create_work_profile">Criar perfil de trabalho</string>
@@ -1213,8 +1206,6 @@
     <string name="lbl_power">Energia</string>
     <string name="lbl_hotspot">Ponto de acesso</string>
     <string name="lbl_timeout">Tempo limite</string>
-    <string name="lbl_vibrate">Vibrar</string>
-    <string name="lbl_muted">Mudo</string>
     <string name="lbl_used">Usado: %1$s</string>
     <string name="lbl_control_center_trigger">Acionador da central de controle</string>
     <string name="lbl_sec">%1$s seg</string>

@@ -19,7 +19,6 @@ class AppListManager @Inject constructor(
     private val favoriteAppManager: FavoriteAppManager,
     private val hiddenAppManager: HiddenAppManager,
     private val cacheManager: CacheManager,
-    private val workspaceManager: WorkspaceManager,
     private val workProfileManager: WorkProfileManager,
     private val sharedPreferences: SharedPreferences
 ) {

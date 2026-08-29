@@ -1,8 +1,6 @@
 package com.guruswarupa.launch.managers
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetHostView
 import android.appwidget.AppWidgetManager
@@ -13,13 +11,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
@@ -359,102 +354,6 @@ class WidgetManager(
         if (index < 0) return
         widgets[index] = widgets[index].copy(customHeightDp = customHeightDp)
         saveWidgets()
-    }
-
-    private fun showWidgetOptionsMenu(appWidgetId: Int, appWidgetInfo: AppWidgetProviderInfo) {
-        val currentIndex = widgets.indexOfFirst { it.appWidgetId == appWidgetId }
-        val widgetName = appWidgetInfo.loadLabel(context.packageManager)
-
-        val options = mutableListOf<String>()
-
-        if (currentIndex > 0) {
-            options.add("Move Up")
-        }
-        if (currentIndex < widgets.size - 1) {
-            options.add("Move Down")
-        }
-        options.add("Delete")
-
-        if (options.isEmpty()) return
-
-        val dialog = AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle(widgetName)
-            .setItems(options.toTypedArray()) { _, which ->
-                val selectedOption = options[which]
-                when (selectedOption) {
-                    "Move Up" -> moveWidgetUp(appWidgetId)
-                    "Move Down" -> moveWidgetDown(appWidgetId)
-                    "Delete" -> showRemoveWidgetDialog(appWidgetId, widgetName.toString())
-                }
-            }
-            .setNegativeButton(context.getString(R.string.cancel_button), null)
-            .show()
-
-        fixDialogTextColors(dialog)
-    }
-
-    private fun fixDialogTextColors(dialog: AlertDialog) {
-        try {
-            val textColor = ContextCompat.getColor(context, R.color.text)
-            val listView = dialog.listView
-            listView?.post {
-                for (i in 0 until listView.childCount) {
-                    val child = listView.getChildAt(i)
-                    if (child is TextView) {
-                        child.setTextColor(textColor)
-                    }
-                }
-            }
-        } catch (_: Exception) {}
-    }
-
-    fun moveWidgetUp(appWidgetId: Int) {
-        val currentIndex = widgets.indexOfFirst { it.appWidgetId == appWidgetId }
-        if (currentIndex > 0 && currentIndex < widgetContainer.childCount) {
-            val widget = widgets.removeAt(currentIndex)
-            widgets.add(currentIndex - 1, widget)
-
-            val viewToMove = widgetContainer.getChildAt(currentIndex)
-            val viewToSwapWith = widgetContainer.getChildAt(currentIndex - 1)
-
-            widgetContainer.removeView(viewToMove)
-            widgetContainer.removeView(viewToSwapWith)
-
-            widgetContainer.addView(viewToSwapWith, currentIndex)
-            widgetContainer.addView(viewToMove, currentIndex - 1)
-
-            saveWidgets()
-        }
-    }
-
-    fun moveWidgetDown(appWidgetId: Int) {
-        val currentIndex = widgets.indexOfFirst { it.appWidgetId == appWidgetId }
-        if (currentIndex < widgets.size - 1 && currentIndex < widgetContainer.childCount - 1) {
-            val widget = widgets.removeAt(currentIndex)
-            widgets.add(currentIndex + 1, widget)
-
-            val viewToMove = widgetContainer.getChildAt(currentIndex)
-            val viewToSwapWith = widgetContainer.getChildAt(currentIndex + 1)
-
-            widgetContainer.removeView(viewToMove)
-            widgetContainer.removeView(viewToSwapWith)
-
-            widgetContainer.addView(viewToSwapWith, currentIndex)
-            widgetContainer.addView(viewToMove, currentIndex + 1)
-
-            saveWidgets()
-        }
-    }
-
-    private fun showRemoveWidgetDialog(appWidgetId: Int, widgetName: String) {
-        AlertDialog.Builder(context, R.style.CustomDialogTheme)
-            .setTitle(context.getString(R.string.dlg_remove_widget))
-            .setMessage(context.getString(R.string.dlg_remove_widget_2, widgetName))
-            .setPositiveButton(context.getString(R.string.font_remove)) { _, _ ->
-                removeWidget(appWidgetId)
-            }
-            .setNegativeButton(context.getString(R.string.cancel_button), null)
-            .show()
     }
 
     fun removeWidget(appWidgetId: Int) {
