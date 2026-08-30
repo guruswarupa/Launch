@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/temperature_2"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="22sp"
             android:textStyle="bold"
             android:letterSpacing="0.02" />
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/compass_enable"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
             android:background="@drawable/button_neutral_ripple"
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/temperature_2"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05"
@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.0°C"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:textSize="48sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.1"
@@ -88,7 +88,7 @@
                 <View
                     android:layout_width="2dp"
                     android:layout_height="40dp"
-                    android:background="@color/nord7"
+                    android:background="?attr/appHighlight"
                     android:alpha="0.5" />
             </LinearLayout>
 
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0.0°F"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="20dp" />
@@ -105,7 +105,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/nord7"
+                android:background="?attr/appHighlight"
                 android:alpha="0.3"
                 android:layout_marginBottom="20dp" />
 
@@ -114,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/status"
-                android:textColor="@color/nord7"
+                android:textColor="?attr/appHighlight"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -125,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/temperature_sensor_not_available_2"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp"
             android:gravity="center"
             android:visibility="gone" />

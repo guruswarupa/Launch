@@ -614,6 +614,14 @@
     <string name="font_family">Font Family</string>
     <string name="font_intensity">Font Intensity</string>
     <string name="theme_color">Theme Color</string>
+    <string name="color_theme">Color Theme</string>
+    <string name="accent_color">Accent Color</string>
+    <string name="palette_nord">Nord</string>
+    <string name="palette_dracula">Dracula</string>
+    <string name="palette_catppuccin_mocha">Catppuccin Mocha</string>
+    <string name="palette_monochrome">Monochrome</string>
+    <string name="opaque_surfaces">Opaque Surfaces</string>
+    <string name="opaque_surfaces_description">Fill cards and panels solidly instead of translucently over the wallpaper</string>
     <string name="get_external_fonts">Get External Fonts</string>
     <string name="icon_packs">Icon Packs</string>
     <string name="enable_icon_pack">Enable Icon Pack</string>

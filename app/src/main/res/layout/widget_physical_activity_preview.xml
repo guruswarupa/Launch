@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/physical_activity"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -37,7 +37,7 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_steps"
                 android:layout_marginEnd="8dp"
-                android:tint="@color/nord14" />
+                android:tint="?attr/appSuccess" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="8,420"
-                    android:textColor="@color/nord14"
+                    android:textColor="?attr/appSuccess"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/steps_today_2"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="84%"
-                android:textColor="@color/nord14"
+                android:textColor="?attr/appSuccess"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -78,7 +78,7 @@
             android:layout_height="6dp"
             android:layout_marginBottom="16dp"
             android:progress="84"
-            android:progressTint="@color/nord14"
+            android:progressTint="?attr/appSuccess"
             style="?android:attr/progressBarStyleHorizontal" />
 
         
@@ -99,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5.2"
-                    android:textColor="@color/nord9"
+                    android:textColor="?attr/appAccentMuted"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -107,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/widget_physical_activity_preview_label_1"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>
@@ -123,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="380"
-                    android:textColor="@color/nord10"
+                    android:textColor="?attr/appAccentSecondary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -131,7 +131,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cal"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>

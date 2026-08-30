@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="16dp"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="32sp"
                 android:textStyle="bold" />
 
@@ -56,7 +56,7 @@
                     android:text="@string/pinned_apps"
                     android:textAllCaps="false"
                     android:background="@drawable/settings_card_background"
-                    android:textColor="@color/white"/>
+                    android:textColor="?attr/appTextPrimary"/>
 
                 <Button
                     android:id="@+id/tab_handle"
@@ -67,7 +67,7 @@
                     android:text="@string/edge_panel_handle_section_title"
                     android:textAllCaps="false"
                     android:background="@drawable/settings_card_background"
-                    android:textColor="@color/white"/>
+                    android:textColor="?attr/appTextPrimary"/>
             </LinearLayout>
 
             <!-- Handle Settings Content -->
@@ -78,10 +78,10 @@
                 android:layout_weight="1"
                 android:layout_marginBottom="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <ScrollView
                     android:layout_width="match_parent"
@@ -100,7 +100,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/customize_the_edge_panel_handle_appearance_and_b"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.5"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="8dp"
@@ -111,7 +111,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="@string/edge_panel_handle_position"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="14sp" />
 
                         <Spinner
@@ -133,14 +133,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/edge_panel_handle_lock"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp" />
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/edge_panel_lock_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF" />
                         </LinearLayout>
 
@@ -156,14 +156,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/edge_panel_show_recent"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp" />
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/edge_panel_show_recent_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF" />
                         </LinearLayout>
 
@@ -172,7 +172,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="22dp"
                             android:text="@string/edge_panel_handle_transparency"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="14sp" />
 
                         <SeekBar
@@ -181,15 +181,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:max="80"
-                            android:progressTint="@color/nord8"
-                            android:thumbTint="@color/nord8" />
+                            android:progressTint="?attr/appAccent"
+                            android:thumbTint="?attr/appAccent" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="22dp"
                             android:text="@string/edge_panel_handle_size"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="14sp" />
 
                         <SeekBar
@@ -198,15 +198,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:max="72"
-                            android:progressTint="@color/nord8"
-                            android:thumbTint="@color/nord8" />
+                            android:progressTint="?attr/appAccent"
+                            android:thumbTint="?attr/appAccent" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="22dp"
                             android:text="@string/edge_panel_handle_width"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="14sp" />
 
                         <SeekBar
@@ -215,8 +215,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:max="24"
-                            android:progressTint="@color/nord8"
-                            android:thumbTint="@color/nord8" />
+                            android:progressTint="?attr/appAccent"
+                            android:thumbTint="?attr/appAccent" />
                     </LinearLayout>
                 </ScrollView>
             </com.google.android.material.card.MaterialCardView>
@@ -230,10 +230,10 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -247,7 +247,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/edge_panel_config_subtitle"
                         android:textSize="13sp"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appTextPrimary"
                         android:alpha="0.5"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="8dp"
@@ -279,7 +279,7 @@
                     android:padding="16dp"
                     android:text="@string/cancel_button"
                     android:textAllCaps="false"
-                    android:textColor="@color/white" />
+                    android:textColor="?attr/appTextPrimary" />
 
                 <Button
                     android:id="@+id/save_edge_panel_config"
@@ -290,7 +290,7 @@
                     android:padding="16dp"
                     android:text="@string/save_button"
                     android:textAllCaps="false"
-                    android:textColor="@color/white" />
+                    android:textColor="?attr/appTextPrimary" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

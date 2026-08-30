@@ -14,8 +14,10 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.AppAdapter
+import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class FastScroller @JvmOverloads constructor(
     context: Context,
@@ -49,7 +51,7 @@ class FastScroller @JvmOverloads constructor(
     private val maxWaveHeight = 160f * density
     private val previewRadius = 38f * density
     private val extraVerticalPadding = 48f * density
-    private var currentColor = Color.WHITE
+    private var currentColor = ThemeManager.color(context, R.attr.appTextPrimary)
 
     private var currentAlpha = 1f
     private var waveProgress = 0f
@@ -323,7 +325,7 @@ class FastScroller @JvmOverloads constructor(
         applyTypeface(fontStyle, intensity)
         
         // Get font color, defaulting to white if null (default color)
-        val fontColor = TypographyManager.getConfiguredFontColor(context) ?: android.graphics.Color.WHITE
+        val fontColor = TypographyManager.getConfiguredFontColor(context) ?: ThemeManager.color(context, R.attr.appTextPrimary)
         setTextColor(fontColor)
         invalidate()
     }

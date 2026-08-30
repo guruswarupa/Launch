@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/card_background"
+    app:cardBackgroundColor="?attr/appSurface"
     app:cardCornerRadius="22dp"
     app:cardElevation="0dp"
-    app:strokeColor="@color/outlineColor"
+    app:strokeColor="?attr/appOutline"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -34,7 +34,7 @@
                 android:id="@+id/web_app_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -55,7 +55,7 @@
             android:contentDescription="@string/open_web_app"
             android:padding="8dp"
             android:src="@drawable/ic_play"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
 
         <ImageButton
             android:id="@+id/web_app_item_edit"
@@ -65,7 +65,7 @@
             android:contentDescription="@string/edit_web_app"
             android:padding="8dp"
             android:src="@drawable/ic_settings"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
 
         <ImageButton
             android:id="@+id/web_app_item_delete"
@@ -75,6 +75,6 @@
             android:contentDescription="@string/remove_web_app"
             android:padding="8dp"
             android:src="@drawable/ic_delete"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

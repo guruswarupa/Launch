@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.adapters.WorkspacesAppsAdapter
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
 class EdgePanelConfigActivity : AppCompatActivity() {
@@ -109,14 +110,14 @@ class EdgePanelConfigActivity : AppCompatActivity() {
 
             appsContainer.visibility = View.VISIBLE
             handleContainer.visibility = View.GONE
-            tabApps.setTextColor(Color.WHITE)
+            tabApps.setTextColor(ThemeManager.color(this, R.attr.appTextPrimary))
             tabHandle.setTextColor(Color.parseColor("#80FFFFFF"))
         } else {
 
             appsContainer.visibility = View.GONE
             handleContainer.visibility = View.VISIBLE
             tabApps.setTextColor(Color.parseColor("#80FFFFFF"))
-            tabHandle.setTextColor(Color.WHITE)
+            tabHandle.setTextColor(ThemeManager.color(this, R.attr.appTextPrimary))
         }
     }
 
@@ -125,7 +126,8 @@ class EdgePanelConfigActivity : AppCompatActivity() {
 
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        themeOverlay.setBackgroundColor(Color.argb(alpha, 0, 0, 0))
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        themeOverlay.setBackgroundColor(Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase)))
 
         titleText.setText(R.string.edge_panel_config_title)
         subtitleText.setText(R.string.edge_panel_config_subtitle)

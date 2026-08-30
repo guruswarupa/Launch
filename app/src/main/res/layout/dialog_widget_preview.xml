@@ -43,7 +43,7 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:indeterminate="true"
-            android:indeterminateTint="@color/nord8"
+            android:indeterminateTint="?attr/appAccent"
             android:visibility="gone" />
     </FrameLayout>
 

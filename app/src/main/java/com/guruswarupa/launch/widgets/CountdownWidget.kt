@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.content.edit
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 data class CountdownItem(
     val id: String,
@@ -264,7 +265,7 @@ class CountdownWidget(
 
     private fun fixDialogTextColors(dialog: AlertDialog) {
         try {
-            val textColor = ContextCompat.getColor(context, R.color.text)
+            val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
             val listView = dialog.listView
             listView?.post {
                 for (i in 0 until listView.childCount) {
@@ -305,8 +306,8 @@ class CountdownWidget(
         val fromCalendarButton: Button = dialogView.findViewById(R.id.from_calendar_button)
 
 
-        val textColor = ContextCompat.getColor(context, R.color.text)
-        val secondaryTextColor = ContextCompat.getColor(context, R.color.text_secondary)
+        val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
+        val secondaryTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
         titleInput.setTextColor(textColor)
         titleInput.setHintTextColor(secondaryTextColor)
         dateInput.setTextColor(textColor)
@@ -400,8 +401,8 @@ class CountdownWidget(
         val fromCalendarButton: Button = dialogView.findViewById(R.id.from_calendar_button)
 
 
-        val textColor = ContextCompat.getColor(context, R.color.text)
-        val secondaryTextColor = ContextCompat.getColor(context, R.color.text_secondary)
+        val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
+        val secondaryTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
         titleInput.setTextColor(textColor)
         titleInput.setHintTextColor(secondaryTextColor)
         dateInput.setTextColor(textColor)
@@ -713,9 +714,9 @@ class CountdownAdapter(
 
 
         val color = if (countdown.isExpired()) {
-            ContextCompat.getColor(holder.itemView.context, R.color.nord11)
+            ThemeManager.color(holder.itemView.context, R.attr.appError)
         } else {
-            ContextCompat.getColor(holder.itemView.context, R.color.nord9)
+            ThemeManager.color(holder.itemView.context, R.attr.appAccentMuted)
         }
         holder.remainingText.setTextColor(color)
 

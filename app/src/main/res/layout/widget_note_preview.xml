@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/notes_title"
-        android:textColor="@color/text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center_vertical"
         android:drawablePadding="8dp"
         app:drawableStartCompat="@drawable/ic_note"
-        app:drawableTint="@color/text"
+        app:drawableTint="?attr/appIconTint"
         android:layout_marginBottom="12dp" />
 
     <LinearLayout
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/meeting_notes_title"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp"/>
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/meeting_notes_desc"
-                android:textColor="@color/text_secondary"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>
@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/shopping_list_title"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp"/>
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/shopping_list_desc"
-                android:textColor="@color/text_secondary"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ideas_title"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp"/>
@@ -117,7 +117,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ideas_desc"
-                android:textColor="@color/text_secondary"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end"/>
@@ -137,7 +137,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_note_button_text"
-        android:textColor="@color/text"
+        android:textColor="?attr/appTextPrimary"
         android:background="@drawable/button_neutral_ripple"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"

@@ -74,15 +74,15 @@
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:src="@drawable/ic_brightness_stat"
-                            android:tint="@color/nord8"/>
+                            android:tint="?attr/appAccent"/>
                         <SeekBar
                             android:id="@+id/brightness_seekbar"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:max="255"
-                            android:progressTint="@color/nord8"
-                            android:thumbTint="@color/nord8"
+                            android:progressTint="?attr/appAccent"
+                            android:thumbTint="?attr/appAccent"
                             android:splitTrack="false"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"/>
@@ -101,14 +101,14 @@
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:src="@drawable/ic_volume_up_stat"
-                            android:tint="@color/nord9"/>
+                            android:tint="?attr/appAccentMuted"/>
                         <SeekBar
                             android:id="@+id/volume_media_seekbar"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:progressTint="@color/nord9"
-                            android:thumbTint="@color/nord9"
+                            android:progressTint="?attr/appAccentMuted"
+                            android:thumbTint="?attr/appAccentMuted"
                             android:splitTrack="false"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"/>
@@ -127,14 +127,14 @@
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:src="@drawable/ic_vibrate_stat"
-                            android:tint="@color/nord13"/>
+                            android:tint="?attr/appWarning"/>
                         <SeekBar
                             android:id="@+id/volume_ring_seekbar"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:progressTint="@color/nord13"
-                            android:thumbTint="@color/nord13"
+                            android:progressTint="?attr/appWarning"
+                            android:thumbTint="?attr/appWarning"
                             android:splitTrack="false"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"/>
@@ -158,12 +158,12 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@android:drawable/ic_lock_silent_mode"
-                                android:tint="@color/nord11"/>
+                                android:tint="?attr/appError"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/alm"
-                                android:textColor="@color/nord11"
+                                android:textColor="?attr/appError"
                                 android:textSize="7sp"
                                 android:fontFamily="sans-serif-medium"
                                 android:layout_marginTop="1dp"/>
@@ -173,8 +173,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:progressTint="@color/nord11"
-                            android:thumbTint="@color/nord11"
+                            android:progressTint="?attr/appError"
+                            android:thumbTint="?attr/appError"
                             android:splitTrack="false"
                             android:paddingStart="8dp"
                             android:paddingEnd="8dp"/>

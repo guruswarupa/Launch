@@ -10,6 +10,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.utils.TodoManager
 import com.guruswarupa.launch.managers.AppDockManager
 import com.guruswarupa.launch.managers.TypographyManager
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class WidgetThemeManager(
     private val activity: Activity
@@ -41,8 +42,8 @@ class WidgetThemeManager(
 
         searchBox?.let { sb ->
             val searchBg = R.drawable.search_box_transparent_bg
-            val textColor = android.graphics.Color.WHITE
-            val hintColor = android.graphics.Color.WHITE
+            val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
+            val hintColor = ThemeManager.color(activity, R.attr.appTextPrimary)
 
 
             searchContainer?.let { sc ->
@@ -57,14 +58,16 @@ class WidgetThemeManager(
             TypographyManager.applyToView(sb)
 
 
-            val iconColor = android.graphics.Color.WHITE
+            val iconColor = ThemeManager.color(activity, R.attr.appIconTint)
             sb.compoundDrawablesRelative[0]?.setTint(iconColor)
             voiceSearchButton?.setColorFilter(iconColor)
             searchTypeButton?.setColorFilter(iconColor)
         }
 
 
-        activity.findViewById<ImageView>(R.id.weather_icon)?.setColorFilter(android.graphics.Color.WHITE)
+        activity.findViewById<ImageView>(R.id.weather_icon)?.setColorFilter(
+            ThemeManager.color(activity, R.attr.appIconTint)
+        )
 
 
         appDockManager?.updateDockIcons()

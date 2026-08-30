@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/weekly_usage"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="4.2h"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/daily_avg"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="29.4h"
-                    android:textColor="@color/nord9"
+                    android:textColor="?attr/appAccentMuted"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -81,7 +81,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/weekly_total"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>

@@ -16,6 +16,7 @@ import androidx.core.content.edit
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.core.PermissionManager
 import com.guruswarupa.launch.managers.NoiseDecibelManager
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import java.text.DecimalFormat
 
 class NoiseDecibelWidget(
@@ -224,15 +225,15 @@ class NoiseDecibelWidget(
             else -> R.string.noise_level_very_loud
         }
 
-        val colorRes = when {
-            decibel < 30 -> R.color.nord7
-            decibel < 50 -> R.color.nord8
-            decibel < 70 -> R.color.nord11
-            else -> R.color.nord12
+        val color = when {
+            decibel < 30 -> ThemeManager.color(context, R.attr.appHighlight)
+            decibel < 50 -> ThemeManager.color(context, R.attr.appAccent)
+            decibel < 70 -> ThemeManager.color(context, R.attr.appError)
+            else -> ContextCompat.getColor(context, R.color.nord12) // most severe step, no themed attr yet
         }
 
         noiseLevelText.setText(levelRes)
-        noiseLevelText.setTextColor(ContextCompat.getColor(context, colorRes))
+        noiseLevelText.setTextColor(color)
 
 
         val indicatorWidth = (decibel / 120.0).coerceIn(0.0, 1.0)
@@ -243,7 +244,7 @@ class NoiseDecibelWidget(
             decibelIndicator.layoutParams = layoutParams
 
 
-            decibelIndicator.setBackgroundColor(ContextCompat.getColor(context, colorRes))
+            decibelIndicator.setBackgroundColor(color)
         }
     }
 

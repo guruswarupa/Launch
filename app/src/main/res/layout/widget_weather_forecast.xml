@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/weather_forecast_widget_title"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -40,7 +40,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@drawable/ic_weather_cloudy"
-            android:tint="@color/widget_text" />
+            android:tint="?attr/appIconTint" />
     </LinearLayout>
 
     <LinearLayout
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="--"
-            android:textColor="@color/nord8"
+            android:textColor="?attr/appAccent"
             android:textSize="36sp"
             android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -76,7 +76,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/widget_item_background"
         android:padding="12dp"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="13sp" />
 
     <TextView
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/weather_forecast_hourly_title"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -100,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/weather_forecast_daily_title"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold" />
 

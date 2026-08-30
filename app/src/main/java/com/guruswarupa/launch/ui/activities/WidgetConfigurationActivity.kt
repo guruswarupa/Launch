@@ -40,6 +40,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.handlers.ActivityResultHandler
 import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class WidgetConfigurationActivity : AppCompatActivity() {
 
@@ -297,7 +298,8 @@ class WidgetConfigurationActivity : AppCompatActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         findViewById<View>(R.id.settings_overlay)?.setBackgroundColor(color)
     }
 
@@ -538,7 +540,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
             color = Color.TRANSPARENT
         }
         private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(context, R.color.nord8)
+            color = ThemeManager.color(context, R.attr.appAccent)
             textSize = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
                 13f,

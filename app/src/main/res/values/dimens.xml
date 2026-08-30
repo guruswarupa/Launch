@@ -19,4 +19,11 @@
     <dimen name="note_editor_card_elevation">14dp</dimen>
     <dimen name="note_editor_card_border_width">1dp</dimen>
     <dimen name="note_editor_status_padding">24dp</dimen>
+
+    <!-- Modern surface treatment corner tokens (GlassSurface). Same across all color palettes. -->
+    <dimen name="app_corner_pill">999dp</dimen>
+    <dimen name="app_corner_large">28dp</dimen>
+    <dimen name="app_corner_medium">20dp</dimen>
+    <dimen name="app_corner_small">14dp</dimen>
+    <dimen name="app_surface_stroke">1dp</dimen>
 </resources>

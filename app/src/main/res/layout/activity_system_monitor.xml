@@ -39,7 +39,7 @@
                 android:text="@string/system_monitor_title"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:letterSpacing="-0.01"/>
 
             <TextView
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/real_time_system_performance_and_hardware_info"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:alpha="0.5"
                 android:textSize="14sp" />
 
@@ -71,7 +71,7 @@
                     android:text="@string/cpu_performance"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:letterSpacing="0.15"
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="12dp"/>
@@ -81,10 +81,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/card_background"
+                    app:cardBackgroundColor="?attr/appSurface"
                     app:cardCornerRadius="24dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="@color/outlineColor">
+                    app:strokeColor="?attr/appOutline">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -97,7 +97,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/cpu_loading"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"/>
 
@@ -106,7 +106,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/cpu_temp_c"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"/>
@@ -122,7 +122,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/individual_cores"
                             android:textSize="11sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.5"
                             android:layout_marginTop="16dp"
                             android:textAllCaps="true"
@@ -148,7 +148,7 @@
                     android:text="@string/gpu_performance"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:letterSpacing="0.15"
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="12dp"/>
@@ -158,10 +158,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/card_background"
+                    app:cardBackgroundColor="?attr/appSurface"
                     app:cardCornerRadius="24dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="@color/outlineColor">
+                    app:strokeColor="?attr/appOutline">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/gpu_loading"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"/>
 
@@ -183,7 +183,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/gpu_temp_c"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"/>
@@ -213,7 +213,7 @@
                     android:text="@string/hardware_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:letterSpacing="0.15"
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="12dp"/>
@@ -223,10 +223,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/card_background"
+                    app:cardBackgroundColor="?attr/appSurface"
                     app:cardCornerRadius="24dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="@color/outlineColor">
+                    app:strokeColor="?attr/appOutline">
 
                     <LinearLayout
                         android:id="@+id/hardware_info_container"
@@ -244,7 +244,7 @@
                     android:text="@string/battery_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:letterSpacing="0.15"
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="12dp"/>
@@ -254,10 +254,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/card_background"
+                    app:cardBackgroundColor="?attr/appSurface"
                     app:cardCornerRadius="24dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="@color/outlineColor">
+                    app:strokeColor="?attr/appOutline">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -270,7 +270,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/health_loading"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"/>
 
@@ -279,7 +279,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/capacity_loading"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"/>
@@ -289,7 +289,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/calculated_health"
-                            android:textColor="@color/nord8"
+                            android:textColor="?attr/appAccent"
                             android:textSize="13sp"
                             android:layout_marginTop="8dp"/>
 
@@ -298,7 +298,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/voltage"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="8dp"/>
@@ -308,7 +308,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/temperature"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"/>
@@ -318,7 +318,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/charging_speed"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"/>
@@ -328,7 +328,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/time_remaining"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="14sp"
                             android:layout_marginTop="4dp"/>
@@ -342,7 +342,7 @@
                     android:text="@string/network_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:letterSpacing="0.15"
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="12dp"/>
@@ -352,10 +352,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/card_background"
+                    app:cardBackgroundColor="?attr/appSurface"
                     app:cardCornerRadius="24dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="@color/outlineColor">
+                    app:strokeColor="?attr/appOutline">
 
                     <LinearLayout
                         android:id="@+id/network_info_container"
@@ -373,7 +373,7 @@
                     android:text="@string/camera_sensors_category"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:letterSpacing="0.15"
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="12dp"/>
@@ -383,10 +383,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/card_background"
+                    app:cardBackgroundColor="?attr/appSurface"
                     app:cardCornerRadius="24dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="@color/outlineColor">
+                    app:strokeColor="?attr/appOutline">
 
                     <LinearLayout
                         android:id="@+id/sensors_info_container"

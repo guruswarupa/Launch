@@ -30,14 +30,14 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
-            android:textColor="@color/white"/>
+            android:textColor="?attr/appTextPrimary"/>
 
         <TextView
             android:id="@+id/icon_pack_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="11sp"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:alpha="0.5"
             android:layout_marginTop="2dp"/>
     </LinearLayout>
@@ -48,6 +48,6 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
-        android:buttonTint="@color/nord8"/>
+        android:buttonTint="?attr/appAccent"/>
 
 </LinearLayout>

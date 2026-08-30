@@ -18,6 +18,7 @@ import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.AppDisplayHelper
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.ui.adapters.FocusModeAppAdapter
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import java.util.concurrent.Executors
 
 class FocusModeConfigActivity : AppCompatActivity() {
@@ -101,8 +102,8 @@ class FocusModeConfigActivity : AppCompatActivity() {
 
         appsContainer.setBackgroundResource(R.drawable.widget_background)
 
-        val textColor = Color.WHITE
-        val subTextColor = Color.parseColor("#B0B0B0")
+        val textColor = ThemeManager.color(this, R.attr.appTextPrimary)
+        val subTextColor = ThemeManager.color(this, R.attr.appTextSecondary)
 
         titleText.setTextColor(textColor)
         subtitleText.setTextColor(subTextColor)
@@ -134,7 +135,8 @@ class FocusModeConfigActivity : AppCompatActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         themeOverlay.setBackgroundColor(color)
     }
 }

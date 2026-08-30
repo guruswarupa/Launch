@@ -38,7 +38,7 @@
                 android:text="@string/privacy_hub"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:letterSpacing="-0.01"/>
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/monitor_app_permissions_and_privacy_risks"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:alpha="0.5"
                 android:textSize="14sp" />
 
@@ -64,10 +64,10 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,14 +79,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="22sp"
                         android:fontFamily="sans-serif-black"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/search_mode_apps"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appTextPrimary"
                         android:alpha="0.5"
                         android:textSize="11sp"/>
                 </LinearLayout>
@@ -98,10 +98,10 @@
                 android:layout_weight="1"
                 android:layout_marginHorizontal="3dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -132,10 +132,10 @@
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="20dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                 android:background="@drawable/settings_card_background"
                 android:hint="@string/filter_applications"
                 android:textColorHint="#66FFFFFF"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:paddingHorizontal="16dp"
                 android:textSize="14sp"
                 android:maxLines="1"
@@ -204,10 +204,10 @@
                         android:text="@string/search_mode_all"
                         android:checked="true"
                         app:chipBackgroundColor="#33000000"
-                        android:textColor="@color/white"
-                        app:checkedIconTint="@color/white"
+                        android:textColor="?attr/appTextPrimary"
+                        app:checkedIconTint="?attr/appIconTint"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="@color/outlineColor"/>
+                        app:chipStrokeColor="?attr/appOutline"/>
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_camera"
                         style="@style/Widget.MaterialComponents.Chip.Filter"
@@ -215,10 +215,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/perm_camera"
                         app:chipBackgroundColor="#33000000"
-                        android:textColor="@color/white"
-                        app:checkedIconTint="@color/white"
+                        android:textColor="?attr/appTextPrimary"
+                        app:checkedIconTint="?attr/appIconTint"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="@color/outlineColor"/>
+                        app:chipStrokeColor="?attr/appOutline"/>
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_microphone"
                         style="@style/Widget.MaterialComponents.Chip.Filter"
@@ -226,10 +226,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/perm_microphone"
                         app:chipBackgroundColor="#33000000"
-                        android:textColor="@color/white"
-                        app:checkedIconTint="@color/white"
+                        android:textColor="?attr/appTextPrimary"
+                        app:checkedIconTint="?attr/appIconTint"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="@color/outlineColor"/>
+                        app:chipStrokeColor="?attr/appOutline"/>
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_location"
                         style="@style/Widget.MaterialComponents.Chip.Filter"
@@ -237,10 +237,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/perm_location"
                         app:chipBackgroundColor="#33000000"
-                        android:textColor="@color/white"
-                        app:checkedIconTint="@color/white"
+                        android:textColor="?attr/appTextPrimary"
+                        app:checkedIconTint="?attr/appIconTint"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="@color/outlineColor"/>
+                        app:chipStrokeColor="?attr/appOutline"/>
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_sideloaded"
                         style="@style/Widget.MaterialComponents.Chip.Filter"
@@ -248,10 +248,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/sideloaded"
                         app:chipBackgroundColor="#33000000"
-                        android:textColor="@color/white"
-                        app:checkedIconTint="@color/white"
+                        android:textColor="?attr/appTextPrimary"
+                        app:checkedIconTint="?attr/appIconTint"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="@color/outlineColor"/>
+                        app:chipStrokeColor="?attr/appOutline"/>
                 </com.google.android.material.chip.ChipGroup>
             </com.guruswarupa.launch.ui.views.SafeHorizontalScrollView>
         </LinearLayout>
@@ -262,10 +262,10 @@
             android:layout_weight="1"
             android:layout_marginBottom="20dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="?attr/appSurface"
             app:cardCornerRadius="24dp"
             app:strokeWidth="1dp"
-            app:strokeColor="@color/outlineColor">
+            app:strokeColor="?attr/appOutline">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/privacy_apps_list"
                 android:layout_width="match_parent"

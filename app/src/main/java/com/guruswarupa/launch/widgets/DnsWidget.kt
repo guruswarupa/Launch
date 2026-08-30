@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 data class DnsProvider(
     val id: String,
@@ -126,9 +127,9 @@ class DnsWidget(
             currentDnsText.text = provider.name
             currentDnsText.setTextColor(
                 if (provider.isAdBlocking) {
-                    context.getColor(R.color.nord14)
+                    ThemeManager.color(context, R.attr.appSuccess)
                 } else {
-                    context.getColor(R.color.text)
+                    ThemeManager.color(context, R.attr.appTextPrimary)
                 }
             )
         }
@@ -285,7 +286,7 @@ class DnsWidget(
 
     private fun fixDialogTextColors(dialog: AlertDialog) {
         try {
-            val textColor = context.getColor(R.color.text)
+            val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
             val listView = dialog.listView
             listView?.post {
                 for (i in 0 until listView.childCount) {

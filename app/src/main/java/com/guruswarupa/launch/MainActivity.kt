@@ -840,6 +840,12 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
+        if (::widgetManager.isInitialized) {
+            // Matches WidgetConfigurationActivity's own pairing of this call with its
+            // WidgetManager's init { retainListening(...) } — needed now that recreate() is a
+            // real, repeatable path (theme switching), not just process death.
+            widgetManager.onDestroy()
+        }
         if (::navigationManager.isInitialized) {
             navigationManager.cleanup()
         }
@@ -861,7 +867,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (!::sharedPreferences.isInitialized) return
-        
+
+        // Belt-and-braces: if the theme changed while this activity was stopped (e.g. the
+        // SETTINGS_UPDATED broadcast that normally triggers this was missed), catch it here.
+        if (com.guruswarupa.launch.ui.theme.ThemeManager.isStale(this, sharedPreferences)) {
+            recreate()
+            return
+        }
+
         val widgetsChanged = sharedPreferences.getBoolean("saved_widgets_changed", false)
         
         if (::lifecycleManager.isInitialized) {

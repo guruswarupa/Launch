@@ -11,7 +11,7 @@
         android:id="@+id/note_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"
@@ -23,7 +23,7 @@
         android:id="@+id/note_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/appTextSecondary"
         android:textSize="14sp"
         android:layout_marginBottom="6dp"
         android:maxLines="2"
@@ -34,7 +34,7 @@
         android:id="@+id/note_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/nord3"
+        android:textColor="?attr/appOutlineMuted"
         android:textSize="12sp"
         android:textStyle="italic"/>
 

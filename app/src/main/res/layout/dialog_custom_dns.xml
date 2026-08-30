@@ -45,8 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/this_dns_blocks_ads_and_trackers"
-            android:textColor="@color/text"
-            android:buttonTint="@color/text" />
+            android:textColor="?attr/appTextPrimary"
+            android:buttonTint="?attr/appIconTint" />
 
     </LinearLayout>
 

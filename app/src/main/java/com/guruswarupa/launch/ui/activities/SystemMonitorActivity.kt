@@ -22,7 +22,9 @@ import android.widget.TextView
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -156,8 +158,10 @@ class SystemMonitorActivity : AppCompatActivity() {
             cpuCoresContainer.removeAllViews()
             repeat(coreUsages.size) {
                 val chip = Chip(this).apply {
-                    setChipBackgroundColorResource(R.color.card_background)
-                    setTextColor(Color.WHITE)
+                    chipBackgroundColor = android.content.res.ColorStateList.valueOf(
+                        ThemeManager.color(this@SystemMonitorActivity, R.attr.appSurface)
+                    )
+                    setTextColor(ThemeManager.color(this@SystemMonitorActivity, R.attr.appTextPrimary))
                     setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 10f)
                     isClickable = false
                     isCheckable = false
@@ -173,11 +177,12 @@ class SystemMonitorActivity : AppCompatActivity() {
             chip.text = String.format(Locale.getDefault(), "C%d: %d%% (%s)", i, usage, freq)
             
             // Visual indicator of load
-            when {
-                usage > 80 -> chip.setChipStrokeColorResource(R.color.red)
-                usage > 50 -> chip.setChipStrokeColorResource(R.color.nord13) // yellow/orange
-                else -> chip.setChipStrokeColorResource(R.color.nord8) // cyan/blue
+            val strokeColor = when {
+                usage > 80 -> ContextCompat.getColor(this, R.color.red)
+                usage > 50 -> ThemeManager.color(this, R.attr.appWarning) // yellow/orange
+                else -> ThemeManager.color(this, R.attr.appAccent) // cyan/blue
             }
+            chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(strokeColor)
             chip.chipStrokeWidth = 2f
         }
     }

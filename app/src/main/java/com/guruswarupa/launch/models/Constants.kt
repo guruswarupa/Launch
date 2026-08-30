@@ -10,7 +10,12 @@ object Constants {
     @SuppressLint("unused")
     object Prefs {
         const val PREFS_NAME = "com.guruswarupa.launch.PREFS"
+        /** Wallpaper picker (downloads an image) — NOT the app color theme. See COLOR_THEME. */
         const val SELECTED_THEME = "selected_theme"
+        /** App color palette id, e.g. "nord" (default), "dracula", "catppuccin_mocha", "monochrome", "light". */
+        const val COLOR_THEME = "color_theme"
+        /** Accent swatch id layered on top of COLOR_THEME. "palette" (default) keeps the palette's native accent. */
+        const val COLOR_ACCENT = "color_accent"
         const val VIEW_PREFERENCE = "view_preference"
         const val VIEW_PREFERENCE_LIST = "list"
         const val VIEW_PREFERENCE_GRID = "grid"

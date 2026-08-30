@@ -14,7 +14,7 @@
         android:inputType="textCapWords"
         android:paddingHorizontal="14dp"
         android:paddingVertical="12dp"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:textColorHint="#80FFFFFF" />
 
     <LinearLayout
@@ -34,7 +34,7 @@
             android:inputType="textUri"
             android:paddingHorizontal="14dp"
             android:paddingVertical="12dp"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textColorHint="#80FFFFFF" />
 
         <ImageButton
@@ -45,7 +45,7 @@
             android:contentDescription="@string/web_app_search_description"
             android:padding="12dp"
             android:src="@drawable/ic_search"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/web_app_popular_sites"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
             android:alpha="0.7"
@@ -110,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/block_external_redirects"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
@@ -120,7 +120,7 @@
                 android:layout_marginTop="2dp"
                 android:alpha="0.6"
                 android:text="@string/prevent_navigation_to_external_domains"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="11sp" />
         </LinearLayout>
 
@@ -136,8 +136,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/allow_http_unencrypted_connection"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="13sp"
-        android:buttonTint="@color/white"
+        android:buttonTint="?attr/appIconTint"
         android:alpha="0.7" />
 </LinearLayout>

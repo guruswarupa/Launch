@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class UsageGraphView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -21,12 +22,12 @@ class UsageGraphView @JvmOverloads constructor(
         strokeWidth = 4f
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
-        color = ContextCompat.getColor(context, R.color.nord8)
+        color = ThemeManager.color(context, R.attr.appAccent)
     }
 
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        color = (ContextCompat.getColor(context, R.color.nord8) and 0x00FFFFFF) or 0x33000000
+        color = (ThemeManager.color(context, R.attr.appAccent) and 0x00FFFFFF) or 0x33000000
     }
 
     private val path = Path()

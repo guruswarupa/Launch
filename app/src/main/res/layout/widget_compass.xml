@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/compass"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.02" />
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/compass_enable"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
             android:background="@drawable/button_neutral_ripple"
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/direction"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05"
@@ -101,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/direction_text"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:textSize="56sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.1"
@@ -110,7 +110,7 @@
                 <View
                     android:layout_width="2dp"
                     android:layout_height="40dp"
-                    android:background="@color/nord7"
+                    android:background="?attr/appHighlight"
                     android:alpha="0.5" />
             </LinearLayout>
 
@@ -119,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/s_0"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.02" />
@@ -131,7 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/compass_sensors_not_available"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp"
             android:gravity="center"
             android:visibility="gone" />

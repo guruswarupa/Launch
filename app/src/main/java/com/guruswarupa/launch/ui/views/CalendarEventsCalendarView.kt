@@ -13,6 +13,7 @@ import com.guruswarupa.launch.widgets.CalendarEvent
 import java.text.SimpleDateFormat
 import java.util.*
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 class CalendarEventsCalendarView(
     rootView: View,
     private var events: List<CalendarEvent>,
@@ -209,7 +210,7 @@ class CalendarEventsCalendarAdapter(
             if (hasCustomEvent) {
                 holder.eventIndicator.visibility = View.VISIBLE
                 holder.eventIndicator.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.nord9)
+                    ThemeManager.color(holder.itemView.context, R.attr.appAccentMuted)
                 )
             } else {
                 holder.eventIndicator.visibility = View.GONE
@@ -219,7 +220,7 @@ class CalendarEventsCalendarAdapter(
             if (hasFestival) {
                 holder.festivalIndicator.visibility = View.VISIBLE
                 holder.festivalIndicator.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.nord11)
+                    ThemeManager.color(holder.itemView.context, R.attr.appError)
                 )
             } else {
                 holder.festivalIndicator.visibility = View.GONE

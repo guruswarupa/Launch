@@ -7,6 +7,8 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import java.time.LocalDate
 import kotlin.math.min
 
@@ -20,7 +22,7 @@ class YearProgressView @JvmOverloads constructor(
     private val rectF = RectF()
 
 
-    private val colorCompleted = Color.parseColor("#A3BE8C")
+    private val colorCompleted = ThemeManager.color(context, R.attr.appSuccess)
     private val colorRemaining = Color.parseColor("#ECEFF4")
 
     private var daysInYear = 365
@@ -92,7 +94,7 @@ class YearProgressView @JvmOverloads constructor(
             val y = startY + row * (cellSize + spacing)
 
 
-            paint.color = Color.WHITE
+            paint.color = ThemeManager.color(context, R.attr.appTextPrimary)
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 3f
             rectF.set(x - 1, y - 1, x + cellSize + 1, y + cellSize + 1)

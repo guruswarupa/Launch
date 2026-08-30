@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="112dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="10dp"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="18dp"
+    app:cardBackgroundColor="?attr/appSurface"
+    app:strokeWidth="1dp"
+    app:strokeColor="?attr/appOutline"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <!-- Preview swatch: background + a surface card + an accent dot, using this
+                 palette's own literal colors (ThemePalette.previewX) — never resolved from the
+                 currently active theme, so every card shows its true palette regardless of
+                 which one is selected. -->
+            <View
+                android:id="@+id/palette_swatch_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <View
+                android:id="@+id/palette_swatch_surface"
+                android:layout_width="52dp"
+                android:layout_height="30dp"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="8dp"/>
+
+            <View
+                android:id="@+id/palette_swatch_accent"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"/>
+
+            <ImageView
+                android:id="@+id/palette_check"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="6dp"
+                android:src="@drawable/ic_check_circle"
+                android:visibility="gone"
+                android:contentDescription="@null"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/palette_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:textColor="?attr/appTextPrimary"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

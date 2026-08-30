@@ -19,6 +19,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 data class NoteItem(
     val id: String,
@@ -201,7 +202,7 @@ class NoteWidget(
 
     private fun fixDialogTextColors(dialog: AlertDialog) {
         try {
-            val textColor = context.getColor(R.color.text)
+            val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
             val listView = dialog.listView
             listView?.post {
                 for (i in 0 until listView.childCount) {

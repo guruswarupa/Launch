@@ -23,6 +23,7 @@ import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.receivers.ScreenOffAdminReceiver
 import com.guruswarupa.launch.services.ScreenLockAccessibilityService
 import com.guruswarupa.launch.services.LaunchNotificationListenerService
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 
 
@@ -330,7 +331,7 @@ class PermissionManager(
 
     private fun fixDialogTextColors(dialog: AlertDialog) {
         try {
-            val textColor = ContextCompat.getColor(activity, R.color.text)
+            val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
             dialog.findViewById<TextView>(android.R.id.title)?.setTextColor(textColor)
             dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(textColor)
         } catch (_: Exception) {}

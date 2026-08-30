@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Color-theme overlays. Each ThemeOverlay.Launch.Palette.* declares every semantic attr
+        from attrs.xml; ui/theme/ThemeManager.kt applies one on top of the base Theme.Launch /
+        Theme.Launch.Settings via Activity.theme.applyStyle(..., force = true).
+
+        parent="" is deliberate: these are pure attribute bags, not meant to inherit Material's
+        own theme chain (that would pull in unrelated defaults and risk clobbering
+        colorPrimary/colorAccent etc. set directly on Theme.Launch).
+
+        Nord is included even though it duplicates Theme.Launch's own base values, so every
+        palette (selected or not) goes through the exact same application path — no special
+        "no overlay needed for the default" branch in ThemeManager.
+    -->
+
+    <style name="ThemeOverlay.Launch.Palette.Nord" parent="">
+        <item name="appAccent">@color/nord8</item>
+        <item name="appAccentMuted">@color/nord9</item>
+        <item name="appAccentSecondary">@color/nord10</item>
+        <item name="appOnAccent">#2E3440</item>
+        <item name="appHighlight">@color/nord7</item>
+
+        <item name="appBackground">@color/background</item>
+        <item name="appSurface">@color/card_background</item>
+        <item name="appSurfaceVariant">@color/widget_item_background</item>
+        <item name="appSurfaceElevated">@color/dialog_background</item>
+        <item name="appScrim">@color/black</item>
+
+        <item name="appTextPrimary">@color/white</item>
+        <item name="appTextSecondary">@color/text_secondary</item>
+        <item name="appTextTertiary">@color/text_tertiary</item>
+        <item name="appTextHint">@color/text_hint</item>
+        <item name="appIconTint">@color/icon_color</item>
+        <item name="appTextShadow">#BF000000</item>
+
+        <item name="appOutline">@color/outlineColor</item>
+        <item name="appOutlineMuted">@color/nord3</item>
+        <item name="appDivider">#0DFFFFFF</item>
+        <item name="appRippleColor">@color/dialog_button_background</item>
+        <item name="appSurfaceBorder">@color/widget_divider</item>
+
+        <item name="appError">@color/nord11</item>
+        <item name="appSuccess">@color/nord14</item>
+        <item name="appWarning">@color/nord13</item>
+
+        <item name="appChart1">@color/nord7</item>
+        <item name="appChart2">@color/nord8</item>
+        <item name="appChart3">@color/nord9</item>
+        <item name="appChart4">@color/nord14</item>
+
+        <item name="appIsLight">false</item>
+    </style>
+
+    <style name="ThemeOverlay.Launch.Palette.Nord.Opaque" parent="">
+        <item name="appSurface">#FF191C24</item>
+        <item name="appSurfaceVariant">#FF232733</item>
+        <item name="appSurfaceElevated">#FF191C24</item>
+    </style>
+
+    <!-- Dracula: https://draculatheme.com/contribute — official palette. -->
+    <style name="ThemeOverlay.Launch.Palette.Dracula" parent="">
+        <item name="appAccent">#BD93F9</item>
+        <item name="appAccentMuted">#FF79C6</item>
+        <item name="appAccentSecondary">#6272A4</item>
+        <item name="appOnAccent">#282A36</item>
+        <item name="appHighlight">#8BE9FD</item>
+
+        <item name="appBackground">#282A36</item>
+        <item name="appSurface">#B3282A36</item>
+        <item name="appSurfaceVariant">#6644475A</item>
+        <item name="appSurfaceElevated">#E62B2E3B</item>
+        <item name="appScrim">#1A1B22</item>
+
+        <item name="appTextPrimary">#F8F8F2</item>
+        <item name="appTextSecondary">#C7C9D6</item>
+        <item name="appTextTertiary">#6272A4</item>
+        <item name="appTextHint">#6272A4</item>
+        <item name="appIconTint">#F8F8F2</item>
+        <item name="appTextShadow">#B3161721</item>
+
+        <item name="appOutline">#4D44475A</item>
+        <item name="appOutlineMuted">#4D6272A4</item>
+        <item name="appDivider">#1FF8F8F2</item>
+        <item name="appRippleColor">#33F8F8F2</item>
+        <item name="appSurfaceBorder">#33F8F8F2</item>
+
+        <item name="appError">#FF5555</item>
+        <item name="appSuccess">#50FA7B</item>
+        <item name="appWarning">#F1FA8C</item>
+
+        <item name="appChart1">#BD93F9</item>
+        <item name="appChart2">#8BE9FD</item>
+        <item name="appChart3">#FF79C6</item>
+        <item name="appChart4">#50FA7B</item>
+
+        <item name="appIsLight">false</item>
+    </style>
+
+    <style name="ThemeOverlay.Launch.Palette.Dracula.Opaque" parent="">
+        <item name="appSurface">#FF282A36</item>
+        <item name="appSurfaceVariant">#FF383A4A</item>
+        <item name="appSurfaceElevated">#FF21222C</item>
+    </style>
+
+    <!-- Catppuccin Mocha: https://catppuccin.com/palette — official palette. -->
+    <style name="ThemeOverlay.Launch.Palette.CatppuccinMocha" parent="">
+        <item name="appAccent">#CBA6F7</item>
+        <item name="appAccentMuted">#B4BEFE</item>
+        <item name="appAccentSecondary">#89B4FA</item>
+        <item name="appOnAccent">#11111B</item>
+        <item name="appHighlight">#94E2D5</item>
+
+        <item name="appBackground">#1E1E2E</item>
+        <item name="appSurface">#B31E1E2E</item>
+        <item name="appSurfaceVariant">#66313244</item>
+        <item name="appSurfaceElevated">#E6181825</item>
+        <item name="appScrim">#11111B</item>
+
+        <item name="appTextPrimary">#CDD6F4</item>
+        <item name="appTextSecondary">#BAC2DE</item>
+        <item name="appTextTertiary">#A6ADC8</item>
+        <item name="appTextHint">#6C7086</item>
+        <item name="appIconTint">#CDD6F4</item>
+        <item name="appTextShadow">#B311111B</item>
+
+        <item name="appOutline">#4D585B70</item>
+        <item name="appOutlineMuted">#4D6C7086</item>
+        <item name="appDivider">#1FCDD6F4</item>
+        <item name="appRippleColor">#33CDD6F4</item>
+        <item name="appSurfaceBorder">#33CDD6F4</item>
+
+        <item name="appError">#F38BA8</item>
+        <item name="appSuccess">#A6E3A1</item>
+        <item name="appWarning">#F9E2AF</item>
+
+        <item name="appChart1">#CBA6F7</item>
+        <item name="appChart2">#89B4FA</item>
+        <item name="appChart3">#94E2D5</item>
+        <item name="appChart4">#FAB387</item>
+
+        <item name="appIsLight">false</item>
+    </style>
+
+    <style name="ThemeOverlay.Launch.Palette.CatppuccinMocha.Opaque" parent="">
+        <item name="appSurface">#FF1E1E2E</item>
+        <item name="appSurfaceVariant">#FF313244</item>
+        <item name="appSurfaceElevated">#FF181825</item>
+    </style>
+
+    <!-- Monochrome: near-black/white minimal palette with a single accent — Niagara-style. -->
+    <style name="ThemeOverlay.Launch.Palette.Monochrome" parent="">
+        <item name="appAccent">#FFFFFF</item>
+        <item name="appAccentMuted">#B3FFFFFF</item>
+        <item name="appAccentSecondary">#8A8A8A</item>
+        <item name="appOnAccent">#000000</item>
+        <item name="appHighlight">#E6E6E6</item>
+
+        <item name="appBackground">#000000</item>
+        <item name="appSurface">#99101010</item>
+        <item name="appSurfaceVariant">#1AFFFFFF</item>
+        <item name="appSurfaceElevated">#F0141414</item>
+        <item name="appScrim">#000000</item>
+
+        <item name="appTextPrimary">#FFFFFF</item>
+        <item name="appTextSecondary">#B3FFFFFF</item>
+        <item name="appTextTertiary">#80FFFFFF</item>
+        <item name="appTextHint">#66FFFFFF</item>
+        <item name="appIconTint">#FFFFFF</item>
+        <item name="appTextShadow">#B3000000</item>
+
+        <item name="appOutline">#26FFFFFF</item>
+        <item name="appOutlineMuted">#1AFFFFFF</item>
+        <item name="appDivider">#14FFFFFF</item>
+        <item name="appRippleColor">#33FFFFFF</item>
+        <item name="appSurfaceBorder">#33FFFFFF</item>
+
+        <item name="appError">#FF6B6B</item>
+        <item name="appSuccess">#D6D6D6</item>
+        <item name="appWarning">#EDEDED</item>
+
+        <item name="appChart1">#FFFFFF</item>
+        <item name="appChart2">#C4C4C4</item>
+        <item name="appChart3">#8A8A8A</item>
+        <item name="appChart4">#5A5A5A</item>
+
+        <item name="appIsLight">false</item>
+    </style>
+
+    <style name="ThemeOverlay.Launch.Palette.Monochrome.Opaque" parent="">
+        <item name="appSurface">#FF101010</item>
+        <item name="appSurfaceVariant">#FF1B1B1B</item>
+        <item name="appSurfaceElevated">#FF141414</item>
+    </style>
+
+
+    <!--
+        Accent overlays: layered on top of a palette overlay to override just the 3
+        accent-related attrs. The "palette" choice in AccentSwatch (no overlay applied) keeps
+        each palette's own native accent — that's the default so existing users see no change.
+    -->
+    <style name="ThemeOverlay.Launch.Accent.Blue" parent="">
+        <item name="appAccent">#4C8DF6</item>
+        <item name="appAccentMuted">#7BA9F8</item>
+        <item name="appOnAccent">#FFFFFF</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Indigo" parent="">
+        <item name="appAccent">#6C7CF0</item>
+        <item name="appAccentMuted">#8F9BF3</item>
+        <item name="appOnAccent">#FFFFFF</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Violet" parent="">
+        <item name="appAccent">#A78BFA</item>
+        <item name="appAccentMuted">#C4AFFB</item>
+        <item name="appOnAccent">#141024</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Magenta" parent="">
+        <item name="appAccent">#E879C7</item>
+        <item name="appAccentMuted">#F0A2D8</item>
+        <item name="appOnAccent">#25101F</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Pink" parent="">
+        <item name="appAccent">#F472A0</item>
+        <item name="appAccentMuted">#F79AC0</item>
+        <item name="appOnAccent">#26101A</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Red" parent="">
+        <item name="appAccent">#EF5350</item>
+        <item name="appAccentMuted">#F17E7B</item>
+        <item name="appOnAccent">#FFFFFF</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Coral" parent="">
+        <item name="appAccent">#FF7A59</item>
+        <item name="appAccentMuted">#FF9C82</item>
+        <item name="appOnAccent">#2A1008</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Amber" parent="">
+        <item name="appAccent">#F5B942</item>
+        <item name="appAccentMuted">#F8CB73</item>
+        <item name="appOnAccent">#241A03</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Lime" parent="">
+        <item name="appAccent">#A8CC50</item>
+        <item name="appAccentMuted">#C0DB7C</item>
+        <item name="appOnAccent">#1A2208</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Green" parent="">
+        <item name="appAccent">#4CAF7D</item>
+        <item name="appAccentMuted">#79C4A0</item>
+        <item name="appOnAccent">#08210F</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Teal" parent="">
+        <item name="appAccent">#2FBFA0</item>
+        <item name="appAccentMuted">#61D3BC</item>
+        <item name="appOnAccent">#04221C</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Cyan" parent="">
+        <item name="appAccent">#56C7E0</item>
+        <item name="appAccentMuted">#85D8EA</item>
+        <item name="appOnAccent">#04222A</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Sky" parent="">
+        <item name="appAccent">#63B3ED</item>
+        <item name="appAccentMuted">#92C9F2</item>
+        <item name="appOnAccent">#04202E</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Slate" parent="">
+        <item name="appAccent">#8A94A6</item>
+        <item name="appAccentMuted">#A9B1BF</item>
+        <item name="appOnAccent">#101319</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Sand" parent="">
+        <item name="appAccent">#C9A97E</item>
+        <item name="appAccentMuted">#D8C2A2</item>
+        <item name="appOnAccent">#241B0E</item>
+    </style>
+    <style name="ThemeOverlay.Launch.Accent.Mono" parent="">
+        <item name="appAccent">#E6E6E6</item>
+        <item name="appAccentMuted">#F2F2F2</item>
+        <item name="appOnAccent">#101010</item>
+    </style>
+</resources>

@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/forecast"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:text="@string/bengaluru_in"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="11sp" />
         </LinearLayout>
 
@@ -39,7 +39,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_weather_cloudy"
-            android:tint="@color/widget_text" />
+            android:tint="?attr/appIconTint" />
     </LinearLayout>
 
     <TextView
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="27°C"
-        android:textColor="@color/nord8"
+        android:textColor="?attr/appAccent"
         android:textSize="26sp"
         android:textStyle="bold" />
 
@@ -55,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/clear_skies"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="13sp"
         android:textStyle="bold" />
 
@@ -66,7 +66,7 @@
         android:background="@drawable/widget_item_background"
         android:padding="8dp"
         android:text="@string/rain_ahead_later_today"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="11sp" />
 
     <FrameLayout
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/s_31_24"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="10sp" />
 
         <View
@@ -95,7 +95,7 @@
             android:layout_gravity="bottom"
             android:gravity="center"
             android:text="@string/now_2p_5p_8p_11p"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="10sp" />
     </FrameLayout>
 
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
         android:text="@string/today_29_21"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="12sp"
         android:textStyle="bold" />
 
@@ -113,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/wed_30_22"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="12sp" />
 
     <TextView
@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/thu_28_20"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="12sp" />
 
 </LinearLayout>

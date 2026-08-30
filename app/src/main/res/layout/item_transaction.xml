@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/income"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/appTextSecondary"
             android:textSize="10sp"
             android:textAllCaps="true"
             android:layout_marginBottom="2dp" />
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/description"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="14sp" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/jan_1_2024"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/appTextSecondary"
             android:textSize="11sp"
             android:layout_marginTop="2dp" />
     </LinearLayout>
@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/s_0_00"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginEnd="12dp"
@@ -60,7 +60,7 @@
         android:layout_height="32dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_delete"
-        android:tint="@color/text_secondary"
+        android:tint="?attr/appIconTint"
         android:contentDescription="@string/delete_transaction"
         android:padding="6dp"
         android:scaleType="centerInside"/>

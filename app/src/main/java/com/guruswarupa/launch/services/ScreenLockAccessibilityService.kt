@@ -45,6 +45,7 @@ import androidx.core.content.ContextCompat
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.managers.AppUsageStatsManager
 import com.guruswarupa.launch.managers.FocusModeManager
 import com.guruswarupa.launch.models.Constants
@@ -306,7 +307,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private fun showFloatingButton() {
         if (floatingView != null) return
 
-        val themedContext = ContextThemeWrapper(this, R.style.Theme_Launch)
+        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
         floatingView = LayoutInflater.from(themedContext).inflate(R.layout.layout_accessibility_shortcut_trigger, null)
 
         val params = WindowManager.LayoutParams(
@@ -438,7 +439,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             return
         }
 
-        val themedContext = ContextThemeWrapper(this, R.style.Theme_Launch)
+        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
         edgeHandleView = LayoutInflater.from(themedContext).inflate(R.layout.layout_edge_panel_handle, null)
 
         val params = WindowManager.LayoutParams(
@@ -561,7 +562,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         }
 
         try {
-            val themedContext = ContextThemeWrapper(this, R.style.Theme_Launch)
+            val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
             val overlay = LayoutInflater.from(themedContext).inflate(R.layout.layout_edge_panel_overlay, null, false)
             edgePanelView = overlay
 
@@ -694,7 +695,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             return
         }
 
-        val themedContext = ContextThemeWrapper(this, R.style.Theme_Launch)
+        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
         controlCenterTriggerView = LayoutInflater.from(themedContext).inflate(R.layout.layout_control_center_trigger, null)
 
         val params = WindowManager.LayoutParams(
@@ -1347,7 +1348,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private fun showMenu() {
         if (shortcutMenu != null) return
 
-        val themedContext = ContextThemeWrapper(this, R.style.Theme_Launch)
+        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
         val menu = LayoutInflater.from(themedContext).inflate(R.layout.layout_accessibility_shortcut, null)
         shortcutMenu = menu
         setupMenuListeners(menu)
@@ -1568,7 +1569,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     topMargin = 4.dpToPx()
                 }
                 textSize = 10f
-                setTextColor(android.graphics.Color.WHITE)
+                setTextColor(ThemeManager.colorOrNull(this@ScreenLockAccessibilityService, R.attr.appTextPrimary) ?: android.graphics.Color.WHITE)
                 maxLines = 2
                 ellipsize = TextUtils.TruncateAt.END
                 gravity = Gravity.CENTER

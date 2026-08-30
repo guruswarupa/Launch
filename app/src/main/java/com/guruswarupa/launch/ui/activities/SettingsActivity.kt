@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -85,6 +86,9 @@ import java.util.LinkedHashMap
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import com.guruswarupa.launch.ui.theme.AccentSwatch
+import com.guruswarupa.launch.ui.theme.ThemeManager
+import com.guruswarupa.launch.ui.theme.ThemePalette
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
@@ -163,6 +167,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         setupWallpaper(null)
 
+        setupThemeSection()
         setupAppearanceSection()
         setupActionsSection()
         setupDockSettings()
@@ -261,6 +266,89 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             WallpaperDisplayHelper.applySystemWallpaper(wallpaperImageView)
         } else {
             WallpaperDisplayHelper.applyThemeWallpaper(wallpaperImageView, demoThemeId)
+        }
+    }
+
+    private fun setupThemeSection() {
+        setupThemePaletteRow()
+        setupThemeAccentGrid()
+        setupOpaqueSurfacesSwitch()
+    }
+
+    private fun setupOpaqueSurfacesSwitch() {
+        val sw = findViewById<SwitchCompat>(R.id.opaque_surfaces_switch)
+        sw.isChecked = prefs.getBoolean(Constants.Prefs.OPAQUE_SURFACES_ENABLED, false)
+        sw.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit { putBoolean(Constants.Prefs.OPAQUE_SURFACES_ENABLED, isChecked) }
+            notifySettingsChanged()
+            recreate()
+        }
+    }
+
+    private fun setupThemePaletteRow() {
+        val row = findViewById<LinearLayout>(R.id.theme_palette_row)
+        row.removeAllViews()
+        val currentId = prefs.getString(Constants.Prefs.COLOR_THEME, null)
+        ThemePalette.ALL.forEach { palette ->
+            val card = layoutInflater.inflate(R.layout.item_theme_palette_card, row, false)
+            card.findViewById<TextView>(R.id.palette_name).setText(palette.nameRes)
+            card.findViewById<View>(R.id.palette_swatch_bg).setBackgroundColor(palette.previewBackground)
+            card.findViewById<View>(R.id.palette_swatch_surface).background =
+                GradientDrawable().apply {
+                    setColor(palette.previewSurface)
+                    cornerRadius = 8.dpToPx().toFloat()
+                }
+            card.findViewById<View>(R.id.palette_swatch_accent).background =
+                GradientDrawable().apply {
+                    setColor(palette.previewAccent)
+                    shape = GradientDrawable.OVAL
+                }
+            card.findViewById<ImageView>(R.id.palette_check).isVisible =
+                palette.id == (currentId ?: ThemePalette.NORD.id)
+            card.setOnClickListener {
+                if (palette.id == (prefs.getString(Constants.Prefs.COLOR_THEME, null) ?: ThemePalette.NORD.id)) return@setOnClickListener
+                prefs.edit { putString(Constants.Prefs.COLOR_THEME, palette.id) }
+                notifySettingsChanged()
+                recreate()
+            }
+            row.addView(card)
+        }
+    }
+
+    private fun setupThemeAccentGrid() {
+        val grid = findViewById<LinearLayout>(R.id.theme_accent_grid)
+        grid.removeAllViews()
+        val currentId = prefs.getString(Constants.Prefs.COLOR_ACCENT, null) ?: AccentSwatch.PALETTE.id
+        AccentSwatch.ALL.forEach { accent ->
+            val swatch = layoutInflater.inflate(R.layout.item_accent_swatch, grid, false)
+            val fill = swatch.findViewById<View>(R.id.accent_swatch_fill)
+            if (accent.previewColor != null) {
+                fill.background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(accent.previewColor)
+                }
+            } else {
+                // The "palette" sentinel: an outline-only ring meaning "use the palette's own
+                // native accent" rather than a solid swatch color.
+                fill.background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(Color.TRANSPARENT)
+                    setStroke(2.dpToPx(), ThemeManager.color(this@SettingsActivity, R.attr.appOutline))
+                }
+            }
+            swatch.findViewById<ImageView>(R.id.accent_check).isVisible = accent.id == currentId
+            swatch.contentDescription = if (accent.id == AccentSwatch.PALETTE.id) {
+                getString(R.string.accent_color)
+            } else {
+                accent.id
+            }
+            swatch.setOnClickListener {
+                if (accent.id == (prefs.getString(Constants.Prefs.COLOR_ACCENT, null) ?: AccentSwatch.PALETTE.id)) return@setOnClickListener
+                prefs.edit { putString(Constants.Prefs.COLOR_ACCENT, accent.id) }
+                notifySettingsChanged()
+                recreate()
+            }
+            grid.addView(swatch)
         }
     }
 
@@ -441,7 +529,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         findViewById<SwitchCompat>(R.id.clock_24_hour_switch).apply {
             fun applyClockSwitchColors(isEnabled: Boolean) {
-                val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+                val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
                 thumbTintList = ColorStateList.valueOf(color)
                 trackTintList = ColorStateList.valueOf(color)
             }
@@ -457,7 +545,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         findViewById<SwitchCompat>(R.id.show_fast_scroller_switch).apply {
             fun applyFastScrollerSwitchColors(isEnabled: Boolean) {
-                val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+                val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
                 thumbTintList = ColorStateList.valueOf(color)
                 trackTintList = ColorStateList.valueOf(color)
             }
@@ -473,7 +561,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         findViewById<SwitchCompat>(R.id.landscape_orientation_switch).apply {
             fun applyLandscapeSwitchColors(isEnabled: Boolean) {
-                val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+                val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
                 thumbTintList = ColorStateList.valueOf(color)
                 trackTintList = ColorStateList.valueOf(color)
             }
@@ -490,7 +578,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         findViewById<SwitchCompat>(R.id.minimal_mode_switch).apply {
             fun applyMinimalModeSwitchColors(isEnabled: Boolean) {
-                val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+                val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
                 thumbTintList = ColorStateList.valueOf(color)
                 trackTintList = ColorStateList.valueOf(color)
             }
@@ -519,7 +607,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 translucencyValue.text = "$p%"
 
                 val alpha = (p * 255 / 100).coerceIn(0, 255)
-                val color = Color.argb(alpha, 0, 0, 0)
+                val scrimBase = ThemeManager.color(this@SettingsActivity, R.attr.appScrim)
+                val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
                 findViewById<View>(R.id.settings_overlay)?.setBackgroundColor(color)
 
                 if (f) {
@@ -583,7 +672,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 val isSelected = ThemeOption.PREDEFINED_THEMES.find { it.id == selectedThemeId }?.category == category
 
                 if (isSelected) {
-                    card.strokeColor = ContextCompat.getColor(this, R.color.nord8)
+                    card.strokeColor = ThemeManager.color(this, R.attr.appAccent)
                     card.strokeWidth = 2.dpToPx()
                 } else {
                     card.strokeColor = Color.TRANSPARENT
@@ -614,7 +703,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 setImageResource(R.drawable.ic_arrow_right)
                 rotation = 180f
                 setBackgroundResource(android.R.color.transparent)
-                setColorFilter(ContextCompat.getColor(this@SettingsActivity, R.color.white))
+                setColorFilter(ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary))
                 setPadding(0, 0, 8, 0)
                 layoutParams = LinearLayout.LayoutParams(40.dpToPx(), ViewGroup.LayoutParams.WRAP_CONTENT)
                 setOnClickListener {
@@ -647,7 +736,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 WallpaperDisplayHelper.applyThemePreview(preview, theme.id)
 
                 if (selectedThemeId == theme.id) {
-                    card.strokeColor = ContextCompat.getColor(this, R.color.nord8)
+                    card.strokeColor = ThemeManager.color(this, R.attr.appAccent)
                     card.strokeWidth = 2.dpToPx()
                 } else {
                     card.strokeColor = Color.TRANSPARENT
@@ -690,14 +779,14 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val topWidgetEnabledSwitch = findViewById<SwitchCompat>(R.id.top_widget_enabled_switch)
         val configureWidgetsButton = findViewById<View>(R.id.configure_widgets_button)
         fun applyWidgetsSwitchColors(isEnabled: Boolean) {
-            val color = if (isEnabled) ContextCompat.getColor(this, R.color.nord8) else Color.WHITE
+            val color = if (isEnabled) ThemeManager.color(this, R.attr.appAccent) else ThemeManager.color(this, R.attr.appTextPrimary)
             widgetsEnabledSwitch.thumbTintList = ColorStateList.valueOf(color)
             widgetsEnabledSwitch.trackTintList = ColorStateList.valueOf(color)
             configureWidgetsButton.alpha = if (isEnabled) 1f else 0.6f
             configureWidgetsButton.isEnabled = isEnabled
         }
         fun applyTopWidgetSwitchColors(isEnabled: Boolean) {
-            val color = if (isEnabled) ContextCompat.getColor(this, R.color.nord8) else Color.WHITE
+            val color = if (isEnabled) ThemeManager.color(this, R.attr.appAccent) else ThemeManager.color(this, R.attr.appTextPrimary)
             topWidgetEnabledSwitch.thumbTintList = ColorStateList.valueOf(color)
             topWidgetEnabledSwitch.trackTintList = ColorStateList.valueOf(color)
         }
@@ -769,7 +858,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val hideWorkspacesSwitch = findViewById<SwitchCompat>(R.id.dock_hide_workspaces_switch)
 
         fun applySwitchColors(isEnabled: Boolean, switch: SwitchCompat) {
-            val color = if (isEnabled) ContextCompat.getColor(this, R.color.nord8) else Color.WHITE
+            val color = if (isEnabled) ThemeManager.color(this, R.attr.appAccent) else ThemeManager.color(this, R.attr.appTextPrimary)
             switch.thumbTintList = ColorStateList.valueOf(color)
             switch.trackTintList = ColorStateList.valueOf(color)
         }
@@ -813,8 +902,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val enabledSwitch = findViewById<SwitchCompat>(R.id.news_feed_enabled_switch)
         val manageButton = findViewById<View>(R.id.manage_news_feeds_button)
 
-        val disabledColor = Color.WHITE
-        val enabledColor = ContextCompat.getColor(this, R.color.nord8)
+        val disabledColor = ThemeManager.color(this, R.attr.appTextPrimary)
+        val enabledColor = ThemeManager.color(this, R.attr.appAccent)
         fun applyNewsFeedSwitchColors(isEnabled: Boolean) {
             val color = if (isEnabled) enabledColor else disabledColor
             enabledSwitch.thumbTintList = ColorStateList.valueOf(color)
@@ -2105,7 +2194,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         toggleSwitch.isChecked = isEnabled
         
         fun applySwitchColors(isEnabled: Boolean) {
-            val color = if (isEnabled) ContextCompat.getColor(this@SettingsActivity, R.color.nord8) else Color.WHITE
+            val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
             toggleSwitch.thumbTintList = ColorStateList.valueOf(color)
             toggleSwitch.trackTintList = ColorStateList.valueOf(color)
         }
@@ -2206,7 +2295,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         findViewById<View>(R.id.settings_overlay)?.setBackgroundColor(color)
     }
 
@@ -2331,12 +2421,12 @@ class ThemedArrayAdapter(
                 val colorStr = itemColors[position]
                 if (colorStr == Constants.TYPOGRAPHY_FONT_COLOR_DEFAULT) {
 
-                    Color.WHITE
+                    ThemeManager.color(context, R.attr.appTextPrimary)
                 } else {
-                    try { Color.parseColor(colorStr) } catch (_: Exception) { Color.WHITE }
+                    try { Color.parseColor(colorStr) } catch (_: Exception) { ThemeManager.color(context, R.attr.appTextPrimary) }
                 }
             } else {
-                TypographyManager.getConfiguredFontColor(context) ?: Color.WHITE
+                TypographyManager.getConfiguredFontColor(context) ?: ThemeManager.color(context, R.attr.appTextPrimary)
             }
             view.setTextColor(color)
         }

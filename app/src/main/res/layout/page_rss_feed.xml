@@ -65,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/news_feed"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/your_headlines_in_one_place"
-                        android:textColor="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -92,7 +92,7 @@
                         android:background="@drawable/drawer_widgets_action_bg"
                         android:contentDescription="@string/refresh_rss_feeds"
                         android:src="@drawable/ic_refresh"
-                        android:tint="@color/widget_text" />
+                        android:tint="?attr/appIconTint" />
 
                     <ImageButton
                         android:id="@+id/rss_manage_button"
@@ -101,7 +101,7 @@
                         android:background="@drawable/drawer_widgets_action_bg"
                         android:contentDescription="@string/manage_rss_feeds"
                         android:src="@drawable/ic_settings_icon"
-                        android:tint="@color/widget_text" />
+                        android:tint="?attr/appIconTint" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -172,7 +172,7 @@
                             android:layout_gravity="center"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_browser"
-                            android:tint="@color/widget_text" />
+                            android:tint="?attr/appIconTint" />
                     </FrameLayout>
 
                     <TextView
@@ -180,7 +180,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/no_news_sources_enabled"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp" />
@@ -190,7 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/open_feed_settings_and_switch_on_the_sources_you"
-                        android:textColor="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="14sp"
                         android:gravity="center"
                         android:alpha="0.78" />

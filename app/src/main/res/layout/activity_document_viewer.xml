@@ -47,7 +47,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:src="@drawable/ic_back"
-                app:tint="@color/text" />
+                app:tint="?attr/appIconTint" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -64,7 +64,7 @@
                     android:ellipsize="marquee"
                     android:singleLine="true"
                     android:text="@string/document"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
@@ -72,7 +72,7 @@
                     android:id="@+id/document_page_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/appTextSecondary"
                     android:textSize="12sp"
                     android:visibility="gone" />
 
@@ -87,7 +87,7 @@
                 android:background="@android:color/transparent"
                 android:padding="8dp"
                 android:src="@drawable/ic_share"
-                app:tint="@color/text" />
+                app:tint="?attr/appIconTint" />
         </LinearLayout>
 
         <View
@@ -153,7 +153,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:indeterminate="true"
-                    android:indeterminateTint="@color/nord7" />
+                    android:indeterminateTint="?attr/appHighlight" />
 
                 <TextView
                     android:id="@+id/loading_text"
@@ -161,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/loading_document"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/appTextSecondary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -179,7 +179,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:src="@drawable/ic_file"
-                    app:tint="@color/text_secondary"
+                    app:tint="?attr/appIconTint"
                     android:alpha="0.5"
                     android:contentDescription="@string/calculator_error" />
 
@@ -190,7 +190,7 @@
                     android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:text="@string/unable_to_open_document"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/appTextSecondary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -202,7 +202,7 @@
                     android:paddingHorizontal="24dp"
                     android:paddingVertical="12dp"
                     android:text="@string/open_with_another_app"
-                    android:textColor="@color/nord7"
+                    android:textColor="?attr/appHighlight"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -231,7 +231,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="12dp"
                 android:src="@drawable/ic_back"
-                app:tint="@color/text"
+                app:tint="?attr/appIconTint"
                 android:contentDescription="@string/previous_page" />
 
             <TextView
@@ -240,7 +240,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-medium" />
 
@@ -252,7 +252,7 @@
                 android:padding="12dp"
                 android:rotation="180"
                 android:src="@drawable/ic_back"
-                app:tint="@color/text"
+                app:tint="?attr/appIconTint"
                 android:contentDescription="@string/next_page" />
         </LinearLayout>
         
@@ -274,7 +274,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="13sp"
                 android:fontFamily="sans-serif-medium"
                 android:background="#1AFFFFFF" />

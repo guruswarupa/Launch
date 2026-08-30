@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="2dp"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/appTextSecondary"
         android:textSize="10sp"
         android:fontFamily="sans-serif-medium" />
 

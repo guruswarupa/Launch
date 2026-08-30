@@ -4,9 +4,9 @@ import android.content.Context
 import android.view.View
 import android.widget.ImageButton
 import android.widget.PopupMenu
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 
 
@@ -83,7 +83,10 @@ class SearchTypeMenuManager(
 
     private fun createTranslucentPopupMenu(anchor: View): PopupMenu {
 
-        val wrapper = ContextThemeWrapper(context, R.style.Theme_Launch)
+        // AppCompat's own ContextThemeWrapper, not ThemeManager.themedContext()'s framework one —
+        // PopupMenu relies on AppCompat's resource remapping to style correctly.
+        val wrapper = androidx.appcompat.view.ContextThemeWrapper(context, R.style.Theme_Launch)
+        ThemeManager.applyOverlaysOnly(wrapper)
         val popup = PopupMenu(wrapper, anchor)
 
 
@@ -147,7 +150,7 @@ class SearchTypeMenuManager(
 
     private fun applyThemeColorToPopupMenu(popup: PopupMenu) {
         try {
-            val themeColor = TypographyManager.getConfiguredFontColor(context) ?: ContextCompat.getColor(context, R.color.white)
+            val themeColor = TypographyManager.getConfiguredFontColor(context) ?: ThemeManager.color(context, R.attr.appTextPrimary)
             val popupField = popup.javaClass.getDeclaredField("mPopup")
             popupField.isAccessible = true
             val menuPopupHelper = popupField.get(popup)

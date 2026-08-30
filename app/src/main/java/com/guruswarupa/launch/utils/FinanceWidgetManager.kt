@@ -14,6 +14,7 @@ import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.ui.adapters.Transaction
 import com.guruswarupa.launch.ui.adapters.TransactionAdapter
 import java.util.Locale
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 
 
@@ -103,7 +104,7 @@ class FinanceWidgetManager(
             "This Month: -$currencySymbol${String.format(Locale.getDefault(), "%.2f", kotlin.math.abs(netSavings))}"
         }
         monthlySpentText.text = netText
-        monthlySpentText.setTextColor(ContextCompat.getColor(activity, R.color.text_secondary))
+        monthlySpentText.setTextColor(ThemeManager.color(activity, R.attr.appTextSecondary))
     }
 
     private fun addTransaction(isIncome: Boolean) {
@@ -231,7 +232,7 @@ class FinanceWidgetManager(
 
     private fun fixDialogTextColors(dialog: AlertDialog) {
         try {
-            val textColor = ContextCompat.getColor(activity, R.color.text)
+            val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
             dialog.findViewById<TextView>(android.R.id.title)?.setTextColor(textColor)
             dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(textColor)
         } catch (_: Exception) {}

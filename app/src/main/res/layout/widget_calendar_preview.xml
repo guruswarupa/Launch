@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/calendar_events"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -36,7 +36,7 @@
                 android:text="@string/widget_calendar_preview_label_1"
                 android:gravity="center"
                 android:background="@drawable/event_circle_background"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp" />
 
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/team_meeting"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:maxLines="1"
@@ -60,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/s_10_00_am_11_00_am"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>
@@ -80,7 +80,7 @@
                 android:text="@string/widget_calendar_preview_label_2"
                 android:gravity="center"
                 android:background="@drawable/event_circle_background"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp" />
 
@@ -94,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/project_review"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:maxLines="1"
@@ -104,7 +104,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/s_2_30_pm_3_30_pm"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>
@@ -123,7 +123,7 @@
                 android:text="@string/widget_calendar_preview_label_3"
                 android:gravity="center"
                 android:background="@drawable/event_circle_background"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp" />
 
@@ -137,7 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/client_call"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:maxLines="1"
@@ -147,7 +147,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/s_4_00_pm_5_00_pm"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>

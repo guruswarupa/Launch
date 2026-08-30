@@ -24,6 +24,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.ui.views.CalendarEventsCalendarView
 import java.text.SimpleDateFormat
 import java.util.*
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 data class CalendarEvent(
     val id: Long,
@@ -488,9 +489,9 @@ class CalendarEventAdapter(
 
 
         val titleColor = if (event.isFestival) {
-            ContextCompat.getColor(holder.itemView.context, R.color.nord11)
+            ThemeManager.color(holder.itemView.context, R.attr.appError)
         } else {
-            ContextCompat.getColor(holder.itemView.context, R.color.nord9)
+            ThemeManager.color(holder.itemView.context, R.attr.appAccentMuted)
         }
         holder.titleText.setTextColor(titleColor)
 

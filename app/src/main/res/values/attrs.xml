@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Semantic theme attributes. Every activity gets these resolved via the app's own theme
+        (see ui/theme/ThemeManager.kt), which stacks a palette overlay (Nord, Dracula,
+        Catppuccin Mocha, Monochrome, Light) and an optional accent overlay on top of the base
+        Theme.Launch / Theme.Launch.Light declared in themes.xml.
+
+        Prefixed "app" to avoid colliding with Material's own colorX attribute namespace.
+        Layouts and code should prefer these over @color/nordN or @color/white so a theme switch
+        reaches them automatically.
+    -->
+
+    <!-- accent -->
+    <attr name="appAccent" format="color"/>
+    <attr name="appAccentMuted" format="color"/>
+    <!-- A second, deeper accent tone distinct from appAccentMuted (Nord's nord10 vs nord9) —
+         used for secondary stat highlights that shouldn't compete with the primary accent. -->
+    <attr name="appAccentSecondary" format="color"/>
+    <!-- text/icon color drawn ON an appAccent-filled surface (e.g. a selected chip). -->
+    <attr name="appOnAccent" format="color"/>
+    <attr name="appHighlight" format="color"/>
+
+    <!-- surfaces -->
+    <attr name="appBackground" format="color"/>
+    <attr name="appSurface" format="color"/>
+    <attr name="appSurfaceVariant" format="color"/>
+    <attr name="appSurfaceElevated" format="color"/>
+    <!-- Opaque RGB base for the BACKGROUND_TRANSLUCENCY wallpaper scrim. -->
+    <attr name="appScrim" format="color"/>
+
+    <!-- foreground -->
+    <attr name="appTextPrimary" format="color"/>
+    <attr name="appTextSecondary" format="color"/>
+    <attr name="appTextTertiary" format="color"/>
+    <attr name="appTextHint" format="color"/>
+    <attr name="appIconTint" format="color"/>
+    <attr name="appTextShadow" format="color"/>
+
+    <!-- lines -->
+    <attr name="appOutline" format="color"/>
+    <!-- A subtler, secondary outline/divider tone distinct from appOutline (Nord's nord3). -->
+    <attr name="appOutlineMuted" format="color"/>
+    <!-- Alpha baked into the color itself — do not pair with android:alpha. -->
+    <attr name="appDivider" format="color"/>
+    <!-- Ripple/highlight tint for dialog controls (was the literal @color/dialog_button_background). -->
+    <attr name="appRippleColor" format="color"/>
+    <!-- Translucent border/ripple token shared by widget_divider and widget_item_stroke (both #33FFFFFF today). -->
+    <attr name="appSurfaceBorder" format="color"/>
+
+    <!-- semantic -->
+    <attr name="appError" format="color"/>
+    <attr name="appSuccess" format="color"/>
+    <attr name="appWarning" format="color"/>
+
+    <!-- decorative data-series colors (charts, contribution graphs) — not status semantics -->
+    <attr name="appChart1" format="color"/>
+    <attr name="appChart2" format="color"/>
+    <attr name="appChart3" format="color"/>
+    <attr name="appChart4" format="color"/>
+
+    <!-- non-color tokens -->
+    <attr name="appIsLight" format="boolean"/>
+    <attr name="appCornerPill" format="dimension"/>
+    <attr name="appCornerLarge" format="dimension"/>
+    <attr name="appCornerMedium" format="dimension"/>
+    <attr name="appCornerSmall" format="dimension"/>
+    <attr name="appSurfaceStroke" format="dimension"/>
+</resources>

@@ -23,7 +23,7 @@
             android:text="@string/permission_name"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:layout_marginBottom="4dp"/>
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:text="@string/permission_description"
             android:textSize="12sp"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:alpha="0.7"/>
 
     </LinearLayout>
@@ -41,7 +41,7 @@
         android:id="@+id/permission_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:thumbTint="@color/nord8"
+        app:thumbTint="?attr/appAccent"
         app:trackTint="#30FFFFFF"/>
 
 </LinearLayout>

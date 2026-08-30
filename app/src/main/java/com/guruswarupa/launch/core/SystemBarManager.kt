@@ -6,7 +6,9 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class SystemBarManager(
     private val activity: androidx.fragment.app.FragmentActivity,
@@ -33,7 +35,8 @@ class SystemBarManager(
     private fun currentTranslucencyScrimColor(): Int {
         val translucency = sharedPreferences.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        return Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(activity, R.attr.appScrim)
+        return Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
     }
 
     fun removeBlurEffect() {

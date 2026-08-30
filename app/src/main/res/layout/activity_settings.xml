@@ -54,7 +54,7 @@
                     android:text="@string/settings"
                     android:textSize="38sp"
                     android:fontFamily="sans-serif-black"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/appTextPrimary"
                     android:shadowColor="#80000000"
                     android:shadowDx="0"
                     android:shadowDy="2"
@@ -68,7 +68,7 @@
                 android:text="@string/appearance"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/nord8"
+                android:textColor="?attr/appAccent"
                 android:letterSpacing="0.15"
                 android:layout_marginBottom="12dp"
                 android:layout_marginStart="12dp"/>
@@ -79,10 +79,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -105,7 +105,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_apps_grid"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -116,7 +116,7 @@
                             android:text="@string/layout_and_grid"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/display_style_arrow"
@@ -124,7 +124,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -151,7 +151,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginEnd="6dp"
                                 android:text="@string/grid"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:background="@drawable/settings_card_background"
                                 android:textAllCaps="false"/>
 
@@ -163,7 +163,7 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="6dp"
                                 android:text="@string/calendar_view_list"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:background="@drawable/settings_card_background"
                                 android:textAllCaps="false"/>
                         </LinearLayout>
@@ -182,7 +182,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/s_4_items_per_row"
                                 android:textSize="13sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.6"/>
 
                             <SeekBar
@@ -191,8 +191,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:paddingHorizontal="0dp"
-                                android:thumbTint="@color/nord8"
-                                android:progressTint="@color/nord8"
+                                android:thumbTint="?attr/appAccent"
+                                android:progressTint="?attr/appAccent"
                                 android:progressBackgroundTint="#20FFFFFF"/>
                         </LinearLayout>
 
@@ -211,15 +211,15 @@
                                 android:layout_weight="1"
                                 android:text="@string/show_app_names_in_grid"
                                 android:textSize="14sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:fontFamily="sans-serif-medium"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/show_app_name_in_grid_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8"/>
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -237,7 +237,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/hide_app_icons_in_list"
                                 android:textSize="14sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:fontFamily="sans-serif-medium"/>
 
                             <androidx.appcompat.widget.SwitchCompat
@@ -246,6 +246,92 @@
                                 android:layout_height="wrap_content"
                                 app:thumbTint="@color/switch_thumb_hide_app_icon"
                                 app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/theme_section"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="20dp">
+
+                            <TextView
+                                android:text="@string/color_theme"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="13sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:alpha="0.6"
+                                android:layout_marginBottom="10dp"/>
+
+                            <HorizontalScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="none"
+                                android:clipToPadding="false">
+
+                                <LinearLayout
+                                    android:id="@+id/theme_palette_row"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"/>
+                            </HorizontalScrollView>
+
+                            <TextView
+                                android:text="@string/accent_color"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="13sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:alpha="0.6"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginBottom="4dp"/>
+
+                            <HorizontalScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="none"
+                                android:clipToPadding="false">
+
+                                <LinearLayout
+                                    android:id="@+id/theme_accent_grid"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"/>
+                            </HorizontalScrollView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginTop="20dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/opaque_surfaces"
+                                    android:textSize="14sp"
+                                    android:textColor="?attr/appTextPrimary"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <androidx.appcompat.widget.SwitchCompat
+                                    android:id="@+id/opaque_surfaces_switch"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:thumbTint="?attr/appAccent"
+                                    app:trackTint="?attr/appAccent"/>
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/opaque_surfaces_description"
+                                android:textSize="11sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:alpha="0.5"
+                                android:layout_marginTop="4dp"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -260,7 +346,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/icon_shape"
                                 android:textSize="13sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.6"
                                 android:layout_marginBottom="8dp"/>
 
@@ -276,7 +362,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/icon_size"
                                 android:textSize="13sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.6"
                                 android:layout_marginTop="20dp"
                                 android:layout_marginBottom="8dp"/>
@@ -293,8 +379,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
-                                    android:thumbTint="@color/nord8"
-                                    android:progressTint="@color/nord8"
+                                    android:thumbTint="?attr/appAccent"
+                                    android:progressTint="?attr/appAccent"
                                     android:progressBackgroundTint="#20FFFFFF"/>
 
                                 <TextView
@@ -304,7 +390,7 @@
                                     android:text="48dp"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end"/>
                             </LinearLayout>
 
@@ -315,8 +401,7 @@
                             android:layout_height="1dp"
                             android:layout_marginTop="24dp"
                             android:layout_marginBottom="16dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -329,14 +414,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/s_24_hour_format"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/clock_24_hour_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -352,14 +437,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/disable_fast_scroller"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/show_fast_scroller_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -375,14 +460,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/enable_landscape_orientation"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/landscape_orientation_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -403,14 +488,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/minimal_mode"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/pitch_black_background_everywhere"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
                             </LinearLayout>
@@ -419,7 +504,7 @@
                                 android:id="@+id/minimal_mode_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -436,7 +521,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/default_home_screen"
                                 android:textSize="13sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.6"
                                 android:layout_marginBottom="8dp"/>
 
@@ -460,7 +545,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/settings_language_label"
                                 android:textSize="13sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.6"
                                 android:layout_marginBottom="8dp"/>
 
@@ -491,7 +576,7 @@
                                     android:layout_weight="1"
                                     android:text="@string/background_translucency"
                                     android:textSize="15sp"
-                                    android:textColor="@color/white"/>
+                                    android:textColor="?attr/appTextPrimary"/>
 
                                 <TextView
                                     android:id="@+id/background_translucency_value"
@@ -500,7 +585,7 @@
                                     android:text="40%"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end"/>
                             </LinearLayout>
 
@@ -510,8 +595,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:paddingHorizontal="0dp"
-                                android:thumbTint="@color/nord8"
-                                android:progressTint="@color/nord8"
+                                android:thumbTint="?attr/appAccent"
+                                android:progressTint="?attr/appAccent"
                                 android:progressBackgroundTint="#20FFFFFF"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -523,10 +608,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -549,7 +634,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_image"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -560,7 +645,7 @@
                             android:text="@string/themes_and_wallpaper"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/wallpaper_arrow"
@@ -568,7 +653,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -586,7 +671,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/choose_theme"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
                             android:layout_marginBottom="12dp"/>
 
@@ -611,7 +696,7 @@
                             android:textAllCaps="false"
                             app:cornerRadius="12dp"
                             android:backgroundTint="#66000000"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             app:strokeWidth="1dp"
                             app:strokeColor="#40FFFFFF"
                             android:fontFamily="sans-serif-black"
@@ -621,8 +706,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginVertical="16dp"
-                            android:alpha="0.1"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         <Button
                             android:id="@+id/change_wallpaper_button"
@@ -631,7 +715,7 @@
                             android:text="@string/custom_system_wallpaper"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -642,10 +726,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -668,7 +752,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_note"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -679,7 +763,7 @@
                             android:text="@string/typography"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/typography_arrow"
@@ -687,7 +771,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -705,7 +789,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/text_scale"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
                             android:layout_marginBottom="8dp"/>
 
@@ -721,8 +805,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:paddingHorizontal="0dp"
-                                android:thumbTint="@color/nord8"
-                                android:progressTint="@color/nord8"
+                                android:thumbTint="?attr/appAccent"
+                                android:progressTint="?attr/appAccent"
                                 android:progressBackgroundTint="#20FFFFFF"/>
 
                             <TextView
@@ -732,7 +816,7 @@
                                 android:text="100%"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium"
-                                android:textColor="@color/nord8"
+                                android:textColor="?attr/appAccent"
                                 android:gravity="end"/>
                         </LinearLayout>
 
@@ -741,7 +825,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/font_family"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
                             android:layout_marginTop="20dp"
                             android:layout_marginBottom="8dp"/>
@@ -757,7 +841,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/font_intensity"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="8dp"/>
@@ -773,7 +857,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/theme_color"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="8dp"/>
@@ -801,7 +885,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:src="@drawable/ic_arrow_right"
-                                app:tint="@color/nord8"/>
+                                app:tint="?attr/appAccent"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -809,7 +893,7 @@
                                 android:text="@string/get_external_fonts"
                                 android:textSize="13sp"
                                 android:fontFamily="sans-serif-medium"
-                                android:textColor="@color/nord8"
+                                android:textColor="?attr/appAccent"
                                 android:layout_marginStart="8dp"/>
                         </LinearLayout>
 
@@ -830,10 +914,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -856,7 +940,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_apps_grid"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -865,7 +949,7 @@
                             android:text="@string/icon_packs"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginStart="16dp"/>
 
                         <View
@@ -879,7 +963,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -898,7 +982,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/enable_icon_pack"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.8"
                             android:paddingVertical="8dp"/>
 
@@ -916,7 +1000,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/no_icon_packs_installed"
                             android:textSize="12sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.5"
                             android:gravity="center"
                             android:padding="16dp"
@@ -928,7 +1012,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/browse_icon_packs_on_play_store"
                             android:textSize="12sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:fontFamily="sans-serif-medium"
                             android:layout_marginTop="12dp"
                             android:paddingVertical="10dp"
@@ -946,10 +1030,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -972,7 +1056,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_search"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -983,7 +1067,7 @@
                             android:text="@string/search_engine"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/search_engine_arrow"
@@ -991,7 +1075,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -1014,8 +1098,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginTop="16dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -1029,14 +1112,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/smart_suggestions"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/smart_suggestions_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1045,7 +1128,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:text="@string/smart_suggestions_description"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.5"
                             android:textSize="12sp"/>
                     </LinearLayout>
@@ -1059,7 +1142,7 @@
                 android:text="@string/features"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/nord8"
+                android:textColor="?attr/appAccent"
                 android:letterSpacing="0.15"
                 android:layout_marginBottom="12dp"
                 android:layout_marginStart="12dp"/>
@@ -1070,10 +1153,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1096,7 +1179,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_ai_assistant"
-                            app:tint="@color/nord8"
+                            app:tint="?attr/appAccent"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -1107,7 +1190,7 @@
                             android:text="@string/ai_assistant"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/ai_assistant_arrow"
@@ -1115,7 +1198,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -1133,7 +1216,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/ai_assistant_description"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.65"
                             android:lineSpacingExtra="2dp"
                             android:layout_marginBottom="16dp"/>
@@ -1150,14 +1233,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/ai_assistant_enable"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/ai_assistant_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1167,7 +1250,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:layout_marginBottom="12dp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.7"
                             android:textSize="13sp"
                             android:visibility="gone"/>
@@ -1179,7 +1262,7 @@
                             android:layout_marginTop="4dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/ai_assistant_choose_model"
-                            android:textColor="@color/nord8"
+                            android:textColor="?attr/appAccent"
                             android:textSize="12sp"
                             android:fontFamily="sans-serif-medium"
                             android:letterSpacing="0.1"/>
@@ -1195,7 +1278,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.45"
                             android:textSize="11sp"/>
 
@@ -1206,7 +1289,7 @@
                             android:layout_marginTop="12dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/ai_assistant_web_providers_label"
-                            android:textColor="@color/nord8"
+                            android:textColor="?attr/appAccent"
                             android:textSize="12sp"
                             android:fontFamily="sans-serif-medium"
                             android:letterSpacing="0.1"/>
@@ -1226,10 +1309,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1252,7 +1335,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_star_icon"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -1263,7 +1346,7 @@
                             android:text="@string/gestures_and_shortcuts"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/quick_actions_arrow"
@@ -1271,7 +1354,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -1301,14 +1384,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/edge_panel_config_title"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/corner_handle_with_recent_and_pinned_apps"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
                             </LinearLayout>
@@ -1317,7 +1400,7 @@
                                 android:id="@+id/edge_panel_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1329,14 +1412,13 @@
                             android:text="@string/customize_edge_panel"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:visibility="gone"/>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -1355,14 +1437,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/walk_to_play"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/launch_an_action_after_sustained_walking"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:alpha="0.5"
                                     android:textSize="11sp" />
                             </LinearLayout>
@@ -1371,7 +1453,7 @@
                                 android:id="@+id/walk_detect_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF" />
                         </LinearLayout>
 
@@ -1395,7 +1477,7 @@
                                 android:layout_marginTop="12dp"
                                 android:text="@string/choose_app"
                                 android:textAllCaps="false"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:background="@drawable/settings_card_background"
                                 android:visibility="gone" />
 
@@ -1406,7 +1488,7 @@
                                 android:layout_marginTop="8dp"
                                 android:text="@string/no_app_selected"
                                 android:textSize="12sp"
-                                android:textColor="@color/nord8"
+                                android:textColor="?attr/appAccent"
                                 android:visibility="gone" />
 
                             <TextView
@@ -1414,7 +1496,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/step_threshold"
                                 android:textSize="12sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.5"
                                 android:layout_marginTop="12dp"
                                 android:layout_marginBottom="4dp" />
@@ -1431,8 +1513,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
-                                    android:thumbTint="@color/nord8"
-                                    android:progressTint="@color/nord8"
+                                    android:thumbTint="?attr/appAccent"
+                                    android:progressTint="?attr/appAccent"
                                     android:progressBackgroundTint="#20FFFFFF" />
 
                                 <TextView
@@ -1442,7 +1524,7 @@
                                     android:text="@string/s_10_steps"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end" />
                             </LinearLayout>
 
@@ -1451,7 +1533,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/time_window"
                                 android:textSize="12sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.5"
                                 android:layout_marginTop="12dp"
                                 android:layout_marginBottom="4dp" />
@@ -1468,8 +1550,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
-                                    android:thumbTint="@color/nord8"
-                                    android:progressTint="@color/nord8"
+                                    android:thumbTint="?attr/appAccent"
+                                    android:progressTint="?attr/appAccent"
                                     android:progressBackgroundTint="#20FFFFFF" />
 
                                 <TextView
@@ -1479,7 +1561,7 @@
                                     android:text="@string/s_15_sec"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end" />
                             </LinearLayout>
 
@@ -1488,7 +1570,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/cooldown"
                                 android:textSize="12sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.5"
                                 android:layout_marginTop="12dp"
                                 android:layout_marginBottom="4dp" />
@@ -1505,8 +1587,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
-                                    android:thumbTint="@color/nord8"
-                                    android:progressTint="@color/nord8"
+                                    android:thumbTint="?attr/appAccent"
+                                    android:progressTint="?attr/appAccent"
                                     android:progressBackgroundTint="#20FFFFFF" />
 
                                 <TextView
@@ -1516,7 +1598,7 @@
                                     android:text="@string/s_5_min"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end" />
                             </LinearLayout>
                         </LinearLayout>
@@ -1539,14 +1621,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/control_center_shortcut"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/system_control_overlay"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
                             </LinearLayout>
@@ -1555,7 +1637,7 @@
                                 android:id="@+id/accessibility_shortcut_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1567,14 +1649,13 @@
                             android:text="@string/customize_control_center"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:visibility="gone"/>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         
                         <LinearLayout
@@ -1589,14 +1670,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/back_tap_action"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/back_tap_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1618,7 +1699,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/tap_sensitivity"
                                 android:textSize="12sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.5"
                                 android:layout_marginTop="12dp"
                                 android:layout_marginBottom="4dp"/>
@@ -1635,8 +1716,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
-                                    android:thumbTint="@color/nord8"
-                                    android:progressTint="@color/nord8"
+                                    android:thumbTint="?attr/appAccent"
+                                    android:progressTint="?attr/appAccent"
                                     android:progressBackgroundTint="#20FFFFFF"/>
 
                                 <TextView
@@ -1646,7 +1727,7 @@
                                     android:text="7"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end"/>
                             </LinearLayout>
                         </LinearLayout>
@@ -1654,8 +1735,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         
                         <LinearLayout
@@ -1670,14 +1750,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/shake_for_torch"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/shake_torch_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1693,7 +1773,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/shake_sensitivity"
                                 android:textSize="12sp"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:alpha="0.5"
                                 android:layout_marginBottom="4dp"/>
 
@@ -1709,8 +1789,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
-                                    android:thumbTint="@color/nord8"
-                                    android:progressTint="@color/nord8"
+                                    android:thumbTint="?attr/appAccent"
+                                    android:progressTint="?attr/appAccent"
                                     android:progressBackgroundTint="#20FFFFFF"/>
 
                                 <TextView
@@ -1720,7 +1800,7 @@
                                     android:text="5"
                                     android:textSize="14sp"
                                     android:fontFamily="sans-serif-medium"
-                                    android:textColor="@color/nord8"
+                                    android:textColor="?attr/appAccent"
                                     android:gravity="end"/>
                             </LinearLayout>
                         </LinearLayout>
@@ -1728,8 +1808,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         
                         <LinearLayout
@@ -1749,14 +1828,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/extra_screen_dimmer"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/system_level_overlay"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
                             </LinearLayout>
@@ -1765,7 +1844,7 @@
                                 android:id="@+id/screen_dimmer_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1781,8 +1860,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingHorizontal="0dp"
-                                android:thumbTint="@color/nord8"
-                                android:progressTint="@color/nord8"
+                                android:thumbTint="?attr/appAccent"
+                                android:progressTint="?attr/appAccent"
                                 android:progressBackgroundTint="#20FFFFFF"/>
 
                             <TextView
@@ -1791,15 +1870,14 @@
                                 android:layout_height="wrap_content"
                                 android:text="10%"
                                 android:textSize="12sp"
-                                android:textColor="@color/nord8"
+                                android:textColor="?attr/appAccent"
                                 android:gravity="end"/>
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         
                         <LinearLayout
@@ -1814,14 +1892,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/night_mode_intensity"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/night_mode_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1837,8 +1915,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingHorizontal="0dp"
-                                android:thumbTint="@color/nord8"
-                                android:progressTint="@color/nord8"
+                                android:thumbTint="?attr/appAccent"
+                                android:progressTint="?attr/appAccent"
                                 android:progressBackgroundTint="#20FFFFFF"/>
 
                             <TextView
@@ -1847,15 +1925,14 @@
                                 android:layout_height="wrap_content"
                                 android:text="10%"
                                 android:textSize="12sp"
-                                android:textColor="@color/nord8"
+                                android:textColor="?attr/appAccent"
                                 android:gravity="end"/>
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         
                         <LinearLayout
@@ -1870,22 +1947,21 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/flip_to_dnd"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="15sp"/>
 
                             <androidx.appcompat.widget.SwitchCompat
                                 android:id="@+id/flip_dnd_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white" />
+                            android:background="?attr/appDivider" />
 
                         
                         <LinearLayout
@@ -1905,14 +1981,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/grayscale_mode"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"/>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/turn_entire_screen_gray"
-                                    android:textColor="@color/white"
+                                    android:textColor="?attr/appTextPrimary"
                                     android:alpha="0.5"
                                     android:textSize="11sp"/>
                             </LinearLayout>
@@ -1921,7 +1997,7 @@
                                 android:id="@+id/grayscale_mode_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
+                                app:thumbTint="?attr/appAccent"
                                 app:trackTint="#30FFFFFF"/>
                         </LinearLayout>
 
@@ -1935,10 +2011,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
             
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1961,7 +2037,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_timer"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
             
                         <TextView
@@ -1972,7 +2048,7 @@
                             android:text="@string/app_timer"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
             
                         <TextView
                             android:id="@+id/app_timer_arrow"
@@ -1980,7 +2056,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
             
@@ -2000,7 +2076,7 @@
                             android:text="@string/manage_app_timers"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -2011,10 +2087,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2037,7 +2113,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_vault_icon"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2048,7 +2124,7 @@
                             android:text="@string/category_security_privacy"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/app_lock_arrow"
@@ -2056,7 +2132,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2076,7 +2152,7 @@
                             android:text="@string/app_lock_and_vault"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="8dp"/>
 
                         <Button
@@ -2086,7 +2162,7 @@
                             android:text="@string/hidden_applications"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="8dp"/>
 
                         <Button
@@ -2096,7 +2172,7 @@
                             android:text="@string/privacy_dashboard"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -2107,10 +2183,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2133,7 +2209,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_calendar"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2144,7 +2220,7 @@
                             android:text="@string/widgets"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/widgets_settings_arrow"
@@ -2152,7 +2228,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2177,7 +2253,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/enable_widgets_page"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
 
@@ -2185,8 +2261,8 @@
                                 android:id="@+id/widgets_page_enabled_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8" />
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -2201,7 +2277,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/show_widgets_above_search_bar"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
 
@@ -2209,8 +2285,8 @@
                                 android:id="@+id/top_widget_enabled_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8" />
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
                         <Button
@@ -2220,7 +2296,7 @@
                             android:text="@string/configure_home_widgets"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -2230,10 +2306,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2257,7 +2333,7 @@
                             android:layout_height="22dp"
                             android:alpha="1.0"
                             android:src="@drawable/ic_notifications"
-                            app:tint="@color/white" />
+                            app:tint="?attr/appIconTint" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -2265,7 +2341,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
                             android:text="@string/news_feed"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium" />
 
@@ -2275,7 +2351,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.4"
                             android:text="▼"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -2299,7 +2375,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/enable_news_page"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
 
@@ -2307,8 +2383,8 @@
                                 android:id="@+id/news_feed_enabled_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8" />
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
                         <Button
@@ -2319,7 +2395,7 @@
                             android:background="@drawable/settings_card_background"
                             android:text="@string/manage_news_feed_sources"
                             android:textAllCaps="false"
-                            android:textColor="@color/white" />
+                            android:textColor="?attr/appTextPrimary" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -2330,10 +2406,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2356,7 +2432,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_browser"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2367,7 +2443,7 @@
                             android:text="@string/web_apps_title"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/web_apps_arrow"
@@ -2375,7 +2451,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2395,7 +2471,7 @@
                             android:text="@string/manage_web_apps"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -2405,10 +2481,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2431,7 +2507,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_apps_grid"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2442,7 +2518,7 @@
                             android:text="@string/dock_controls"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/dock_settings_arrow"
@@ -2450,7 +2526,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2475,7 +2551,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/hide_work_profile"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
 
@@ -2483,8 +2559,8 @@
                                 android:id="@+id/dock_hide_work_profile_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8" />
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -2499,7 +2575,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/hide_focus_mode"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
 
@@ -2507,8 +2583,8 @@
                                 android:id="@+id/dock_hide_focus_mode_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8" />
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -2523,7 +2599,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/hide_workspaces"
-                                android:textColor="@color/white"
+                                android:textColor="?attr/appTextPrimary"
                                 android:textSize="14sp"
                                 android:fontFamily="sans-serif-medium" />
 
@@ -2531,15 +2607,15 @@
                                 android:id="@+id/dock_hide_workspaces_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="@color/nord8"
-                                app:trackTint="@color/nord8" />
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/hiding_all_three_will_remove_the_dock_entirely"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="12sp"
                             android:alpha="0.5"
                             android:fontFamily="sans-serif" />
@@ -2552,10 +2628,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2578,7 +2654,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_dns"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2589,7 +2665,7 @@
                             android:text="@string/system_monitor_title"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/system_monitor_arrow"
@@ -2597,7 +2673,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2617,7 +2693,7 @@
                             android:text="@string/view_system_diagnostics"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -2628,7 +2704,7 @@
                 android:text="@string/maintenance"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/nord8"
+                android:textColor="?attr/appAccent"
                 android:letterSpacing="0.15"
                 android:layout_marginBottom="12dp"
                 android:layout_marginStart="12dp"/>
@@ -2639,10 +2715,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2665,7 +2741,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_refresh"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2676,7 +2752,7 @@
                             android:text="@string/backup_and_restore"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/backup_restore_arrow"
@@ -2684,7 +2760,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2711,7 +2787,7 @@
                                 android:text="@string/export_all_data"
                                 android:textAllCaps="false"
                                 android:background="@drawable/settings_card_background"
-                                android:textColor="@color/white"/>
+                                android:textColor="?attr/appTextPrimary"/>
 
                             <Button
                                 android:id="@+id/import_settings_button"
@@ -2722,15 +2798,14 @@
                                 android:text="@string/import_all_data"
                                 android:textAllCaps="false"
                                 android:background="@drawable/settings_card_background"
-                                android:textColor="@color/white"/>
+                                android:textColor="?attr/appTextPrimary"/>
                         </LinearLayout>
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:alpha="0.05"
-                        android:background="@color/white" />
+                        android:background="?attr/appDivider" />
 
                     <LinearLayout
                         android:id="@+id/launcher_header"
@@ -2747,7 +2822,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_restart"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2758,7 +2833,7 @@
                             android:text="@string/system_actions"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/launcher_arrow"
@@ -2766,7 +2841,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2786,7 +2861,7 @@
                             android:text="@string/restart_launcher"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="8dp"/>
 
                         <Button
@@ -2796,7 +2871,7 @@
                             android:text="@string/clear_temporary_cache"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="8dp"/>
 
                         <Button
@@ -2817,10 +2892,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2843,7 +2918,7 @@
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:src="@drawable/ic_person"
-                            app:tint="@color/white"
+                            app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
                         <TextView
@@ -2854,7 +2929,7 @@
                             android:text="@string/launcher_info"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/permissions_arrow"
@@ -2862,7 +2937,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2882,7 +2957,7 @@
                             android:text="@string/manage_system_permissions"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="12dp"/>
 
                         <Button
@@ -2892,7 +2967,7 @@
                             android:text="@string/system_app_settings"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="12dp"/>
 
                     </LinearLayout>
@@ -2905,10 +2980,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background"
+                app:cardBackgroundColor="?attr/appSurface"
                 app:cardCornerRadius="24dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/outlineColor">
+                app:strokeColor="?attr/appOutline">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -2942,7 +3017,7 @@
                             android:text="@string/support_and_projects"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"/>
+                            android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
                             android:id="@+id/support_badge"
@@ -2953,7 +3028,7 @@
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="4dp"
                             android:text="@string/supporter_badge"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="11sp"
                             android:fontFamily="sans-serif-medium"
                             android:visibility="gone"/>
@@ -2964,7 +3039,7 @@
                             android:layout_height="wrap_content"
                             android:text="▼"
                             android:textSize="10sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.4"/>
                     </LinearLayout>
 
@@ -2984,7 +3059,7 @@
                             android:text="@string/send_feedback_bug_report"
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:layout_marginBottom="16dp"/>
 
                         <TextView
@@ -2993,7 +3068,7 @@
                             android:text="@string/support_project_intro"
                             android:textSize="14sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.8"
                             android:lineSpacingExtra="2dp"
                             android:layout_marginBottom="8dp"/>
@@ -3003,7 +3078,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/support_project_commitment"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.65"
                             android:lineSpacingExtra="2dp"
                             android:layout_marginBottom="16dp"/>
@@ -3014,7 +3089,7 @@
                             android:text="@string/support_project_prompt"
                             android:textSize="14sp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.8"
                             android:layout_marginBottom="12dp"/>
 
@@ -3034,7 +3109,7 @@
                                 android:enabled="false"
                                 android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
-                                android:textColor="@color/white"/>
+                                android:textColor="?attr/appTextPrimary"/>
 
                             <Button
                                 android:id="@+id/support_99"
@@ -3046,7 +3121,7 @@
                                 android:enabled="false"
                                 android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
-                                android:textColor="@color/white"/>
+                                android:textColor="?attr/appTextPrimary"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -3065,7 +3140,7 @@
                                 android:enabled="false"
                                 android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
-                                android:textColor="@color/white"/>
+                                android:textColor="?attr/appTextPrimary"/>
 
                             <Button
                                 android:id="@+id/support_299"
@@ -3077,14 +3152,13 @@
                                 android:enabled="false"
                                 android:text="@string/support_button_loading"
                                 android:textAllCaps="false"
-                                android:textColor="@color/white"/>
+                                android:textColor="?attr/appTextPrimary"/>
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:alpha="0.05"
-                            android:background="@color/white"
+                            android:background="?attr/appDivider"
                             android:layout_marginVertical="12dp"/>
 
                         <TextView
@@ -3093,7 +3167,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/project_source"
                             android:textSize="13sp"
-                            android:textColor="@color/white"
+                            android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
                             android:lineSpacingExtra="4dp"/>
                     </LinearLayout>
@@ -3117,7 +3191,7 @@
                     android:paddingEnd="14dp"
                     android:paddingBottom="6dp"
                     android:text="@string/developed_by_guru_swarupa"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/appTextPrimary"
                     android:textStyle="bold"
                     android:textSize="11sp"/>
 
@@ -3131,7 +3205,7 @@
                     android:paddingEnd="14dp"
                     android:paddingBottom="6dp"
                     android:text="v1.0"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/appTextPrimary"
                     android:textStyle="bold"
                     android:textSize="11sp"
                     android:layout_marginTop="4dp"/>

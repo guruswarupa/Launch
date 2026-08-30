@@ -38,7 +38,7 @@
                 android:text="@string/rss_sources"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:letterSpacing="-0.01"/>
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/add_and_manage_your_rss_feed_subscriptions"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:alpha="0.5"
                 android:textSize="14sp" />
 
@@ -60,7 +60,7 @@
             android:background="@drawable/settings_card_background"
             android:text="@string/add_custom_rss_link"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="?attr/appTextPrimary" />
 
         <TextView
             android:id="@+id/rss_sources_empty"

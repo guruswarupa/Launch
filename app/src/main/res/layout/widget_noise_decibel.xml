@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/noise_decibel_analyzer"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="22sp"
             android:textStyle="bold"
             android:letterSpacing="0.02" />
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/compass_enable"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
             android:background="@drawable/button_neutral_ripple"
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/current_noise_level"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05"
@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0.0 dB"
-                android:textColor="@color/nord8"
+                android:textColor="?attr/appAccent"
                 android:textSize="48sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.1"
@@ -81,7 +81,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/nord7"
+                android:background="?attr/appHighlight"
                 android:alpha="0.3"
                 android:layout_marginBottom="20dp" />
 
@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/noise_level_quiet"
-                    android:textColor="@color/nord7"
+                    android:textColor="?attr/appHighlight"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -114,7 +114,7 @@
                     android:id="@+id/decibel_indicator"
                     android:layout_width="0dp"
                     android:layout_height="8dp"
-                    android:background="@color/nord8"
+                    android:background="?attr/appAccent"
                     android:layout_marginBottom="4dp" />
 
                 <LinearLayout
@@ -127,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="0"
-                        android:textColor="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="10sp"
                         android:gravity="start" />
 
@@ -135,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="60"
-                        android:textColor="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="10sp"
                         android:gravity="center" />
 
@@ -144,7 +144,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="120"
-                        android:textColor="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="10sp"
                         android:gravity="end" />
                 </LinearLayout>
@@ -157,7 +157,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/microphone_not_available"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp"
             android:gravity="center"
             android:visibility="gone" />
@@ -168,7 +168,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/microphone_permission_required"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp"
             android:gravity="center"
             android:visibility="gone" />
@@ -178,7 +178,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/grant_microphone_permission"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="14sp"
             android:background="@drawable/button_neutral_ripple"
             android:paddingVertical="12dp"

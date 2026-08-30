@@ -32,6 +32,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.RejectedExecutionException
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class AppTimerManager(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("app_timer_prefs", Context.MODE_PRIVATE)
@@ -236,7 +237,7 @@ class AppTimerManager(private val context: Context) {
 
     private fun fixDialogItemsTextColor(dialog: AlertDialog) {
         try {
-            val textColor = ContextCompat.getColor(context, R.color.text)
+            val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
             val listView = dialog.listView
             if (listView != null) {
 

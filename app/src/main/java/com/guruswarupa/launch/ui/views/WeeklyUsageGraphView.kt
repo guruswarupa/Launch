@@ -10,6 +10,7 @@ import androidx.core.graphics.toColorInt
 import kotlin.math.abs
 import kotlin.math.sqrt
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 class WeeklyUsageGraphView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -74,11 +75,11 @@ class WeeklyUsageGraphView @JvmOverloads constructor(
     }
 
     private fun updatePaints() {
-        val widgetText = ContextCompat.getColor(context, R.color.widget_text)
-        val widgetTextSecondary = ContextCompat.getColor(context, R.color.widget_text_secondary)
-        val itemBackground = ContextCompat.getColor(context, R.color.widget_item_background)
-        val itemStroke = ContextCompat.getColor(context, R.color.widget_item_stroke)
-        val divider = ContextCompat.getColor(context, R.color.widget_divider)
+        val widgetText = ThemeManager.color(context, R.attr.appTextPrimary)
+        val widgetTextSecondary = ThemeManager.color(context, R.attr.appTextPrimary)
+        val itemBackground = ThemeManager.color(context, R.attr.appSurfaceVariant)
+        val itemStroke = ThemeManager.color(context, R.attr.appSurfaceBorder)
+        val divider = ThemeManager.color(context, R.attr.appSurfaceBorder)
 
         cardPaint.color = itemBackground
         cardStrokePaint.color = itemStroke

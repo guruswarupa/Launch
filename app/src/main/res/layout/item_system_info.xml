@@ -9,7 +9,7 @@
         android:id="@+id/info_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:alpha="0.9"
         android:textSize="16sp"
         android:fontFamily="sans-serif-medium"
@@ -19,7 +19,7 @@
         android:id="@+id/info_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:alpha="0.75"
         android:textSize="13sp"
         android:layout_marginTop="2dp" />
@@ -27,7 +27,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/white"
-        android:alpha="0.05"
+        android:background="?attr/appDivider"
         android:layout_marginTop="8dp" />
 </LinearLayout>

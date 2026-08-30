@@ -21,7 +21,7 @@
             android:layout_gravity="center"
             android:contentDescription="@null"
             android:src="@drawable/ic_heart_filled"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
     </FrameLayout>
 
     <TextView
@@ -30,7 +30,7 @@
         android:layout_marginTop="18dp"
         android:gravity="center"
         android:text="@string/support_thank_you_title"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="24sp"
         android:fontFamily="sans-serif-black" />
 
@@ -41,7 +41,7 @@
         android:gravity="center"
         android:lineSpacingExtra="3dp"
         android:text="@string/support_thank_you_message"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/appTextSecondary"
         android:textSize="15sp" />
 
     <LinearLayout
@@ -58,7 +58,7 @@
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp"
             android:text="@string/support_thank_you_chip_adfree"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="12sp"
             android:fontFamily="sans-serif-medium" />
 
@@ -70,7 +70,7 @@
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp"
             android:text="@string/support_thank_you_chip_open_source"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="12sp"
             android:fontFamily="sans-serif-medium" />
     </LinearLayout>
@@ -83,7 +83,7 @@
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         android:text="@string/support_thank_you_chip_no_subscription"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="12sp"
         android:fontFamily="sans-serif-medium" />
 

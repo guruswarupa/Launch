@@ -19,7 +19,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_calendar"
-            android:tint="@color/widget_text"
+            android:tint="?attr/appIconTint"
             android:layout_marginEnd="8dp" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/countdown"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_countdowns_yet"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="14sp"
             android:layout_marginBottom="8dp" />
 
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tap_add_to_create_a_countdown"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="12sp" />
     </LinearLayout>
 

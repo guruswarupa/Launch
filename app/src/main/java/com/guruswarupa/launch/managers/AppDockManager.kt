@@ -23,6 +23,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.activities.FocusModeConfigActivity
 import com.guruswarupa.launch.ui.activities.WorkspaceConfigActivity
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.DialogStyler
 import java.util.Locale
 import kotlin.math.abs
@@ -191,7 +192,8 @@ class AppDockManager(
         return GradientDrawable().apply {
             cornerRadius = 1000f
 
-            setColor(Color.parseColor("#80000000"))
+            setColor(ThemeManager.color(context, R.attr.appSurface))
+            // TODO(surface-treatment): swap for a themed border token once GlassSurface lands.
             setStroke(1, Color.parseColor("#40FFFFFF"))
         }
     }
@@ -212,7 +214,7 @@ class AppDockManager(
             focusTimerText = TextView(context).apply {
                 tag = "focus_timer_text"
                 textSize = Constants.Dimensions.FOCUS_TIMER_TEXT_SIZE_SP
-                setTextColor(Color.WHITE)
+                setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -332,7 +334,7 @@ class AppDockManager(
             workProfileNameText = TextView(context).apply {
                 tag = "work_profile_name_text"
                 textSize = Constants.Dimensions.FOCUS_TIMER_TEXT_SIZE_SP
-                setTextColor(Color.WHITE)
+                setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -506,8 +508,8 @@ class AppDockManager(
             if (isWorkspaceActive) {
                 val bg = GradientDrawable().apply {
                     cornerRadius = 1000f
-                    setColor(Color.parseColor("#80000000"))
-                    setStroke(2, Color.parseColor("#8FBCBB"))
+                    setColor(ThemeManager.color(context, R.attr.appSurface))
+                    setStroke(2, ThemeManager.color(context, R.attr.appHighlight))
                 }
                 container.background = bg
             } else {
@@ -542,7 +544,7 @@ class AppDockManager(
                 if (isWorkProfileEnabled) {
                     val bg = GradientDrawable().apply {
                         cornerRadius = 1000f
-                        setColor(Color.parseColor("#80000000"))
+                        setColor(ThemeManager.color(context, R.attr.appSurface))
                         setStroke(2, Color.parseColor("#4CAF50"))
                     }
                     container.background = bg
@@ -668,8 +670,8 @@ class AppDockManager(
             val isWork = state == PomodoroManager.STATE_WORK
             val bg = GradientDrawable().apply {
                 cornerRadius = 1000f
-                setColor(Color.parseColor("#80000000"))
-                setStroke(2, if (isWork) Color.parseColor("#BF616A") else Color.parseColor("#A3BE8C"))
+                setColor(ThemeManager.color(context, R.attr.appSurface))
+                setStroke(2, if (isWork) ThemeManager.color(context, R.attr.appError) else ThemeManager.color(context, R.attr.appSuccess))
             }
             container.background = bg
         }
@@ -765,8 +767,8 @@ class AppDockManager(
             if (isFocusMode) {
                 val bg = GradientDrawable().apply {
                     cornerRadius = 1000f
-                    setColor(Color.parseColor("#80000000"))
-                    setStroke(2, Color.parseColor("#5E81AC"))
+                    setColor(ThemeManager.color(context, R.attr.appSurface))
+                    setStroke(2, ThemeManager.color(context, R.attr.appAccentSecondary))
                 }
                 container.background = bg
                 if (::focusTimerText.isInitialized) {

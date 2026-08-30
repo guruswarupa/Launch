@@ -75,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="32sp"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:gravity="center"
                     android:fontFamily="sans-serif-light"
                     android:letterSpacing="0.05"
@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:gravity="center"
                     android:fontFamily="sans-serif-light"
                     android:paddingTop="8dp" />
@@ -113,7 +113,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:fontFamily="sans-serif-light"/>
                 </LinearLayout>
 
@@ -132,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/usage"
                         android:textSize="14sp"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:fontFamily="sans-serif-light"
                         android:gravity="center"/>
                 </LinearLayout>
@@ -164,8 +164,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/search_text"
-                    android:textColor="@color/widget_text"
-                    android:textColorHint="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textColorHint="?attr/appTextPrimary"
                     android:padding="12dp"
                     android:background="@null"
                     android:textSize="16sp"
@@ -317,7 +317,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/widgets"
-                            android:textColor="@color/widget_text"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="20sp"
                             android:textStyle="bold"/>
 
@@ -326,7 +326,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="@string/your_personalized_drawer"
-                            android:textColor="@color/widget_text_secondary"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -336,7 +336,7 @@
                         android:layout_height="44dp"
                         android:background="@drawable/drawer_widgets_action_bg"
                         android:src="@drawable/ic_settings_icon"
-                        android:tint="@color/widget_text"
+                        android:tint="?attr/appIconTint"
                         android:contentDescription="@string/configure_widgets" />
                 </LinearLayout>
             </com.google.android.material.appbar.AppBarLayout>
@@ -389,14 +389,14 @@
                         android:layout_gravity="center"
                         android:contentDescription="@null"
                         android:src="@drawable/ic_widget_placeholder"
-                        android:tint="@color/widget_text" />
+                        android:tint="?attr/appIconTint" />
                 </FrameLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/no_widgets_enabled"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
@@ -405,7 +405,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/tap_gear_icon_above_to_add_and_configure_widgets"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"
                     android:gravity="center"
                     android:alpha="0.78" />
@@ -581,7 +581,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/weekly_usage"
                         android:textSize="18sp"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textStyle="bold"
                         android:gravity="start"
                         android:layout_marginBottom="16dp"/>
@@ -596,7 +596,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/grant_usage_access_permission"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="14sp"
                         android:background="@drawable/button_neutral_ripple"
                         android:paddingVertical="12dp"
@@ -678,7 +678,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/todo_list"
-                            android:textColor="@color/widget_text"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -734,7 +734,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/finance_tracker"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -762,7 +762,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/total_balance"
-                        android:textColor="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="12sp"
                         android:layout_marginBottom="4dp" />
 
@@ -771,7 +771,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/s_0_00"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp" />
@@ -787,7 +787,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/this_month_0_00"
-                            android:textColor="@color/widget_text_secondary"
+                            android:textColor="?attr/appTextPrimary"
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -808,8 +808,8 @@
                         android:inputType="numberDecimal"
                         android:paddingStart="18dp"
                         android:paddingEnd="18dp"
-                        android:textColor="@color/widget_text"
-                        android:textColorHint="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
+                        android:textColorHint="?attr/appTextPrimary"
                         android:textSize="16sp"
                         android:layout_marginBottom="12dp" />
 
@@ -822,8 +822,8 @@
                         android:inputType="text"
                         android:paddingStart="18dp"
                         android:paddingEnd="18dp"
-                        android:textColor="@color/widget_text"
-                        android:textColorHint="@color/widget_text_secondary"
+                        android:textColor="?attr/appTextPrimary"
+                        android:textColorHint="?attr/appTextPrimary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -843,7 +843,7 @@
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/button_neutral_ripple"
                         android:text="@string/add_income"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:elevation="4dp" />
@@ -856,7 +856,7 @@
                         android:layout_marginStart="8dp"
                         android:background="@drawable/button_neutral_ripple"
                         android:text="@string/add_expense"
-                        android:textColor="@color/widget_text"
+                        android:textColor="?attr/appTextPrimary"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:elevation="4dp" />
@@ -907,7 +907,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="80sp"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:fontFamily="sans-serif-thin"
                 android:letterSpacing="0.1"
                 android:shadowColor="#80000000"
@@ -921,7 +921,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:fontFamily="sans-serif-light"
                 android:letterSpacing="0.2"
                 android:textAllCaps="true"

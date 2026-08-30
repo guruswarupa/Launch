@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="24:15:30"
-        android:textColor="@color/nord8"
+        android:textColor="?attr/appAccent"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/new_year_2024"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="12sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp" />
@@ -33,7 +33,7 @@
         android:layout_height="4dp"
         android:layout_marginTop="8dp"
         android:progress="75"
-        android:progressTint="@color/nord14"
+        android:progressTint="?attr/appSuccess"
         style="?android:attr/progressBarStyleHorizontal" />
 
 </LinearLayout>

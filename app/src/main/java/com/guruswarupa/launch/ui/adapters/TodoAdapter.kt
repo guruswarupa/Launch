@@ -16,6 +16,7 @@ import com.guruswarupa.launch.models.TodoItem
 import java.util.Calendar
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.TypographyManager
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class TodoAdapter(
     private val todoItems: MutableList<TodoItem>,
@@ -123,17 +124,17 @@ class TodoAdapter(
                 val dayOfWeek = index + 1
                 if (todoItem.selectedDays.contains(dayOfWeek)) {
 
-                    val selectedBgColor = ContextCompat.getColor(context, R.color.nord8)
+                    val selectedBgColor = ThemeManager.color(context, R.attr.appAccent)
                     dayView.setBackgroundColor(selectedBgColor)
-                    dayView.setTextColor(ContextCompat.getColor(context, R.color.white))
+                    dayView.setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
                 } else {
 
                     val unselectedBgColor = if (isNightMode(context)) {
-                        ContextCompat.getColor(context, R.color.nord3)
+                        ThemeManager.color(context, R.attr.appOutlineMuted)
                     } else {
                         ContextCompat.getColor(context, R.color.nord2)
                     }
-                    val unselectedTextColor = ContextCompat.getColor(context, R.color.text_secondary)
+                    val unselectedTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
                     dayView.setBackgroundColor(unselectedBgColor)
                     dayView.setTextColor(unselectedTextColor)
                 }

@@ -139,7 +139,7 @@
                             android:maxLines="1"
                             android:paddingHorizontal="14dp"
                             android:paddingVertical="12dp"
-                            android:textColor="@color/text"
+                            android:textColor="?attr/appTextPrimary"
                             android:textColorHint="@color/text_hint"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -163,7 +163,7 @@
                             android:minHeight="220dp"
                             android:padding="12dp"
                             android:scrollbars="vertical"
-                            android:textColor="@color/text"
+                            android:textColor="?attr/appTextPrimary"
                             android:textColorHint="@color/text_hint"
                             android:textSize="14sp" />
 

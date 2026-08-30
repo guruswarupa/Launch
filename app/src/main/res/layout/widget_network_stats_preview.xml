@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/network_stats"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -29,14 +29,14 @@
             android:layout_height="16dp"
             android:src="@drawable/ic_wifi"
             android:layout_marginEnd="8dp"
-            android:tint="@color/nord14" />
+            android:tint="?attr/appSuccess" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/wifi_connected"
-            android:textColor="@color/nord14"
+            android:textColor="?attr/appSuccess"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_42_mbps"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="10sp" />
 
     </LinearLayout>
@@ -68,14 +68,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/font_download"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1.2 GB"
-                android:textColor="@color/nord9"
+                android:textColor="?attr/appAccentMuted"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -93,14 +93,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/upload"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="345 MB"
-                android:textColor="@color/nord10"
+                android:textColor="?attr/appAccentSecondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -117,14 +117,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/ping"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="24 ms"
-                android:textColor="@color/nord14"
+                android:textColor="?attr/appSuccess"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 

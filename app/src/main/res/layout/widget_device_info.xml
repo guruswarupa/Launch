@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/device_info"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="12dp"/>
@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cpu_model"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"/>
                 
                 <TextView
@@ -46,7 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/support_button_loading"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"
                     android:maxLines="1"
                     android:ellipsize="end"/>
@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cpu_temp"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"/>
                 
                 <TextView
@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--°C"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -94,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ram_usage"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"/>
                 
                 <TextView
@@ -102,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 / 0 GB"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"/>
 
                 <ProgressBar
@@ -126,7 +126,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/perm_storage"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"/>
                 
                 <TextView
@@ -134,7 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 / 0 GB"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"/>
                 
                 <ProgressBar
@@ -152,7 +152,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/widget_text_secondary"
+            android:background="?attr/appTextPrimary"
             android:alpha="0.2"
             android:layout_marginBottom="12dp"/>
 
@@ -171,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/android_version"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp"/>
                 
                 <TextView
@@ -179,7 +179,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"
                     android:maxLines="1"
                     android:ellipsize="end"/>
@@ -195,7 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/system_uptime"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp"/>
                 
                 <TextView
@@ -203,7 +203,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"/>
             </LinearLayout>
 
@@ -217,7 +217,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/hardware_info_2"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp"/>
                 
                 <TextView
@@ -225,7 +225,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"
                     android:maxLines="1"
                     android:ellipsize="end"/>
@@ -240,7 +240,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/kernel_version"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp"/>
                 
                 <TextView
@@ -248,7 +248,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="14sp"
                     android:maxLines="1"
                     android:ellipsize="end"/>

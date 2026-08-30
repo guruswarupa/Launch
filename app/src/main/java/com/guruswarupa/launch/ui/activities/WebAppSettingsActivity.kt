@@ -33,6 +33,7 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.WebAppManager
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.models.WebAppEntry
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.WebAppSearchHelper
 import com.guruswarupa.launch.utils.SearchSuggestion
@@ -180,7 +181,8 @@ class WebAppSettingsActivity : AppCompatActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         overlayView.setBackgroundColor(color)
     }
 
@@ -251,7 +253,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
 
 
         val enabledColor = Color.rgb(72, 191, 145)
-        val disabledColor = Color.WHITE
+        val disabledColor = ThemeManager.color(this, R.attr.appTextPrimary)
         fun applySwitchColors(isChecked: Boolean) {
             blockRedirectsSwitch.thumbTintList = android.content.res.ColorStateList.valueOf(
                 if (isChecked) enabledColor else disabledColor
@@ -376,7 +378,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
                 text = suggestion.title
                 setPadding(24, 12, 24, 12)
                 setBackgroundResource(R.drawable.dialog_input_background)
-                setTextColor(Color.WHITE)
+                setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
                 textSize = 13f
                 isSingleLine = true
                 maxLines = 1

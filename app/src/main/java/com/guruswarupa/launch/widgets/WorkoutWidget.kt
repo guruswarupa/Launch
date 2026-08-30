@@ -26,6 +26,7 @@ import com.guruswarupa.launch.ui.views.WorkoutCalendarView
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.*
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class WorkoutWidget(rootView: View) {
     private val context: Context = rootView.context
@@ -238,8 +239,8 @@ class WorkoutWidget(rootView: View) {
         val typeTime = dialogView.findViewById<android.widget.RadioButton>(R.id.type_time)
 
 
-        val textColor = ContextCompat.getColor(context, R.color.text)
-        val secondaryTextColor = ContextCompat.getColor(context, R.color.text_secondary)
+        val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
+        val secondaryTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
         customInput.setTextColor(textColor)
         customInput.setHintTextColor(secondaryTextColor)
 
@@ -383,7 +384,7 @@ class WorkoutWidget(rootView: View) {
 
     private fun fixDialogTextColors(dialog: AlertDialog) {
         try {
-            val textColor = ContextCompat.getColor(context, R.color.text)
+            val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
             val listView = dialog.listView
             listView?.post {
                 for (i in 0 until listView.childCount) {

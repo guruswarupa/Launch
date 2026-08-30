@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/paste_a_valid_rss_or_atom_feed_url"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/appTextSecondary"
         android:textSize="13sp" />
 
     <EditText
@@ -27,6 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="@string/examples_bbc_reuters_hacker_news_blogs_podcasts"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/appTextSecondary"
         android:textSize="12sp" />
 </LinearLayout>

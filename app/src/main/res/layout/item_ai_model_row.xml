@@ -21,7 +21,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="15sp"
             android:fontFamily="sans-serif-medium"/>
 
@@ -33,7 +33,7 @@
             android:paddingHorizontal="10dp"
             android:paddingVertical="3dp"
             android:text="@string/ai_assistant_selected_badge"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="11sp"
             android:fontFamily="sans-serif-medium"
             android:visibility="gone"/>
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:alpha="0.6"
         android:textSize="12sp"/>
 
@@ -53,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:alpha="0.7"
         android:textSize="12sp"/>
 
@@ -65,7 +65,7 @@
         android:layout_marginTop="8dp"
         android:max="100"
         android:progress="0"
-        android:progressTint="@color/nord8"
+        android:progressTint="?attr/appAccent"
         android:progressBackgroundTint="#20FFFFFF"
         android:visibility="gone"/>
 
@@ -77,6 +77,6 @@
         android:textAllCaps="false"
         android:textSize="13sp"
         android:background="@drawable/drawer_widgets_action_bg"
-        android:textColor="@color/white"/>
+        android:textColor="?attr/appTextPrimary"/>
 
 </LinearLayout>

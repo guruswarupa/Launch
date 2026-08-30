@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/card_background" />
-    <stroke android:width="1dp" android:color="@color/outlineColor" />
+    <solid android:color="?attr/appSurface" />
+    <stroke android:width="1dp" android:color="?attr/appOutline" />
     <corners android:radius="24dp" />
 </shape>

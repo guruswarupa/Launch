@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/finance_tracker"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -29,14 +29,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/balance"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="12sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_2_450_75"
-            android:textColor="@color/nord14"
+            android:textColor="?attr/appSuccess"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/grocery_store"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -78,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/s_85_30"
-                android:textColor="@color/nord11"
+                android:textColor="?attr/appError"
                 android:textSize="12sp" />
 
         </LinearLayout>
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/coffee_shop"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/s_4_50"
-                android:textColor="@color/nord11"
+                android:textColor="?attr/appError"
                 android:textSize="12sp" />
 
         </LinearLayout>
@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/salary_deposit"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -145,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/s_3_200_00"
-                android:textColor="@color/nord14"
+                android:textColor="?attr/appSuccess"
                 android:textSize="12sp" />
 
         </LinearLayout>

@@ -33,7 +33,7 @@
             android:text="@string/focus_mode"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="?attr/appTextPrimary"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"/>
 
@@ -81,7 +81,7 @@
                 android:text="@string/cancel_button"
                 android:textAllCaps="false"
                 android:background="@drawable/settings_card_background"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:padding="16dp"
                 android:layout_marginEnd="8dp"/>
 
@@ -93,7 +93,7 @@
                 android:text="@string/save_button"
                 android:textAllCaps="false"
                 android:background="@drawable/settings_card_background"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:padding="16dp"
                 android:layout_marginStart="8dp"/>
 

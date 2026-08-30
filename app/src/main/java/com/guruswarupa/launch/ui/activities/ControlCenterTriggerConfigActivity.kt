@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class ControlCenterTriggerConfigActivity : AppCompatActivity() {
 
@@ -120,7 +121,8 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         findViewById<View>(R.id.theme_overlay)?.setBackgroundColor(color)
     }
 

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/workout_tracker"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/running"
-            android:textColor="@color/nord8"
+            android:textColor="?attr/appAccent"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="24:15"
-            android:textColor="@color/nord9"
+            android:textColor="?attr/appAccentMuted"
             android:textSize="28sp"
             android:textStyle="bold"
             android:layout_marginBottom="12dp" />
@@ -62,7 +62,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3.2"
-                    android:textColor="@color/nord10"
+                    android:textColor="?attr/appAccentSecondary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/widget_workout_preview_label_1"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>
@@ -86,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="152"
-                    android:textColor="@color/nord11"
+                    android:textColor="?attr/appError"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -94,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/bpm"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="10sp" />
 
             </LinearLayout>

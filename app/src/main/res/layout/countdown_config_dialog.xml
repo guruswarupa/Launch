@@ -60,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/select_from_calendar"
-        android:textColor="@color/text"
+        android:textColor="?attr/appTextPrimary"
         android:background="@drawable/button_neutral_ripple"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp" />

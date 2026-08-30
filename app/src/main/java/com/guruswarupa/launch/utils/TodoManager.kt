@@ -23,6 +23,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import java.util.Calendar
 import java.util.Locale
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 
 
@@ -211,7 +212,7 @@ class TodoManager(
 
     private fun fixDialogTextColors(dialog: android.app.AlertDialog) {
         try {
-            val textColor = ContextCompat.getColor(activity, R.color.text)
+            val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
             dialog.findViewById<TextView>(android.R.id.title)?.setTextColor(textColor)
         } catch (_: Exception) {}
     }

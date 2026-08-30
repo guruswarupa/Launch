@@ -9,6 +9,7 @@ import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.managers.AppDockManager
 import com.guruswarupa.launch.widgets.WidgetThemeManager
 import com.guruswarupa.launch.managers.TypographyManager
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 
 
@@ -54,7 +55,8 @@ class SettingsChangeCoordinator(
         val views = activity.views
         val translucency = sharedPreferences.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(activity, com.guruswarupa.launch.R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
 
         if (views.areTranslucencyOverlaysInitialized()) {
             views.backgroundTranslucencyOverlay.setBackgroundColor(color)
@@ -81,6 +83,15 @@ class SettingsChangeCoordinator(
 
     fun handleSettingsUpdate() {
         val sharedPreferences = activity.sharedPreferences
+
+        // If the color theme (palette/accent/opaque-surfaces) changed, everything below this
+        // point is about to be redone by the recreate anyway — bail out early rather than
+        // running the full settings-update pass on views that are seconds from being torn down.
+        if (ThemeManager.isStale(activity, sharedPreferences)) {
+            activity.recreate()
+            return
+        }
+
         val views = activity.views
         val adapter = adapterProvider()
         val use24HourClock = sharedPreferences.getBoolean(Constants.Prefs.CLOCK_24_HOUR_FORMAT, false)

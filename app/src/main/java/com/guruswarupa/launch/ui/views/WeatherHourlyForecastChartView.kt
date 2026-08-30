@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.utils.WeatherManager
 import kotlin.math.max
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class WeatherHourlyForecastChartView @JvmOverloads constructor(
     context: Context,
@@ -80,9 +81,9 @@ class WeatherHourlyForecastChartView @JvmOverloads constructor(
     }
 
     private fun updateColors() {
-        val accent = ContextCompat.getColor(context, R.color.nord8)
-        val text = ContextCompat.getColor(context, R.color.widget_text)
-        val secondary = ContextCompat.getColor(context, R.color.widget_text_secondary)
+        val accent = ThemeManager.color(context, R.attr.appAccent)
+        val text = ThemeManager.color(context, R.attr.appTextPrimary)
+        val secondary = ThemeManager.color(context, R.attr.appTextPrimary)
         val darkSurface = Color.argb(232, 8, 14, 22)
         val darkPill = Color.argb(244, 14, 22, 32)
 

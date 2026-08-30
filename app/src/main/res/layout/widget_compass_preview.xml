@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/widget_compass_preview_label_1"
-            android:textColor="@color/nord8"
+            android:textColor="?attr/appAccent"
             android:textSize="32sp"
             android:textStyle="bold"
             android:layout_marginBottom="4dp" />
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_0"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 

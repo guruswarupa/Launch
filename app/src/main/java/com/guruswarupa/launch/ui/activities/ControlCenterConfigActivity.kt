@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.services.ScreenLockAccessibilityService
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import java.util.Collections
 
@@ -156,14 +157,14 @@ class ControlCenterConfigActivity : AppCompatActivity() {
 
             shortcutsCard.visibility = View.VISIBLE
             triggerCard.visibility = View.GONE
-            tabCustomize.setTextColor(Color.WHITE)
+            tabCustomize.setTextColor(ThemeManager.color(this, R.attr.appTextPrimary))
             tabHandle.setTextColor(Color.parseColor("#80FFFFFF"))
         } else {
 
             shortcutsCard.visibility = View.GONE
             triggerCard.visibility = View.VISIBLE
             tabCustomize.setTextColor(Color.parseColor("#80FFFFFF"))
-            tabHandle.setTextColor(Color.WHITE)
+            tabHandle.setTextColor(ThemeManager.color(this, R.attr.appTextPrimary))
         }
     }
 
@@ -254,7 +255,8 @@ class ControlCenterConfigActivity : AppCompatActivity() {
 
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        settingsOverlay.setBackgroundColor(Color.argb(alpha, 0, 0, 0))
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        settingsOverlay.setBackgroundColor(Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase)))
 
         titleText.setText(R.string.control_center_config_title)
         subtitleText.setText(R.string.control_center_config_subtitle)
@@ -270,7 +272,9 @@ class ControlCenterConfigActivity : AppCompatActivity() {
             val item = items[pos]
             h.label.text = item.label
             h.icon.setImageResource(item.icon)
-            h.icon.imageTintList = android.content.res.ColorStateList.valueOf(Color.WHITE)
+            h.icon.imageTintList = android.content.res.ColorStateList.valueOf(
+                ThemeManager.color(h.icon.context, R.attr.appIconTint)
+            )
             h.cb.isChecked = item.isEnabled
             h.cb.setOnCheckedChangeListener { _, checked -> item.isEnabled = checked }
         }

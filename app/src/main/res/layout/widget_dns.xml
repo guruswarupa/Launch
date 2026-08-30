@@ -19,7 +19,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_dns"
-            android:tint="@color/text"
+            android:tint="?attr/appIconTint"
             android:layout_marginEnd="8dp"
             android:contentDescription="@string/dns_icon" />
 
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/dns_provider"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/active_dns"
-                android:textColor="@color/text_secondary"
+                android:textColor="?attr/appTextSecondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cloudflare_dns"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
         </LinearLayout>
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/change"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="16dp"
             android:paddingVertical="8dp"
@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/quick_switch_between_dns_providers_for_privacy_s"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/appTextSecondary"
             android:textSize="12sp"/>
     </LinearLayout>
 

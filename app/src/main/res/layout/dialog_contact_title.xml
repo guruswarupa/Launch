@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/text" />
+            android:textColor="?attr/appTextPrimary" />
 
         <TextView
             android:id="@+id/contact_number"

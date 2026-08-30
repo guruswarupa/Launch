@@ -23,13 +23,13 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="12dp"
             android:minHeight="40dp"
-            android:background="@color/widget_text_secondary" />
+            android:background="?attr/appTextPrimary" />
 
         <CheckBox
             android:id="@+id/todo_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/nord8"
+            android:buttonTint="?attr/appAccent"
             android:layout_marginEnd="12dp"
             android:saveEnabled="false" />
 
@@ -44,7 +44,7 @@
                 android:id="@+id/todo_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="15sp"
                 android:lineSpacingExtra="2dp" />
 
@@ -59,7 +59,7 @@
                     android:id="@+id/category_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
                     android:background="@drawable/input_field_background"
                     android:paddingHorizontal="6dp"
@@ -70,7 +70,7 @@
                     android:id="@+id/due_time_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
                     android:layout_marginEnd="6dp" />
 
@@ -78,7 +78,7 @@
                     android:id="@+id/interval_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
                     android:visibility="gone" />
 
@@ -92,7 +92,7 @@
             android:layout_height="36dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete"
-            android:tint="@color/widget_text_secondary"
+            android:tint="?attr/appIconTint"
             android:contentDescription="@string/delete_todo_item"
             android:padding="6dp" />
 

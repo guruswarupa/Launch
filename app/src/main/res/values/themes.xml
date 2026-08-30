@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Launch" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Launch" parent="Theme.MaterialComponents.NoActionBar">
         
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -35,10 +35,147 @@
         <item name="materialButtonStyle">@style/Widget.Launch.Button</item>
 
         <item name="android:windowAnimationStyle">@style/WindowAnimations</item>
+
+        <!--
+            Semantic theme attributes (see attrs.xml), given identity values that point at the
+            existing Nord color resources. A layout migrated to ?attr/appTextPrimary renders
+            byte-identical to one still on @color/white — this is what lets the res/layout/
+            migration (see IMPLEMENTATION_PLAN Phase 2) land as many small, always-shippable
+            commits with zero visual diff, ahead of any non-Nord palette existing.
+
+            ThemeManager overlays a palette style (Nord/Dracula/Catppuccin Mocha/Monochrome/
+            Light) and an optional accent style on top of these at runtime; these are simply the
+            Nord palette's own values, inlined as the base theme's defaults.
+        -->
+        <item name="appAccent">@color/nord8</item>
+        <item name="appAccentMuted">@color/nord9</item>
+        <item name="appAccentSecondary">@color/nord10</item>
+        <item name="appOnAccent">#2E3440</item>
+        <item name="appHighlight">@color/nord7</item>
+
+        <item name="appBackground">@color/background</item>
+        <item name="appSurface">@color/card_background</item>
+        <item name="appSurfaceVariant">@color/widget_item_background</item>
+        <item name="appSurfaceElevated">@color/dialog_background</item>
+        <item name="appScrim">@color/black</item>
+
+        <item name="appTextPrimary">@color/white</item>
+        <item name="appTextSecondary">@color/text_secondary</item>
+        <item name="appTextTertiary">@color/text_tertiary</item>
+        <item name="appTextHint">@color/text_hint</item>
+        <item name="appIconTint">@color/icon_color</item>
+        <item name="appTextShadow">#BF000000</item>
+
+        <item name="appOutline">@color/outlineColor</item>
+        <item name="appOutlineMuted">@color/nord3</item>
+        <item name="appDivider">#0DFFFFFF</item>
+        <item name="appRippleColor">@color/dialog_button_background</item>
+        <item name="appSurfaceBorder">@color/widget_divider</item>
+
+        <item name="appError">@color/nord11</item>
+        <item name="appSuccess">@color/nord14</item>
+        <item name="appWarning">@color/nord13</item>
+
+        <item name="appChart1">@color/nord7</item>
+        <item name="appChart2">@color/nord8</item>
+        <item name="appChart3">@color/nord9</item>
+        <item name="appChart4">@color/nord14</item>
+
+        <item name="appIsLight">false</item>
+        <item name="appCornerPill">@dimen/app_corner_pill</item>
+        <item name="appCornerLarge">@dimen/app_corner_large</item>
+        <item name="appCornerMedium">@dimen/app_corner_medium</item>
+        <item name="appCornerSmall">@dimen/app_corner_small</item>
+        <item name="appSurfaceStroke">@dimen/app_surface_stroke</item>
     </style>
-    
+
     <style name="Theme.Launch.Settings" parent="Theme.Launch">
-        
+
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowShowWallpaper">true</item>
+    </style>
+
+    <!--
+        Light siblings, added now so later phases can extend them without a themes.xml structural
+        change. Not yet reachable — ThemeManager only switches to these once the Light color
+        palette (Phase 6) is wired up. Their attr values are placeholders (copied from Nord) and
+        must not be trusted until Phase 6 replaces them with real light-appropriate values.
+    -->
+    <style name="Theme.Launch.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorOnSurface">@color/text</item>
+        <item name="colorOnBackground">@color/text</item>
+
+        <item name="android:textColorPrimary">@color/text</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColor">@color/text</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+
+        <item name="popupMenuStyle">@style/PopupMenuStyle</item>
+        <item name="android:popupMenuStyle">@style/PopupMenuStyle</item>
+        <item name="materialButtonStyle">@style/Widget.Launch.Button</item>
+
+        <item name="android:windowAnimationStyle">@style/WindowAnimations</item>
+
+        <item name="appAccent">@color/nord8</item>
+        <item name="appAccentMuted">@color/nord9</item>
+        <item name="appAccentSecondary">@color/nord10</item>
+        <item name="appOnAccent">#2E3440</item>
+        <item name="appHighlight">@color/nord7</item>
+
+        <item name="appBackground">@color/background</item>
+        <item name="appSurface">@color/card_background</item>
+        <item name="appSurfaceVariant">@color/widget_item_background</item>
+        <item name="appSurfaceElevated">@color/dialog_background</item>
+        <item name="appScrim">@color/black</item>
+
+        <item name="appTextPrimary">@color/white</item>
+        <item name="appTextSecondary">@color/text_secondary</item>
+        <item name="appTextTertiary">@color/text_tertiary</item>
+        <item name="appTextHint">@color/text_hint</item>
+        <item name="appIconTint">@color/icon_color</item>
+        <item name="appTextShadow">#BF000000</item>
+
+        <item name="appOutline">@color/outlineColor</item>
+        <item name="appOutlineMuted">@color/nord3</item>
+        <item name="appDivider">#0DFFFFFF</item>
+        <item name="appRippleColor">@color/dialog_button_background</item>
+        <item name="appSurfaceBorder">@color/widget_divider</item>
+
+        <item name="appError">@color/nord11</item>
+        <item name="appSuccess">@color/nord14</item>
+        <item name="appWarning">@color/nord13</item>
+
+        <item name="appChart1">@color/nord7</item>
+        <item name="appChart2">@color/nord8</item>
+        <item name="appChart3">@color/nord9</item>
+        <item name="appChart4">@color/nord14</item>
+
+        <item name="appIsLight">false</item>
+        <item name="appCornerPill">@dimen/app_corner_pill</item>
+        <item name="appCornerLarge">@dimen/app_corner_large</item>
+        <item name="appCornerMedium">@dimen/app_corner_medium</item>
+        <item name="appCornerSmall">@dimen/app_corner_small</item>
+        <item name="appSurfaceStroke">@dimen/app_surface_stroke</item>
+    </style>
+
+    <style name="Theme.Launch.Settings.Light" parent="Theme.Launch.Light">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowShowWallpaper">true</item>

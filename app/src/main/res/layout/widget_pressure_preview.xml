@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1013.25"
-        android:textColor="@color/nord8"
+        android:textColor="?attr/appAccent"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp" />
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hpa"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
 
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stable"
-        android:textColor="@color/nord14"
+        android:textColor="?attr/appSuccess"
         android:textSize="12sp"
         android:textStyle="bold" />
 

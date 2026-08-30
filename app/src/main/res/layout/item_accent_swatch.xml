@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_margin="4dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:clickable="true"
+    android:focusable="true">
+
+    <View
+        android:id="@+id/accent_swatch_fill"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/accent_check"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_check_circle"
+        android:visibility="gone"
+        android:contentDescription="@null"/>
+</FrameLayout>

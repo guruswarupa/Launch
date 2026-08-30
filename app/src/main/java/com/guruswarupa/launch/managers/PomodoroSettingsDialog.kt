@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.setDialogInputView
 import java.text.DateFormat
@@ -32,13 +33,13 @@ class PomodoroSettingsDialog(
         }
 
         val statsView = TextView(context).apply {
-            setTextColor(android.graphics.Color.WHITE)
+            setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
             textSize = 14f
             text = buildStatsText(stats)
         }
 
         val descriptionView = TextView(context).apply {
-            setTextColor(android.graphics.Color.WHITE)
+            setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
             textSize = 14f
             text = "Set the length of your work sessions, regular breaks, long breaks, and how often a long break should happen."
         }
@@ -117,7 +118,7 @@ class PomodoroSettingsDialog(
             setPadding(0, topPadding, 0, 0)
         }
         val titleView = TextView(context).apply {
-            setTextColor(android.graphics.Color.WHITE)
+            setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
             textSize = 15f
             text = title
         }

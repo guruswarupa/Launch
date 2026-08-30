@@ -28,7 +28,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/app_name_2"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="16sp" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/limit_1h_30m"
-            android:textColor="@color/nord8"
+            android:textColor="?attr/appAccent"
             android:textSize="12sp" />
 
         <TextView
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:thumbTint="@color/nord8"
+        app:thumbTint="?attr/appAccent"
         app:trackTint="#30FFFFFF" />
 
 </LinearLayout>

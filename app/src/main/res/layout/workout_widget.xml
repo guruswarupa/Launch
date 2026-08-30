@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/workout"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/calendar_view_calendar"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="12sp"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="12dp"
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="14sp"
             android:background="@drawable/button_neutral_ripple"
             android:paddingHorizontal="20dp"
@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/weather_today"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"
                     android:layout_marginBottom="4dp" />
 
@@ -84,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textColor="@color/nord7"
+                    android:textColor="?attr/appHighlight"
                     android:textSize="28sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -92,7 +92,7 @@
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/nord3"
+                android:background="?attr/appOutlineMuted"
                 android:layout_marginHorizontal="12dp" />
 
             <LinearLayout
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/exercises"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="12sp"
                     android:layout_marginBottom="4dp" />
 
@@ -115,7 +115,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textColor="@color/widget_text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -125,7 +125,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/nord3"
+            android:background="?attr/appOutlineMuted"
             android:layout_marginBottom="12dp" />
 
         <LinearLayout
@@ -145,7 +145,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/streak"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
                     android:layout_marginBottom="4dp" />
 
@@ -154,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/s_0_days"
-                    android:textColor="@color/nord14"
+                    android:textColor="?attr/appSuccess"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -162,7 +162,7 @@
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/nord3"
+                android:background="?attr/appOutlineMuted"
                 android:layout_marginHorizontal="12dp" />
 
             <LinearLayout
@@ -176,7 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/this_week"
-                    android:textColor="@color/widget_text_secondary"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
                     android:layout_marginBottom="4dp" />
 
@@ -185,7 +185,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textColor="@color/nord8"
+                    android:textColor="?attr/appAccent"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -231,7 +231,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_exercises_yet"
-            android:textColor="@color/widget_text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -240,7 +240,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tap_add_to_start_tracking_your_workouts"
-            android:textColor="@color/widget_text_secondary"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="14sp"
             android:gravity="center" />
     </LinearLayout>

@@ -25,6 +25,7 @@ import com.guruswarupa.launch.managers.RssFeedManager
 import com.guruswarupa.launch.managers.RssFeedSource
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class RssFeedSettingsActivity : AppCompatActivity() {
     private val prefs by lazy { getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE) }
@@ -143,8 +144,8 @@ class RssFeedSettingsActivity : AppCompatActivity() {
         itemView.findViewById<TextView>(R.id.rss_feed_url).text = source.url
 
         val toggle = itemView.findViewById<SwitchCompat>(R.id.rss_feed_switch)
-        val disabledColor = Color.WHITE
-        val enabledColor = getColor(R.color.nord8)
+        val disabledColor = ThemeManager.color(this, R.attr.appTextPrimary)
+        val enabledColor = ThemeManager.color(this, R.attr.appAccent)
         fun applyToggleColors(isEnabled: Boolean) {
             val color = if (isEnabled) enabledColor else disabledColor
             toggle.thumbTintList = ColorStateList.valueOf(color)
@@ -192,8 +193,8 @@ class RssFeedSettingsActivity : AppCompatActivity() {
         val card = MaterialCardView(this).apply {
             radius = dp(24).toFloat()
             cardElevation = 0f
-            setCardBackgroundColor(getColor(R.color.card_background))
-            strokeColor = getColor(R.color.outlineColor)
+            setCardBackgroundColor(ThemeManager.color(this@RssFeedSettingsActivity, R.attr.appSurface))
+            strokeColor = ThemeManager.color(this@RssFeedSettingsActivity, R.attr.appOutline)
             strokeWidth = dp(1)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -224,7 +225,7 @@ class RssFeedSettingsActivity : AppCompatActivity() {
         textColumn.addView(TextView(this).apply {
             text = title
             textSize = 16f
-            setTextColor(Color.WHITE)
+            setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
             typeface = android.graphics.Typeface.DEFAULT_BOLD
         })
         textColumn.addView(TextView(this).apply {
@@ -236,7 +237,7 @@ class RssFeedSettingsActivity : AppCompatActivity() {
 
         val arrowView = TextView(this).apply {
             textSize = 10f
-            setTextColor(Color.WHITE)
+            setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
             alpha = 0.4f
         }
 
@@ -338,7 +339,8 @@ class RssFeedSettingsActivity : AppCompatActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        overlayView.setBackgroundColor(Color.argb(alpha, 0, 0, 0))
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        overlayView.setBackgroundColor(Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase)))
     }
 
     private fun notifySettingsChanged() {

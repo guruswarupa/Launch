@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/transaction_history"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
             android:layout_height="40dp"
             android:background="@drawable/button_neutral_ripple"
             android:src="@drawable/ic_delete"
-            android:tint="@color/text"
+            android:tint="?attr/appIconTint"
             android:contentDescription="@string/clear_all_transactions"
             android:padding="8dp" />
     </LinearLayout>
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/button_neutral_ripple"
             android:text="@string/support_thank_you_close"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:paddingHorizontal="32dp"
             android:paddingVertical="12dp"
             android:textSize="14sp" />

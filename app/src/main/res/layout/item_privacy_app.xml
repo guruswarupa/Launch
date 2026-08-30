@@ -34,14 +34,14 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="@color/text"/>
+                android:textColor="?attr/appTextPrimary"/>
 
             <TextView
                 android:id="@+id/package_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:alpha="0.5"
                 android:ellipsize="middle"
                 android:maxLines="1"/>
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:background="@drawable/button_background"
             android:paddingHorizontal="8dp"
             android:paddingVertical="2dp"
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textSize="13sp"
-        android:textColor="@color/text"
+        android:textColor="?attr/appTextPrimary"
         android:alpha="0.8"/>
 
     <LinearLayout
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:alpha="0.7"
             android:lineSpacingExtra="2dp"
             android:layout_marginBottom="12dp"/>

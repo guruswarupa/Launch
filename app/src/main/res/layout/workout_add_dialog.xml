@@ -26,9 +26,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/reps_count"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:checked="true"
-            android:buttonTint="@color/nord7" />
+            android:buttonTint="?attr/appHighlight" />
 
         <RadioButton
             android:id="@+id/type_time"
@@ -36,8 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/time_stopwatch"
-            android:textColor="@color/text"
-            android:buttonTint="@color/nord7" />
+            android:textColor="?attr/appTextPrimary"
+            android:buttonTint="?attr/appHighlight" />
     </RadioGroup>
 
     <TextView
@@ -63,7 +63,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/nord3"
+        android:background="?attr/appOutlineMuted"
         android:layout_marginVertical="12dp" />
 
     <TextView

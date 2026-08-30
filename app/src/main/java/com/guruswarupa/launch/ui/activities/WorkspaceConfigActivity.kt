@@ -23,6 +23,7 @@ import com.guruswarupa.launch.utils.setDialogInputView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import android.graphics.Color
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class WorkspaceConfigActivity : AppCompatActivity() {
     private lateinit var workspaceManager: WorkspaceManager
@@ -74,7 +75,8 @@ class WorkspaceConfigActivity : AppCompatActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         themeOverlay.setBackgroundColor(color)
     }
 
@@ -86,8 +88,8 @@ class WorkspaceConfigActivity : AppCompatActivity() {
 
         workspacesContainer.setBackgroundResource(R.drawable.widget_background)
 
-        val textColor = ContextCompat.getColor(this, R.color.white)
-        val subTextColor = Color.parseColor("#B0B0B0")
+        val textColor = ThemeManager.color(this, R.attr.appTextPrimary)
+        val subTextColor = ThemeManager.color(this, R.attr.appTextSecondary)
 
         titleText.setTextColor(textColor)
         subtitleText.setTextColor(subTextColor)
@@ -118,7 +120,7 @@ class WorkspaceConfigActivity : AppCompatActivity() {
             override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
                 val view = super.getView(position, convertView, parent)
                 val text = view.findViewById<TextView>(android.R.id.text1)
-                text.setTextColor(Color.WHITE)
+                text.setTextColor(ThemeManager.color(view.context, R.attr.appTextPrimary))
                 return view
             }
         }

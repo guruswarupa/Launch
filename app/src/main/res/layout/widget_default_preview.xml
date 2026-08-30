@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/widget"
-        android:textColor="@color/nord8"
+        android:textColor="?attr/appAccent"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp" />
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/preview"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="12sp" />
 
 </LinearLayout>

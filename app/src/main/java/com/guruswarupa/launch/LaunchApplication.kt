@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.net.toUri
@@ -19,6 +20,7 @@ import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.services.NightModeService
 import com.guruswarupa.launch.services.ScreenDimmerService
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import dagger.hilt.android.HiltAndroidApp
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -27,17 +29,34 @@ import java.io.StringWriter
 class LaunchApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Theme.Launch no longer parents ...DayNight..., so this pins Material's internal
+        // widgets (switches, dialog scrims, spinner popups) to dark regardless of the system
+        // theme setting. Until the Light color palette lands, forcing dark keeps behavior
+        // identical to before — without it, a system-light device would render white text on
+        // top of Material's light-mode internals. See models/Constants.kt COLOR_THEME.
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: android.os.Bundle?) {
+                // Runs from inside the framework Activity.onCreate() (which every activity's
+                // own onCreate() calls via super.onCreate() before doing anything else), so this
+                // always lands before that activity's own setContentView() — see
+                // ui/theme/ThemeManager.kt's apply() doc for why that ordering matters. A no-op
+                // for activities not on Theme.Launch/.Settings (e.g. the framework-themed
+                // ScreenRecordPermissionActivity).
+                ThemeManager.apply(activity)
+
                 if (activity is ComponentActivity) {
-                    val scrimColor = Color.argb(0x66, 0, 0, 0)
+                    val light = ThemeManager.isLight(activity)
+                    val scrimBase = ThemeManager.colorOrNull(activity, com.guruswarupa.launch.R.attr.appScrim) ?: Color.BLACK
+                    val scrimColor = Color.argb(0x66, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
+                    val barStyle = if (light) SystemBarStyle.light(scrimColor, scrimColor) else SystemBarStyle.dark(scrimColor)
                     activity.enableEdgeToEdge(
-                        statusBarStyle = SystemBarStyle.dark(scrimColor),
-                        navigationBarStyle = SystemBarStyle.dark(scrimColor)
+                        statusBarStyle = barStyle,
+                        navigationBarStyle = barStyle
                     )
                     WindowCompat.getInsetsController(activity.window, activity.window.decorView)?.let { controller ->
-                        controller.isAppearanceLightStatusBars = false
-                        controller.isAppearanceLightNavigationBars = false
+                        controller.isAppearanceLightStatusBars = light
+                        controller.isAppearanceLightNavigationBars = light
                         controller.systemBarsBehavior =
                             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                     }

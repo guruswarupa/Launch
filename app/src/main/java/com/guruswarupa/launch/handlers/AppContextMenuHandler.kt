@@ -20,6 +20,7 @@ import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.ui.activities.WebAppActivity
 import com.guruswarupa.launch.ui.activities.WebAppSettingsActivity
 import java.util.concurrent.ExecutorService
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class AppContextMenuHandler(
     private val activity: MainActivity,
@@ -34,7 +35,7 @@ class AppContextMenuHandler(
     fun showAppContextMenu(view: View, packageName: String, appInfo: ResolveInfo) {
         val popupMenu = PopupMenu(activity, view, Gravity.END, 0, R.style.PopupMenuStyle)
         popupMenu.menuInflater.inflate(R.menu.app_context_menu, popupMenu.menu)
-        val textColor = ContextCompat.getColor(activity, R.color.text)
+        val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
         val appName = labelResolver(packageName, appInfo)
 
         val dailyLimitItem = popupMenu.menu.add(0, 100, 0, activity.getString(R.string.daily_usage_set_limit_action))
@@ -149,7 +150,7 @@ class AppContextMenuHandler(
 
     fun showWebAppContextMenu(view: View, packageName: String, appInfo: ResolveInfo) {
         val popupMenu = PopupMenu(activity, view, Gravity.END, 0, R.style.PopupMenuStyle)
-        val textColor = ContextCompat.getColor(activity, R.color.text)
+        val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
         val appName = appInfo.activityInfo.name
 
         popupMenu.menu.add(0, 200, 0, activity.getString(R.string.open_web_app))
@@ -216,7 +217,7 @@ class AppContextMenuHandler(
     @SuppressLint("DiscouragedPrivateApi")
     private fun fixPopupMenuTextColors(popupMenu: PopupMenu) {
         try {
-            val textColor = TypographyManager.getConfiguredFontColor(activity) ?: ContextCompat.getColor(activity, R.color.text)
+            val textColor = TypographyManager.getConfiguredFontColor(activity) ?: ThemeManager.color(activity, R.attr.appTextPrimary)
             val popupField = popupMenu.javaClass.getDeclaredField("mPopup")
             popupField.isAccessible = true
             val menuPopupHelper = popupField.get(popupMenu)

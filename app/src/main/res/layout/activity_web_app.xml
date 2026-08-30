@@ -30,7 +30,7 @@
             android:contentDescription="@string/back_button"
             android:padding="8dp"
             android:src="@drawable/ic_back"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -67,7 +67,7 @@
             android:contentDescription="@string/refresh"
             android:padding="8dp"
             android:src="@drawable/ic_refresh"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
 
         <ImageButton
             android:id="@+id/web_app_browser_button"
@@ -77,7 +77,7 @@
             android:contentDescription="@string/open_in_browser"
             android:padding="8dp"
             android:src="@drawable/ic_browser"
-            android:tint="@color/white" />
+            android:tint="?attr/appIconTint" />
     </LinearLayout>
 
         <ProgressBar
@@ -87,7 +87,7 @@
             android:layout_height="3dp"
             android:indeterminate="false"
             android:max="100"
-            android:progressTint="@color/nord8" />
+            android:progressTint="?attr/appAccent" />
 
         <WebView
             android:id="@+id/web_app_webview"

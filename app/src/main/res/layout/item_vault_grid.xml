@@ -38,7 +38,7 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center"
                 android:visibility="gone"
-                app:tint="@color/text"
+                app:tint="?attr/appIconTint"
                 android:contentDescription="@string/app_name" />
         </FrameLayout>
 
@@ -57,7 +57,7 @@
                 android:ellipsize="middle"
                 android:singleLine="true"
                 android:gravity="center"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:alpha="0.5"
                 android:textSize="11sp" />
         </LinearLayout>

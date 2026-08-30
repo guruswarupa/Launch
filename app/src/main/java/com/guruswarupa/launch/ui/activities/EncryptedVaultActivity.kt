@@ -43,6 +43,7 @@ import java.text.DecimalFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class EncryptedVaultActivity : VaultBaseActivity() {
     private lateinit var vaultManager: EncryptedFolderManager
@@ -273,7 +274,8 @@ class EncryptedVaultActivity : VaultBaseActivity() {
     private fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        val color = Color.argb(alpha, 0, 0, 0)
+        val scrimBase = ThemeManager.color(this, R.attr.appScrim)
+        val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
         findViewById<View>(R.id.settings_overlay)?.setBackgroundColor(color)
     }
 
@@ -533,17 +535,17 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                 when {
                     mimeType.startsWith("text/") || file.name.endsWith(".txt") -> {
                         holder.thumbnail.setImageResource(R.drawable.ic_note)
-                        holder.thumbnail.imageTintList = ContextCompat.getColorStateList(holder.itemView.context, R.color.text)
+                        holder.thumbnail.imageTintList = android.content.res.ColorStateList.valueOf(ThemeManager.color(holder.itemView.context, R.attr.appTextPrimary))
                         holder.thumbnail.alpha = 1.0f
                     }
                     extension == "pdf" || mimeType.contains("pdf") -> {
                         holder.thumbnail.setImageResource(R.drawable.ic_pdf)
-                        holder.thumbnail.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#BF616A"))
+                        holder.thumbnail.imageTintList = android.content.res.ColorStateList.valueOf(ThemeManager.color(holder.itemView.context, R.attr.appError))
                         holder.thumbnail.alpha = 1.0f
                     }
                     else -> {
                         holder.thumbnail.setImageResource(R.drawable.ic_file)
-                        holder.thumbnail.imageTintList = ContextCompat.getColorStateList(holder.itemView.context, R.color.text)
+                        holder.thumbnail.imageTintList = android.content.res.ColorStateList.valueOf(ThemeManager.color(holder.itemView.context, R.attr.appTextPrimary))
                         holder.thumbnail.alpha = 0.3f
                     }
                 }

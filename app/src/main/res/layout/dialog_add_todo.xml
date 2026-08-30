@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/category"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:layout_marginBottom="8dp" />
 
         <Spinner
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/priority"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:layout_marginBottom="8dp" />
 
         <Spinner
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/due_time_optional"
-            android:textColor="@color/text"
+            android:textColor="?attr/appTextPrimary"
             android:layout_marginBottom="8dp" />
 
         <CheckBox
@@ -59,8 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/set_due_time"
-            android:textColor="@color/text"
-            android:buttonTint="@color/text"
+            android:textColor="?attr/appTextPrimary"
+            android:buttonTint="?attr/appIconTint"
             android:layout_marginBottom="8dp" />
 
         <TimePicker
@@ -77,8 +77,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/recurring_task"
-            android:textColor="@color/text"
-            android:buttonTint="@color/text"
+            android:textColor="?attr/appTextPrimary"
+            android:buttonTint="?attr/appIconTint"
             android:layout_marginBottom="8dp" />
 
         
@@ -96,8 +96,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/days"
-                android:textColor="@color/text"
-                android:buttonTint="@color/text"
+                android:textColor="?attr/appTextPrimary"
+                android:buttonTint="?attr/appIconTint"
                 android:checked="true" />
 
             <RadioButton
@@ -106,8 +106,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/interval"
-                android:textColor="@color/text"
-                android:buttonTint="@color/text" />
+                android:textColor="?attr/appTextPrimary"
+                android:buttonTint="?attr/appIconTint" />
 
         </RadioGroup>
 
@@ -124,7 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/repeat_every"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:layout_marginBottom="8dp" />
 
             <Spinner
@@ -137,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start_time"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:layout_marginBottom="8dp" />
 
             <TimePicker
@@ -160,7 +160,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/select_days"
-                android:textColor="@color/text"
+                android:textColor="?attr/appTextPrimary"
                 android:layout_marginBottom="8dp" />
 
             <GridLayout
@@ -178,9 +178,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/sun"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />
@@ -192,9 +192,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/mon"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />
@@ -206,9 +206,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/tue"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />
@@ -220,9 +220,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/wed"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />
@@ -234,9 +234,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/thu"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />
@@ -248,9 +248,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/fri"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />
@@ -262,9 +262,9 @@
                     android:layout_columnWeight="1"
                     android:layout_gravity="fill_horizontal"
                     android:text="@string/sat"
-                    android:textColor="@color/text"
+                    android:textColor="?attr/appTextPrimary"
                     android:textSize="11sp"
-                    android:buttonTint="@color/text"
+                    android:buttonTint="?attr/appIconTint"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp" />

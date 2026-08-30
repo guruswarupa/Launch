@@ -5,7 +5,9 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.toColorInt
+import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.HourlyActivityData
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class HourlyStepsChartView @JvmOverloads constructor(
     context: Context,
@@ -45,7 +47,7 @@ class HourlyStepsChartView @JvmOverloads constructor(
 
     private val valueTextPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.WHITE
+        color = ThemeManager.color(context, R.attr.appTextPrimary)
         textSize = 22f
         textAlign = Paint.Align.CENTER
     }

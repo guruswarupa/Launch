@@ -24,6 +24,7 @@ import com.guruswarupa.launch.ui.views.PhysicalActivityCalendarView
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class PhysicalActivityWidget(
     private val context: Context,
@@ -151,8 +152,8 @@ class PhysicalActivityWidget(
 
 
         hourlyStatsContainer.removeAllViews()
-        val textColor = ContextCompat.getColor(context, R.color.text)
-        val secondaryTextColor = ContextCompat.getColor(context, R.color.text_secondary)
+        val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
+        val secondaryTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
 
         hourlyData.forEach { hourly ->
             if (hourly.steps > 0 || hourly.walkingMinutes > 0) {

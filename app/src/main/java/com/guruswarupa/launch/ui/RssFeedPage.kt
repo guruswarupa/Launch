@@ -27,6 +27,7 @@ import com.guruswarupa.launch.managers.RssArticle
 import com.guruswarupa.launch.managers.RssFeedManager
 import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class RssFeedPage(
     private val activity: MainActivity,
@@ -180,9 +181,9 @@ class RssFeedPage(
                 isCheckable = true
                 isCheckedIconVisible = false
                 chipBackgroundColor = android.content.res.ColorStateList.valueOf(0x33000000)
-                setTextColor(android.content.res.ColorStateList.valueOf(Color.WHITE))
+                setTextColor(android.content.res.ColorStateList.valueOf(ThemeManager.color(activity, R.attr.appTextPrimary)))
                 chipStrokeWidth = activity.resources.displayMetrics.density
-                chipStrokeColor = android.content.res.ColorStateList.valueOf(activity.getColor(R.color.outlineColor))
+                chipStrokeColor = android.content.res.ColorStateList.valueOf(ThemeManager.color(activity, R.attr.appOutline))
                 if (index > 0) {
                     (layoutParams as? ViewGroup.MarginLayoutParams)?.marginStart = 0
                 }
@@ -244,7 +245,7 @@ class RssFeedPage(
             val title = TextView(context).apply {
                 text = "Manage RSS Feeds"
                 textSize = 18f
-                setTextColor(Color.WHITE)
+                setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
             }
             val subtitle = TextView(context).apply {
                 text = "Tap a source to remove it, or add a new RSS or Atom URL."

@@ -18,7 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="16sp"/>
 
     <CheckBox
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:buttonTint="@color/nord8"
+        android:buttonTint="?attr/appAccent"
         android:saveEnabled="false"/>
 
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.BatteryManager
 import java.util.Locale
+import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class BatteryHealthWidget(
     private val context: Context,
@@ -78,10 +79,10 @@ class BatteryHealthWidget(
 
         if (batteryInfo.isCharging) {
             chargingSpeedText.text = String.format(Locale.getDefault(), "%d mA", batteryInfo.chargingSpeed)
-            chargingSpeedText.setTextColor(context.getColor(R.color.nord10))
+            chargingSpeedText.setTextColor(ThemeManager.color(context, R.attr.appAccentSecondary))
         } else {
             chargingSpeedText.text = context.getString(R.string.status_not_charging)
-            chargingSpeedText.setTextColor(context.getColor(R.color.widget_text_secondary))
+            chargingSpeedText.setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
         }
 
         voltageText.text = String.format(Locale.getDefault(), "%d mV", batteryInfo.voltage)
@@ -91,9 +92,9 @@ class BatteryHealthWidget(
         healthStatusText.text = batteryInfo.health
         healthStatusText.setTextColor(
             when (batteryInfo.health) {
-                "Good" -> context.getColor(R.color.nord14)
-                "Overheat", "Dead", "Over Voltage" -> context.getColor(R.color.nord13)
-                else -> context.getColor(R.color.widget_text)
+                "Good" -> ThemeManager.color(context, R.attr.appSuccess)
+                "Overheat", "Dead", "Over Voltage" -> ThemeManager.color(context, R.attr.appWarning)
+                else -> ThemeManager.color(context, R.attr.appTextPrimary)
             }
         )
 

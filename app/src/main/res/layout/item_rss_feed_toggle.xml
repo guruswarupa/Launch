@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/card_background"
+    app:cardBackgroundColor="?attr/appSurface"
     app:cardCornerRadius="22dp"
     app:cardElevation="0dp"
-    app:strokeColor="@color/outlineColor"
+    app:strokeColor="?attr/appOutline"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -27,7 +27,7 @@
                 android:id="@+id/rss_feed_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -45,8 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            app:thumbTint="@color/nord8"
-            app:trackTint="@color/nord8" />
+            app:thumbTint="?attr/appAccent"
+            app:trackTint="?attr/appAccent" />
 
         <ImageButton
             android:id="@+id/rss_feed_edit"
@@ -57,7 +57,7 @@
             android:contentDescription="@string/edit_rss_source"
             android:padding="8dp"
             android:src="@drawable/ic_settings"
-            android:tint="@color/white"
+            android:tint="?attr/appIconTint"
             android:visibility="gone" />
 
         <ImageButton
@@ -69,7 +69,7 @@
             android:contentDescription="@string/delete_rss_source"
             android:padding="8dp"
             android:src="@drawable/ic_delete"
-            android:tint="@color/white"
+            android:tint="?attr/appIconTint"
             android:visibility="gone" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

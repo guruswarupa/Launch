@@ -38,7 +38,7 @@
                 android:text="@string/hidden_apps"
                 android:textSize="32sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:letterSpacing="-0.01"/>
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/manage_apps_hidden_from_your_home_screen"
-                android:textColor="@color/white"
+                android:textColor="?attr/appTextPrimary"
                 android:alpha="0.5"
                 android:textSize="14sp" />
 
@@ -58,10 +58,10 @@
             android:layout_weight="1"
             android:layout_marginBottom="20dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="?attr/appSurface"
             app:cardCornerRadius="24dp"
             app:strokeWidth="1dp"
-            app:strokeColor="@color/outlineColor">
+            app:strokeColor="?attr/appOutline">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:src="@drawable/ic_vault_icon"
-                        app:tint="@color/white"
+                        app:tint="?attr/appIconTint"
                         android:alpha="0.2"/>
 
                     <TextView
@@ -101,7 +101,7 @@
                         android:text="@string/privacy_vault_is_empty"
                         android:textSize="16sp"
                         android:fontFamily="sans-serif-medium"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/appTextPrimary"
                         android:alpha="0.4"
                         android:layout_marginTop="16dp"/>
                 </LinearLayout>

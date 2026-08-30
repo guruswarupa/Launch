@@ -8,6 +8,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.toColorInt
 import androidx.core.graphics.withRotation
+import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import kotlin.math.*
 
 class CompassView @JvmOverloads constructor(
@@ -52,7 +54,7 @@ class CompassView @JvmOverloads constructor(
 
     private val textPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.WHITE
+        color = ThemeManager.color(context, R.attr.appTextPrimary)
         textSize = 56f
         textAlign = Paint.Align.CENTER
         typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
@@ -320,7 +322,7 @@ class CompassView @JvmOverloads constructor(
 
 
         textPaint.textSize = 64f
-        textPaint.color = Color.WHITE
+        textPaint.color = ThemeManager.color(context, R.attr.appTextPrimary)
         textPaint.getTextBounds(directionName, 0, directionName.length, textBounds)
         canvas.drawText(
             directionName,

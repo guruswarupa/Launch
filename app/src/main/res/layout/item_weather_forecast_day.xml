@@ -13,7 +13,7 @@
         android:id="@+id/forecast_day_label"
         android:layout_width="54dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="13sp"
         android:textStyle="bold" />
 
@@ -23,21 +23,21 @@
         android:layout_height="18dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="10dp"
-        android:tint="@color/widget_text" />
+        android:tint="?attr/appIconTint" />
 
     <TextView
         android:id="@+id/forecast_day_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/widget_text_secondary"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="13sp" />
 
     <TextView
         android:id="@+id/forecast_day_range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="13sp"
         android:textStyle="bold" />
 

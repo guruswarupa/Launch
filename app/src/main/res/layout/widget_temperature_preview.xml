@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/s_23_5"
-        android:textColor="@color/nord8"
+        android:textColor="?attr/appAccent"
         android:textSize="28sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp" />
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/comfortable"
-        android:textColor="@color/nord14"
+        android:textColor="?attr/appSuccess"
         android:textSize="12sp"
         android:textStyle="bold" />
 

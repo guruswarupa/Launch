@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/battery_health"
-        android:textColor="@color/widget_text"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
@@ -32,14 +32,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/battery"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="12sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="85%"
-                android:textColor="@color/nord14"
+                android:textColor="?attr/appSuccess"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
         </LinearLayout>
@@ -56,14 +56,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/time_left"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="10sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5h 30m"
-                android:textColor="@color/widget_text"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="11sp"/>
         </LinearLayout>
 
@@ -79,14 +79,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/charging"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="10sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1200 mA"
-                android:textColor="@color/nord10"
+                android:textColor="?attr/appAccentSecondary"
                 android:textSize="11sp"/>
         </LinearLayout>
 
@@ -101,14 +101,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/health"
-                android:textColor="@color/widget_text_secondary"
+                android:textColor="?attr/appTextPrimary"
                 android:textSize="10sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/good"
-                android:textColor="@color/nord14"
+                android:textColor="?attr/appSuccess"
                 android:textSize="11sp"
                 android:textStyle="bold"/>
         </LinearLayout>

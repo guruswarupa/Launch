@@ -14,7 +14,7 @@
         android:id="@+id/countdown_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:textColor="?attr/appTextPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp" />
@@ -23,7 +23,7 @@
         android:id="@+id/countdown_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_secondary"
+        android:textColor="?attr/appTextSecondary"
         android:textSize="12sp"
         android:layout_marginBottom="4dp" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/countdown_remaining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/nord9"
+        android:textColor="?attr/appAccentMuted"
         android:textSize="18sp"
         android:textStyle="bold" />
 

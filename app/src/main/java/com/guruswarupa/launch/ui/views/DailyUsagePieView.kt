@@ -5,6 +5,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.toColorInt
+import com.guruswarupa.launch.R
+import com.guruswarupa.launch.ui.theme.ThemeManager
 import kotlin.math.*
 
 class DailyUsagePieView @JvmOverloads constructor(
@@ -34,7 +36,7 @@ class DailyUsagePieView @JvmOverloads constructor(
 
     private val textPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.WHITE
+        color = ThemeManager.color(context, R.attr.appTextPrimary)
         textSize = 24f
         textAlign = Paint.Align.CENTER
         typeface = Typeface.DEFAULT_BOLD
