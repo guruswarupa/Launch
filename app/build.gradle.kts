@@ -111,7 +111,6 @@ dependencies {
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.appcompat)
     implementation(libs.google.play.billing)
-    implementation(libs.google.play.review)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation("com.google.mediapipe:tasks-genai:0.10.27")

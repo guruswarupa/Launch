@@ -4,8 +4,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.widget.Toast
 import androidx.core.content.edit
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
@@ -17,7 +17,6 @@ class ReviewPromptManager(
 ) {
     private val reviewPromptIntervalMillis = TimeUnit.DAYS.toMillis(7)
     private val maxPromptCount = 3
-    private val reviewManager = ReviewManagerFactory.create(activity)
 
     fun recordFirstUseIfNeeded() {
         if (sharedPreferences.getLong(Constants.Prefs.REVIEW_FIRST_USE_AT, 0L) != 0L) {
@@ -61,7 +60,7 @@ class ReviewPromptManager(
                 sharedPreferences.edit {
                     putBoolean(Constants.Prefs.REVIEW_CTA_USED, true)
                 }
-                launchReviewFlow()
+                openPlayStoreListing()
             }
             .setNegativeButton(R.string.review_prompt_negative) { _, _ ->
                 scheduleNextPrompt()
@@ -73,18 +72,12 @@ class ReviewPromptManager(
         return true
     }
 
-    private fun launchReviewFlow() {
-        val request = reviewManager.requestReviewFlow()
-        request.addOnCompleteListener { task ->
-            if (!activity.isFinishing && !activity.isDestroyed && task.isSuccessful) {
-                val reviewInfo = task.result
-                reviewManager.launchReviewFlow(activity, reviewInfo)
-            } else {
-                openPlayStoreListing()
-            }
-        }
-    }
-
+    /**
+     * Opens this app's Play Store listing directly. Deliberately not using the Play Core
+     * In-App Review API here: that API shows a small in-app star-rating card, not the Play
+     * Store page, and is quota-limited — it commonly completes "successfully" while silently
+     * showing nothing at all, which left this button doing nothing when that happened.
+     */
     private fun openPlayStoreListing() {
         val marketIntent = Intent(
             Intent.ACTION_VIEW,
@@ -99,7 +92,11 @@ class ReviewPromptManager(
         } else {
             webIntent
         }
-        activity.startActivity(intent)
+        try {
+            activity.startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(activity, R.string.toast_no_app_available, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun scheduleNextPrompt() {
