@@ -245,6 +245,9 @@
     
     <include layout="@layout/page_rss_feed" />
 
+
+    <include layout="@layout/page_ai_chat" />
+
     
     <FrameLayout
         android:id="@+id/widgets_drawer"

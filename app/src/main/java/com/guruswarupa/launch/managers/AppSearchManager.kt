@@ -1,6 +1,7 @@
 package com.guruswarupa.launch.managers
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -9,7 +10,11 @@ import android.widget.AutoCompleteTextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.guruswarupa.launch.AppAdapter
+import com.guruswarupa.launch.ai.llm.ModelDownloadManager
+import com.guruswarupa.launch.ai.llm.ModelState
+import com.guruswarupa.launch.ai.prediction.SuggestionEngine
 import com.guruswarupa.launch.models.AppMetadata
+import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.utils.AndroidSettingsHelper
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
@@ -24,7 +29,10 @@ import javax.inject.Inject
 
 @ActivityScoped
 class AppSearchManager @Inject constructor(
-    @ActivityContext private val context: Context
+    @ActivityContext private val context: Context,
+    private val suggestionEngine: SuggestionEngine,
+    private val sharedPreferences: SharedPreferences,
+    private val modelDownloadManager: ModelDownloadManager
 ) {
     private val packageManager: PackageManager = context.packageManager
     private val fullAppList = mutableListOf<ResolveInfo>()
@@ -198,9 +206,28 @@ class AppSearchManager @Inject constructor(
         }
     }
 
+    private fun isSmartRankingEnabled(): Boolean =
+        sharedPreferences.getBoolean(Constants.Prefs.SMART_SUGGESTIONS_ENABLED, true)
+
+    private fun isAskAiAvailable(): Boolean =
+        sharedPreferences.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false) &&
+            modelDownloadManager.currentState() == ModelState.READY
+
+    private fun looksLikeNaturalLanguageQuery(query: String): Boolean {
+        val trimmed = query.trim()
+        if (trimmed.endsWith("?")) return true
+        return trimmed.split(Regex("\\s+")).size > 2
+    }
+
     private fun buildFilteredList(query: String): ArrayList<ResolveInfo> {
         val queryLower = query.lowercase().trim()
-        val cacheKey = "$currentSearchMode|$queryLower"
+        val smartRankingEnabled = isSmartRankingEnabled()
+        val askAiAvailable = isAskAiAvailable()
+        val cacheKey = if (smartRankingEnabled) {
+            "$currentSearchMode|$queryLower|${suggestionEngine.generation()}|$askAiAvailable"
+        } else {
+            "$currentSearchMode|$queryLower|$askAiAvailable"
+        }
 
         synchronized(dataLock) {
             searchCache[cacheKey]?.let { return ArrayList(it) }
@@ -248,8 +275,23 @@ class AppSearchManager @Inject constructor(
                         }
                     }
 
-                    val sortedExact = exactMatches.sortedBy { getSortKey(getAppLabel(it)) }
-                    val sortedPartial = partialMatches.sortedBy { getSortKey(getAppLabel(it)) }
+                    val sortedExact: List<ResolveInfo>
+                    val sortedPartial: List<ResolveInfo>
+                    if (smartRankingEnabled) {
+                        val candidatePackages = (exactMatches.asSequence() + partialMatches.asSequence())
+                            .map { it.activityInfo.packageName }
+                            .distinct()
+                            .toList()
+                        val scoreByPackage = suggestionEngine.rank(candidatePackages)
+                            .associate { it.key to it.score }
+                        val byScoreThenLabel = compareByDescending<ResolveInfo> { scoreByPackage[it.activityInfo.packageName] ?: 0.0 }
+                            .thenBy { getSortKey(getAppLabel(it)) }
+                        sortedExact = exactMatches.sortedWith(byScoreThenLabel)
+                        sortedPartial = partialMatches.sortedWith(byScoreThenLabel)
+                    } else {
+                        sortedExact = exactMatches.sortedBy { getSortKey(getAppLabel(it)) }
+                        sortedPartial = partialMatches.sortedBy { getSortKey(getAppLabel(it)) }
+                    }
 
                     newFilteredList.addAll(sortedExact)
                     newFilteredList.addAll(sortedPartial)
@@ -307,6 +349,9 @@ class AppSearchManager @Inject constructor(
                 }
 
                 if (currentSearchMode == SearchMode.ALL) {
+                    if (askAiAvailable && looksLikeNaturalLanguageQuery(query)) {
+                        newFilteredList.add(createAskAiOption(query))
+                    }
                     if (!(isFocusModeActive?.invoke() == true)) {
                         newFilteredList.add(createGoogleMapsSearchOption(query))
                         newFilteredList.add(createPlayStoreSearchOption(query))
@@ -488,6 +533,21 @@ class AppSearchManager @Inject constructor(
                 activityInfo = ActivityInfo().apply {
                     packageName = "contact_unified"
                     name = contact
+                }
+            }
+            cachedResolveInfos[key] = info
+            return info
+        }
+    }
+
+    private fun createAskAiOption(query: String): ResolveInfo {
+        val key = "ask_ai_$query"
+        synchronized(dataLock) {
+            cachedResolveInfos[key]?.let { return it }
+            val info = ResolveInfo().apply {
+                activityInfo = ActivityInfo().apply {
+                    packageName = "ask_ai_result"
+                    name = query
                 }
             }
             cachedResolveInfos[key] = info

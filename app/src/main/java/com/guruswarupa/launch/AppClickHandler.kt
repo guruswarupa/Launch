@@ -9,6 +9,7 @@ import android.os.UserManager
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.content.edit
+import com.guruswarupa.launch.ai.prediction.LaunchEventStore
 
 class AppClickHandler(
     private val activity: MainActivity,
@@ -17,6 +18,7 @@ class AppClickHandler(
     private val userManager: UserManager,
     private val mainUserSerial: Int,
     private val labelResolver: (String, ResolveInfo) -> String,
+    private val launchEventStore: LaunchEventStore,
 ) {
     private sealed interface LaunchResolution {
         data class IntentLaunch(val intent: Intent) : LaunchResolution
@@ -70,6 +72,7 @@ class AppClickHandler(
     private fun recordUsage(packageName: String) {
         val currentCount = prefs.getInt("usage_$packageName", 0)
         prefs.edit { putInt("usage_$packageName", currentCount + 1) }
+        launchEventStore.recordEvent(packageName)
     }
 
     private fun resolveLaunchIntent(appInfo: ResolveInfo, packageName: String, serial: Int): LaunchResolution {

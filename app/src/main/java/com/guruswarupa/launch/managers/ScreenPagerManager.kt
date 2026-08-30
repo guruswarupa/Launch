@@ -30,7 +30,8 @@ class ScreenPagerManager(
         RSS,
         WIDGETS,
         CENTER,
-        WALLPAPER
+        WALLPAPER,
+        AI_CHAT
     }
 
     private lateinit var pagerScrollView: HorizontalScrollView
@@ -61,12 +62,14 @@ class ScreenPagerManager(
         val widgetsView = activity.findViewById<View>(R.id.widgets_drawer) ?: return
         val centerView = activity.findViewById<View>(R.id.main_content) ?: return
         val rightView = activity.findViewById<View>(R.id.wallpaper_drawer) ?: return
+        val aiChatView = activity.findViewById<View>(R.id.ai_chat_page) ?: return
 
         pageViews.clear()
         pageViews[Page.RSS] = rssView
         pageViews[Page.WIDGETS] = widgetsView
         pageViews[Page.CENTER] = centerView
         pageViews[Page.WALLPAPER] = rightView
+        pageViews[Page.AI_CHAT] = aiChatView
 
         val pageStrip = LinearLayout(activity).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -220,8 +223,12 @@ class ScreenPagerManager(
         val prefs = activity.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
         val rssEnabled = prefs.getBoolean(Constants.Prefs.RSS_PAGE_ENABLED, true)
         val widgetsEnabled = prefs.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
+        val aiAssistantEnabled = prefs.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)
         val pages = mutableListOf<Page>()
         pages.add(Page.WALLPAPER)
+        if (aiAssistantEnabled) {
+            pages.add(Page.AI_CHAT)
+        }
         pages.add(Page.CENTER)
         if (widgetsEnabled) {
             pages.add(Page.WIDGETS)
@@ -329,6 +336,8 @@ class ScreenPagerManager(
     fun openCenterPage(animated: Boolean = true) = scrollToPage(Page.CENTER, animated)
 
     fun openWallpaperPage(animated: Boolean = true) = scrollToPage(Page.WALLPAPER, animated)
+
+    fun openAiChatPage(animated: Boolean = true) = scrollToPage(Page.AI_CHAT, animated)
 
     fun setLeftPageLocked(locked: Boolean) {
         leftPageLocked = locked

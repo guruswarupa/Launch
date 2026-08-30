@@ -541,6 +541,29 @@ class ActivityInitializer(
                 params.width = targetWidth
                 it.layoutParams = params
             }
+
+            val aiChatView = activity.findViewById<FrameLayout>(R.id.ai_chat_page)
+            aiChatView?.let {
+                val params = it.layoutParams as ViewGroup.LayoutParams
+                params.width = targetWidth
+                it.layoutParams = params
+
+                // Pushes the header card below the status bar via extra top MARGIN, not
+                // padding: padding would grow the card's own box (status-bar-height of dead
+                // space between its border and its text); margin just repositions it, keeping
+                // it visually identical in size to the RSS/Widgets headers it's styled to match.
+                val header = activity.findViewById<View>(R.id.ai_chat_header)
+                val headerLayoutParams = header?.layoutParams as? ViewGroup.MarginLayoutParams
+                if (header != null && headerLayoutParams != null) {
+                    val initialHeaderTopMargin = (header.getTag(R.id.ai_chat_header) as? Int) ?: headerLayoutParams.topMargin.also {
+                        header.setTag(R.id.ai_chat_header, it)
+                    }
+                    val topInset = ViewCompat.getRootWindowInsets(activity.window.decorView)
+                        ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+                    headerLayoutParams.topMargin = initialHeaderTopMargin + topInset
+                    header.layoutParams = headerLayoutParams
+                }
+            }
         }
 
 

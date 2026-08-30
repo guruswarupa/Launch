@@ -404,6 +404,36 @@
     <string name="year_progress_days_remaining_format">%1$d days remaining</string>
 
     
+    <string name="smart_suggestions">Smart suggestions</string>
+    <string name="smart_suggestions_description">Rank search results and app suggestions by your habits (time of day, frequency, recency). Runs entirely on-device — nothing leaves your phone.</string>
+    <string name="ask_ai_result">Ask AI: %1$s</string>
+    <string name="ask_ai_dialog_title">AI Assistant</string>
+    <string name="ask_ai_thinking">Thinking…</string>
+    <string name="ask_ai_error">Couldn\'t get an answer: %1$s</string>
+    <string name="close_button">Close</string>
+    <string name="ai_assistant">AI Assistant</string>
+    <string name="ai_assistant_enable">Enable AI Assistant</string>
+    <string name="ai_assistant_description">Ask natural-language questions from search. Answered entirely on-device by a small open model — nothing is sent anywhere, no account needed.</string>
+    <string name="ai_assistant_download">Download model (%1$s)</string>
+    <string name="ai_assistant_downloading">Downloading… %1$d%%</string>
+    <string name="ai_assistant_verifying">Verifying…</string>
+    <string name="ai_assistant_ready">Model ready</string>
+    <string name="ai_assistant_failed">Download failed — check your Wi-Fi and try again</string>
+    <string name="ai_assistant_delete_model">Delete downloaded model</string>
+    <string name="ai_assistant_wifi_notice">Downloads over Wi-Fi only, about %1$s.</string>
+    <string name="ai_assistant_unsupported_ram">This device doesn\'t have enough free memory to run the assistant.</string>
+    <string name="ai_assistant_unsupported_abi">This device\'s processor isn\'t supported by the assistant.</string>
+    <string name="ai_assistant_unsupported_storage">Not enough free storage to download the assistant model.</string>
+    <string name="ai_assistant_license_notice">Powered by %1$s, licensed under %2$s.</string>
+    <string name="ai_chat_subtitle">On-device, offline, private</string>
+    <string name="ai_chat_clear">Clear conversation</string>
+    <string name="ai_chat_empty_title">Ask me anything</string>
+    <string name="ai_chat_empty_message">Runs entirely on this device — nothing you type ever leaves your phone.</string>
+    <string name="ai_chat_not_ready_title">Assistant not set up yet</string>
+    <string name="ai_chat_not_ready_message">Turn on the AI Assistant and download the model from Settings → Features to start chatting.</string>
+    <string name="ai_chat_input_hint">Message the assistant…</string>
+    <string name="ai_chat_send">Send</string>
+    <string name="ai_chat_thinking">…</string>
     <string name="support_project_intro">Your support helps keep Launch ad-free, open source, and actively maintained for the long term.</string>
     <string name="support_project_commitment">I am committed to keeping every feature free, avoiding subscriptions, and using support to improve stability, ship thoughtful updates, and maintain the app for years to come.</string>
     <string name="support_project_prompt">Support the project</string>

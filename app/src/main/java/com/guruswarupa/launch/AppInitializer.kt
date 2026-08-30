@@ -189,6 +189,11 @@ class AppInitializer(private val activity: MainActivity) {
             RssFeedPage(activity, rssPageView).setup()
         }
 
+        findViewById<View?>(R.id.ai_chat_page)?.let { aiChatPageView ->
+            aiChatPage = com.guruswarupa.launch.ui.AiChatPage(activity, aiChatPageView)
+            aiChatPage.setup()
+        }
+
         drawerManager = DrawerManager(
             activity, screenPagerManager, gestureHandler, usageStatsDisplayManager, activityInitializer,
             themeCheckCallback = { checkAndUpdateThemeIfNeeded() }
@@ -210,7 +215,8 @@ class AppInitializer(private val activity: MainActivity) {
 
         val drawerWallpaper = findViewById<ImageView>(R.id.drawer_wallpaper_background)
         val rssWallpaper = findViewById<ImageView>(R.id.rss_wallpaper_background)
-        wallpaperManagerHelper = WallpaperManagerHelper(activity, views.wallpaperBackground, drawerWallpaper, backgroundExecutor, rssWallpaper)
+        val aiChatWallpaper = findViewById<ImageView>(R.id.ai_chat_wallpaper_background)
+        wallpaperManagerHelper = WallpaperManagerHelper(activity, views.wallpaperBackground, drawerWallpaper, backgroundExecutor, rssWallpaper, aiChatWallpaper)
         wallpaperManagerHelper.setWallpaperBackground()
 
         refreshRightDrawerWallpaper()

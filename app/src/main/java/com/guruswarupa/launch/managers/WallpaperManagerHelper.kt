@@ -23,7 +23,8 @@ class WallpaperManagerHelper(
     private val wallpaperBackground: ImageView,
     private val drawerWallpaperBackground: ImageView?,
     private val backgroundExecutor: java.util.concurrent.ExecutorService,
-    private val rssWallpaperBackground: ImageView? = null
+    private val rssWallpaperBackground: ImageView? = null,
+    private val aiChatWallpaperBackground: ImageView? = null
 ) {
     private val handler = Handler(Looper.getMainLooper())
     private var currentWallpaperBitmap: Bitmap? = null
@@ -41,6 +42,8 @@ class WallpaperManagerHelper(
             drawerWallpaperBackground?.setBackgroundColor(Color.BLACK)
             rssWallpaperBackground?.setImageDrawable(null)
             rssWallpaperBackground?.setBackgroundColor(Color.BLACK)
+            aiChatWallpaperBackground?.setImageDrawable(null)
+            aiChatWallpaperBackground?.setBackgroundColor(Color.BLACK)
             return
         }
 
@@ -137,6 +140,8 @@ class WallpaperManagerHelper(
             drawerWallpaperBackground?.setImageBitmap(newBitmap)
             rssWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
             rssWallpaperBackground?.setImageBitmap(newBitmap)
+            aiChatWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
+            aiChatWallpaperBackground?.setImageBitmap(newBitmap)
         }
     }
 
@@ -149,6 +154,8 @@ class WallpaperManagerHelper(
             drawerWallpaperBackground?.setBackgroundColor(Color.BLACK)
             rssWallpaperBackground?.setImageDrawable(null)
             rssWallpaperBackground?.setBackgroundColor(Color.BLACK)
+            aiChatWallpaperBackground?.setImageDrawable(null)
+            aiChatWallpaperBackground?.setBackgroundColor(Color.BLACK)
             return
         }
 
@@ -160,6 +167,8 @@ class WallpaperManagerHelper(
         drawerWallpaperBackground?.setImageResource(R.drawable.wallpaper_background)
         rssWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
         rssWallpaperBackground?.setImageResource(R.drawable.wallpaper_background)
+        aiChatWallpaperBackground?.setBackgroundColor(Color.TRANSPARENT)
+        aiChatWallpaperBackground?.setImageResource(R.drawable.wallpaper_background)
     }
 
 
@@ -170,6 +179,7 @@ class WallpaperManagerHelper(
             wallpaperBackground.setRenderEffect(null)
             drawerWallpaperBackground?.setRenderEffect(null)
             rssWallpaperBackground?.setRenderEffect(null)
+            aiChatWallpaperBackground?.setRenderEffect(null)
             activity.findViewById<ImageView>(R.id.right_drawer_wallpaper)?.setRenderEffect(null)
         }
     }
@@ -194,6 +204,7 @@ class WallpaperManagerHelper(
         wallpaperBackground.setImageDrawable(null)
         drawerWallpaperBackground?.setImageDrawable(null)
         rssWallpaperBackground?.setImageDrawable(null)
+        aiChatWallpaperBackground?.setImageDrawable(null)
 
 
 

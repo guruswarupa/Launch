@@ -114,11 +114,8 @@ dependencies {
     implementation(libs.google.play.review)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    
-    
+    implementation("com.google.mediapipe:tasks-genai:0.10.27")
     implementation("com.squareup.moshi:moshi:1.15.1")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
-    
-    
     implementation("org.jsoup:jsoup:1.17.2")
 }

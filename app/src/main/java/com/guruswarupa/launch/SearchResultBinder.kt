@@ -1,5 +1,6 @@
 package com.guruswarupa.launch
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
@@ -7,7 +8,10 @@ import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
+import com.guruswarupa.launch.ai.llm.AssistantResult
 import com.guruswarupa.launch.models.Constants
+import kotlinx.coroutines.launch
 import java.io.File
 
 interface SearchResultBinder {
@@ -158,6 +162,46 @@ class FileSearchResultBinder(
     }
 }
 
+class AskAiSearchResultBinder(
+    private val activity: MainActivity,
+    private val searchBox: AutoCompleteTextView,
+    private val iconLoader: IconLoader,
+    private val applyIconVisualState: (String, AppAdapter.ViewHolder) -> Unit
+) : SearchResultBinder {
+    override val packageName: String = "ask_ai_result"
+
+    override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
+        holder.itemView.tag = packageName
+        iconLoader.applyShapeAppearance(holder.appIcon)
+        iconLoader.setIconResource(holder.appIcon, R.drawable.ic_ai_assistant)
+        val query = appInfo.activityInfo.name
+        holder.appName?.text = activity.getString(R.string.ask_ai_result, query)
+        applyIconVisualState(packageName, holder)
+        holder.itemView.setOnClickListener {
+            searchBox.text.clear()
+            askAi(query)
+        }
+    }
+
+    private fun askAi(query: String) {
+        val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
+            .setTitle(R.string.ask_ai_dialog_title)
+            .setMessage(R.string.ask_ai_thinking)
+            .setPositiveButton(R.string.close_button, null)
+            .show()
+
+        activity.lifecycleScope.launch {
+            val result = activity.onDeviceAssistant.ask(query)
+            val text = when (result) {
+                is AssistantResult.Success -> result.text
+                is AssistantResult.Error -> activity.getString(R.string.ask_ai_error, result.message)
+            }
+            if (activity.isFinishing || activity.isDestroyed) return@launch
+            dialog.setMessage(text)
+        }
+    }
+}
+
 fun createSearchResultBinderRegistry(
     activity: MainActivity,
     context: android.content.Context,
@@ -299,6 +343,12 @@ fun createSearchResultBinderRegistry(
             applyIconVisualState = applyIconVisualState
         ),
         FileSearchResultBinder(
+            activity = activity,
+            searchBox = searchBox,
+            iconLoader = iconLoader,
+            applyIconVisualState = applyIconVisualState
+        ),
+        AskAiSearchResultBinder(
             activity = activity,
             searchBox = searchBox,
             iconLoader = iconLoader,

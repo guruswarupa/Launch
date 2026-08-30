@@ -122,7 +122,8 @@ class AppAdapter(
         mainUserSerial = mainUserSerial,
         labelResolver = { packageName, appInfo ->
             labelCache["${packageName}|${appInfo.preferredOrder}"] ?: packageName
-        }
+        },
+        launchEventStore = activity.launchEventStore
     )
 
     private val searchResultBinderRegistry = createSearchResultBinderRegistry(

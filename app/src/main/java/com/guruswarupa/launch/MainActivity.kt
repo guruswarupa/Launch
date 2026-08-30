@@ -22,6 +22,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.guruswarupa.launch.ai.llm.OnDeviceAssistant
+import com.guruswarupa.launch.ai.prediction.LaunchEventStore
+import com.guruswarupa.launch.ai.prediction.SuggestionEngine
 import com.guruswarupa.launch.di.BackgroundExecutor
 import com.guruswarupa.launch.di.ResourceLoader
 import com.guruswarupa.launch.core.*
@@ -108,6 +111,15 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var weatherManager: WeatherManager
 
+    @Inject
+    lateinit var launchEventStore: LaunchEventStore
+
+    @Inject
+    lateinit var suggestionEngine: SuggestionEngine
+
+    @Inject
+    lateinit var onDeviceAssistant: OnDeviceAssistant
+
     internal class MainActivityHandler(activity: MainActivity) : Handler(Looper.getMainLooper()) {
         private val weakActivity = WeakReference(activity)
 
@@ -153,6 +165,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var widgetSetupManager: WidgetSetupManager
 
     lateinit var widgetManager: WidgetManager
+
+    lateinit var aiChatPage: com.guruswarupa.launch.ui.AiChatPage
 
     lateinit var voiceSearchManager: VoiceSearchManager
 
@@ -357,6 +371,9 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View?>(R.id.rss_feed_page)?.let { rssPageView ->
             RssFeedPage(this, rssPageView).updateTypography()
+        }
+        if (::aiChatPage.isInitialized) {
+            aiChatPage.updateTypography()
         }
 
         val focusMode = appDockManager.getCurrentMode()
@@ -620,6 +637,7 @@ class MainActivity : AppCompatActivity() {
                             ScreenPagerManager.Page.WIDGETS -> screenPagerManager.openWidgetsPage(animated = false)
                             ScreenPagerManager.Page.CENTER -> screenPagerManager.openCenterPage(animated = false)
                             ScreenPagerManager.Page.WALLPAPER -> screenPagerManager.openWallpaperPage(animated = false)
+                            ScreenPagerManager.Page.AI_CHAT -> screenPagerManager.openAiChatPage(animated = false)
                         }
                     }
                 }
@@ -631,10 +649,14 @@ class MainActivity : AppCompatActivity() {
                 viewModel.updateCurrentPage(page)
                 val isFullyTransparentPage = page == ScreenPagerManager.Page.WALLPAPER ||
                         page == ScreenPagerManager.Page.WIDGETS ||
-                        page == ScreenPagerManager.Page.RSS
+                        page == ScreenPagerManager.Page.RSS ||
+                        page == ScreenPagerManager.Page.AI_CHAT
                 systemBarManager.updateSystemBars(isFullyTransparentPage)
                 if (page == ScreenPagerManager.Page.WIDGETS) {
                     initializeDeferredWidgets()
+                }
+                if (page == ScreenPagerManager.Page.AI_CHAT && ::aiChatPage.isInitialized) {
+                    aiChatPage.onPageShown()
                 }
             }
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
@@ -643,7 +665,8 @@ class MainActivity : AppCompatActivity() {
             val currentPage = screenPagerManager.getCurrentPage()
             val isCurrentFullyTransparent = currentPage == ScreenPagerManager.Page.WALLPAPER ||
                     currentPage == ScreenPagerManager.Page.WIDGETS ||
-                    currentPage == ScreenPagerManager.Page.RSS
+                    currentPage == ScreenPagerManager.Page.RSS ||
+                    currentPage == ScreenPagerManager.Page.AI_CHAT
             systemBarManager.updateSystemBars(isCurrentFullyTransparent)
         }
     }
@@ -786,6 +809,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        if (::aiChatPage.isInitialized) {
+            handler.post {
+                if (!isFinishing && !isDestroyed) {
+                    aiChatPage.updateTypography()
+                }
+            }
+        }
     }
 
     private fun handlePackageChange(packageName: String?, isRemoved: Boolean) {
@@ -882,6 +913,7 @@ class MainActivity : AppCompatActivity() {
             cacheManager.clearCache()
             appListLoader.clearCache()
             wallpaperManagerHelper.clearCache()
+            onDeviceAssistant.release()
         }
     }
 
@@ -890,6 +922,7 @@ class MainActivity : AppCompatActivity() {
         cacheManager.clearCache()
         appListLoader.clearCache()
         wallpaperManagerHelper.clearCache()
+        onDeviceAssistant.release()
     }
 
     override fun onRequestPermissionsResult(

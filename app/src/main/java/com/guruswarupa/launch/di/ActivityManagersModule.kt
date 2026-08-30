@@ -3,6 +3,7 @@ package com.guruswarupa.launch.di
 import android.content.SharedPreferences
 import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.AppLauncher
+import com.guruswarupa.launch.ai.prediction.LaunchEventStore
 import com.guruswarupa.launch.core.PermissionManager
 import com.guruswarupa.launch.core.ShareManager
 import com.guruswarupa.launch.core.SystemBarManager
@@ -55,8 +56,9 @@ object ActivityManagersModule {
     @ActivityScoped
     fun provideAppLauncher(
         activity: FragmentActivity,
-        appLockManager: AppLockManager
-    ): AppLauncher = AppLauncher(activity, activity.packageManager, appLockManager)
+        appLockManager: AppLockManager,
+        launchEventStore: LaunchEventStore
+    ): AppLauncher = AppLauncher(activity, activity.packageManager, appLockManager, launchEventStore)
 
     @Provides
     @ActivityScoped

@@ -1009,11 +1009,50 @@
                             style="@style/TranslucentSpinnerStyle"
                             android:layout_width="match_parent"
                             android:layout_height="48dp"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="16dp"
+                            android:alpha="0.05"
+                            android:background="@color/white" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="12dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/smart_suggestions"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/smart_suggestions_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="@color/nord8"
+                                app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="@string/smart_suggestions_description"
+                            android:textColor="@color/white"
+                            android:alpha="0.5"
+                            android:textSize="12sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -1025,7 +1064,158 @@
                 android:layout_marginBottom="12dp"
                 android:layout_marginStart="12dp"/>
 
-            
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/outlineColor">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <LinearLayout
+                        android:id="@+id/ai_assistant_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="16dp"
+                        android:background="?attr/selectableItemBackgroundBorderless">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_ai_assistant"
+                            app:tint="@color/nord8"
+                            android:alpha="1.0"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/ai_assistant"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/white"/>
+
+                        <TextView
+                            android:id="@+id/ai_assistant_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="▼"
+                            android:textSize="10sp"
+                            android:textColor="@color/white"
+                            android:alpha="0.4"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ai_assistant_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ai_assistant_description"
+                            android:textSize="13sp"
+                            android:textColor="@color/white"
+                            android:alpha="0.65"
+                            android:lineSpacingExtra="2dp"
+                            android:layout_marginBottom="16dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/ai_assistant_enable"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/ai_assistant_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="@color/nord8"
+                                app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/ai_assistant_status_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="12dp"
+                            android:textColor="@color/white"
+                            android:alpha="0.7"
+                            android:textSize="13sp"/>
+
+                        <ProgressBar
+                            android:id="@+id/ai_assistant_progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="6dp"
+                            android:layout_marginBottom="12dp"
+                            android:max="100"
+                            android:progress="0"
+                            android:progressTint="@color/nord8"
+                            android:progressBackgroundTint="#20FFFFFF"
+                            android:visibility="gone"/>
+
+                        <Button
+                            android:id="@+id/ai_assistant_download_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="@color/white"
+                            android:layout_marginBottom="8dp"
+                            android:visibility="gone"/>
+
+                        <Button
+                            android:id="@+id/ai_assistant_delete_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/ai_assistant_delete_model"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="@color/white"
+                            android:layout_marginBottom="12dp"
+                            android:visibility="gone"/>
+
+                        <TextView
+                            android:id="@+id/ai_assistant_license_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:alpha="0.45"
+                            android:textSize="11sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
