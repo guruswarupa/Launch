@@ -13,9 +13,9 @@
         <item name="colorOnBackground">@color/text</item>
         
         
-        <item name="android:textColorPrimary">@color/text</item>
-        <item name="android:textColorSecondary">@color/text_secondary</item>
-        <item name="android:textColor">@color/text</item>
+        <item name="android:textColorPrimary">?attr/appTextPrimary</item>
+        <item name="android:textColorSecondary">?attr/appTextSecondary</item>
+        <item name="android:textColor">?attr/appTextPrimary</item>
         
         
         <item name="android:windowLightStatusBar">false</item>
@@ -112,9 +112,9 @@
         <item name="colorOnSurface">@color/text</item>
         <item name="colorOnBackground">@color/text</item>
 
-        <item name="android:textColorPrimary">@color/text</item>
-        <item name="android:textColorSecondary">@color/text_secondary</item>
-        <item name="android:textColor">@color/text</item>
+        <item name="android:textColorPrimary">?attr/appTextPrimary</item>
+        <item name="android:textColorSecondary">?attr/appTextSecondary</item>
+        <item name="android:textColor">?attr/appTextPrimary</item>
 
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>

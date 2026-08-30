@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:gravity="center"
-            android:textColor="#CCFFFFFF"
+            android:textColor="?attr/appTextSecondary"
             android:textSize="15sp"
             android:visibility="gone" />
 

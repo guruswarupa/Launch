@@ -15,7 +15,7 @@
         android:paddingHorizontal="14dp"
         android:paddingVertical="12dp"
         android:textColor="?attr/appTextPrimary"
-        android:textColorHint="#80FFFFFF"
+        android:textColorHint="?attr/appTextHint"
         android:imeOptions="actionSearch" />
 
     <ProgressBar

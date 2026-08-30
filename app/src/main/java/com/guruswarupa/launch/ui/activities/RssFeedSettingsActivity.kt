@@ -231,7 +231,7 @@ class RssFeedSettingsActivity : AppCompatActivity() {
         textColumn.addView(TextView(this).apply {
             text = subtitle
             textSize = 12f
-            setTextColor(0xCCFFFFFF.toInt())
+            setTextColor(ThemeManager.color(context, R.attr.appTextSecondary))
             setPadding(0, dp(4), 0, 0)
         })
 
@@ -250,7 +250,7 @@ class RssFeedSettingsActivity : AppCompatActivity() {
             content.addView(TextView(this).apply {
                 text = emptyMessage
                 textSize = 13f
-                setTextColor(0xCCFFFFFF.toInt())
+                setTextColor(ThemeManager.color(context, R.attr.appTextSecondary))
                 setPadding(0, 0, 0, dp(4))
             })
         } else {

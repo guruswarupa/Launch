@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Spinner
@@ -48,7 +47,7 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
 
 
         val positions = arrayOf(getString(R.string.control_center_trigger_position_left), getString(R.string.control_center_trigger_position_right))
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, positions)
+        val adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, positions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         positionSpinner.adapter = adapter
 

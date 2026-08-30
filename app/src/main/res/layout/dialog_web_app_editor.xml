@@ -15,7 +15,7 @@
         android:paddingHorizontal="14dp"
         android:paddingVertical="12dp"
         android:textColor="?attr/appTextPrimary"
-        android:textColorHint="#80FFFFFF" />
+        android:textColorHint="?attr/appTextHint" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
             android:paddingHorizontal="14dp"
             android:paddingVertical="12dp"
             android:textColor="?attr/appTextPrimary"
-            android:textColorHint="#80FFFFFF" />
+            android:textColorHint="?attr/appTextHint" />
 
         <ImageButton
             android:id="@+id/web_app_search_button"

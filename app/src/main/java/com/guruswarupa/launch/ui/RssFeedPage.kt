@@ -180,7 +180,7 @@ class RssFeedPage(
                 text = category
                 isCheckable = true
                 isCheckedIconVisible = false
-                chipBackgroundColor = android.content.res.ColorStateList.valueOf(0x33000000)
+                chipBackgroundColor = android.content.res.ColorStateList.valueOf(ThemeManager.color(activity, R.attr.appSurfaceVariant))
                 setTextColor(android.content.res.ColorStateList.valueOf(ThemeManager.color(activity, R.attr.appTextPrimary)))
                 chipStrokeWidth = activity.resources.displayMetrics.density
                 chipStrokeColor = android.content.res.ColorStateList.valueOf(ThemeManager.color(activity, R.attr.appOutline))
@@ -250,7 +250,7 @@ class RssFeedPage(
             val subtitle = TextView(context).apply {
                 text = "Tap a source to remove it, or add a new RSS or Atom URL."
                 textSize = 13f
-                setTextColor(0xCCFFFFFF.toInt())
+                setTextColor(ThemeManager.color(context, R.attr.appTextSecondary))
                 setPadding(0, 8, 0, 20)
             }
 

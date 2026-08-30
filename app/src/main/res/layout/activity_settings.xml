@@ -249,92 +249,6 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/theme_section"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginTop="20dp">
-
-                            <TextView
-                                android:text="@string/color_theme"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:textColor="?attr/appTextPrimary"
-                                android:alpha="0.6"
-                                android:layout_marginBottom="10dp"/>
-
-                            <HorizontalScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:scrollbars="none"
-                                android:clipToPadding="false">
-
-                                <LinearLayout
-                                    android:id="@+id/theme_palette_row"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"/>
-                            </HorizontalScrollView>
-
-                            <TextView
-                                android:text="@string/accent_color"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:textColor="?attr/appTextPrimary"
-                                android:alpha="0.6"
-                                android:layout_marginTop="20dp"
-                                android:layout_marginBottom="4dp"/>
-
-                            <HorizontalScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:scrollbars="none"
-                                android:clipToPadding="false">
-
-                                <LinearLayout
-                                    android:id="@+id/theme_accent_grid"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"/>
-                            </HorizontalScrollView>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginTop="20dp">
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="@string/opaque_surfaces"
-                                    android:textSize="14sp"
-                                    android:textColor="?attr/appTextPrimary"
-                                    android:fontFamily="sans-serif-medium"/>
-
-                                <androidx.appcompat.widget.SwitchCompat
-                                    android:id="@+id/opaque_surfaces_switch"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:thumbTint="?attr/appAccent"
-                                    app:trackTint="?attr/appAccent"/>
-                            </LinearLayout>
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/opaque_surfaces_description"
-                                android:textSize="11sp"
-                                android:textColor="?attr/appTextPrimary"
-                                android:alpha="0.5"
-                                android:layout_marginTop="4dp"/>
-                        </LinearLayout>
-
-                        <LinearLayout
                             android:id="@+id/icon_style_section"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -667,12 +581,35 @@
                         android:paddingBottom="16dp">
 
                         <TextView
+                            android:text="@string/color_theme"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textColor="?attr/appTextPrimary"
+                            android:alpha="0.6"
+                            android:layout_marginBottom="10dp"/>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none"
+                            android:clipToPadding="false">
+
+                            <LinearLayout
+                                android:id="@+id/theme_palette_row"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"/>
+                        </HorizontalScrollView>
+
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/choose_theme"
                             android:textSize="13sp"
                             android:textColor="?attr/appTextPrimary"
                             android:alpha="0.6"
+                            android:layout_marginTop="20dp"
                             android:layout_marginBottom="12dp"/>
 
                         <com.guruswarupa.launch.ui.views.SafeHorizontalScrollView
@@ -686,6 +623,62 @@
                                 android:orientation="horizontal"
                                 android:paddingVertical="4dp"/>
                         </com.guruswarupa.launch.ui.views.SafeHorizontalScrollView>
+
+                        <TextView
+                            android:text="@string/accent_color"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textColor="?attr/appTextPrimary"
+                            android:alpha="0.6"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="4dp"/>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none"
+                            android:clipToPadding="false">
+
+                            <LinearLayout
+                                android:id="@+id/theme_accent_grid"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"/>
+                        </HorizontalScrollView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="20dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/opaque_surfaces"
+                                android:textSize="14sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:fontFamily="sans-serif-medium"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/opaque_surfaces_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/opaque_surfaces_description"
+                            android:textSize="11sp"
+                            android:textColor="?attr/appTextPrimary"
+                            android:alpha="0.5"
+                            android:layout_marginTop="4dp"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/apply_theme_button"

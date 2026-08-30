@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/dialog_button_background" />
+    <solid android:color="?attr/appRippleColor" />
     <corners android:radius="16dp" />
     <stroke
         android:width="1.2dp"
-        android:color="@color/dialog_text_secondary" />
+        android:color="?attr/appOutline" />
 </shape>

@@ -2032,7 +2032,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             override fun onStopTrackingTouch(s: SeekBar?) {}
         })
 
-        styS.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, baseStyL).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        styS.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, baseStyL.toTypedArray()).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
         val currentStyle = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
         val selectedIndex = baseStyV.indexOf(currentStyle)
