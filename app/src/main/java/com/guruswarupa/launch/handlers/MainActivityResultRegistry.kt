@@ -2,6 +2,7 @@ package com.guruswarupa.launch.handlers
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.net.Uri
 import androidx.fragment.app.FragmentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +20,10 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
     val widgetPickerLauncher: ActivityResultLauncher<Intent>
     val widgetConfigurationLauncher: ActivityResultLauncher<Intent>
     val voiceSearchLauncher: ActivityResultLauncher<Intent>
+    val aiChatMediaPickerLauncher: ActivityResultLauncher<String>
+
+    /** Set by the AI chat page's WebView file-chooser callback right before launching; consumed and cleared on result. */
+    var onAiChatMediaPicked: ((List<Uri>) -> Unit)? = null
 
 
 
@@ -103,6 +108,11 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
             }
 
             deps.activityResultHandler?.handleActivityResult(PermissionManager.VOICE_SEARCH_REQUEST, result.resultCode, result.data)
+        }
+
+        aiChatMediaPickerLauncher = activity.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+            onAiChatMediaPicked?.invoke(uris)
+            onAiChatMediaPicked = null
         }
     }
 

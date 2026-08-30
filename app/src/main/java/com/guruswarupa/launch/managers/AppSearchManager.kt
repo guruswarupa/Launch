@@ -10,8 +10,7 @@ import android.widget.AutoCompleteTextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.guruswarupa.launch.AppAdapter
-import com.guruswarupa.launch.ai.llm.ModelDownloadManager
-import com.guruswarupa.launch.ai.llm.ModelState
+import com.guruswarupa.launch.ai.llm.OnDeviceAssistant
 import com.guruswarupa.launch.ai.prediction.SuggestionEngine
 import com.guruswarupa.launch.models.AppMetadata
 import com.guruswarupa.launch.models.Constants
@@ -32,7 +31,7 @@ class AppSearchManager @Inject constructor(
     @ActivityContext private val context: Context,
     private val suggestionEngine: SuggestionEngine,
     private val sharedPreferences: SharedPreferences,
-    private val modelDownloadManager: ModelDownloadManager
+    private val onDeviceAssistant: OnDeviceAssistant
 ) {
     private val packageManager: PackageManager = context.packageManager
     private val fullAppList = mutableListOf<ResolveInfo>()
@@ -211,7 +210,7 @@ class AppSearchManager @Inject constructor(
 
     private fun isAskAiAvailable(): Boolean =
         sharedPreferences.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false) &&
-            modelDownloadManager.currentState() == ModelState.READY
+            onDeviceAssistant.isModelReady
 
     private fun looksLikeNaturalLanguageQuery(query: String): Boolean {
         val trimmed = query.trim()

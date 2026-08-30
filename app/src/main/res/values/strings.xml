@@ -424,7 +424,13 @@
     <string name="ai_assistant_unsupported_ram">This device doesn\'t have enough free memory to run the assistant.</string>
     <string name="ai_assistant_unsupported_abi">This device\'s processor isn\'t supported by the assistant.</string>
     <string name="ai_assistant_unsupported_storage">Not enough free storage to download the assistant model.</string>
-    <string name="ai_assistant_license_notice">Powered by %1$s, licensed under %2$s.</string>
+    <string name="ai_assistant_license_notice">Every model above is Apache License 2.0, hosted ungated by the LiteRT community — no account or key needed to download.</string>
+    <string name="ai_assistant_choose_model">Model</string>
+    <string name="ai_assistant_selected_badge">Active</string>
+    <string name="ai_assistant_use_model">Use this model</string>
+    <string name="ai_assistant_web_providers_label">Or use a web AI</string>
+    <string name="ai_assistant_web_provider_description">Opens the real %1$s site full-screen. Needs an internet connection and your own account there.</string>
+    <string name="ai_assistant_use_web_provider">Use this</string>
     <string name="ai_chat_subtitle">On-device, offline, private</string>
     <string name="ai_chat_clear">Clear conversation</string>
     <string name="ai_chat_empty_title">Ask me anything</string>

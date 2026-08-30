@@ -655,8 +655,12 @@ class MainActivity : AppCompatActivity() {
                 if (page == ScreenPagerManager.Page.WIDGETS) {
                     initializeDeferredWidgets()
                 }
-                if (page == ScreenPagerManager.Page.AI_CHAT && ::aiChatPage.isInitialized) {
-                    aiChatPage.onPageShown()
+                if (::aiChatPage.isInitialized) {
+                    if (page == ScreenPagerManager.Page.AI_CHAT) {
+                        aiChatPage.onPageShown()
+                    } else {
+                        aiChatPage.onPageHidden()
+                    }
                 }
             }
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
@@ -842,6 +846,9 @@ class MainActivity : AppCompatActivity() {
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onDestroy()
         }
+        if (::aiChatPage.isInitialized) {
+            aiChatPage.onActivityDestroy()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -859,6 +866,9 @@ class MainActivity : AppCompatActivity() {
         
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onResume()
+        }
+        if (::aiChatPage.isInitialized) {
+            aiChatPage.onActivityResume()
         }
 
         // If widgets were changed in configuration, ensure they are reordered correctly
@@ -894,6 +904,9 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onPause()
+        }
+        if (::aiChatPage.isInitialized) {
+            aiChatPage.onActivityPause()
         }
     }
 

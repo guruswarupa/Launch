@@ -183,4 +183,30 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <WebView
+        android:id="@+id/ai_chat_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/ai_chat_webview_fullscreen_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/ai_chat_webview_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="top"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/nord8"
+        android:progressBackgroundTint="@android:color/transparent"
+        android:visibility="gone" />
+
 </FrameLayout>

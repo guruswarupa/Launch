@@ -61,6 +61,7 @@ import com.guruswarupa.launch.ai.llm.DeviceCapability
 import com.guruswarupa.launch.ai.llm.DeviceCapabilityResult
 import com.guruswarupa.launch.ai.llm.ModelDownloadManager
 import com.guruswarupa.launch.ai.llm.ModelState
+import com.guruswarupa.launch.ai.llm.WebAiProvider
 import dagger.hilt.android.AndroidEntryPoint
 import com.guruswarupa.launch.managers.DownloadableFontManager
 import com.guruswarupa.launch.managers.AppUsageStatsManager
@@ -1651,32 +1652,37 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun formatModelSize(): String = "${AssistantModel.EXPECTED_SIZE_BYTES / (1024 * 1024)} MB"
+    private fun formatSize(bytes: Long): String = "${bytes / (1024 * 1024)} MB"
+
+    private class ModelRowViews(
+        val root: View,
+        val name: TextView,
+        val badge: View,
+        val description: TextView,
+        val status: TextView,
+        val progress: ProgressBar,
+        val actionButton: Button
+    )
+
+    private val aiModelRows = LinkedHashMap<String, ModelRowViews>()
+    private val aiWebProviderRows = LinkedHashMap<String, ModelRowViews>()
+
+    private fun selectedModelId(): String =
+        prefs.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_MODEL_ID, null) ?: AssistantModel.DEFAULT.id
+
+    private fun isWebSourceSelected(): Boolean =
+        prefs.getString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_ON_DEVICE) ==
+            Constants.Prefs.AI_ASSISTANT_SOURCE_WEB
+
+    private fun selectedWebProviderId(): String? =
+        prefs.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID, null)
 
     private fun setupAiAssistant() {
         val sw = findViewById<SwitchCompat>(R.id.ai_assistant_switch)
         val statusText = findViewById<TextView>(R.id.ai_assistant_status_text)
-        val progressBar = findViewById<ProgressBar>(R.id.ai_assistant_progress_bar)
-        val downloadButton = findViewById<Button>(R.id.ai_assistant_download_button)
-        val deleteButton = findViewById<Button>(R.id.ai_assistant_delete_button)
         val licenseText = findViewById<TextView>(R.id.ai_assistant_license_text)
 
-        licenseText.text = getString(R.string.ai_assistant_license_notice, AssistantModel.DISPLAY_NAME, AssistantModel.LICENSE_NAME)
-
-        val capability = deviceCapability.check()
-        if (capability is DeviceCapabilityResult.Unsupported) {
-            sw.isEnabled = false
-            sw.isChecked = false
-            downloadButton.isVisible = false
-            deleteButton.isVisible = false
-            progressBar.isVisible = false
-            statusText.text = when (capability.reason) {
-                DeviceCapabilityResult.Reason.LOW_RAM -> getString(R.string.ai_assistant_unsupported_ram)
-                DeviceCapabilityResult.Reason.UNSUPPORTED_ABI -> getString(R.string.ai_assistant_unsupported_abi)
-                DeviceCapabilityResult.Reason.LOW_STORAGE -> getString(R.string.ai_assistant_unsupported_storage)
-            }
-            return
-        }
+        licenseText.text = getString(R.string.ai_assistant_license_notice)
 
         sw.isChecked = prefs.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)
         sw.setOnCheckedChangeListener { _, isChecked ->
@@ -1684,82 +1690,214 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
         }
 
-        downloadButton.setOnClickListener {
-            if (modelDownloadManager.startDownload()) {
-                refreshAiAssistantModelUi(statusText, progressBar, downloadButton, deleteButton)
-                startAiAssistantPolling(statusText, progressBar, downloadButton, deleteButton)
+        // Web providers need no local model, so they're offered on every device — only the
+        // on-device model list is gated on capability.
+        val modelListLabel = findViewById<View>(R.id.ai_assistant_choose_model_label)
+        val modelList = findViewById<LinearLayout>(R.id.ai_assistant_model_list)
+        val capability = deviceCapability.check()
+        if (capability is DeviceCapabilityResult.Unsupported) {
+            modelListLabel.isVisible = false
+            modelList.isVisible = false
+            statusText.isVisible = true
+            statusText.text = when (capability.reason) {
+                DeviceCapabilityResult.Reason.LOW_RAM -> getString(R.string.ai_assistant_unsupported_ram)
+                DeviceCapabilityResult.Reason.UNSUPPORTED_ABI -> getString(R.string.ai_assistant_unsupported_abi)
+                DeviceCapabilityResult.Reason.LOW_STORAGE -> getString(R.string.ai_assistant_unsupported_storage)
             }
+        } else {
+            statusText.isVisible = false
+            setupOnDeviceModelList(modelList)
         }
 
-        deleteButton.setOnClickListener {
-            modelDownloadManager.deleteModel()
-            refreshAiAssistantModelUi(statusText, progressBar, downloadButton, deleteButton)
-        }
-
-        refreshAiAssistantModelUi(statusText, progressBar, downloadButton, deleteButton)
-        if (modelDownloadManager.currentState() == ModelState.DOWNLOADING) {
-            startAiAssistantPolling(statusText, progressBar, downloadButton, deleteButton)
-        }
+        setupWebProviderList()
     }
 
-    private fun refreshAiAssistantModelUi(
-        statusText: TextView,
-        progressBar: ProgressBar,
-        downloadButton: Button,
-        deleteButton: Button
-    ) {
-        when (val state = modelDownloadManager.currentState()) {
-            ModelState.NOT_DOWNLOADED, ModelState.FAILED -> {
-                statusText.text = if (state == ModelState.FAILED) {
-                    getString(R.string.ai_assistant_failed)
-                } else {
-                    getString(R.string.ai_assistant_wifi_notice, formatModelSize())
+    private fun setupOnDeviceModelList(modelList: LinearLayout) {
+        modelList.removeAllViews()
+        aiModelRows.clear()
+        AssistantModel.ALL.forEach { model ->
+            val rowView = layoutInflater.inflate(R.layout.item_ai_model_row, modelList, false)
+            val row = ModelRowViews(
+                root = rowView,
+                name = rowView.findViewById(R.id.model_row_name),
+                badge = rowView.findViewById(R.id.model_row_selected_badge),
+                description = rowView.findViewById(R.id.model_row_description),
+                status = rowView.findViewById(R.id.model_row_status),
+                progress = rowView.findViewById(R.id.model_row_progress),
+                actionButton = rowView.findViewById(R.id.model_row_action_button)
+            )
+            row.name.text = model.displayName
+            row.description.text = model.description
+            aiModelRows[model.id] = row
+            modelList.addView(rowView)
+
+            row.root.setOnClickListener {
+                if (modelDownloadManager.currentState(model) == ModelState.READY) {
+                    selectOnDeviceModel(model.id)
                 }
-                progressBar.isVisible = false
-                downloadButton.isVisible = true
-                downloadButton.isEnabled = true
-                downloadButton.text = getString(R.string.ai_assistant_download, formatModelSize())
-                deleteButton.isVisible = false
             }
-            ModelState.DOWNLOADING -> {
-                val percent = ((modelDownloadManager.progress()?.fraction ?: 0f) * 100).toInt()
-                statusText.text = getString(R.string.ai_assistant_downloading, percent)
-                progressBar.isVisible = true
-                progressBar.progress = percent
-                downloadButton.isVisible = true
-                downloadButton.isEnabled = false
-                deleteButton.isVisible = false
+            row.actionButton.setOnClickListener {
+                when (modelDownloadManager.currentState(model)) {
+                    ModelState.NOT_DOWNLOADED, ModelState.FAILED -> {
+                        if (isAnyAiModelDownloading()) return@setOnClickListener
+                        if (modelDownloadManager.startDownload(model)) {
+                            refreshAllAiModelRows()
+                            startAiAssistantPolling()
+                        }
+                    }
+                    ModelState.READY -> {
+                        if (!isWebSourceSelected() && model.id == selectedModelId()) {
+                            modelDownloadManager.deleteModel(model)
+                            refreshAllAiModelRows()
+                            notifySettingsChanged()
+                        } else {
+                            selectOnDeviceModel(model.id)
+                        }
+                    }
+                    ModelState.DOWNLOADING, ModelState.VERIFYING -> {}
+                }
             }
-            ModelState.VERIFYING -> {
-                statusText.text = getString(R.string.ai_assistant_verifying)
-                progressBar.isVisible = true
-                progressBar.progress = 100
-                downloadButton.isVisible = true
-                downloadButton.isEnabled = false
-                deleteButton.isVisible = false
-            }
-            ModelState.READY -> {
-                statusText.text = getString(R.string.ai_assistant_ready)
-                progressBar.isVisible = false
-                downloadButton.isVisible = false
-                deleteButton.isVisible = true
+        }
+
+        refreshAllAiModelRows()
+        if (isAnyAiModelDownloading()) {
+            startAiAssistantPolling()
+        }
+    }
+
+    private fun selectOnDeviceModel(modelId: String) {
+        prefs.edit {
+            putString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_ON_DEVICE)
+            putString(Constants.Prefs.AI_ASSISTANT_SELECTED_MODEL_ID, modelId)
+        }
+        refreshAllAiModelRows()
+        refreshAllWebProviderRows()
+        notifySettingsChanged()
+    }
+
+    private fun selectWebProvider(providerId: String) {
+        prefs.edit {
+            putString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_WEB)
+            putString(Constants.Prefs.AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID, providerId)
+        }
+        refreshAllAiModelRows()
+        refreshAllWebProviderRows()
+        notifySettingsChanged()
+    }
+
+    private fun setupWebProviderList() {
+        val providerList = findViewById<LinearLayout>(R.id.ai_assistant_web_provider_list)
+        providerList.removeAllViews()
+        aiWebProviderRows.clear()
+
+        WebAiProvider.ALL.forEach { provider ->
+            val rowView = layoutInflater.inflate(R.layout.item_ai_model_row, providerList, false)
+            val row = ModelRowViews(
+                root = rowView,
+                name = rowView.findViewById(R.id.model_row_name),
+                badge = rowView.findViewById(R.id.model_row_selected_badge),
+                description = rowView.findViewById(R.id.model_row_description),
+                status = rowView.findViewById(R.id.model_row_status),
+                progress = rowView.findViewById(R.id.model_row_progress),
+                actionButton = rowView.findViewById(R.id.model_row_action_button)
+            )
+            row.name.text = provider.displayName
+            row.description.text = getString(R.string.ai_assistant_web_provider_description, provider.displayName)
+            row.progress.isVisible = false
+            row.status.isVisible = false
+            row.actionButton.text = getString(R.string.ai_assistant_use_web_provider)
+            aiWebProviderRows[provider.id] = row
+            providerList.addView(rowView)
+
+            val select = { selectWebProvider(provider.id) }
+            row.root.setOnClickListener { select() }
+            row.actionButton.setOnClickListener { select() }
+        }
+
+        refreshAllWebProviderRows()
+    }
+
+    private fun refreshAllWebProviderRows() {
+        val isWeb = isWebSourceSelected()
+        val selectedId = selectedWebProviderId()
+        WebAiProvider.ALL.forEach { provider ->
+            val row = aiWebProviderRows[provider.id] ?: return@forEach
+            val isSelected = isWeb && provider.id == selectedId
+            row.badge.isVisible = isSelected
+            row.actionButton.isVisible = !isSelected
+        }
+    }
+
+    private fun isAnyAiModelDownloading(): Boolean =
+        AssistantModel.ALL.any { modelDownloadManager.currentState(it) == ModelState.DOWNLOADING }
+
+    private fun refreshAllAiModelRows() {
+        val selectedId = selectedModelId()
+        val anyDownloading = isAnyAiModelDownloading()
+        val onDeviceActive = !isWebSourceSelected()
+
+        AssistantModel.ALL.forEach { model ->
+            val row = aiModelRows[model.id] ?: return@forEach
+            val isSelected = onDeviceActive && model.id == selectedId
+
+            when (val state = modelDownloadManager.currentState(model)) {
+                ModelState.NOT_DOWNLOADED, ModelState.FAILED -> {
+                    row.badge.isVisible = false
+                    row.status.text = if (state == ModelState.FAILED) {
+                        getString(R.string.ai_assistant_failed)
+                    } else {
+                        getString(R.string.ai_assistant_wifi_notice, formatSize(model.expectedSizeBytes))
+                    }
+                    row.progress.isVisible = false
+                    row.actionButton.isVisible = true
+                    row.actionButton.isEnabled = !anyDownloading
+                    row.actionButton.text = getString(R.string.ai_assistant_download, formatSize(model.expectedSizeBytes))
+                }
+                ModelState.DOWNLOADING -> {
+                    row.badge.isVisible = false
+                    val percent = ((modelDownloadManager.progress(model)?.fraction ?: 0f) * 100).toInt()
+                    row.status.text = getString(R.string.ai_assistant_downloading, percent)
+                    row.progress.isVisible = true
+                    row.progress.progress = percent
+                    row.actionButton.isVisible = true
+                    row.actionButton.isEnabled = false
+                    row.actionButton.text = getString(R.string.ai_assistant_downloading, percent)
+                }
+                ModelState.VERIFYING -> {
+                    row.badge.isVisible = false
+                    row.status.text = getString(R.string.ai_assistant_verifying)
+                    row.progress.isVisible = true
+                    row.progress.progress = 100
+                    row.actionButton.isVisible = true
+                    row.actionButton.isEnabled = false
+                    row.actionButton.text = getString(R.string.ai_assistant_verifying)
+                }
+                ModelState.READY -> {
+                    row.badge.isVisible = isSelected
+                    row.status.text = getString(R.string.ai_assistant_ready)
+                    row.progress.isVisible = false
+                    row.actionButton.isVisible = true
+                    row.actionButton.isEnabled = true
+                    row.actionButton.text = if (isSelected) {
+                        getString(R.string.ai_assistant_delete_model)
+                    } else {
+                        getString(R.string.ai_assistant_use_model)
+                    }
+                }
             }
         }
     }
 
-    private fun startAiAssistantPolling(
-        statusText: TextView,
-        progressBar: ProgressBar,
-        downloadButton: Button,
-        deleteButton: Button
-    ) {
+    private fun startAiAssistantPolling() {
         if (aiAssistantPolling) return
         aiAssistantPolling = true
         val poll = object : Runnable {
             override fun run() {
-                val state = modelDownloadManager.pollAndReconcile()
-                refreshAiAssistantModelUi(statusText, progressBar, downloadButton, deleteButton)
-                if (state == ModelState.DOWNLOADING || state == ModelState.VERIFYING) {
+                val stillActive = AssistantModel.ALL
+                    .map { modelDownloadManager.pollAndReconcile(it) }
+                    .any { it == ModelState.DOWNLOADING || it == ModelState.VERIFYING }
+                refreshAllAiModelRows()
+                if (stillActive) {
                     aiAssistantPollHandler.postDelayed(this, 1000)
                 } else {
                     aiAssistantPolling = false

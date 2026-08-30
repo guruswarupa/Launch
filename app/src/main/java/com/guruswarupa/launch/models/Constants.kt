@@ -37,8 +37,16 @@ object Constants {
         const val SEARCH_ENGINE = "search_engine"
         const val SMART_SUGGESTIONS_ENABLED = "smart_suggestions_enabled"
         const val AI_ASSISTANT_ENABLED = "ai_assistant_enabled"
-        const val AI_ASSISTANT_MODEL_STATE = "ai_assistant_model_state"
-        const val AI_ASSISTANT_DOWNLOAD_ID = "ai_assistant_download_id"
+        /** "on_device" or "web" — which of the two lists below is the active assistant. */
+        const val AI_ASSISTANT_SOURCE_TYPE = "ai_assistant_source_type"
+        const val AI_ASSISTANT_SELECTED_MODEL_ID = "ai_assistant_selected_model_id"
+        const val AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID = "ai_assistant_selected_web_provider_id"
+        const val AI_ASSISTANT_SOURCE_ON_DEVICE = "on_device"
+        const val AI_ASSISTANT_SOURCE_WEB = "web"
+        /** Suffix with "_<modelId>" — each catalog model tracks its download state independently. */
+        const val AI_ASSISTANT_MODEL_STATE_PREFIX = "ai_assistant_model_state_"
+        /** Suffix with "_<modelId>". */
+        const val AI_ASSISTANT_DOWNLOAD_ID_PREFIX = "ai_assistant_download_id_"
         const val ACCESSIBILITY_SHORTCUT_ENABLED = "accessibility_shortcut_enabled"
         const val CONTROL_CENTER_SHORTCUTS = "control_center_shortcuts"
         const val CONTROL_CENTER_TRIGGER_ENABLED = "control_center_trigger_enabled"

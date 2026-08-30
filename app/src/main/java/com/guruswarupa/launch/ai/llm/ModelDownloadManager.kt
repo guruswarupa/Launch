@@ -22,9 +22,11 @@ data class DownloadProgress(val bytesDownloaded: Long, val totalBytes: Long) {
 }
 
 /**
- * Downloads [AssistantModel] over Wi-Fi/unmetered only, verifies it byte-for-byte and by
- * SHA-256 before marking it ready, and never touches the network again after that — the
- * assistant runs fully offline from then on. No account, no key, nothing to configure.
+ * Downloads any [AssistantModelInfo] from [AssistantModel.ALL] over Wi-Fi/unmetered only,
+ * verifies it byte-for-byte and by SHA-256 before marking it ready, and never touches the
+ * network again after that — the assistant runs fully offline from then on. No account, no
+ * key, nothing to configure. Every model in the catalog tracks its own download state
+ * independently, so switching the selected model doesn't lose progress on another one.
  */
 @Singleton
 class ModelDownloadManager @Inject constructor(
@@ -40,89 +42,89 @@ class ModelDownloadManager @Inject constructor(
         File(context.getExternalFilesDir(null) ?: context.filesDir, "ai_models").apply { mkdirs() }
     }
 
-    fun modelFile(): File = File(modelsDir, AssistantModel.FILE_NAME)
+    fun modelFile(model: AssistantModelInfo): File = File(modelsDir, model.fileName)
 
     /** Cheap, prefs-only read — safe to call often (e.g. to decide whether to show the assistant UI). */
-    fun currentState(): ModelState {
-        val raw = rawState()
-        return if (raw == ModelState.READY && !modelFile().exists()) ModelState.NOT_DOWNLOADED else raw
+    fun currentState(model: AssistantModelInfo): ModelState {
+        val raw = rawState(model)
+        return if (raw == ModelState.READY && !modelFile(model).exists()) ModelState.NOT_DOWNLOADED else raw
     }
 
-    fun startDownload(): Boolean {
-        if (currentState() == ModelState.DOWNLOADING) return false
-        modelFile().delete()
+    fun startDownload(model: AssistantModelInfo): Boolean {
+        if (currentState(model) == ModelState.DOWNLOADING) return false
+        modelFile(model).delete()
 
-        val request = DownloadManager.Request(Uri.parse(AssistantModel.DOWNLOAD_URL))
-            .setTitle(AssistantModel.DISPLAY_NAME)
+        val request = DownloadManager.Request(Uri.parse(model.downloadUrl))
+            .setTitle(model.displayName)
             .setAllowedOverMetered(false)
             .setAllowedOverRoaming(false)
-            .setDestinationUri(Uri.fromFile(modelFile()))
+            .setDestinationUri(Uri.fromFile(modelFile(model)))
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION)
 
         val id = downloadManager.enqueue(request)
         sharedPreferences.edit {
-            putLong(Constants.Prefs.AI_ASSISTANT_DOWNLOAD_ID, id)
-            putString(Constants.Prefs.AI_ASSISTANT_MODEL_STATE, ModelState.DOWNLOADING.name)
+            putLong(downloadIdKey(model), id)
+            putString(stateKey(model), ModelState.DOWNLOADING.name)
         }
         return true
     }
 
-    /** Progress for the currently tracked download, or null if none is in flight. */
-    fun progress(): DownloadProgress? {
-        val id = downloadId() ?: return null
+    /** Progress for [model]'s currently tracked download, or null if none is in flight. */
+    fun progress(model: AssistantModelInfo): DownloadProgress? {
+        val id = downloadId(model) ?: return null
         downloadManager.query(DownloadManager.Query().setFilterById(id)).use { cursor ->
             if (!cursor.moveToFirst()) return null
             val downloaded = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
             val total = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-            return DownloadProgress(downloaded, if (total > 0) total else AssistantModel.EXPECTED_SIZE_BYTES)
+            return DownloadProgress(downloaded, if (total > 0) total else model.expectedSizeBytes)
         }
     }
 
     /**
-     * Call periodically (e.g. every second) while a download is in flight, and once on
-     * app/screen start to reconcile a download that finished or failed while the process
+     * Call periodically (e.g. every second) while [model]'s download is in flight, and once
+     * on app/screen start to reconcile a download that finished or failed while the process
      * wasn't running. Kicks off checksum verification in the background on success.
      */
-    fun pollAndReconcile(): ModelState {
-        if (rawState() != ModelState.DOWNLOADING) return currentState()
-        val id = downloadId() ?: return markFailed()
+    fun pollAndReconcile(model: AssistantModelInfo): ModelState {
+        if (rawState(model) != ModelState.DOWNLOADING) return currentState(model)
+        val id = downloadId(model) ?: return markFailed(model)
 
         downloadManager.query(DownloadManager.Query().setFilterById(id)).use { cursor ->
-            if (!cursor.moveToFirst()) return markFailed()
+            if (!cursor.moveToFirst()) return markFailed(model)
             return when (cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))) {
                 DownloadManager.STATUS_SUCCESSFUL -> {
-                    setState(ModelState.VERIFYING)
-                    backgroundExecutor.execute { verifyAndFinalize() }
+                    setState(model, ModelState.VERIFYING)
+                    backgroundExecutor.execute { verifyAndFinalize(model) }
                     ModelState.VERIFYING
                 }
-                DownloadManager.STATUS_FAILED -> markFailed()
+                DownloadManager.STATUS_FAILED -> markFailed(model)
                 else -> ModelState.DOWNLOADING
             }
         }
     }
 
-    fun deleteModel() {
-        downloadId()?.let { downloadManager.remove(it) }
-        modelFile().delete()
+    fun deleteModel(model: AssistantModelInfo) {
+        downloadId(model)?.let { downloadManager.remove(it) }
+        modelFile(model).delete()
         sharedPreferences.edit {
-            remove(Constants.Prefs.AI_ASSISTANT_DOWNLOAD_ID)
-            putString(Constants.Prefs.AI_ASSISTANT_MODEL_STATE, ModelState.NOT_DOWNLOADED.name)
+            remove(downloadIdKey(model))
+            putString(stateKey(model), ModelState.NOT_DOWNLOADED.name)
         }
     }
 
-    private fun verifyAndFinalize() {
-        val file = modelFile()
-        if (!file.exists() || file.length() != AssistantModel.EXPECTED_SIZE_BYTES) {
+    private fun verifyAndFinalize(model: AssistantModelInfo) {
+        val file = modelFile(model)
+        if (!file.exists() || file.length() != model.expectedSizeBytes) {
             file.delete()
-            markFailed()
+            markFailed(model)
             return
         }
-        if (!sha256Of(file).equals(AssistantModel.EXPECTED_SHA256, ignoreCase = true)) {
+        if (!sha256Of(file).equals(model.expectedSha256, ignoreCase = true)) {
             file.delete()
-            markFailed()
+            markFailed(model)
             return
         }
-        setState(ModelState.READY)
+        setState(model, ModelState.READY)
     }
 
     private fun sha256Of(file: File): String {
@@ -138,20 +140,23 @@ class ModelDownloadManager @Inject constructor(
         return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
-    private fun downloadId(): Long? =
-        sharedPreferences.getLong(Constants.Prefs.AI_ASSISTANT_DOWNLOAD_ID, -1L).takeIf { it != -1L }
+    private fun stateKey(model: AssistantModelInfo) = Constants.Prefs.AI_ASSISTANT_MODEL_STATE_PREFIX + model.id
+    private fun downloadIdKey(model: AssistantModelInfo) = Constants.Prefs.AI_ASSISTANT_DOWNLOAD_ID_PREFIX + model.id
 
-    private fun rawState(): ModelState =
-        sharedPreferences.getString(Constants.Prefs.AI_ASSISTANT_MODEL_STATE, null)
+    private fun downloadId(model: AssistantModelInfo): Long? =
+        sharedPreferences.getLong(downloadIdKey(model), -1L).takeIf { it != -1L }
+
+    private fun rawState(model: AssistantModelInfo): ModelState =
+        sharedPreferences.getString(stateKey(model), null)
             ?.let { runCatching { ModelState.valueOf(it) }.getOrNull() }
             ?: ModelState.NOT_DOWNLOADED
 
-    private fun setState(state: ModelState) {
-        sharedPreferences.edit { putString(Constants.Prefs.AI_ASSISTANT_MODEL_STATE, state.name) }
+    private fun setState(model: AssistantModelInfo, state: ModelState) {
+        sharedPreferences.edit { putString(stateKey(model), state.name) }
     }
 
-    private fun markFailed(): ModelState {
-        setState(ModelState.FAILED)
+    private fun markFailed(model: AssistantModelInfo): ModelState {
+        setState(model, ModelState.FAILED)
         return ModelState.FAILED
     }
 }

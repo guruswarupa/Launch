@@ -1,7 +1,9 @@
 package com.guruswarupa.launch.ai.llm
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
+import com.guruswarupa.launch.models.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -16,20 +18,21 @@ sealed interface AssistantResult {
 }
 
 /**
- * Lazily loads [AssistantModel] into memory on first question and holds it resident for
- * follow-up questions. A ~500MB model sitting in memory is exactly the kind of thing that
- * gets a home-screen launcher's process killed to reclaim RAM, so [release] must be called
- * whenever the launcher backgrounds or the system asks for memory back — see
- * MainActivity's onStop/onTrimMemory.
+ * Lazily loads the user's selected [AssistantModelInfo] (see [AssistantModel.ALL]) into
+ * memory on first question and holds it resident for follow-up questions. A model sitting
+ * in memory is exactly the kind of thing that gets a home-screen launcher's process killed
+ * to reclaim RAM, so [release] must be called whenever the launcher backgrounds or the
+ * system asks for memory back — see MainActivity's onTrimMemory/onLowMemory.
  *
  * Deprecation note: [LlmInference] (tasks-genai) is in MediaPipe's maintenance-only mode in
- * favor of LiteRT-LM, but LiteRT-LM has no `.litertlm` build of our chosen ungated model
+ * favor of LiteRT-LM, but LiteRT-LM has no `.litertlm` build of our chosen ungated models
  * (see [AssistantModel]) — only `.task`, which tasks-genai consumes directly. Swap this file
  * if/when that changes; nothing outside `ai/llm/` depends on which runtime is used.
  */
 @Singleton
 class OnDeviceAssistant @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val sharedPreferences: SharedPreferences,
     private val modelDownloadManager: ModelDownloadManager
 ) {
     companion object {
@@ -38,15 +41,28 @@ class OnDeviceAssistant @Inject constructor(
 
     private val lock = Mutex()
     private var engine: LlmInference? = null
+    private var loadedModelId: String? = null
 
-    val isModelReady: Boolean get() = modelDownloadManager.currentState() == ModelState.READY
+    fun selectedModel(): AssistantModelInfo =
+        AssistantModel.byId(sharedPreferences.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_MODEL_ID, null))
+
+    val isModelReady: Boolean get() = modelDownloadManager.currentState(selectedModel()) == ModelState.READY
 
     suspend fun ask(prompt: String): AssistantResult = withContext(Dispatchers.IO) {
-        if (!isModelReady) return@withContext AssistantResult.Error("Model not downloaded")
+        val model = selectedModel()
+        if (modelDownloadManager.currentState(model) != ModelState.READY) {
+            return@withContext AssistantResult.Error("Model not downloaded")
+        }
 
         lock.withLock {
             try {
-                val activeEngine = engine ?: createEngine().also { engine = it }
+                if (loadedModelId != null && loadedModelId != model.id) {
+                    releaseLocked()
+                }
+                val activeEngine = engine ?: createEngine(model).also {
+                    engine = it
+                    loadedModelId = model.id
+                }
                 AssistantResult.Success(activeEngine.generateResponse(prompt))
             } catch (e: Exception) {
                 // A corrupt load or an engine wedged by a previous failure is not worth
@@ -74,12 +90,13 @@ class OnDeviceAssistant @Inject constructor(
     private fun releaseLocked() {
         engine?.close()
         engine = null
+        loadedModelId = null
     }
 
     @Suppress("DEPRECATION")
-    private fun createEngine(): LlmInference {
+    private fun createEngine(model: AssistantModelInfo): LlmInference {
         val options = LlmInference.LlmInferenceOptions.builder()
-            .setModelPath(modelDownloadManager.modelFile().absolutePath)
+            .setModelPath(modelDownloadManager.modelFile(model).absolutePath)
             .setMaxTokens(MAX_TOKENS)
             .setPreferredBackend(LlmInference.Backend.CPU)
             .build()

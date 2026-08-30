@@ -1169,45 +1169,50 @@
                             android:layout_marginBottom="12dp"
                             android:textColor="@color/white"
                             android:alpha="0.7"
-                            android:textSize="13sp"/>
-
-                        <ProgressBar
-                            android:id="@+id/ai_assistant_progress_bar"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="6dp"
-                            android:layout_marginBottom="12dp"
-                            android:max="100"
-                            android:progress="0"
-                            android:progressTint="@color/nord8"
-                            android:progressBackgroundTint="#20FFFFFF"
+                            android:textSize="13sp"
                             android:visibility="gone"/>
 
-                        <Button
-                            android:id="@+id/ai_assistant_download_button"
+                        <TextView
+                            android:id="@+id/ai_assistant_choose_model_label"
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
                             android:layout_marginBottom="8dp"
-                            android:visibility="gone"/>
+                            android:text="@string/ai_assistant_choose_model"
+                            android:textColor="@color/nord8"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.1"/>
 
-                        <Button
-                            android:id="@+id/ai_assistant_delete_button"
+                        <LinearLayout
+                            android:id="@+id/ai_assistant_model_list"
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/ai_assistant_delete_model"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="@color/white"
-                            android:layout_marginBottom="12dp"
-                            android:visibility="gone"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
+
+                        <TextView
+                            android:id="@+id/ai_assistant_web_providers_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/ai_assistant_web_providers_label"
+                            android:textColor="@color/nord8"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.1"/>
+
+                        <LinearLayout
+                            android:id="@+id/ai_assistant_web_provider_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
 
                         <TextView
                             android:id="@+id/ai_assistant_license_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:textColor="@color/white"
                             android:alpha="0.45"
                             android:textSize="11sp"/>
