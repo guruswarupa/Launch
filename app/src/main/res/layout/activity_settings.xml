@@ -1191,6 +1191,15 @@
                             android:orientation="vertical"/>
 
                         <TextView
+                            android:id="@+id/ai_assistant_license_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/white"
+                            android:alpha="0.45"
+                            android:textSize="11sp"/>
+
+                        <TextView
                             android:id="@+id/ai_assistant_web_providers_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -1207,15 +1216,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"/>
-
-                        <TextView
-                            android:id="@+id/ai_assistant_license_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textColor="@color/white"
-                            android:alpha="0.45"
-                            android:textSize="11sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
