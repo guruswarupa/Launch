@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.guruswarupa.launch",
+  "applicationId": "com.guruswarupa.launchh",
   "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 63,
-      "versionName": "7.6",
+      "versionCode": 66,
+      "versionName": "7.7",
       "outputFile": "app-release.apk"
     }
   ],
