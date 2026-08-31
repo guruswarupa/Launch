@@ -170,8 +170,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var mediaSessionMonitor: com.guruswarupa.launch.managers.MediaSessionMonitor
 
-    lateinit var wallpaperLyricsController: com.guruswarupa.launch.ui.WallpaperLyricsController
-    fun isWallpaperLyricsControllerInitialized() = ::wallpaperLyricsController.isInitialized
+    lateinit var wallpaperMediaController: com.guruswarupa.launch.ui.WallpaperMediaController
+    fun isWallpaperMediaControllerInitialized() = ::wallpaperMediaController.isInitialized
 
     lateinit var voiceSearchManager: VoiceSearchManager
 
@@ -667,22 +667,22 @@ class MainActivity : AppCompatActivity() {
                         aiChatPage.onPageHidden()
                     }
                 }
-                if (::wallpaperLyricsController.isInitialized) {
+                if (::wallpaperMediaController.isInitialized) {
                     if (page == ScreenPagerManager.Page.WALLPAPER) {
-                        wallpaperLyricsController.onPageShown()
+                        wallpaperMediaController.onPageShown()
                     } else {
-                        wallpaperLyricsController.onPageHidden()
+                        wallpaperMediaController.onPageHidden()
                     }
                 }
             }
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
                 initializeDeferredWidgets()
             }
-            if (::wallpaperLyricsController.isInitialized) {
+            if (::wallpaperMediaController.isInitialized) {
                 if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WALLPAPER) {
-                    wallpaperLyricsController.onPageShown()
+                    wallpaperMediaController.onPageShown()
                 } else {
-                    wallpaperLyricsController.onPageHidden()
+                    wallpaperMediaController.onPageHidden()
                 }
             }
             val currentPage = screenPagerManager.getCurrentPage()
@@ -874,8 +874,8 @@ class MainActivity : AppCompatActivity() {
         if (::aiChatPage.isInitialized) {
             aiChatPage.onActivityDestroy()
         }
-        if (::wallpaperLyricsController.isInitialized) {
-            wallpaperLyricsController.onActivityDestroy()
+        if (::wallpaperMediaController.isInitialized) {
+            wallpaperMediaController.onActivityDestroy()
         }
         if (::mediaSessionMonitor.isInitialized) {
             mediaSessionMonitor.cleanup()
@@ -908,8 +908,8 @@ class MainActivity : AppCompatActivity() {
         if (::aiChatPage.isInitialized) {
             aiChatPage.onActivityResume()
         }
-        if (::wallpaperLyricsController.isInitialized) {
-            wallpaperLyricsController.onActivityResume()
+        if (::wallpaperMediaController.isInitialized) {
+            wallpaperMediaController.onActivityResume()
         }
 
         // If widgets were changed in configuration, ensure they are reordered correctly
@@ -949,8 +949,8 @@ class MainActivity : AppCompatActivity() {
         if (::aiChatPage.isInitialized) {
             aiChatPage.onActivityPause()
         }
-        if (::wallpaperLyricsController.isInitialized) {
-            wallpaperLyricsController.onActivityPause()
+        if (::wallpaperMediaController.isInitialized) {
+            wallpaperMediaController.onActivityPause()
         }
     }
 

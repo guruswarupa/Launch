@@ -196,8 +196,8 @@ class AppInitializer(private val activity: MainActivity) {
 
         mediaSessionMonitor = MediaSessionMonitor(activity)
         findViewById<View?>(R.id.wallpaper_drawer)?.let { wallpaperDrawerView ->
-            wallpaperLyricsController = com.guruswarupa.launch.ui.WallpaperLyricsController(activity, wallpaperDrawerView)
-            wallpaperLyricsController.setup()
+            wallpaperMediaController = com.guruswarupa.launch.ui.WallpaperMediaController(activity, wallpaperDrawerView)
+            wallpaperMediaController.setup()
         }
 
         drawerManager = DrawerManager(

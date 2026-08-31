@@ -933,12 +933,21 @@
                 android:text="@string/monday_01_jan"/>
         </LinearLayout>
 
-        <include
-            layout="@layout/wallpaper_lyrics"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="96dp"/>
+            android:layout_marginBottom="96dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <include layout="@layout/wallpaper_media_controls" />
+
+            <include
+                layout="@layout/wallpaper_lyrics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
     </FrameLayout>
 
 </com.guruswarupa.launch.ui.views.SafeDrawerLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wallpaper_media_controls_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/wallpaper_media_pill_background"
+    android:paddingHorizontal="18dp"
+    android:paddingVertical="8dp"
+    android:visibility="gone">
+
+    <ImageButton
+        android:id="@+id/wallpaper_media_prev"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:padding="6dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_skip_previous"
+        android:contentDescription="@string/previous"
+        android:tint="?attr/appIconTint"/>
+
+    <ImageButton
+        android:id="@+id/wallpaper_media_play_pause"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginHorizontal="14dp"
+        android:padding="8dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_play"
+        android:contentDescription="@string/play_pause"
+        android:tint="?attr/appIconTint"/>
+
+    <ImageButton
+        android:id="@+id/wallpaper_media_next"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:padding="6dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_skip_next"
+        android:contentDescription="@string/next"
+        android:tint="?attr/appIconTint"/>
+</LinearLayout>

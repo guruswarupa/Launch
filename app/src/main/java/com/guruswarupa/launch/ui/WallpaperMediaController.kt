@@ -4,6 +4,7 @@ import android.media.session.PlaybackState
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.guruswarupa.launch.MainActivity
@@ -16,17 +17,25 @@ import com.guruswarupa.launch.managers.NowPlaying
 import com.guruswarupa.launch.models.Constants
 
 /**
- * Ambient, auto-scrolling song lyrics shown on the wallpaper page while music plays (see
- * ScreenPagerManager.Page.WALLPAPER). On by default (toggle in Settings > Widgets); hides
- * itself whenever there's nothing to show rather than surfacing any error/permission state -
- * the media controller widget already owns that conversation.
+ * The wallpaper page's now-playing presence (see ScreenPagerManager.Page.WALLPAPER): a small
+ * floating transport-control pill plus, just below it, auto-scrolling synced lyrics. Both
+ * pieces share one MediaSessionMonitor subscription. The controls pill shows whenever a media
+ * session exists (mirrors the always-on media controller widget); the lyrics block additionally
+ * requires the Settings toggle (on by default) and a lyrics match. Everything hides itself
+ * rather than surfacing an error/permission state - the media controller widget on the widgets
+ * page already owns that conversation.
  */
-class WallpaperLyricsController(
+class WallpaperMediaController(
     private val activity: MainActivity,
     rootView: View
 ) : MediaSessionListener {
 
-    private val container: LinearLayout = rootView.findViewById(R.id.wallpaper_lyrics_container)
+    private val controlsContainer: LinearLayout = rootView.findViewById(R.id.wallpaper_media_controls_container)
+    private val prevBtn: ImageButton = rootView.findViewById(R.id.wallpaper_media_prev)
+    private val playPauseBtn: ImageButton = rootView.findViewById(R.id.wallpaper_media_play_pause)
+    private val nextBtn: ImageButton = rootView.findViewById(R.id.wallpaper_media_next)
+
+    private val lyricsContainer: LinearLayout = rootView.findViewById(R.id.wallpaper_lyrics_container)
     private val prevText: TextView = rootView.findViewById(R.id.lyrics_prev)
     private val currentText: TextView = rootView.findViewById(R.id.lyrics_current)
     private val nextText: TextView = rootView.findViewById(R.id.lyrics_next)
@@ -36,6 +45,7 @@ class WallpaperLyricsController(
 
     private var currentTrack: NowPlaying? = null
     private var lyricsResult: LyricsResult? = null
+    private var latestPlaybackState: PlaybackState? = null
     private var lastLineIndex = Int.MIN_VALUE
     private var listenerAttached = false
     private var pageVisible = false
@@ -48,9 +58,22 @@ class WallpaperLyricsController(
         }
     }
 
+    init {
+        prevBtn.setOnClickListener { activity.mediaSessionMonitor.activeController?.transportControls?.skipToPrevious() }
+        nextBtn.setOnClickListener { activity.mediaSessionMonitor.activeController?.transportControls?.skipToNext() }
+        playPauseBtn.setOnClickListener {
+            val controller = activity.mediaSessionMonitor.activeController ?: return@setOnClickListener
+            if (controller.playbackState?.state == PlaybackState.STATE_PLAYING) {
+                controller.transportControls.pause()
+            } else {
+                controller.transportControls.play()
+            }
+        }
+    }
+
     fun setup() {
         // Listening starts lazily from onPageShown/onActivityResume so an idle launcher never
-        // registers a media-session listener for a feature it isn't displaying.
+        // registers a media-session listener for a page that isn't displayed.
     }
 
     fun onPageShown() {
@@ -82,14 +105,14 @@ class WallpaperLyricsController(
     }
 
     fun onSettingsUpdated() {
-        updateActiveState()
+        updateLyricsVisibility()
     }
 
-    private fun isFeatureEnabled(): Boolean =
+    private fun isLyricsFeatureEnabled(): Boolean =
         activity.sharedPreferences.getBoolean(Constants.Prefs.WALLPAPER_LYRICS_ENABLED, true)
 
     private fun updateActiveState() {
-        val shouldListen = isFeatureEnabled() && pageVisible && activityResumed
+        val shouldListen = pageVisible && activityResumed
         if (shouldListen && !listenerAttached) {
             activity.mediaSessionMonitor.addListener(this)
             listenerAttached = true
@@ -100,24 +123,27 @@ class WallpaperLyricsController(
             // of short-circuiting on an unchanged NowPlaying and leaving the view hidden.
             currentTrack = null
             lyricsResult = null
+            latestPlaybackState = null
             lastLineIndex = Int.MIN_VALUE
-            hide()
+            hideLyrics()
+            updateControlsVisibility()
         }
         updateTickerState()
     }
 
     override fun onTrackChanged(track: NowPlaying?) {
+        updateControlsVisibility(track)
         if (track == currentTrack) return
         currentTrack = track
         lyricsResult = null
         lastLineIndex = Int.MIN_VALUE
-        hide()
+        hideLyrics()
 
         if (track != null && track.title.isNotBlank() && track.artist.isNotBlank()) {
             lyricsManager.fetch(track) { result ->
                 if (track == currentTrack) {
                     lyricsResult = result
-                    render()
+                    renderLyrics()
                 }
             }
         }
@@ -125,23 +151,43 @@ class WallpaperLyricsController(
     }
 
     override fun onPlaybackStateChanged(state: PlaybackState?) {
+        latestPlaybackState = state
+        playPauseBtn.setImageResource(
+            if (state?.state == PlaybackState.STATE_PLAYING) R.drawable.ic_pause else R.drawable.ic_play
+        )
         updateTickerState()
     }
 
-    private fun render() {
+    private fun updateControlsVisibility(track: NowPlaying? = currentTrack) {
+        controlsContainer.visibility = if (track != null) View.VISIBLE else View.GONE
+    }
+
+    private fun updateLyricsVisibility() {
+        if (!isLyricsFeatureEnabled()) {
+            hideLyrics()
+        } else {
+            renderLyrics()
+        }
+    }
+
+    private fun renderLyrics() {
+        if (!isLyricsFeatureEnabled()) {
+            hideLyrics()
+            return
+        }
         when (val result = lyricsResult) {
             is LyricsResult.Synced -> {
-                container.visibility = View.VISIBLE
+                lyricsContainer.visibility = View.VISIBLE
                 lastLineIndex = Int.MIN_VALUE
                 updateCurrentLine()
             }
             is LyricsResult.Plain -> {
-                container.visibility = View.VISIBLE
+                lyricsContainer.visibility = View.VISIBLE
                 prevText.text = ""
                 nextText.text = ""
                 currentText.text = result.text
             }
-            LyricsResult.NotFound, null -> hide()
+            LyricsResult.NotFound, null -> hideLyrics()
         }
         updateTickerState()
     }
@@ -161,13 +207,13 @@ class WallpaperLyricsController(
         currentText.animate().alpha(1f).setDuration(CROSSFADE_MS).start()
     }
 
-    private fun hide() {
-        container.visibility = View.GONE
+    private fun hideLyrics() {
+        lyricsContainer.visibility = View.GONE
     }
 
     private fun updateTickerState() {
-        val hasSyncedLyrics = lyricsResult is LyricsResult.Synced
-        val isPlaying = activity.mediaSessionMonitor.activeController?.playbackState?.state == PlaybackState.STATE_PLAYING
+        val hasSyncedLyrics = isLyricsFeatureEnabled() && lyricsResult is LyricsResult.Synced
+        val isPlaying = latestPlaybackState?.state == PlaybackState.STATE_PLAYING
         if (listenerAttached && hasSyncedLyrics && isPlaying) startTicker() else stopTicker()
     }
 

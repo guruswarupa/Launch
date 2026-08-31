@@ -128,8 +128,8 @@ class SettingsChangeCoordinator(
             views.searchContainer.layoutParams = params
         }
 
-        if (activity.isWallpaperLyricsControllerInitialized()) {
-            activity.wallpaperLyricsController.onSettingsUpdated()
+        if (activity.isWallpaperMediaControllerInitialized()) {
+            activity.wallpaperMediaController.onSettingsUpdated()
         }
 
         activity.timeDateManager.setUse24HourFormat(use24HourClock)
