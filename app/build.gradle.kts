@@ -13,7 +13,7 @@ android {
         applicationId = "com.guruswarupa.launch"
         minSdk = 26
         targetSdk = 36
-        versionCode = 66
+        versionCode = 67
         versionName = "7.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -28,7 +28,7 @@ android {
                 "proguard-rules.pro"
             )
             ndk {
-                debugSymbolLevel = "none"
+                debugSymbolLevel = "FULL"
             }
         }
     }
