@@ -662,6 +662,7 @@
     <string name="privacy_dashboard">Privacy Dashboard</string>
     <string name="enable_widgets_page">Enable widgets page</string>
     <string name="show_widgets_above_search_bar">Show widgets above search bar</string>
+    <string name="show_lyrics_on_wallpaper_page">Show song lyrics on wallpaper page</string>
     <string name="configure_home_widgets">Configure Home Widgets</string>
     <string name="news_feed">News Feed</string>
     <string name="enable_news_page">Enable news page</string>

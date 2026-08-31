@@ -2282,6 +2282,30 @@
                                 app:trackTint="?attr/appAccent" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/show_lyrics_on_wallpaper_page"
+                                android:textColor="?attr/appTextPrimary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/wallpaper_lyrics_enabled_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
+                        </LinearLayout>
+
                         <Button
                             android:id="@+id/configure_widgets_button"
                             android:layout_width="match_parent"

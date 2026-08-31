@@ -92,6 +92,7 @@ object Constants {
         const val RSS_PAGE_ENABLED = "rss_page_enabled"
         const val WIDGETS_PAGE_ENABLED = "widgets_page_enabled"
         const val TOP_WIDGET_ENABLED = "top_widget_enabled"
+        const val WALLPAPER_LYRICS_ENABLED = "wallpaper_lyrics_enabled"
         const val RSS_FEED_URLS = "rss_feed_urls"
         const val RSS_CUSTOM_FEED_URLS = "rss_custom_feed_urls"
         const val RSS_FEED_CACHE = "rss_feed_cache"

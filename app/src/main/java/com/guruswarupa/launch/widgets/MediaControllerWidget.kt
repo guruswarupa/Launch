@@ -1,11 +1,7 @@
 package com.guruswarupa.launch.widgets
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.media.MediaMetadata
-import android.media.session.MediaController
-import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
 import android.provider.Settings
 import android.view.View
@@ -14,9 +10,15 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import com.guruswarupa.launch.R
-import com.guruswarupa.launch.services.LaunchNotificationListenerService
+import com.guruswarupa.launch.managers.MediaSessionListener
+import com.guruswarupa.launch.managers.MediaSessionMonitor
+import com.guruswarupa.launch.managers.NowPlaying
 
-class MediaControllerWidget(private val context: Context, private val rootView: View) {
+class MediaControllerWidget(
+    private val context: Context,
+    private val rootView: View,
+    private val mediaSessionMonitor: MediaSessionMonitor
+) : MediaSessionListener {
     private val trackTitle: TextView = rootView.findViewById(R.id.media_track_title)
     private val artistName: TextView = rootView.findViewById(R.id.media_artist)
     private val playPauseBtn: ImageButton = rootView.findViewById(R.id.media_play_pause)
@@ -25,95 +27,46 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
     private val controlsLayout: View = rootView.findViewById(R.id.media_controls_layout)
     private val permissionButton: Button = rootView.findViewById(R.id.request_media_permission_button)
 
-    private var activeController: MediaController? = null
-    private val mediaSessionManager = context.getSystemService(Context.MEDIA_SESSION_SERVICE) as MediaSessionManager
-    private val componentName = ComponentName(context, LaunchNotificationListenerService::class.java)
-    private var sessionListenerRegistered = false
-
-    private val callback = object : MediaController.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackState?) {
-            updatePlaybackState(state)
-        }
-
-        override fun onMetadataChanged(metadata: MediaMetadata?) {
-            updateMetadata(metadata)
-        }
-    }
-
-    private val sessionListener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
-        val newController = controllers?.firstOrNull()
-        if (newController != activeController) {
-            activeController?.unregisterCallback(callback)
-            activeController = newController
-            newController?.registerCallback(callback)
-
-            updateMetadata(newController?.metadata)
-            updatePlaybackState(newController?.playbackState)
-        }
-    }
-
     init {
         setupListeners()
         permissionButton.setOnClickListener {
             openNotificationSettings()
         }
-        registerSessionListener()
+        mediaSessionMonitor.addListener(this)
         refreshController()
     }
 
     private fun setupListeners() {
         playPauseBtn.setOnClickListener {
-            activeController?.playbackState?.let { state ->
+            mediaSessionMonitor.activeController?.playbackState?.let { state ->
                 if (state.state == PlaybackState.STATE_PLAYING) {
-                    activeController?.transportControls?.pause()
+                    mediaSessionMonitor.activeController?.transportControls?.pause()
                 } else {
-                    activeController?.transportControls?.play()
+                    mediaSessionMonitor.activeController?.transportControls?.play()
                 }
             }
         }
-        prevBtn.setOnClickListener { activeController?.transportControls?.skipToPrevious() }
-        nextBtn.setOnClickListener { activeController?.transportControls?.skipToNext() }
-    }
-
-    private fun registerSessionListener() {
-        if (!sessionListenerRegistered && isNotificationListenerEnabled()) {
-            try {
-                mediaSessionManager.addOnActiveSessionsChangedListener(sessionListener, componentName)
-                sessionListenerRegistered = true
-            } catch (e: SecurityException) {
-                sessionListenerRegistered = false
-            }
-        }
+        prevBtn.setOnClickListener { mediaSessionMonitor.activeController?.transportControls?.skipToPrevious() }
+        nextBtn.setOnClickListener { mediaSessionMonitor.activeController?.transportControls?.skipToNext() }
     }
 
     fun refreshController() {
-        if (!isNotificationListenerEnabled()) {
+        if (!mediaSessionMonitor.isNotificationListenerEnabled()) {
             showPermissionState()
             return
         }
 
-        try {
-            permissionButton.visibility = View.GONE
-            controlsLayout.visibility = View.VISIBLE
+        permissionButton.visibility = View.GONE
+        controlsLayout.visibility = View.VISIBLE
+        mediaSessionMonitor.refresh()
+    }
 
-            if (!sessionListenerRegistered) {
-                registerSessionListener()
-            }
+    override fun onTrackChanged(track: NowPlaying?) {
+        updateMetadata(track)
+    }
 
-            val controllers = mediaSessionManager.getActiveSessions(componentName)
-            val newController = controllers?.firstOrNull()
-
-            if (newController != activeController) {
-                activeController?.unregisterCallback(callback)
-                activeController = newController
-                activeController?.registerCallback(callback)
-
-                updateMetadata(activeController?.metadata)
-                updatePlaybackState(activeController?.playbackState)
-            }
-        } catch (e: SecurityException) {
-            showPermissionState()
-        }
+    override fun onPlaybackStateChanged(state: PlaybackState?) {
+        updatePlaybackState(state)
     }
 
     private fun showPermissionState() {
@@ -123,10 +76,10 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
         permissionButton.visibility = View.VISIBLE
     }
 
-    private fun updateMetadata(metadata: MediaMetadata?) {
-        if (metadata != null) {
-            trackTitle.text = metadata.getString(MediaMetadata.METADATA_KEY_TITLE) ?: "Unknown Track"
-            artistName.text = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST) ?: "Unknown Artist"
+    private fun updateMetadata(track: NowPlaying?) {
+        if (track != null) {
+            trackTitle.text = track.title.ifEmpty { "Unknown Track" }
+            artistName.text = track.artist.ifEmpty { "Unknown Artist" }
         } else {
             trackTitle.text = context.getString(R.string.not_playing)
             artistName.text = ""
@@ -138,20 +91,6 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
             playPauseBtn.setImageResource(R.drawable.ic_pause)
         } else {
             playPauseBtn.setImageResource(R.drawable.ic_play)
-        }
-    }
-
-    private fun isNotificationListenerEnabled(): Boolean {
-        val packageName = context.packageName
-        val flat = Settings.Secure.getString(
-            context.contentResolver,
-            "enabled_notification_listeners"
-        )
-        if (flat.isNullOrEmpty()) return false
-        val names = flat.split(":")
-        return names.any { name ->
-            val componentName = ComponentName.unflattenFromString(name)
-            componentName?.packageName == packageName
         }
     }
 
@@ -167,14 +106,6 @@ class MediaControllerWidget(private val context: Context, private val rootView: 
     }
 
     fun cleanup() {
-        activeController?.unregisterCallback(callback)
-        activeController = null
-        if (sessionListenerRegistered) {
-            try {
-                mediaSessionManager.removeOnActiveSessionsChangedListener(sessionListener)
-            } catch (_: Exception) {
-            }
-            sessionListenerRegistered = false
-        }
+        mediaSessionMonitor.removeListener(this)
     }
 }

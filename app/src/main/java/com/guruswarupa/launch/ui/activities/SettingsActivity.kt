@@ -777,6 +777,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         applySectionExpandedState(wContent, wArrow, widgetsSectionExpanded)
         val widgetsEnabledSwitch = findViewById<SwitchCompat>(R.id.widgets_page_enabled_switch)
         val topWidgetEnabledSwitch = findViewById<SwitchCompat>(R.id.top_widget_enabled_switch)
+        val wallpaperLyricsEnabledSwitch = findViewById<SwitchCompat>(R.id.wallpaper_lyrics_enabled_switch)
         val configureWidgetsButton = findViewById<View>(R.id.configure_widgets_button)
         fun applyWidgetsSwitchColors(isEnabled: Boolean) {
             val color = if (isEnabled) ThemeManager.color(this, R.attr.appAccent) else ThemeManager.color(this, R.attr.appTextPrimary)
@@ -790,11 +791,18 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             topWidgetEnabledSwitch.thumbTintList = ColorStateList.valueOf(color)
             topWidgetEnabledSwitch.trackTintList = ColorStateList.valueOf(color)
         }
+        fun applyWallpaperLyricsSwitchColors(isEnabled: Boolean) {
+            val color = if (isEnabled) ThemeManager.color(this, R.attr.appAccent) else ThemeManager.color(this, R.attr.appTextPrimary)
+            wallpaperLyricsEnabledSwitch.thumbTintList = ColorStateList.valueOf(color)
+            wallpaperLyricsEnabledSwitch.trackTintList = ColorStateList.valueOf(color)
+        }
 
         widgetsEnabledSwitch.isChecked = prefs.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
         topWidgetEnabledSwitch.isChecked = prefs.getBoolean(Constants.Prefs.TOP_WIDGET_ENABLED, true)
+        wallpaperLyricsEnabledSwitch.isChecked = prefs.getBoolean(Constants.Prefs.WALLPAPER_LYRICS_ENABLED, true)
         applyWidgetsSwitchColors(widgetsEnabledSwitch.isChecked)
         applyTopWidgetSwitchColors(topWidgetEnabledSwitch.isChecked)
+        applyWallpaperLyricsSwitchColors(wallpaperLyricsEnabledSwitch.isChecked)
         widgetsEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
             applyWidgetsSwitchColors(isChecked)
             prefs.edit { putBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, isChecked) }
@@ -804,6 +812,11 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         topWidgetEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
             applyTopWidgetSwitchColors(isChecked)
             prefs.edit { putBoolean(Constants.Prefs.TOP_WIDGET_ENABLED, isChecked) }
+            notifySettingsChanged()
+        }
+        wallpaperLyricsEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            applyWallpaperLyricsSwitchColors(isChecked)
+            prefs.edit { putBoolean(Constants.Prefs.WALLPAPER_LYRICS_ENABLED, isChecked) }
             notifySettingsChanged()
         }
 

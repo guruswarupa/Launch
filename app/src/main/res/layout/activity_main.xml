@@ -932,6 +932,13 @@
                 android:shadowRadius="2"
                 android:text="@string/monday_01_jan"/>
         </LinearLayout>
+
+        <include
+            layout="@layout/wallpaper_lyrics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="96dp"/>
     </FrameLayout>
 
 </com.guruswarupa.launch.ui.views.SafeDrawerLayout>

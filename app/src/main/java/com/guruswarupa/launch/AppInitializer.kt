@@ -194,6 +194,12 @@ class AppInitializer(private val activity: MainActivity) {
             aiChatPage.setup()
         }
 
+        mediaSessionMonitor = MediaSessionMonitor(activity)
+        findViewById<View?>(R.id.wallpaper_drawer)?.let { wallpaperDrawerView ->
+            wallpaperLyricsController = com.guruswarupa.launch.ui.WallpaperLyricsController(activity, wallpaperDrawerView)
+            wallpaperLyricsController.setup()
+        }
+
         drawerManager = DrawerManager(
             activity, screenPagerManager, gestureHandler, usageStatsDisplayManager, activityInitializer,
             themeCheckCallback = { checkAndUpdateThemeIfNeeded() }

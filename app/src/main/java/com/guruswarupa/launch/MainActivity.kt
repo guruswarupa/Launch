@@ -168,6 +168,11 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var aiChatPage: com.guruswarupa.launch.ui.AiChatPage
 
+    lateinit var mediaSessionMonitor: com.guruswarupa.launch.managers.MediaSessionMonitor
+
+    lateinit var wallpaperLyricsController: com.guruswarupa.launch.ui.WallpaperLyricsController
+    fun isWallpaperLyricsControllerInitialized() = ::wallpaperLyricsController.isInitialized
+
     lateinit var voiceSearchManager: VoiceSearchManager
 
     lateinit var usageStatsRefreshManager: UsageStatsRefreshManager
@@ -662,9 +667,23 @@ class MainActivity : AppCompatActivity() {
                         aiChatPage.onPageHidden()
                     }
                 }
+                if (::wallpaperLyricsController.isInitialized) {
+                    if (page == ScreenPagerManager.Page.WALLPAPER) {
+                        wallpaperLyricsController.onPageShown()
+                    } else {
+                        wallpaperLyricsController.onPageHidden()
+                    }
+                }
             }
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
                 initializeDeferredWidgets()
+            }
+            if (::wallpaperLyricsController.isInitialized) {
+                if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WALLPAPER) {
+                    wallpaperLyricsController.onPageShown()
+                } else {
+                    wallpaperLyricsController.onPageHidden()
+                }
             }
             val currentPage = screenPagerManager.getCurrentPage()
             val isCurrentFullyTransparent = currentPage == ScreenPagerManager.Page.WALLPAPER ||
@@ -855,6 +874,12 @@ class MainActivity : AppCompatActivity() {
         if (::aiChatPage.isInitialized) {
             aiChatPage.onActivityDestroy()
         }
+        if (::wallpaperLyricsController.isInitialized) {
+            wallpaperLyricsController.onActivityDestroy()
+        }
+        if (::mediaSessionMonitor.isInitialized) {
+            mediaSessionMonitor.cleanup()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -882,6 +907,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (::aiChatPage.isInitialized) {
             aiChatPage.onActivityResume()
+        }
+        if (::wallpaperLyricsController.isInitialized) {
+            wallpaperLyricsController.onActivityResume()
         }
 
         // If widgets were changed in configuration, ensure they are reordered correctly
@@ -920,6 +948,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (::aiChatPage.isInitialized) {
             aiChatPage.onActivityPause()
+        }
+        if (::wallpaperLyricsController.isInitialized) {
+            wallpaperLyricsController.onActivityPause()
         }
     }
 
