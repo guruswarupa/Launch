@@ -335,16 +335,17 @@ class AiChatPage(
         }
     }
 
-    /** Pushes the input bar above the on-screen keyboard by shrinking the content column with bottom padding equal to the IME's height, instead of relying on windowSoftInputMode (which would resize every page in the shared pager, not just this one). */
+    /** Pushes the input bar above the on-screen keyboard and the navigation bar by shrinking the content column with bottom padding equal to whichever is taller, instead of relying on windowSoftInputMode (which would resize every page in the shared pager, not just this one). IME insets already extend past the nav bar when the keyboard is up, so the two are maxed rather than summed. */
     private fun setupKeyboardAvoidance() {
         val initialBottomPadding = contentContainer.paddingBottom
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBarBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
             contentContainer.setPadding(
                 contentContainer.paddingLeft,
                 contentContainer.paddingTop,
                 contentContainer.paddingRight,
-                initialBottomPadding + imeBottom
+                initialBottomPadding + maxOf(imeBottom, navBarBottom)
             )
             insets
         }
