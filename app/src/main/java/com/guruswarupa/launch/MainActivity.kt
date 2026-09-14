@@ -652,11 +652,9 @@ class MainActivity : AppCompatActivity() {
         if (::screenPagerManager.isInitialized) {
             screenPagerManager.setOnPageChanged { page ->
                 viewModel.updateCurrentPage(page)
-                val isFullyTransparentPage = page == ScreenPagerManager.Page.WALLPAPER ||
-                        page == ScreenPagerManager.Page.WIDGETS ||
-                        page == ScreenPagerManager.Page.RSS ||
-                        page == ScreenPagerManager.Page.AI_CHAT
-                systemBarManager.updateSystemBars(isFullyTransparentPage)
+                // All pages share the same translucent system-bar scrim so nothing
+                // changes mid-swipe (avoids the status bar flicker between pages).
+                systemBarManager.updateSystemBars(false)
                 if (page == ScreenPagerManager.Page.WIDGETS) {
                     initializeDeferredWidgets()
                 }
@@ -685,12 +683,7 @@ class MainActivity : AppCompatActivity() {
                     wallpaperMediaController.onPageHidden()
                 }
             }
-            val currentPage = screenPagerManager.getCurrentPage()
-            val isCurrentFullyTransparent = currentPage == ScreenPagerManager.Page.WALLPAPER ||
-                    currentPage == ScreenPagerManager.Page.WIDGETS ||
-                    currentPage == ScreenPagerManager.Page.RSS ||
-                    currentPage == ScreenPagerManager.Page.AI_CHAT
-            systemBarManager.updateSystemBars(isCurrentFullyTransparent)
+            systemBarManager.updateSystemBars(false)
         }
     }
 
