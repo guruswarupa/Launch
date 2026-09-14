@@ -153,6 +153,9 @@ class SettingsChangeCoordinator(
         if (activity.isWallpaperMediaControllerInitialized()) {
             activity.wallpaperMediaController.onSettingsUpdated()
         }
+        if (activity.isStockTopWidgetMediaControllerInitialized()) {
+            activity.stockTopWidgetMediaController.onSettingsUpdated()
+        }
 
         activity.timeDateManager.setUse24HourFormat(use24HourClock)
 

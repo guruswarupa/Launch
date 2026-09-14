@@ -179,6 +179,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var wallpaperMediaController: com.guruswarupa.launch.ui.WallpaperMediaController
     fun isWallpaperMediaControllerInitialized() = ::wallpaperMediaController.isInitialized
 
+    // Stock's home page has no separate "wallpaper page" to swipe to (see
+    // ScreenPagerManager.buildActivePages), so the same now-playing controls + lyrics get a
+    // second instance living directly in Stock's top clock widget instead.
+    lateinit var stockTopWidgetMediaController: com.guruswarupa.launch.ui.WallpaperMediaController
+    fun isStockTopWidgetMediaControllerInitialized() = ::stockTopWidgetMediaController.isInitialized
+
     lateinit var voiceSearchManager: VoiceSearchManager
 
     lateinit var usageStatsRefreshManager: UsageStatsRefreshManager
@@ -708,6 +714,13 @@ class MainActivity : AppCompatActivity() {
                         wallpaperMediaController.onPageHidden()
                     }
                 }
+                if (::stockTopWidgetMediaController.isInitialized) {
+                    if (page == ScreenPagerManager.Page.CENTER && com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+                        stockTopWidgetMediaController.onPageShown()
+                    } else {
+                        stockTopWidgetMediaController.onPageHidden()
+                    }
+                }
             }
             if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
                 initializeDeferredWidgets()
@@ -717,6 +730,13 @@ class MainActivity : AppCompatActivity() {
                     wallpaperMediaController.onPageShown()
                 } else {
                     wallpaperMediaController.onPageHidden()
+                }
+            }
+            if (::stockTopWidgetMediaController.isInitialized) {
+                if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.CENTER && com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+                    stockTopWidgetMediaController.onPageShown()
+                } else {
+                    stockTopWidgetMediaController.onPageHidden()
                 }
             }
             val currentPage = screenPagerManager.getCurrentPage()
@@ -912,6 +932,9 @@ class MainActivity : AppCompatActivity() {
         if (::wallpaperMediaController.isInitialized) {
             wallpaperMediaController.onActivityDestroy()
         }
+        if (::stockTopWidgetMediaController.isInitialized) {
+            stockTopWidgetMediaController.onActivityDestroy()
+        }
         if (::mediaSessionMonitor.isInitialized) {
             mediaSessionMonitor.cleanup()
         }
@@ -945,6 +968,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (::wallpaperMediaController.isInitialized) {
             wallpaperMediaController.onActivityResume()
+        }
+        if (::stockTopWidgetMediaController.isInitialized) {
+            stockTopWidgetMediaController.onActivityResume()
         }
 
         // If widgets were changed in configuration, ensure they are reordered correctly
@@ -989,6 +1015,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (::wallpaperMediaController.isInitialized) {
             wallpaperMediaController.onActivityPause()
+        }
+        if (::stockTopWidgetMediaController.isInitialized) {
+            stockTopWidgetMediaController.onActivityPause()
         }
     }
 

@@ -2,7 +2,6 @@ package com.guruswarupa.launch.widgets
 
 class WidgetLifecycleCoordinator {
     lateinit var calculatorWidget: CalculatorWidget
-    lateinit var mediaControllerWidget: MediaControllerWidget
     lateinit var workoutWidget: WorkoutWidget
     lateinit var physicalActivityWidget: PhysicalActivityWidget
     lateinit var compassWidget: CompassWidget
@@ -20,7 +19,6 @@ class WidgetLifecycleCoordinator {
     lateinit var networkStatsWidget: NetworkStatsWidget
     lateinit var deviceInfoWidget: DeviceInfoWidget
 
-    fun isMediaControllerWidgetInitialized() = ::mediaControllerWidget.isInitialized
     fun isPhysicalActivityWidgetInitialized() = ::physicalActivityWidget.isInitialized
     fun isCompassWidgetInitialized() = ::compassWidget.isInitialized
     fun isPressureWidgetInitialized() = ::pressureWidget.isInitialized
@@ -75,7 +73,6 @@ class WidgetLifecycleCoordinator {
 
     fun setupDefaultLifecycle() {
         widgets.clear()
-        register({ ::mediaControllerWidget.isInitialized }, { mediaControllerWidget.refreshController() }, { }, { mediaControllerWidget.cleanup() })
         register({ ::yearProgressWidget.isInitialized }, { yearProgressWidget.onResume() }, { yearProgressWidget.onPause() }, { yearProgressWidget.cleanup() })
         register({ ::physicalActivityWidget.isInitialized }, { physicalActivityWidget.onResume() }, { physicalActivityWidget.onPause() }, { physicalActivityWidget.cleanup() })
         register({ ::compassWidget.isInitialized }, { compassWidget.onResume() }, { compassWidget.onPause() }, { compassWidget.cleanup() })

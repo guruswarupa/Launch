@@ -62,7 +62,6 @@ class WidgetVisibilityManager(
     private fun updateSimpleWidgetContainers(widgetMap: Map<String, WidgetConfigurationManager.WidgetInfo>): List<String> {
         val failedWidgets = mutableListOf<String>()
         val simpleWidgets = listOf(
-            "media_controller_widget_container" to com.guruswarupa.launch.R.id.media_controller_widget_container,
             "calendar_events_widget_container" to com.guruswarupa.launch.R.id.calendar_events_widget_container,
             "countdown_widget_container" to com.guruswarupa.launch.R.id.countdown_widget_container,
             "dns_widget_container" to com.guruswarupa.launch.R.id.dns_widget_container,
@@ -420,7 +419,6 @@ class WidgetVisibilityManager(
     private fun getWidgetViewById(widgetId: String): View? {
         // Always try to find the view from activity first, regardless of current parent
         val view = when (widgetId) {
-            "media_controller_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.media_controller_widget_container)
             "calendar_events_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.calendar_events_widget_container)
             "countdown_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.countdown_widget_container)
             "dns_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.dns_widget_container)

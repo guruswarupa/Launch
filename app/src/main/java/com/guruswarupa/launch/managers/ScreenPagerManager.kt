@@ -53,9 +53,13 @@ class ScreenPagerManager(
     private var pagingEnabled = true
 
     companion object {
-        private const val PAGE_SWITCH_THRESHOLD = 0.12f
-        private const val PAGE_SWITCH_SETTLE_THRESHOLD = 0.22f
-        private const val FLING_VELOCITY_MULTIPLIER = 4
+        // A committed drag needs to cross ~a third of the page before it counts as a swipe (was
+        // 0.12 - just a light flick was enough to change pages, which read as accidental) -
+        // matches roughly how Android's own ViewPager behaves by default. A fast fling still
+        // switches pages regardless of distance, same as before.
+        private const val PAGE_SWITCH_THRESHOLD = 0.3f
+        private const val PAGE_SWITCH_SETTLE_THRESHOLD = 0.42f
+        private const val FLING_VELOCITY_MULTIPLIER = 5
     }
 
     fun setup() {
@@ -278,6 +282,15 @@ class ScreenPagerManager(
         }
     }
 
+    /**
+     * Each page (RSS, Widgets, Home, AI Chat, Wallpaper) draws its own full opaque background
+     * with nothing shared behind the page strip - scaling or extra-translating a page during the
+     * swipe (an earlier version of this did both, for a "depth" look) shrinks/shifts it away from
+     * its neighbor and opens a gap that shows raw window background through it, which reads as
+     * visually broken rather than a nicer transition. Alpha is the one transform that's free of
+     * that risk (it never changes a page's bounds), so lean on that alone, just far more visibly
+     * than before.
+     */
     private fun applyPageTransitions(scrollX: Int) {
         if (pageWidth <= 0) {
             return
@@ -290,7 +303,7 @@ class ScreenPagerManager(
             val distanceFromCenter = kotlin.math.abs(scrollX - pageCenterX).toFloat()
             val fraction = (distanceFromCenter / pageWidth).coerceIn(0f, 1f)
 
-            page.alpha = 1f - (fraction * 0.08f)
+            page.alpha = 1f - (fraction * 0.55f)
             page.scaleX = 1f
             page.scaleY = 1f
             page.translationX = 0f

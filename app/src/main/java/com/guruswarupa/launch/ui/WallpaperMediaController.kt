@@ -1,12 +1,15 @@
 package com.guruswarupa.launch.ui
 
+import android.content.Intent
 import android.media.session.PlaybackState
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.LrcParser
@@ -17,13 +20,14 @@ import com.guruswarupa.launch.managers.NowPlaying
 import com.guruswarupa.launch.models.Constants
 
 /**
- * The wallpaper page's now-playing presence (see ScreenPagerManager.Page.WALLPAPER): a small
- * floating transport-control pill plus, just below it, auto-scrolling synced lyrics. Both
- * pieces share one MediaSessionMonitor subscription. The controls pill shows whenever a media
- * session exists (mirrors the always-on media controller widget); the lyrics block additionally
- * requires the Settings toggle (on by default) and a lyrics match. Everything hides itself
- * rather than surfacing an error/permission state - the media controller widget on the widgets
- * page already owns that conversation.
+ * A now-playing presence: a small floating transport-control pill plus, just below it,
+ * auto-scrolling synced lyrics - used both on the wallpaper page (see
+ * ScreenPagerManager.Page.WALLPAPER) and, as a second instance, inside Stock's home top widget
+ * (see MainActivity.stockTopWidgetMediaController). Both pieces share one MediaSessionMonitor
+ * subscription. The controls pill shows whenever a media session exists; the lyrics block
+ * additionally requires the Settings toggle (on by default) and a lyrics match. When
+ * notification listener access - what the whole media session depends on - isn't granted, a
+ * tappable prompt takes this spot instead of it just staying silently blank.
  */
 class WallpaperMediaController(
     private val activity: MainActivity,
@@ -39,6 +43,8 @@ class WallpaperMediaController(
     private val prevText: TextView = rootView.findViewById(R.id.lyrics_prev)
     private val currentText: TextView = rootView.findViewById(R.id.lyrics_current)
     private val nextText: TextView = rootView.findViewById(R.id.lyrics_next)
+
+    private val permissionPrompt: LinearLayout = rootView.findViewById(R.id.wallpaper_media_permission_prompt)
 
     private val lyricsManager by lazy { LyricsManager(activity, activity.backgroundExecutor) }
     private val tickHandler = Handler(Looper.getMainLooper())
@@ -68,6 +74,20 @@ class WallpaperMediaController(
             } else {
                 controller.transportControls.play()
             }
+        }
+        permissionPrompt.setOnClickListener { openNotificationSettings() }
+    }
+
+    /** Same notification-listener request flow used elsewhere in the app (e.g. PermissionManager). */
+    private fun openNotificationSettings() {
+        try {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            activity.startActivity(intent)
+            Toast.makeText(activity, activity.getString(R.string.toast_enable_launch_in_the_list), Toast.LENGTH_LONG).show()
+        } catch (_: Exception) {
+            Toast.makeText(activity, activity.getString(R.string.toast_could_not_open_settings), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -113,10 +133,17 @@ class WallpaperMediaController(
 
     private fun updateActiveState() {
         val shouldListen = pageVisible && activityResumed
-        if (shouldListen && !listenerAttached) {
+        // Notification listener access is what backs the whole media session - without it this
+        // spot used to just stay permanently blank with nothing telling the user why. Surface a
+        // tappable prompt in its place instead whenever this spot would otherwise be showing.
+        val hasPermission = activity.mediaSessionMonitor.isNotificationListenerEnabled()
+        permissionPrompt.visibility = if (shouldListen && !hasPermission) View.VISIBLE else View.GONE
+
+        val shouldListenNow = shouldListen && hasPermission
+        if (shouldListenNow && !listenerAttached) {
             activity.mediaSessionMonitor.addListener(this)
             listenerAttached = true
-        } else if (!shouldListen && listenerAttached) {
+        } else if (!shouldListenNow && listenerAttached) {
             activity.mediaSessionMonitor.removeListener(this)
             listenerAttached = false
             // Reset so re-attaching later (song unchanged) still re-fetches/re-renders instead

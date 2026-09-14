@@ -31,7 +31,6 @@ class DeferredWidgetInitializer(
         widgetSetupManager.setupTopWidgetData()
 
         with(widgetLifecycleCoordinator) {
-            setup("MediaController") { mediaControllerWidget = widgetSetupManager.setupMediaControllerWidget() }
             setup("Calculator") { calculatorWidget = widgetSetupManager.setupCalculatorWidget() }
             setup("Workout") { workoutWidget = widgetSetupManager.setupWorkoutWidget() }
             setup("PhysicalActivity") { physicalActivityWidget = widgetSetupManager.setupPhysicalActivityWidget(sharedPreferences) }

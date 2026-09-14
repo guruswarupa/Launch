@@ -136,6 +136,22 @@
                         android:fontFamily="sans-serif-light"
                         android:gravity="center"/>
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/stock_top_widget_media_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="12dp">
+
+                    <include layout="@layout/wallpaper_media_permission_prompt" />
+
+                    <include layout="@layout/wallpaper_media_controls" />
+
+                    <include layout="@layout/wallpaper_lyrics" />
+                </LinearLayout>
             </LinearLayout>
 
             
@@ -447,16 +463,6 @@
                     android:gravity="center"
                     android:alpha="0.78" />
             </LinearLayout>
-
-            
-            <LinearLayout
-                android:id="@+id/media_controller_widget_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginVertical="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
 
             <LinearLayout
                 android:id="@+id/calendar_events_widget_container"
@@ -977,6 +983,8 @@
             android:layout_marginBottom="96dp"
             android:orientation="vertical"
             android:gravity="center_horizontal">
+
+            <include layout="@layout/wallpaper_media_permission_prompt" />
 
             <include layout="@layout/wallpaper_media_controls" />
 

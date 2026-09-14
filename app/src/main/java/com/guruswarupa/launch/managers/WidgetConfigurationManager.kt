@@ -15,10 +15,13 @@ class WidgetConfigurationManager(
     companion object {
         private const val PREF_WIDGET_ORDER = "widget_order"
         private const val PREFS_SYSTEM_WIDGETS_KEY = "saved_widgets"
-        private const val REMOVED_NOTIFICATIONS_WIDGET_ID = "notifications_widget_container"
+        // Widget ids that used to be offered but no longer are - kept here (rather than deleted
+        // outright) so a saved order from before the removal doesn't resurrect a dead/broken
+        // entry. Media Controller moved to the wallpaper page and Stock's home widget instead of
+        // being a Widgets-page entry (see WallpaperMediaController).
+        private val REMOVED_WIDGET_IDS = setOf("notifications_widget_container", "media_controller_widget_container")
 
         val IN_APP_WIDGETS = listOf(
-            WidgetInfo("media_controller_widget_container", "Media Controller", false),
             WidgetInfo("calendar_events_widget_container", "Calendar Events", false),
             WidgetInfo("countdown_widget_container", "Countdown", false),
             WidgetInfo("dns_widget_container", "DNS Provider", false),
@@ -93,7 +96,7 @@ class WidgetConfigurationManager(
                     val cls = jsonObject.optString("providerClass").takeIf { it.isNotEmpty() }
                     val widgetId = if (jsonObject.has("appWidgetId")) jsonObject.getInt("appWidgetId") else null
 
-                    if (id != REMOVED_NOTIFICATIONS_WIDGET_ID) {
+                    if (id !in REMOVED_WIDGET_IDS) {
                         val customHeightDp = if (jsonObject.has("customHeightDp")) jsonObject.optInt("customHeightDp") else null
                         savedWidgetsList.add(
                             WidgetInfo(
@@ -282,7 +285,7 @@ class WidgetConfigurationManager(
     fun saveWidgetOrder(widgets: List<WidgetInfo>) {
         val jsonArray = JSONArray()
         widgets.forEach { widget ->
-            if (!widget.isProvider && widget.id != REMOVED_NOTIFICATIONS_WIDGET_ID) {
+            if (!widget.isProvider && widget.id !in REMOVED_WIDGET_IDS) {
                 val jsonObject = JSONObject()
                 jsonObject.put("id", widget.id)
                 jsonObject.put("name", widget.name)

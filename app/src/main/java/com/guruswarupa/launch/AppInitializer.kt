@@ -251,6 +251,10 @@ class AppInitializer(private val activity: MainActivity) {
             wallpaperMediaController = com.guruswarupa.launch.ui.WallpaperMediaController(activity, wallpaperDrawerView)
             wallpaperMediaController.setup()
         }
+        findViewById<View?>(R.id.stock_top_widget_media_wrapper)?.let { stockMediaWrapperView ->
+            stockTopWidgetMediaController = com.guruswarupa.launch.ui.WallpaperMediaController(activity, stockMediaWrapperView)
+            stockTopWidgetMediaController.setup()
+        }
 
         drawerManager = DrawerManager(
             activity, screenPagerManager, gestureHandler, usageStatsDisplayManager, activityInitializer,

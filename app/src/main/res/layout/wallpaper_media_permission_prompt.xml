@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/wallpaper_media_permission_prompt"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/wallpaper_media_pill_background"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_play"
+        app:tint="?attr/appIconTint"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:maxWidth="220dp"
+        android:textSize="13sp"
+        android:textColor="?attr/appTextPrimary"
+        android:text="@string/lbl_to_control_media_please_enable_notification_acce" />
+
+</LinearLayout>

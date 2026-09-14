@@ -105,11 +105,6 @@ class WidgetSetupManager(
         layoutId = R.layout.calculator_widget
     ) { CalculatorWidget(it) }
 
-    fun setupMediaControllerWidget(): MediaControllerWidget = setupInflatedWidget(
-        containerId = R.id.media_controller_widget_container,
-        layoutId = R.layout.media_controller_widget
-    ) { MediaControllerWidget(activity, it, activity.mediaSessionMonitor) }
-
     fun setupWorkoutWidget(): WorkoutWidget = setupInflatedWidget(
         containerId = R.id.workout_widget_container,
         layoutId = R.layout.workout_widget
