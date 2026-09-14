@@ -577,7 +577,7 @@ class MainActivity : AppCompatActivity() {
             reviewPromptManager.recordFirstUseIfNeeded()
         }
         if (!isFinishing) {
-            systemBarManager.makeSystemBarsTransparent()
+            systemBarManager.makeSystemBarsTransparent(isFullyTransparent = true)
         }
 
         scheduleDeferredWidgetPrewarm()

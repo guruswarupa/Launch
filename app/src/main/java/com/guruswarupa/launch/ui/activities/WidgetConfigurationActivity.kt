@@ -67,7 +67,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
         val systemBarManager = SystemBarManager(this, prefs)
         window.decorView.post {
-            systemBarManager.makeSystemBarsTransparent()
+            systemBarManager.makeSystemBarsTransparent(isFullyTransparent = true)
 
             WindowCompat.getInsetsController(window, window.decorView).let { controller ->
                 controller.isAppearanceLightStatusBars = false

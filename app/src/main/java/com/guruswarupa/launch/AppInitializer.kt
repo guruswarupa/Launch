@@ -41,7 +41,7 @@ class AppInitializer(private val activity: MainActivity) {
             setupLifeCycleAndReceivers()
 
             window.decorView.post {
-                systemBarManager.makeSystemBarsTransparent()
+                systemBarManager.makeSystemBarsTransparent(isFullyTransparent = true)
             }
         }
     }

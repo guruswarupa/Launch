@@ -16,8 +16,8 @@ class SystemBarManager(
 ) {
     private var lastAppliedScrimColor: Int? = null
 
-    fun makeSystemBarsTransparent() {
-        updateSystemBars(false)
+    fun makeSystemBarsTransparent(isFullyTransparent: Boolean) {
+        updateSystemBars(isFullyTransparent)
         WindowCompat.getInsetsController(activity.window, activity.window.decorView)?.let { controller ->
             controller.isAppearanceLightStatusBars = false
             controller.isAppearanceLightNavigationBars = false

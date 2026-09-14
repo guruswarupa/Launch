@@ -88,7 +88,11 @@ class LifecycleManager(
         val deps = dependencies
         val now = SystemClock.elapsedRealtime()
 
-        deps.systemBarManager?.makeSystemBarsTransparent()
+        // Every page uses the fully-transparent system-bar style (see MainActivity's
+        // page-changed handler): reassert that on resume, not the "not fully transparent"
+        // scrim — otherwise returning to the app (e.g. from another app) shows a darker
+        // status bar until the next page change corrects it.
+        deps.systemBarManager?.makeSystemBarsTransparent(isFullyTransparent = true)
 
 
         deps.appLockManager?.clearAuthTimeout()
