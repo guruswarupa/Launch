@@ -50,6 +50,7 @@ class ScreenPagerManager(
     private val pageViews = linkedMapOf<Page, View>()
     private var activePages = listOf(Page.WALLPAPER, Page.CENTER, Page.WIDGETS)
     private var suppressNextLayoutSnap = false
+    private var pagingEnabled = true
 
     companion object {
         private const val PAGE_SWITCH_THRESHOLD = 0.12f
@@ -92,6 +93,7 @@ class ScreenPagerManager(
 
         pagerScrollView = object : SafeHorizontalScrollView(activity) {
             override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+                if (!pagingEnabled) return false
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
                         touchStartX = event.x
@@ -225,7 +227,11 @@ class ScreenPagerManager(
         val widgetsEnabled = prefs.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
         val aiAssistantEnabled = prefs.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)
         val pages = mutableListOf<Page>()
-        pages.add(Page.WALLPAPER)
+        // The wallpaper page's big clock duplicates Stock's own top-of-home clock - drop it
+        // there rather than showing the same thing twice a swipe away.
+        if (!com.guruswarupa.launch.utils.LayoutMode.isStock(prefs)) {
+            pages.add(Page.WALLPAPER)
+        }
         if (aiAssistantEnabled) {
             pages.add(Page.AI_CHAT)
         }
@@ -344,6 +350,11 @@ class ScreenPagerManager(
         if (locked && (currentPage == Page.RSS || currentPage == Page.WIDGETS)) {
             openWallpaperPage(animated = true)
         }
+    }
+
+    /** Disables horizontal page swiping entirely, e.g. while the stock app drawer is open. */
+    fun setPagingEnabled(enabled: Boolean) {
+        pagingEnabled = enabled
     }
 
     private fun handleTouchEvent(event: MotionEvent) {

@@ -362,6 +362,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         val gridBtn = findViewById<Button>(R.id.grid_option)
         val listBtn = findViewById<Button>(R.id.list_option)
+        val stockBtn = findViewById<Button>(R.id.stock_option)
         val gridSection = findViewById<LinearLayout>(R.id.grid_columns_section)
         val gridValue = findViewById<TextView>(R.id.grid_columns_value)
         val gridSeek = findViewById<SeekBar>(R.id.grid_columns_seekbar)
@@ -392,21 +393,53 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             override fun onStopTrackingTouch(s: SeekBar?) {}
         })
 
-        updateDisplayStyleButtons(gridBtn, listBtn, selectedStyle)
-        gridSection.isVisible = selectedStyle == Constants.Prefs.VIEW_PREFERENCE_GRID
+        val showAppNameInSection = findViewById<LinearLayout>(R.id.show_app_name_in_grid_section)
+        val showAppNameSwitch = findViewById<SwitchCompat>(R.id.show_app_name_in_grid_switch)
+        val hideAppIconInListSection = findViewById<LinearLayout>(R.id.hide_app_icon_in_list_section)
+        val hideAppIconInListSwitch = findViewById<SwitchCompat>(R.id.hide_app_icon_in_list_switch)
+        val stockDrawerEnabledSection = findViewById<LinearLayout>(R.id.stock_drawer_enabled_section)
+        val stockDrawerEnabledSwitch = findViewById<SwitchCompat>(R.id.stock_drawer_enabled_switch)
+        val stockHotseatSection = findViewById<LinearLayout>(R.id.stock_hotseat_section)
+        val stockHotseatValue = findViewById<TextView>(R.id.stock_hotseat_value)
+        val stockHotseatSeek = findViewById<SeekBar>(R.id.stock_hotseat_seekbar)
 
-        listBtn.setOnClickListener {
-            selectedStyle = Constants.Prefs.VIEW_PREFERENCE_LIST
-            updateDisplayStyleButtons(gridBtn, listBtn, Constants.Prefs.VIEW_PREFERENCE_LIST)
-            gridSection.isVisible = false
-            prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_LIST) }
+        fun applyDisplayStyle(style: String) {
+            selectedStyle = style
+            updateDisplayStyleButtons(gridBtn, listBtn, stockBtn, style)
+            val isGridLike = style == Constants.Prefs.VIEW_PREFERENCE_GRID || style == Constants.Prefs.VIEW_PREFERENCE_STOCK
+            val isStock = style == Constants.Prefs.VIEW_PREFERENCE_STOCK
+            gridSection.isVisible = isGridLike
+            showAppNameInSection.isVisible = isGridLike
+            hideAppIconInListSection.isVisible = style == Constants.Prefs.VIEW_PREFERENCE_LIST
+            stockDrawerEnabledSection.isVisible = isStock
+            stockHotseatSection.isVisible = isStock
+        }
+
+        applyDisplayStyle(selectedStyle)
+
+        stockDrawerEnabledSwitch.isChecked = prefs.getBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, true)
+        stockDrawerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit { putBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, isChecked) }
             notifySettingsChanged()
         }
 
-
-        val showAppNameInSection = findViewById<LinearLayout>(R.id.show_app_name_in_grid_section)
-        val showAppNameSwitch = findViewById<SwitchCompat>(R.id.show_app_name_in_grid_switch)
-        showAppNameInSection.isVisible = selectedStyle == Constants.Prefs.VIEW_PREFERENCE_GRID
+        val minHotseat = 3
+        val maxHotseat = 5
+        var selectedHotseatCount = prefs.getInt(Constants.Prefs.STOCK_HOTSEAT_COUNT, 4).coerceIn(minHotseat, maxHotseat)
+        stockHotseatSeek.max = maxHotseat - minHotseat
+        stockHotseatSeek.progress = selectedHotseatCount - minHotseat
+        stockHotseatValue.text = getString(R.string.stock_hotseat_apps_format, selectedHotseatCount)
+        stockHotseatSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) {
+                selectedHotseatCount = minHotseat + p
+                stockHotseatValue.text = getString(R.string.stock_hotseat_apps_format, selectedHotseatCount)
+                if (f) {
+                    prefs.edit { putInt(Constants.Prefs.STOCK_HOTSEAT_COUNT, selectedHotseatCount) }
+                    notifySettingsChanged()
+                }
+            } override fun onStartTrackingTouch(s: SeekBar?) {}
+            override fun onStopTrackingTouch(s: SeekBar?) {}
+        })
 
         val showAppNamesInGrid = prefs.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
         showAppNameSwitch.isChecked = showAppNamesInGrid
@@ -416,10 +449,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
         }
 
-        val hideAppIconInListSection = findViewById<LinearLayout>(R.id.hide_app_icon_in_list_section)
-        val hideAppIconInListSwitch = findViewById<SwitchCompat>(R.id.hide_app_icon_in_list_switch)
-        hideAppIconInListSection.isVisible = selectedStyle == Constants.Prefs.VIEW_PREFERENCE_LIST
-
         val hideAppIconInList = prefs.getBoolean(Constants.Prefs.HIDE_APP_ICON_IN_LIST, false)
         hideAppIconInListSwitch.isChecked = hideAppIconInList
 
@@ -428,22 +457,21 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
         }
 
-
         gridBtn.setOnClickListener {
-            updateDisplayStyleButtons(gridBtn, listBtn, Constants.Prefs.VIEW_PREFERENCE_GRID)
-            gridSection.isVisible = true
-            showAppNameInSection.isVisible = true
-            hideAppIconInListSection.isVisible = false
+            applyDisplayStyle(Constants.Prefs.VIEW_PREFERENCE_GRID)
             prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_GRID) }
             notifySettingsChanged()
         }
 
         listBtn.setOnClickListener {
-            updateDisplayStyleButtons(gridBtn, listBtn, Constants.Prefs.VIEW_PREFERENCE_LIST)
-            gridSection.isVisible = false
-            showAppNameInSection.isVisible = false
-            hideAppIconInListSection.isVisible = true
+            applyDisplayStyle(Constants.Prefs.VIEW_PREFERENCE_LIST)
             prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_LIST) }
+            notifySettingsChanged()
+        }
+
+        stockBtn.setOnClickListener {
+            applyDisplayStyle(Constants.Prefs.VIEW_PREFERENCE_STOCK)
+            prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_STOCK) }
             notifySettingsChanged()
         }
 
@@ -1329,12 +1357,14 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         arrow.rotation = if (isExpanded) 180f else 0f
     }
 
-    private fun updateDisplayStyleButtons(grid: Button, list: Button, style: String) {
-        val isGrid = style == "grid"
-        grid.alpha = if (isGrid) 1.0f else 0.4f
-        grid.setBackgroundResource(if (isGrid) R.drawable.settings_card_background else 0)
-        list.alpha = if (!isGrid) 1.0f else 0.4f
-        list.setBackgroundResource(if (!isGrid) R.drawable.settings_card_background else 0)
+    private fun updateDisplayStyleButtons(grid: Button, list: Button, stock: Button, style: String) {
+        fun apply(button: Button, isSelected: Boolean) {
+            button.alpha = if (isSelected) 1.0f else 0.4f
+            button.setBackgroundResource(if (isSelected) R.drawable.settings_card_background else 0)
+        }
+        apply(grid, style == Constants.Prefs.VIEW_PREFERENCE_GRID)
+        apply(list, style == Constants.Prefs.VIEW_PREFERENCE_LIST)
+        apply(stock, style == Constants.Prefs.VIEW_PREFERENCE_STOCK)
     }
 
     private fun setupAccessibilityShortcut() {

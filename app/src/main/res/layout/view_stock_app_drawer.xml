@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stock_drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/appSurface"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone"
+    android:elevation="24dp"
+    android:translationZ="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/stock_drawer_search_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/stock_drawer_search_bg"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="?attr/appIconTint"
+                    android:contentDescription="@string/search_type"/>
+
+                <AutoCompleteTextView
+                    android:id="@+id/stock_drawer_search_box"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/stock_drawer_search_hint"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textColorHint="?attr/appTextHint"
+                    android:padding="12dp"
+                    android:background="@null"
+                    android:textSize="16sp"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stock_drawer_add_to_home_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:minHeight="52dp"
+                android:background="@drawable/stock_drawer_search_bg"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:rotation="270"
+                    app:tint="?attr/appAccent"/>
+
+                <TextView
+                    android:id="@+id/stock_drawer_add_to_home_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stock_drag_to_add_to_home"
+                    android:textColor="?attr/appAccent"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif-medium"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/stock_drawer_mode_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:id="@+id/stock_drawer_focus_toggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:minHeight="44dp"
+                android:background="@drawable/stock_drawer_search_bg"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/stock_drawer_focus_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_focus_mode"
+                    app:tint="?attr/appTextPrimary"
+                    android:contentDescription="@string/stock_drawer_focus_label" />
+
+                <TextView
+                    android:id="@+id/stock_drawer_focus_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stock_drawer_focus_label"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stock_drawer_work_toggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:minHeight="44dp"
+                android:background="@drawable/stock_drawer_search_bg"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/stock_drawer_work_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_work_inactive"
+                    app:tint="?attr/appTextPrimary"
+                    android:contentDescription="@string/stock_drawer_work_label" />
+
+                <TextView
+                    android:id="@+id/stock_drawer_work_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stock_drawer_work_label"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.guruswarupa.launch.ui.views.SafeRecyclerView
+            android:id="@+id/stock_drawer_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp"
+            android:clipToPadding="false"
+            android:clipChildren="false" />
+
+        <TextView
+            android:id="@+id/stock_drawer_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="@string/app_list_no_apps_found"
+            android:textColor="?attr/appTextPrimary"
+            android:visibility="gone" />
+    </LinearLayout>
+</FrameLayout>

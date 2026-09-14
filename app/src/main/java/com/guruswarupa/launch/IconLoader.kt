@@ -44,7 +44,6 @@ class IconLoader(
     private val activity: MainActivity,
     private val context: Context,
     private val separatorPackage: String,
-    private val specialPackageNames: Set<String>,
     private val sharedPreferences: android.content.SharedPreferences,
     private val cacheManager: CacheManager
 ) {
@@ -358,8 +357,8 @@ class IconLoader(
 
         val cacheKey = "${packageName}|${app.preferredOrder}"
         val cachedIcon = iconCache[cacheKey]
-        if (packageName in specialPackageNames || cachedIcon != null) {
-            if (cachedIcon != null && holder?.appIcon != null) {
+        if (cachedIcon != null) {
+            if (holder?.appIcon != null) {
                 updateHolderIcon(holder, cacheKey, cachedIcon, onIconReady)
             }
             return

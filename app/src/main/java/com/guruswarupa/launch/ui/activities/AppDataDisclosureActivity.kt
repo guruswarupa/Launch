@@ -1,12 +1,11 @@
 package com.guruswarupa.launch.ui.activities
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Html
-import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnticipateInterpolator
@@ -17,6 +16,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -47,6 +48,10 @@ class AppDataDisclosureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
         setContentView(R.layout.activity_app_data_disclosure)
 
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
@@ -67,7 +72,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
                 val importRoot = findViewById<LinearLayout>(R.id.import_root)
                 val viewModeRoot = findViewById<LinearLayout>(R.id.view_mode_selection_root)
-                val disclosureRoot = findViewById<LinearLayout>(R.id.disclosure_root)
 
                 if (viewModeRoot.visibility == View.VISIBLE) {
                     viewModeRoot.visibility = View.GONE
@@ -75,69 +79,17 @@ class AppDataDisclosureActivity : AppCompatActivity() {
                     importRoot.alpha = 1f
                     importRoot.scaleX = 1f
                     importRoot.scaleY = 1f
-                } else if (importRoot.visibility == View.VISIBLE) {
-                    importRoot.visibility = View.GONE
-                    disclosureRoot.visibility = View.VISIBLE
-                    disclosureRoot.alpha = 1f
-                    disclosureRoot.scaleX = 1f
-                    disclosureRoot.scaleY = 1f
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
                 }
             }
         })
     }
 
     private fun setupViews() {
-        val titleText = findViewById<TextView>(R.id.disclosure_title)
-        val messageText = findViewById<TextView>(R.id.disclosure_message)
-        val linksText = findViewById<TextView>(R.id.disclosure_links)
-        val acceptButton = findViewById<Button>(R.id.accept_button)
-        val declineButton = findViewById<Button>(R.id.decline_button)
-
-        val importRoot = findViewById<LinearLayout>(R.id.import_root)
-        val disclosureRoot = findViewById<LinearLayout>(R.id.disclosure_root)
         val importDataButton = findViewById<Button>(R.id.import_data_button)
         val skipImportButton = findViewById<Button>(R.id.skip_import_button)
-
-        titleText.text = getString(R.string.app_data_disclosure_title)
-
-
-        messageText.text = Html.fromHtml(getString(R.string.app_data_disclosure_message), Html.FROM_HTML_MODE_COMPACT)
-
-        linksText.text = Html.fromHtml(getString(R.string.data_disclosure_links), Html.FROM_HTML_MODE_COMPACT)
-        linksText.movementMethod = LinkMovementMethod.getInstance()
-
-        acceptButton.setOnClickListener {
-
-            val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
-            prefs.edit { putBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, true) }
-
-
-            disclosureRoot.animate()
-                .alpha(0f)
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .setDuration(400)
-                .withEndAction {
-                    disclosureRoot.visibility = View.GONE
-                    importRoot.visibility = View.VISIBLE
-                    importRoot.alpha = 0f
-                    importRoot.scaleX = 1.05f
-                    importRoot.scaleY = 1.05f
-                    importRoot.animate()
-                        .alpha(1f)
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(450)
-                        .setInterpolator(OvershootInterpolator())
-                        .start()
-                }
-                .start()
-        }
-
-        declineButton.setOnClickListener {
-
-            finishAffinity()
-        }
 
         importDataButton.setOnClickListener {
             importLauncher.launch(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -228,7 +180,7 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         val welcomeContainer = findViewById<LinearLayout>(R.id.welcome_container)
         val welcomeText = findViewById<TextView>(R.id.welcome_text)
         val welcomeSubtitle = findViewById<TextView>(R.id.welcome_subtitle)
-        val disclosureRoot = findViewById<LinearLayout>(R.id.disclosure_root)
+        val importRoot = findViewById<LinearLayout>(R.id.import_root)
 
 
         welcomeText.animate()
@@ -263,13 +215,18 @@ class AppDataDisclosureActivity : AppCompatActivity() {
                 .withEndAction {
                     welcomeContainer.visibility = View.GONE
 
+                    // No separate consent step anymore - reaching the first real screen is what
+                    // marks onboarding as done, same as APP_DATA_CONSENT_GIVEN always meant here.
+                    getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE).edit {
+                        putBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, true)
+                    }
 
-                    disclosureRoot.visibility = View.VISIBLE
-                    disclosureRoot.alpha = 0f
-                    disclosureRoot.scaleX = 0.95f
-                    disclosureRoot.scaleY = 0.95f
+                    importRoot.visibility = View.VISIBLE
+                    importRoot.alpha = 0f
+                    importRoot.scaleX = 0.95f
+                    importRoot.scaleY = 0.95f
 
-                    disclosureRoot.animate()
+                    importRoot.animate()
                         .alpha(1f)
                         .scaleX(1f)
                         .scaleY(1f)
@@ -301,6 +258,7 @@ class AppDataDisclosureActivity : AppCompatActivity() {
     private fun setupViewModeSelection() {
         val listModeOption = findViewById<LinearLayout>(R.id.list_mode_option)
         val gridModeOption = findViewById<LinearLayout>(R.id.grid_mode_option)
+        val stockModeOption = findViewById<LinearLayout>(R.id.stock_mode_option)
 
         listModeOption.setOnClickListener {
             selectViewMode(Constants.Prefs.VIEW_PREFERENCE_LIST)
@@ -308,6 +266,10 @@ class AppDataDisclosureActivity : AppCompatActivity() {
 
         gridModeOption.setOnClickListener {
             selectViewMode(Constants.Prefs.VIEW_PREFERENCE_GRID)
+        }
+
+        stockModeOption.setOnClickListener {
+            selectViewMode(Constants.Prefs.VIEW_PREFERENCE_STOCK)
         }
     }
 
@@ -333,8 +295,33 @@ class AppDataDisclosureActivity : AppCompatActivity() {
                     .setDuration(400)
                     .setInterpolator(OvershootInterpolator())
                     .start()
+                animateModeCardsIn()
             }
             .start()
+    }
+
+    /** A small staggered pop-in for the three mode cards, timed just behind [viewModeRoot]'s own fade-in. */
+    private fun animateModeCardsIn() {
+        val cards = listOf(
+            findViewById<View>(R.id.list_mode_option),
+            findViewById<View>(R.id.grid_mode_option),
+            findViewById<View>(R.id.stock_mode_option)
+        )
+        cards.forEachIndexed { index, card ->
+            card.alpha = 0f
+            card.translationY = 28f
+            card.scaleX = 0.88f
+            card.scaleY = 0.88f
+            card.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(420)
+                .setStartDelay(120L + index * 90L)
+                .setInterpolator(OvershootInterpolator(1.1f))
+                .start()
+        }
     }
 
     private fun selectViewMode(mode: String) {
@@ -342,10 +329,10 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         prefs.edit { putString(Constants.Prefs.VIEW_PREFERENCE, mode) }
 
         val viewModeRoot = findViewById<LinearLayout>(R.id.view_mode_selection_root)
-        val selectedOption = if (mode == Constants.Prefs.VIEW_PREFERENCE_LIST) {
-            findViewById<LinearLayout>(R.id.list_mode_option)
-        } else {
-            findViewById<LinearLayout>(R.id.grid_mode_option)
+        val selectedOption = when (mode) {
+            Constants.Prefs.VIEW_PREFERENCE_LIST -> findViewById<LinearLayout>(R.id.list_mode_option)
+            Constants.Prefs.VIEW_PREFERENCE_GRID -> findViewById<LinearLayout>(R.id.grid_mode_option)
+            else -> findViewById<LinearLayout>(R.id.stock_mode_option)
         }
 
         selectedOption.animate()

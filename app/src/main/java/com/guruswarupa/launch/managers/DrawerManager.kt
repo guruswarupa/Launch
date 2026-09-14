@@ -16,7 +16,9 @@ class DrawerManager(
     private val gestureHandler: GestureHandler,
     private val usageStatsDisplayManager: UsageStatsDisplayManager,
     private val activityInitializer: ActivityInitializer,
-    private val themeCheckCallback: () -> Unit
+    private val themeCheckCallback: () -> Unit,
+    private val stockDrawerShownProvider: () -> Boolean = { false },
+    private val hideStockDrawer: () -> Unit = {}
 ) {
     private val handler = Handler(Looper.getMainLooper())
     lateinit var navigationManager: NavigationManager
@@ -40,6 +42,10 @@ class DrawerManager(
 
         activity.onBackPressedDispatcher.addCallback(activity, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (stockDrawerShownProvider()) {
+                    hideStockDrawer()
+                    return
+                }
                 if (::navigationManager.isInitialized) {
                     navigationManager.handleBackPressed {
 

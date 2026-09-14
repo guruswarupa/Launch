@@ -36,7 +36,7 @@ class AppDockManager(
     private val context: Context = activity
     private val dockIconSizePx = (Constants.Dimensions.DOCK_ICON_SIZE_DP * context.resources.displayMetrics.density).toInt()
     private val focusModeKey = "focus_mode_enabled"
-    private val focusModeAllowedAppsKey = "focus_mode_allowed_apps"
+    private val focusModeBlockedAppsKey = "focus_mode_blocked_apps"
     private val focusModeEndTimeKey = "focus_mode_end_time"
     private val focusModeDndEnabledKey = "focus_mode_dnd_enabled"
     private lateinit var focusModeToggle: ImageView
@@ -407,7 +407,7 @@ class AppDockManager(
         showWorkspaceSelector()
     }
 
-    private fun toggleWorkProfile() {
+    fun toggleWorkProfile() {
         val isWorkModeEnabled = workProfileManager.syncWorkProfileEnabledState()
 
         if (isWorkModeEnabled) {
@@ -473,7 +473,7 @@ class AppDockManager(
         scrollToTop()
     }
 
-    private fun turnOffWorkspace() {
+    fun turnOffWorkspace() {
         if (workspaceManager.isWorkspaceModeActive()) {
             workspaceManager.setActiveWorkspaceId(null)
             updateWorkspaceIcon()
@@ -577,7 +577,7 @@ class AppDockManager(
         sharedPreferences.edit { putBoolean(focusModeKey, isFocusMode) }
     }
 
-    private fun toggleFocusMode() {
+    fun toggleFocusMode() {
         if (isFocusMode) {
             val modeType = sharedPreferences.getString(Constants.Prefs.FOCUS_MODE_TYPE,
                 Constants.Prefs.FOCUS_MODE_TYPE_STRICT)
@@ -808,9 +808,15 @@ class AppDockManager(
         val isWorkMode = workProfileManager.isWorkProfileEnabled()
         val isFocusActive = isFocusMode || pomodoroManager.isPomodoroActive()
 
-        val hideWorkProfile = sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORK_PROFILE, false)
-        val hideFocusMode = sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_FOCUS_MODE, false)
-        val hideWorkspaces = sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORKSPACES, false)
+        // Stock's home page is meant to stay minimal, like a real launcher's - none of the
+        // workspace/focus-mode/work-profile pills belong there regardless of the user's own
+        // per-pill settings (workspaces are also a different app-organization concept from
+        // Stock's favorites+drawer model, and would silently filter the "show everything" drawer
+        // if left active).
+        val isStock = com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)
+        val hideWorkProfile = isStock || sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORK_PROFILE, false)
+        val hideFocusMode = isStock || sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_FOCUS_MODE, false)
+        val hideWorkspaces = isStock || sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORKSPACES, false)
 
         val allThreeHiddenInSettings = hideWorkProfile && hideFocusMode && hideWorkspaces
 
@@ -874,17 +880,17 @@ class AppDockManager(
         }
     }
 
-    private fun showFocusModeSettings() {
+    fun showFocusModeSettings() {
         val intent = Intent(context, FocusModeConfigActivity::class.java)
         context.startActivity(intent)
     }
 
-    private fun getAllowedAppsInFocusMode(): Set<String> {
-        return sharedPreferences.getStringSet(focusModeAllowedAppsKey, mutableSetOf()) ?: mutableSetOf()
+    private fun getBlockedAppsInFocusMode(): Set<String> {
+        return sharedPreferences.getStringSet(focusModeBlockedAppsKey, mutableSetOf()) ?: mutableSetOf()
     }
 
     fun isAppHiddenInFocusMode(packageName: String): Boolean {
-        return if (isFocusMode) !getAllowedAppsInFocusMode().contains(packageName) else false
+        return if (isFocusMode) getBlockedAppsInFocusMode().contains(packageName) else false
     }
 
     fun getCurrentMode(): Boolean {

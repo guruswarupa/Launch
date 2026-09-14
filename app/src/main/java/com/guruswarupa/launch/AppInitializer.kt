@@ -76,6 +76,14 @@ class AppInitializer(private val activity: MainActivity) {
 
     private fun MainActivity.setupAppList() {
         appDockManager = AppDockManager(activity, sharedPreferences, views.appDock)
+        if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+            // Covers cold start with Stock already selected and a workspace left active from a
+            // previous session - live switches are handled in SettingsChangeCoordinator.
+            appDockManager.turnOffWorkspace()
+            if (views.isSearchContainerInitialized()) {
+                views.searchContainer.visibility = android.view.View.GONE
+            }
+        }
         widgetThemeManager = WidgetThemeManager(activity)
 
         settingsChangeCoordinator = SettingsChangeCoordinator(
@@ -137,6 +145,8 @@ class AppInitializer(private val activity: MainActivity) {
         appListUIUpdater.setupCallbacks()
         appListUIUpdater.setAdapter(adapter)
 
+        setupStockDrawer()
+
         usageStatsDisplayManager = UsageStatsDisplayManager(activity, usageStatsManager, views.weeklyUsageGraph, adapter, views.recyclerView)
 
         if (!appDockManager.getCurrentMode()) {
@@ -149,6 +159,48 @@ class AppInitializer(private val activity: MainActivity) {
             if (!isFinishing && !isDestroyed) {
                 updateAppSearchManager()
             }
+        }
+    }
+
+    private fun MainActivity.setupStockDrawer() {
+        val drawerRoot = findViewById<View>(R.id.stock_drawer) ?: return
+        val drawerRecyclerView = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.stock_drawer_recycler_view)
+        val drawerSearchBox = findViewById<android.widget.AutoCompleteTextView>(R.id.stock_drawer_search_box)
+        val drawerEmptyState = findViewById<View>(R.id.stock_drawer_empty_state)
+        val drawerSearchContainer = findViewById<View>(R.id.stock_drawer_search_container)
+        val drawerAddToHomeZone = findViewById<View>(R.id.stock_drawer_add_to_home_zone)
+
+        stockDrawerManager = StockDrawerManager(
+            activity = activity,
+            drawerRoot = drawerRoot,
+            recyclerView = drawerRecyclerView,
+            searchBox = drawerSearchBox,
+            emptyState = drawerEmptyState,
+            searchContainer = drawerSearchContainer,
+            addToHomeZone = drawerAddToHomeZone,
+            appListManager = appListManager,
+            appDockManager = appDockManager,
+            appOrderManager = appOrderManager,
+            folderManager = folderManager,
+            favoriteAppManager = favoriteAppManager,
+            sharedPreferences = sharedPreferences,
+            screenPagerManager = screenPagerManager
+        )
+        stockDrawerManager.setup()
+        stockDrawerManager.attachOpenGesture(views.recyclerView)
+        stockDrawerManager.attachOpenGestureToView(views.appListEmptyState)
+        val homeRemoveZone = findViewById<View>(R.id.stock_home_remove_zone)
+        val homeHotseat = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.stock_home_hotseat)
+        stockDrawerManager.attachHomeReorder(views.recyclerView, adapter, homeHotseat, homeRemoveZone)
+        gestureHandler.onSwipeUpFromHome = {
+            stockDrawerManager.show()
+            true
+        }
+
+        val previousCallback = appListLoader.onAppListUpdated
+        appListLoader.onAppListUpdated = { sortedList, filteredList, isFinal ->
+            previousCallback?.invoke(sortedList, filteredList, isFinal)
+            stockDrawerManager.onFullAppListUpdated(filteredList)
         }
     }
 
@@ -202,7 +254,9 @@ class AppInitializer(private val activity: MainActivity) {
 
         drawerManager = DrawerManager(
             activity, screenPagerManager, gestureHandler, usageStatsDisplayManager, activityInitializer,
-            themeCheckCallback = { checkAndUpdateThemeIfNeeded() }
+            themeCheckCallback = { checkAndUpdateThemeIfNeeded() },
+            stockDrawerShownProvider = { isStockDrawerManagerInitialized() && stockDrawerManager.isShown() },
+            hideStockDrawer = { stockDrawerManager.hide() }
         )
         drawerManager.setup()
         navigationManager = drawerManager.navigationManager
@@ -251,7 +305,7 @@ class AppInitializer(private val activity: MainActivity) {
         )
 
         focusModeApplier = FocusModeApplier(
-            activity, backgroundExecutor, appListManager, appDockManager,
+            activity, backgroundExecutor, appListManager, appDockManager, sharedPreferences,
             views.searchContainer, adapter, fullAppList, appList,
             onUpdateAppSearchManager = { updateAppSearchManager() },
             onUpdateFastScrollerVisibility = { updateFastScrollerVisibility() },

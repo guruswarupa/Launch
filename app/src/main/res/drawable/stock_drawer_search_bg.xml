@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A translucent black wash over the drawer's own ?attr/appSurface background, so the search
+     bar reads as a visibly darker, recessed pill instead of blending into the surface behind it
+     (a flat ?attr/appSurface fill, as search_box_transparent_bg uses, is identical to the
+     drawer's own background and disappears entirely). Works across every palette since it
+     darkens relative to whatever's underneath rather than assuming a specific base color. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#28000000"/>
+    <corners android:radius="16dp"/>
+</shape>

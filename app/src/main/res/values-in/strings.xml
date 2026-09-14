@@ -39,12 +39,7 @@
     <string name="accessibility_description">Digunakan untuk mengunci layar dengan ketuk dua kali dan mengaktifkan buka kunci sidik jari. Layanan ini tidak mengumpulkan, menyimpan, atau mengirimkan data pribadi apa pun. Layanan ini hanya melakukan tindakan tingkat sistem, seperti mengunci layar dan mengambil tangkapan layar, saat secara eksplisit dipicu oleh gestur pengguna.</string>
     
     
-    <string name="app_data_disclosure_title">Privasi &amp; Pengungkapan</string>
-    <string name="app_data_disclosure_message">Untuk memberikan pengalaman launcher yang fungsional, Launch memproses informasi tentang aplikasi yang terinstal. Semua data disimpan &lt;b&gt;secara lokal di perangkat Anda&lt;/b&gt; dan tidak pernah dibagikan dengan pihak ketiga.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Yang kami kumpulkan:&lt;/b&gt;&lt;br/&gt;• Nama paket, nama aplikasi, dan ikon&lt;br/&gt;• Informasi niat peluncuran&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Bagaimana kami menggunakannya:&lt;/b&gt;&lt;br/&gt;• Menampilkan dan mencari aplikasi Anda&lt;br/&gt;• Mengaktifkan fitur pengorganisasian aplikasi&lt;br/&gt;Dengan mengklik \'Terima\', Anda menyetujui praktik data ini.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Kebijakan Privasi&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Lisensi&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Beri bintang repositori di GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Berkontribusi&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Lisensi&lt;/a&gt;</string>
-    <string name="i_agree">Terima &amp; Lanjutkan</string>
-    <string name="decline">Keluar</string>
     <string name="accessibility_permission_title">Izin Aksesibilitas</string>
     <string name="accessibility_permission_message">Untuk mengunci layar dan mempertahankan buka kunci sidik jari, aktifkan Launch di pengaturan aksesibilitas.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Selamat Datang</string>
     <string name="to_launch">DI LAUNCH</string>
-    <string name="resources">SUMBER DAYA</string>
     <string name="import_data">Impor Data</string>
     <string name="restore_your_previous_configuration_from_a_backu">Pulihkan konfigurasi sebelumnya dari file cadangan, atau mulai baru dengan pengaturan default.</string>
     <string name="choose_backup_file">Pilih File Cadangan</string>

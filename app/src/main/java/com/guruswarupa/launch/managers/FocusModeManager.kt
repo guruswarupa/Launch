@@ -13,7 +13,11 @@ class FocusModeManager(private val context: Context, private val sharedPreferenc
 
     companion object {
         private const val FOCUS_MODE_ENABLED = "focus_mode_enabled"
-        private const val FOCUS_MODE_ALLOWED_APPS = "focus_mode_allowed_apps"
+        // A blocklist (apps hidden *during* focus mode) rather than the old allowlist - for most
+        // people the set of apps they want to keep away during focus is far smaller than the set
+        // they want to keep, so this is a separate key rather than reinterpreting the old one
+        // (which would otherwise flip existing users' saved "keep these" list into "hide these").
+        private const val FOCUS_MODE_BLOCKED_APPS = "focus_mode_blocked_apps"
         private const val TAG = "FocusModeManager"
     }
 
@@ -48,12 +52,12 @@ class FocusModeManager(private val context: Context, private val sharedPreferenc
         }
     }
 
-    fun getAllowedApps(): Set<String> {
+    fun getBlockedApps(): Set<String> {
         return try {
-            sharedPreferences.getStringSet(FOCUS_MODE_ALLOWED_APPS, emptySet()) ?: emptySet()
+            sharedPreferences.getStringSet(FOCUS_MODE_BLOCKED_APPS, emptySet()) ?: emptySet()
         } catch (e: ClassCastException) {
-            Log.e(TAG, "Data corruption: $FOCUS_MODE_ALLOWED_APPS is not a Set. Attempting recovery.", e)
-            val stringValue = try { sharedPreferences.getString(FOCUS_MODE_ALLOWED_APPS, null) } catch (_: Exception) { null }
+            Log.e(TAG, "Data corruption: $FOCUS_MODE_BLOCKED_APPS is not a Set. Attempting recovery.", e)
+            val stringValue = try { sharedPreferences.getString(FOCUS_MODE_BLOCKED_APPS, null) } catch (_: Exception) { null }
             val recoveredSet = if (stringValue != null) {
                 if (stringValue.startsWith("[") && stringValue.endsWith("]")) {
                     stringValue.substring(1, stringValue.length - 1)
@@ -69,26 +73,26 @@ class FocusModeManager(private val context: Context, private val sharedPreferenc
             }
 
             sharedPreferences.edit {
-                remove(FOCUS_MODE_ALLOWED_APPS)
-                putStringSet(FOCUS_MODE_ALLOWED_APPS, recoveredSet)
+                remove(FOCUS_MODE_BLOCKED_APPS)
+                putStringSet(FOCUS_MODE_BLOCKED_APPS, recoveredSet)
             }
             recoveredSet
         }
     }
 
-    fun updateAllowedApps(packageNames: Set<String>) {
-        sharedPreferences.edit { putStringSet(FOCUS_MODE_ALLOWED_APPS, packageNames) }
+    fun updateBlockedApps(packageNames: Set<String>) {
+        sharedPreferences.edit { putStringSet(FOCUS_MODE_BLOCKED_APPS, packageNames) }
     }
 
-    fun addAllowedApp(packageName: String) {
-        val currentApps = getAllowedApps().toMutableSet()
+    fun addBlockedApp(packageName: String) {
+        val currentApps = getBlockedApps().toMutableSet()
         currentApps.add(packageName)
-        updateAllowedApps(currentApps)
+        updateBlockedApps(currentApps)
     }
 
-    fun removeAllowedApp(packageName: String) {
-        val currentApps = getAllowedApps().toMutableSet()
+    fun removeBlockedApp(packageName: String) {
+        val currentApps = getBlockedApps().toMutableSet()
         currentApps.remove(packageName)
-        updateAllowedApps(currentApps)
+        updateBlockedApps(currentApps)
     }
 }

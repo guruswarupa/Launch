@@ -149,7 +149,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="52dp"
                                 android:layout_weight="1"
-                                android:layout_marginEnd="6dp"
+                                android:layout_marginEnd="4dp"
                                 android:text="@string/grid"
                                 android:textColor="?attr/appTextPrimary"
                                 android:background="@drawable/settings_card_background"
@@ -161,8 +161,20 @@
                                 android:layout_width="0dp"
                                 android:layout_height="52dp"
                                 android:layout_weight="1"
-                                android:layout_marginStart="6dp"
+                                android:layout_marginHorizontal="4dp"
                                 android:text="@string/calendar_view_list"
+                                android:textColor="?attr/appTextPrimary"
+                                android:background="@drawable/settings_card_background"
+                                android:textAllCaps="false"/>
+
+                            <Button
+                                android:id="@+id/stock_option"
+                                style="@style/Widget.MaterialComponents.Button.TextButton"
+                                android:layout_width="0dp"
+                                android:layout_height="52dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="4dp"
+                                android:text="@string/display_style_stock"
                                 android:textColor="?attr/appTextPrimary"
                                 android:background="@drawable/settings_card_background"
                                 android:textAllCaps="false"/>
@@ -246,6 +258,61 @@
                                 android:layout_height="wrap_content"
                                 app:thumbTint="@color/switch_thumb_hide_app_icon"
                                 app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/stock_drawer_enabled_section"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="20dp"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/stock_use_app_drawer"
+                                android:textSize="14sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:fontFamily="sans-serif-medium"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/stock_drawer_enabled_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/stock_hotseat_section"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="20dp"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/stock_hotseat_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/stock_hotseat_apps_format"
+                                android:textSize="13sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:alpha="0.6"/>
+
+                            <SeekBar
+                                android:id="@+id/stock_hotseat_seekbar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:max="2"
+                                android:paddingHorizontal="0dp"
+                                android:thumbTint="?attr/appAccent"
+                                android:progressTint="?attr/appAccent"
+                                android:progressBackgroundTint="#20FFFFFF"/>
                         </LinearLayout>
 
                         <LinearLayout

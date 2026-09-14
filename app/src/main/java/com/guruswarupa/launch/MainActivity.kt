@@ -73,6 +73,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var favoriteAppManager: FavoriteAppManager
 
     @Inject
+    lateinit var appOrderManager: com.guruswarupa.launch.managers.AppOrderManager
+
+    @Inject
+    lateinit var folderManager: com.guruswarupa.launch.managers.FolderManager
+
+    @Inject
     lateinit var hiddenAppManager: HiddenAppManager
 
     @Inject
@@ -195,6 +201,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var screenPagerManager: ScreenPagerManager
 
+    lateinit var stockDrawerManager: com.guruswarupa.launch.managers.StockDrawerManager
+    fun isStockDrawerManagerInitialized() = ::stockDrawerManager.isInitialized
+
     lateinit var contactActionHandler: ContactActionHandler
 
     lateinit var settingsChangeCoordinator: SettingsChangeCoordinator
@@ -231,6 +240,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showAllAppsFromFavorites() {
+        if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+            if (::stockDrawerManager.isInitialized) {
+                stockDrawerManager.show()
+            }
+            return
+        }
+
         if (!showOnlyFavoritesInitially) return
 
 
@@ -246,6 +262,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showFavoritesFromAllApps() {
+        if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) return
         if (showOnlyFavoritesInitially) return
 
 
@@ -379,6 +396,11 @@ class MainActivity : AppCompatActivity() {
         }
         if (::aiChatPage.isInitialized) {
             aiChatPage.updateTypography()
+        }
+
+        if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+            views.fastScroller.visibility = View.GONE
+            return
         }
 
         val focusMode = appDockManager.getCurrentMode()
@@ -532,8 +554,16 @@ class MainActivity : AppCompatActivity() {
         val targetFullList = newFullList ?: fullAppList
         val targetHomeList = newHomeList ?: appList
 
+        if (!views.isSearchBoxInitialized()) return
+        // The Stock drawer retargets this same shared engine to its own search box while it's
+        // open (see StockDrawerManager.show/hide) - app-list refreshes fire this same update
+        // path while that's active, so don't steal search input back to the (hidden, in Stock)
+        // home search box out from under it.
+        if (isStockDrawerManagerInitialized() && stockDrawerManager.isShown()) {
+            return
+        }
 
-        if (!appSearchManager.isConfigured()) {
+        if (!appSearchManager.isAttachedTo(views.searchBox)) {
 
             if (!::adapter.isInitialized) return
 
@@ -594,6 +624,9 @@ class MainActivity : AppCompatActivity() {
         if (isHomeOrLauncher) {
             if (::screenPagerManager.isInitialized) {
                 screenPagerManager.openDefaultHomePage(animated = true)
+            }
+            if (::stockDrawerManager.isInitialized) {
+                stockDrawerManager.hide(animated = false)
             }
         }
 
@@ -945,6 +978,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        if (::stockDrawerManager.isInitialized) {
+            stockDrawerManager.hide(animated = false)
+        }
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onPause()
         }

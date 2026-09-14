@@ -39,12 +39,7 @@
     <string name="accessibility_description">Se usa para bloquear la pantalla con doble toque y permite el desbloqueo con huella digital. Este servicio no recopila, almacena ni transmite datos personales. Solo realiza acciones a nivel del sistema, como bloquear la pantalla y capturar pantallazos, cuando se activan explícitamente mediante gestos del usuario.</string>
     
     
-    <string name="app_data_disclosure_title">Privacidad y divulgación</string>
-    <string name="app_data_disclosure_message">Para ofrecer una experiencia de lanzador funcional, Launch procesa información sobre tus aplicaciones instaladas. Todos los datos se almacenan &lt;b&gt;localmente en tu dispositivo&lt;/b&gt; y nunca se comparten con terceros.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Lo que recopilamos:&lt;/b&gt;&lt;br/&gt;• Nombres de paquetes, nombres de aplicaciones e íconos&lt;br/&gt;• Información de intención de inicio&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Cómo lo usamos:&lt;/b&gt;&lt;br/&gt;• Mostrar y buscar tus aplicaciones&lt;br/&gt;• Habilitar funciones de organización de aplicaciones&lt;br/&gt;Al hacer clic en \'Aceptar\', aceptas estas prácticas de datos.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Política de privacidad&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Licencia&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Dale una estrella al repositorio en GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Contribuir&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Licencia&lt;/a&gt;</string>
-    <string name="i_agree">Aceptar y continuar</string>
-    <string name="decline">Salir</string>
     <string name="accessibility_permission_title">Permiso de accesibilidad</string>
     <string name="accessibility_permission_message">Para bloquear la pantalla y mantener el desbloqueo por huella digital, activa Launch en la configuración de accesibilidad.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Bienvenido</string>
     <string name="to_launch">A LAUNCH</string>
-    <string name="resources">RECURSOS</string>
     <string name="import_data">Importar datos</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restaura tu configuración anterior desde un archivo de copia de seguridad, o empieza de nuevo con la configuración predeterminada.</string>
     <string name="choose_backup_file">Elegir archivo de copia de seguridad</string>

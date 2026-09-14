@@ -39,12 +39,7 @@
     <string name="accessibility_description">Используется для блокировки экрана двойным касанием и разблокировки по отпечатку пальца. Эта служба не собирает, не хранит и не передаёт личные данные. Она выполняет только действия на уровне системы, такие как блокировка экрана и создание скриншотов, при явном запуске жестами пользователя.</string>
     
     
-    <string name="app_data_disclosure_title">Конфиденциальность и раскрытие данных</string>
-    <string name="app_data_disclosure_message">Чтобы обеспечить функциональность лаунчера, Launch обрабатывает информацию об установленных приложениях. Все данные хранятся &lt;b&gt;локально на вашем устройстве&lt;/b&gt; и никогда не передаются третьим лицам.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Что мы собираем:&lt;/b&gt;&lt;br/&gt;• Имена пакетов, названия приложений и значки&lt;br/&gt;• Информацию о намерении запуска&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Как мы это используем:&lt;/b&gt;&lt;br/&gt;• Отображение и поиск приложений&lt;br/&gt;• Функции организации приложений&lt;br/&gt;Нажимая «Принять», вы соглашаетесь с этими практиками обработки данных.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Политика конфиденциальности&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Лицензия&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Поставьте звезду репозиторию на GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Как внести вклад&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Лицензия&lt;/a&gt;</string>
-    <string name="i_agree">Принять и продолжить</string>
-    <string name="decline">Выйти</string>
     <string name="accessibility_permission_title">Разрешение специальных возможностей</string>
     <string name="accessibility_permission_message">Чтобы блокировать экран и сохранить разблокировку по отпечатку пальца, включите Launch в настройках специальных возможностей.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Добро пожаловать</string>
     <string name="to_launch">В LAUNCH</string>
-    <string name="resources">РЕСУРСЫ</string>
     <string name="import_data">Импорт данных</string>
     <string name="restore_your_previous_configuration_from_a_backu">Восстановите предыдущую конфигурацию из файла резервной копии или начните заново со стандартными настройками.</string>
     <string name="choose_backup_file">Выбрать файл резервной копии</string>

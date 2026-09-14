@@ -43,12 +43,7 @@
     <string name="accessibility_description">Used to lock the screen when you double tap, allowing you to use fingerprint to unlock. This service does not collect, store, or transmit any personal data. It only performs system-level actions like screen locking and taking screenshots when explicitly triggered by user gestures.</string>
     
     
-    <string name="app_data_disclosure_title">Privacy &amp; Data Disclosure</string>
-    <string name="app_data_disclosure_message">To provide a functional launcher experience, Launch processes information about your installed applications. All data is stored &lt;b&gt;locally on your device&lt;/b&gt; and is never shared with third parties.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;What we collect:&lt;/b&gt;&lt;br/&gt;• Package names, app names, and icons&lt;br/&gt;• Launch intent information&lt;br/&gt;&lt;br/&gt;&lt;b&gt;How we use it:&lt;/b&gt;&lt;br/&gt;• Displaying and searching your apps&lt;br/&gt;• Enabling app organization features&lt;br/&gt;By clicking \'Accept\', you agree to these data practices.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Privacy Policy&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;License&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Star the repo on GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Contributing&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;License&lt;/a&gt;</string>
-    <string name="i_agree">Accept &amp; Continue</string>
-    <string name="decline">Exit</string>
     <string name="accessibility_permission_title">Accessibility Permission</string>
     <string name="accessibility_permission_message">To lock the screen and keep fingerprint unlock working, please enable Launch in Accessibility settings.</string>
 
@@ -506,7 +501,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Welcome</string>
     <string name="to_launch">TO LAUNCH</string>
-    <string name="resources">RESOURCES</string>
     <string name="import_data">Import Data</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restore your previous configuration from a backup file, or start fresh with default settings.</string>
     <string name="choose_backup_file">Choose Backup File</string>
@@ -516,6 +510,24 @@
     <string name="vertical_list">Vertical list</string>
     <string name="grid">Grid</string>
     <string name="grid_layout">Grid layout</string>
+    <string name="display_style_stock">Stock</string>
+    <string name="stock_layout_subtitle">Favorites + drawer</string>
+    <string name="stock_drawer_search_hint">Search</string>
+    <string name="stock_folder_name_hint">Folder name</string>
+    <string name="stock_drag_to_add_to_home">Release to add to Home</string>
+    <string name="stock_app_added_to_home">Added %1$s to Home</string>
+    <string name="stock_folder_added_to_home">Added \"%1$s\" to Home</string>
+    <string name="stock_drag_to_remove">Remove from Home</string>
+    <string name="stock_drawer_focus_label">Focus</string>
+    <string name="stock_drawer_work_label">Work</string>
+    <string name="stock_use_app_drawer">Use app drawer</string>
+    <string name="stock_hotseat_apps_format">%1$d apps in hotseat</string>
+    <string name="stock_app_removed_from_home">Removed %1$s from Home</string>
+    <string name="stock_folder_removed_from_home">Removed \"%1$s\" from Home</string>
+    <string name="stock_folder_default_name">Folder</string>
+    <string name="stock_folder_create_title">Name this folder</string>
+    <string name="stock_folder_rename_title">Rename folder</string>
+    <string name="stock_folder_delete">Delete folder</string>
     <string name="you_can_change_this_later_in_settings">You can change this later in settings</string>
     <string name="app_lock">App Lock</string>
     <string name="protect_your_apps_with_pin_or_biometric_authenti">Protect your apps with PIN or biometric authentication</string>
@@ -548,7 +560,13 @@
     <string name="vault_is_empty">Vault is empty</string>
     <string name="add_file">Add File</string>
     <string name="focus_mode">Focus Mode</string>
-    <string name="select_apps_allowed_in_focus_mode">Select apps allowed in Focus Mode</string>
+    <string name="select_apps_allowed_in_focus_mode">Select apps to hide during Focus Mode</string>
+    <string name="focus_mode_search_hint">Search apps</string>
+    <plurals name="focus_mode_blocked_count">
+        <item quantity="zero">No apps hidden</item>
+        <item quantity="one">%1$d app hidden</item>
+        <item quantity="other">%1$d apps hidden</item>
+    </plurals>
     <string name="hidden_apps">Hidden Apps</string>
     <string name="manage_apps_hidden_from_your_home_screen">Manage apps hidden from your home screen</string>
     <string name="privacy_vault_is_empty">Privacy vault is empty</string>

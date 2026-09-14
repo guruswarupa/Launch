@@ -39,12 +39,7 @@
     <string name="accessibility_description">Utilisé pour verrouiller l\'écran d\'un double appui et permet le déverrouillage par empreinte digitale. Ce service ne collecte, ne stocke ni ne transmet aucune donnée personnelle. Il n\'effectue que des actions au niveau du système, comme verrouiller l\'écran et capturer des captures d\'écran, lorsqu\'elles sont explicitement déclenchées par les gestes de l\'utilisateur.</string>
     
     
-    <string name="app_data_disclosure_title">Confidentialité &amp; divulgation</string>
-    <string name="app_data_disclosure_message">Pour offrir une expérience de lanceur fonctionnelle, Launch traite des informations sur vos applications installées. Toutes les données sont stockées &lt;b&gt;localement sur votre appareil&lt;/b&gt; et ne sont jamais partagées avec des tiers.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Ce que nous collectons :&lt;/b&gt;&lt;br/&gt;• Noms de packages, noms d\'applications et icônes&lt;br/&gt;• Informations sur l\'intention de lancement&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Comment nous l\'utilisons :&lt;/b&gt;&lt;br/&gt;• Afficher et rechercher vos applications&lt;br/&gt;• Activer les fonctionnalités d\'organisation des applications&lt;br/&gt;En cliquant sur \'Accepter\', vous acceptez ces pratiques de données.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Politique de confidentialité&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Licence&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Mettez une étoile au dépôt sur GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Contribuer&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Licence&lt;/a&gt;</string>
-    <string name="i_agree">Accepter &amp; continuer</string>
-    <string name="decline">Quitter</string>
     <string name="accessibility_permission_title">Autorisation d\'accessibilité</string>
     <string name="accessibility_permission_message">Pour verrouiller l\'écran et conserver le déverrouillage par empreinte digitale, veuillez activer Launch dans les paramètres d\'accessibilité.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Bienvenue</string>
     <string name="to_launch">SUR LAUNCH</string>
-    <string name="resources">RESSOURCES</string>
     <string name="import_data">Importer des données</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restaurez votre configuration précédente à partir d\'un fichier de sauvegarde, ou recommencez avec les paramètres par défaut.</string>
     <string name="choose_backup_file">Choisir un fichier de sauvegarde</string>

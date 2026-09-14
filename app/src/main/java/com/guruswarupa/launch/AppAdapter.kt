@@ -106,7 +106,6 @@ class AppAdapter(
         activity = activity,
         context = context,
         separatorPackage = SEPARATOR_PACKAGE,
-        specialPackageNames = SPECIAL_PACKAGE_NAMES,
         sharedPreferences = prefs,
         cacheManager = activity.cacheManager
     ).apply {
@@ -165,6 +164,133 @@ class AppAdapter(
         if (this.isGridMode != isGridMode) {
             this.isGridMode = isGridMode
             notifyItemRangeChanged(0, currentList.size, PAYLOAD_VIEW_MODE)
+        }
+    }
+
+    /**
+     * Consulted before the default long-press context menu. Returning true consumes the
+     * long-press (e.g. the stock drawer starts a drag reorder instead of opening the menu).
+     * Also used to start a drag for folder entries.
+     */
+    var onItemLongPress: ((ViewHolder) -> Boolean)? = null
+
+    /** Fired when a folder entry (see [com.guruswarupa.launch.managers.AppOrderManager]) is tapped. Receives the folder id. */
+    var onFolderClick: ((String) -> Unit)? = null
+
+    /** Supplies the (up to 9) member apps of a folder, for the mini icon-grid preview. */
+    var folderAppsResolver: ((String) -> List<ResolveInfo>)? = null
+
+    private val folderPreviewCache = ConcurrentHashMap<String, Drawable>()
+
+    private fun bindFolder(holder: ViewHolder, appInfo: ResolveInfo) {
+        TypographyManager.applyToViewTree(holder.itemView, currentFontScale, currentFontStyle, currentFontIntensity, currentFontColor)
+        val folderId = appInfo.nonLocalizedLabel?.toString().orEmpty()
+        val folderName = appInfo.activityInfo.name ?: ""
+        val memberApps = folderAppsResolver?.invoke(folderId).orEmpty().take(9)
+        val previewKey = folderId + ":" + memberApps.joinToString(",") { "${it.activityInfo.packageName}/${it.activityInfo.name}" }
+
+        holder.itemView.tag = "folder:$previewKey"
+        holder.appName?.text = folderName
+        holder.appUsageTime?.visibility = View.GONE
+        configureLabelVisibility(holder)
+        configureIconVisibility(holder)
+        iconLoader.updateIconSize(holder.appIcon)
+        // Folders render as a plain, unclipped transparent square (not the user's chosen
+        // round/squircle/etc. icon shape) so the mini icon grid inside isn't cropped at the
+        // corners - both the ShapeableImageView's own clip and IconLoader.setIconDrawable's
+        // bitmap masking are bypassed here.
+        holder.appIcon?.shapeAppearanceModel = com.google.android.material.shape.ShapeAppearanceModel.builder().build()
+
+        val cachedPreview = folderPreviewCache[previewKey]
+        if (cachedPreview != null) {
+            holder.appIcon?.setImageDrawable(cachedPreview)
+        } else {
+            holder.appIcon?.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_stock_folder))
+            loadFolderPreview(holder, previewKey, memberApps)
+        }
+
+        holder.itemView.setOnClickListener {
+            onFolderClick?.invoke(folderId)
+        }
+        holder.itemView.setOnLongClickListener {
+            onItemLongPress?.invoke(holder) == true
+        }
+    }
+
+    private fun loadFolderPreview(holder: ViewHolder, previewKey: String, memberApps: List<ResolveInfo>) {
+        if (memberApps.isEmpty()) return
+        adapterScope.launch {
+            val composite = withContext(Dispatchers.IO) {
+                try {
+                    val icons = memberApps.mapNotNull { app ->
+                        try {
+                            app.loadIcon(activity.packageManager)
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }
+                    if (icons.isEmpty()) null else composeFolderPreview(icons)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            if (composite != null) {
+                folderPreviewCache[previewKey] = composite
+                if (holder.itemView.tag == "folder:$previewKey") {
+                    holder.appIcon?.setImageDrawable(composite)
+                }
+            }
+        }
+    }
+
+    private fun composeFolderPreview(icons: List<Drawable>): android.graphics.drawable.BitmapDrawable {
+        val size = 240
+        val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        val count = icons.size.coerceAtMost(9)
+        // Always a square NxN virtual grid (2x2 or 3x3) so cells stay square even when there
+        // are fewer icons than cells - unused cells are simply left blank, matching how stock
+        // launchers render 2-3 app folder previews instead of stretching icons to fill space.
+        val columns = if (count <= 4) 2 else 3
+        val rows = columns
+        val gap = size * 0.06f
+        val cellWidth = (size - gap * (columns + 1)) / columns
+        val cellHeight = (size - gap * (rows + 1)) / rows
+
+        for (i in 0 until count) {
+            val row = i / columns
+            val col = i % columns
+            val left = (gap + col * (cellWidth + gap)).toInt()
+            val top = (gap + row * (cellHeight + gap)).toInt()
+            val right = (left + cellWidth).toInt()
+            val bottom = (top + cellHeight).toInt()
+            icons[i].setBounds(left, top, right, bottom)
+            icons[i].draw(canvas)
+        }
+        return android.graphics.drawable.BitmapDrawable(activity.resources, bitmap)
+    }
+
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        val updated = currentList.toMutableList()
+        if (fromPosition !in updated.indices || toPosition !in updated.indices) return
+        val item = updated.removeAt(fromPosition)
+        updated.add(toPosition, item)
+        submitList(updated)
+    }
+
+    fun showContextMenuForHolder(holder: ViewHolder) {
+        val position = holder.bindingAdapterPosition
+        if (position == RecyclerView.NO_POSITION) return
+        val appInfo = getItem(position)
+        val packageName = appInfo.activityInfo.packageName
+        if (packageName == com.guruswarupa.launch.managers.AppOrderManager.FOLDER_PACKAGE) {
+            onFolderClick?.invoke(appInfo.nonLocalizedLabel?.toString().orEmpty())
+            return
+        }
+        if (WebAppManager.isWebAppPackage(packageName)) {
+            showWebAppContextMenu(holder.itemView, packageName, appInfo)
+        } else {
+            showAppContextMenu(holder.itemView, packageName, appInfo)
         }
     }
 
@@ -382,6 +508,14 @@ class AppAdapter(
         val appInfo = getItem(position)
         val packageName = appInfo.activityInfo.packageName
 
+        if (packageName == com.guruswarupa.launch.managers.AppOrderManager.FOLDER_PACKAGE) {
+            // Payload-only rebinds (icon style/size/typography refreshes) would otherwise treat
+            // the folder placeholder as a regular app and clobber its square, unclipped preview
+            // with a shaped fallback icon - always do a full rebind instead.
+            bindFolder(holder, appInfo)
+            return
+        }
+
         if (payloads.isNotEmpty()) {
             for (payload in payloads) {
                 when (payload) {
@@ -449,6 +583,7 @@ class AppAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
+            if (onItemLongPress?.invoke(holder) == true) return@setOnLongClickListener true
             showAppContextMenu(holder.itemView, packageName, appInfo)
             true
         }
@@ -568,6 +703,7 @@ class AppAdapter(
             activity.appSearchManager.filterAppsAndContacts("")
         }
         holder.itemView.setOnLongClickListener {
+            if (onItemLongPress?.invoke(holder) == true) return@setOnLongClickListener true
             showWebAppContextMenu(holder.itemView, packageName, appInfo)
             true
         }

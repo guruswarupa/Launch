@@ -39,12 +39,7 @@
     <string name="accessibility_description">Usado para bloquear a tela com toque duplo e permitir o desbloqueio por impressão digital. Este serviço não coleta, armazena ou transmite nenhum dado pessoal. Ele realiza apenas ações em nível de sistema, como bloquear a tela e capturar telas, quando explicitamente acionado por gestos do usuário.</string>
     
     
-    <string name="app_data_disclosure_title">Privacidade e divulgação</string>
-    <string name="app_data_disclosure_message">Para oferecer uma experiência funcional de launcher, o Launch processa informações sobre seus aplicativos instalados. Todos os dados são armazenados &lt;b&gt;localmente no seu dispositivo&lt;/b&gt; e nunca compartilhados com terceiros.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;O que coletamos:&lt;/b&gt;&lt;br/&gt;• Nomes de pacotes, nomes de aplicativos e ícones&lt;br/&gt;• Informações de intenção de inicialização&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Como usamos:&lt;/b&gt;&lt;br/&gt;• Exibir e pesquisar seus aplicativos&lt;br/&gt;• Habilitar recursos de organização de aplicativos&lt;br/&gt;Ao clicar em \'Aceitar\', você concorda com essas práticas de dados.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Política de privacidade&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Licença&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Dê uma estrela ao repositório no GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Contribuir&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Licença&lt;/a&gt;</string>
-    <string name="i_agree">Aceitar e continuar</string>
-    <string name="decline">Sair</string>
     <string name="accessibility_permission_title">Permissão de acessibilidade</string>
     <string name="accessibility_permission_message">Para bloquear a tela e manter o desbloqueio por impressão digital, ative o Launch nas configurações de acessibilidade.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Bem-vindo</string>
     <string name="to_launch">AO LAUNCH</string>
-    <string name="resources">RECURSOS</string>
     <string name="import_data">Importar dados</string>
     <string name="restore_your_previous_configuration_from_a_backu">Restaure sua configuração anterior de um arquivo de backup ou comece do zero com as configurações padrão.</string>
     <string name="choose_backup_file">Escolher arquivo de backup</string>

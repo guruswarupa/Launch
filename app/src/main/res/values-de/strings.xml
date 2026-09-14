@@ -39,12 +39,7 @@
     <string name="accessibility_description">Wird verwendet, um den Bildschirm bei einem Doppeltipp zu sperren und ermöglicht die Entsperrung per Fingerabdruck. Dieser Dienst sammelt, speichert oder überträgt keine persönlichen Daten. Er führt nur Aktionen auf Systemebene aus, wie das Sperren des Bildschirms und das Erstellen von Screenshots, wenn dies ausdrücklich durch Nutzergesten ausgelöst wird.</string>
     
     
-    <string name="app_data_disclosure_title">Datenschutz &amp; Offenlegung</string>
-    <string name="app_data_disclosure_message">Um eine funktionale Launcher-Erfahrung zu bieten, verarbeitet Launch Informationen über deine installierten Apps. Alle Daten werden &lt;b&gt;lokal auf deinem Gerät&lt;/b&gt; gespeichert und niemals an Dritte weitergegeben.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Was wir erfassen:&lt;/b&gt;&lt;br/&gt;• Paketnamen, App-Namen und Symbole&lt;br/&gt;• Startabsicht-Informationen&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wie wir es verwenden:&lt;/b&gt;&lt;br/&gt;• Anzeigen und Durchsuchen deiner Apps&lt;br/&gt;• Ermöglichen von App-Organisationsfunktionen&lt;br/&gt;Durch Klicken auf \'Akzeptieren\' stimmst du diesen Datenpraktiken zu.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;Datenschutzrichtlinie&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Lizenz&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;Gib dem Repo auf GitHub einen Stern&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;Mitwirken&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;Lizenz&lt;/a&gt;</string>
-    <string name="i_agree">Akzeptieren &amp; Weiter</string>
-    <string name="decline">Beenden</string>
     <string name="accessibility_permission_title">Bedienungshilfen-Berechtigung</string>
     <string name="accessibility_permission_message">Um den Bildschirm zu sperren und die Fingerabdruck-Entsperrung beizubehalten, aktiviere bitte Launch in den Bedienungshilfen-Einstellungen.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">Willkommen</string>
     <string name="to_launch">BEI LAUNCH</string>
-    <string name="resources">RESSOURCEN</string>
     <string name="import_data">Daten importieren</string>
     <string name="restore_your_previous_configuration_from_a_backu">Stelle deine vorherige Konfiguration aus einer Sicherungsdatei wieder her oder beginne mit den Standardeinstellungen neu.</string>
     <string name="choose_backup_file">Sicherungsdatei auswählen</string>

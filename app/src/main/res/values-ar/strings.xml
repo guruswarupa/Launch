@@ -39,12 +39,7 @@
     <string name="accessibility_description">تُستخدم لقفل الشاشة عند النقر المزدوج، مما يتيح استخدام بصمة الإصبع لإلغاء القفل. لا تجمع هذه الخدمة أو تخزن أو تنقل أي بيانات شخصية. تقوم فقط بتنفيذ إجراءات على مستوى النظام مثل قفل الشاشة والتقاط لقطات الشاشة عند تفعيلها صراحةً بواسطة إيماءات المستخدم.</string>
     
     
-    <string name="app_data_disclosure_title">الخصوصية والإفصاح عن البيانات</string>
-    <string name="app_data_disclosure_message">لتوفير تجربة مشغل وظيفية، تقوم Launch بمعالجة معلومات حول تطبيقاتك المثبتة. يتم تخزين جميع البيانات &lt;b&gt;محليًا على جهازك&lt;/b&gt; ولا تتم مشاركتها أبدًا مع أطراف ثالثة.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;ما نجمعه:&lt;/b&gt;&lt;br/&gt;• أسماء الحزم وأسماء التطبيقات والأيقونات&lt;br/&gt;• معلومات نية التشغيل&lt;br/&gt;&lt;br/&gt;&lt;b&gt;كيف نستخدمها:&lt;/b&gt;&lt;br/&gt;• عرض تطبيقاتك والبحث فيها&lt;br/&gt;• تفعيل ميزات تنظيم التطبيقات&lt;br/&gt;بالنقر على \'قبول\'، فإنك توافق على ممارسات البيانات هذه.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;سياسة الخصوصية&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;الترخيص&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;ضع نجمة على المستودع في GitHub&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;المساهمة&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;الترخيص&lt;/a&gt;</string>
-    <string name="i_agree">قبول ومتابعة</string>
-    <string name="decline">خروج</string>
     <string name="accessibility_permission_title">إذن إمكانية الوصول</string>
     <string name="accessibility_permission_message">لقفل الشاشة والحفاظ على عمل بصمة الإصبع، يرجى تفعيل Launch في إعدادات إمكانية الوصول.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">مرحبًا</string>
     <string name="to_launch">في Launch</string>
-    <string name="resources">الموارد</string>
     <string name="import_data">استيراد البيانات</string>
     <string name="restore_your_previous_configuration_from_a_backu">استعد تكوينك السابق من ملف نسخ احتياطي، أو ابدأ من جديد بالإعدادات الافتراضية.</string>
     <string name="choose_backup_file">اختر ملف النسخ الاحتياطي</string>

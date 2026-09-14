@@ -152,6 +152,19 @@ class AppListUIUpdater(
 
             val isEmpty = newAppList.isEmpty()
             recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            if (isEmpty) {
+                // Stock's home page is left blank (no message) when there are no favorites yet -
+                // the view stays visible and empty rather than GONE, since it's also the
+                // swipe-up-to-open-drawer touch target set up in StockDrawerManager
+                // (attachOpenGestureToView) for this exact state.
+                val isStockHome = com.guruswarupa.launch.utils.LayoutMode.isStock(activity.sharedPreferences) &&
+                    activity.showOnlyFavoritesInitially
+                if (isStockHome) {
+                    activity.views.appListEmptyState.text = ""
+                } else {
+                    activity.views.appListEmptyState.setText(R.string.app_list_no_apps_found)
+                }
+            }
             activity.views.appListEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
             activity.updateFastScrollerVisibility()
 

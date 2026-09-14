@@ -19,6 +19,17 @@ object Constants {
         const val VIEW_PREFERENCE = "view_preference"
         const val VIEW_PREFERENCE_LIST = "list"
         const val VIEW_PREFERENCE_GRID = "grid"
+        const val VIEW_PREFERENCE_STOCK = "stock"
+        const val STOCK_DRAWER_APP_ORDER = "stock_drawer_app_order"
+        const val STOCK_HOME_APP_ORDER = "stock_home_app_order"
+        const val STOCK_DRAWER_FOLDERS = "stock_drawer_folders"
+        const val STOCK_HOME_FOLDERS = "stock_home_folders"
+        /** When false, Stock has no separate drawer - every app lives on the home page instead. */
+        const val STOCK_DRAWER_ENABLED = "stock_drawer_enabled"
+        /** Max apps/folders the Stock dock can hold (3-5) - capacity only, membership is explicit. */
+        const val STOCK_HOTSEAT_COUNT = "stock_hotseat_count"
+        /** Explicit, independent order of apps/folders placed in the Stock dock - never auto-derived from home order. */
+        const val STOCK_DOCK_ORDER = "stock_dock_order"
         const val SHAKE_TORCH_ENABLED = "shake_torch_enabled"
         const val SHAKE_SENSITIVITY = "shake_sensitivity"
         const val SCREEN_DIMMER_ENABLED = "screen_dimmer_enabled"

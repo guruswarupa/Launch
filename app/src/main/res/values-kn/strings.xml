@@ -39,12 +39,7 @@
     <string name="accessibility_description">ಎರಡು ಬಾರಿ ಟ್ಯಾಪ್ ಮಾಡಿದಾಗ ಪರದೆಯನ್ನು ಲಾಕ್ ಮಾಡಲು ಮತ್ತು ಫಿಂಗರ್‌ಪ್ರಿಂಟ್ ಅನ್‌ಲಾಕ್ ಸಕ್ರಿಯಗೊಳಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ. ಈ ಸೇವೆ ಯಾವುದೇ ವೈಯಕ್ತಿಕ ಡೇಟಾವನ್ನು ಸಂಗ್ರಹಿಸುವುದಿಲ್ಲ, ಸಂಗ್ರಹಿಸಿ ಇಡುವುದಿಲ್ಲ ಅಥವಾ ರವಾನಿಸುವುದಿಲ್ಲ. ಬಳಕೆದಾರರ ಸನ್ನೆಗಳಿಂದ ಸ್ಪಷ್ಟವಾಗಿ ಪ್ರಚೋದಿಸಿದಾಗ ಮಾತ್ರ ಇದು ಪರದೆ ಲಾಕ್ ಮಾಡುವುದು ಮತ್ತು ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆಯುವಂತಹ ಸಿಸ್ಟಂ-ಮಟ್ಟದ ಕ್ರಿಯೆಗಳನ್ನು ಮಾತ್ರ ಮಾಡುತ್ತದೆ.</string>
     
     
-    <string name="app_data_disclosure_title">ಗೌಪ್ಯತೆ ಮತ್ತು ಬಹಿರಂಗಪಡಿಸುವಿಕೆ</string>
-    <string name="app_data_disclosure_message">ಕ್ರಿಯಾತ್ಮಕ ಲಾಂಚರ್ ಅನುಭವ ನೀಡಲು, Launch ನಿಮ್ಮ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲಾದ ಆ್ಯಪ್‌ಗಳ ಬಗ್ಗೆ ಮಾಹಿತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸುತ್ತದೆ. ಎಲ್ಲಾ ಡೇಟಾ &lt;b&gt;ನಿಮ್ಮ ಸಾಧನದಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ&lt;/b&gt; ಸಂಗ್ರಹವಾಗಿರುತ್ತದೆ ಮತ್ತು ಎಂದಿಗೂ ಮೂರನೇ ವ್ಯಕ್ತಿಗಳೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಲಾಗುವುದಿಲ್ಲ.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;ನಾವು ಏನನ್ನು ಸಂಗ್ರಹಿಸುತ್ತೇವೆ:&lt;/b&gt;&lt;br/&gt;• ಪ್ಯಾಕೇಜ್ ಹೆಸರುಗಳು, ಆ್ಯಪ್ ಹೆಸರುಗಳು ಮತ್ತು ಐಕಾನ್‌ಗಳು&lt;br/&gt;• ಲಾಂಚ್ ಇಂಟೆಂಟ್ ಮಾಹಿತಿ&lt;br/&gt;&lt;br/&gt;&lt;b&gt;ನಾವು ಅದನ್ನು ಹೇಗೆ ಬಳಸುತ್ತೇವೆ:&lt;/b&gt;&lt;br/&gt;• ನಿಮ್ಮ ಆ್ಯಪ್‌ಗಳನ್ನು ಪ್ರದರ್ಶಿಸುವುದು ಮತ್ತು ಹುಡುಕುವುದು&lt;br/&gt;• ಆ್ಯಪ್ ಸಂಘಟನೆ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸುವುದು&lt;br/&gt;\'ಒಪ್ಪಿಗೆ\' ಕ್ಲಿಕ್ ಮಾಡುವ ಮೂಲಕ, ನೀವು ಈ ಡೇಟಾ ಅಭ್ಯಾಸಗಳಿಗೆ ಒಪ್ಪುತ್ತೀರಿ.</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;ಗೌಪ್ಯತಾ ನೀತಿ&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;ಪರವಾನಗಿ&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;GitHub ನಲ್ಲಿ ರೆಪೊಸಿಟರಿಗೆ ಸ್ಟಾರ್ ನೀಡಿ&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;ಕೊಡುಗೆ ನೀಡಿ&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;ಪರವಾನಗಿ&lt;/a&gt;</string>
-    <string name="i_agree">ಒಪ್ಪಿಗೆ ಮತ್ತು ಮುಂದುವರಿಸಿ</string>
-    <string name="decline">ನಿರ್ಗಮಿಸಿ</string>
     <string name="accessibility_permission_title">ಸುಲಭಪ್ರವೇಶ ಅನುಮತಿ</string>
     <string name="accessibility_permission_message">ಪರದೆಯನ್ನು ಲಾಕ್ ಮಾಡಲು ಮತ್ತು ಫಿಂಗರ್‌ಪ್ರಿಂಟ್ ಅನ್‌ಲಾಕ್ ಉಳಿಸಿಕೊಳ್ಳಲು, ದಯವಿಟ್ಟು ಸುಲಭಪ್ರವೇಶ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ Launch ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">ಸ್ವಾಗತ</string>
     <string name="to_launch">LAUNCH ಗೆ</string>
-    <string name="resources">ಸಂಪನ್ಮೂಲಗಳು</string>
     <string name="import_data">ಡೇಟಾ ಆಮದು ಮಾಡಿ</string>
     <string name="restore_your_previous_configuration_from_a_backu">ಬ್ಯಾಕಪ್ ಫೈಲ್‌ನಿಂದ ನಿಮ್ಮ ಹಿಂದಿನ ಸಂರಚನೆಯನ್ನು ಮರುಸ್ಥಾಪಿಸಿ, ಅಥವಾ ಡೀಫಾಲ್ಟ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳೊಂದಿಗೆ ಹೊಸದಾಗಿ ಪ್ರಾರಂಭಿಸಿ.</string>
     <string name="choose_backup_file">ಬ್ಯಾಕಪ್ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ</string>

@@ -84,11 +84,7 @@ class AppListLoader(
     }
 
     fun loadApps(forceRefresh: Boolean = false, fullAppList: MutableList<ResolveInfo>, appList: MutableList<ResolveInfo>, adapter: AppAdapter?) {
-        val viewPreference = sharedPreferences.getString(
-            Constants.Prefs.VIEW_PREFERENCE,
-            Constants.Prefs.VIEW_PREFERENCE_LIST
-        )
-        val isGridMode = viewPreference == Constants.Prefs.VIEW_PREFERENCE_GRID
+        val isGridMode = com.guruswarupa.launch.utils.LayoutMode.isGridRendering(sharedPreferences)
 
         val currentTime = System.currentTimeMillis()
         val myGeneration = loadGeneration.incrementAndGet()
@@ -112,7 +108,8 @@ class AppListLoader(
                     val cachedFinalList = appListManager.prepareSortedList(cachedAppsWithWebApps, focusMode, workspaceMode, activity.showOnlyFavoritesInitially)
 
 
-                    if (activity.showOnlyFavoritesInitially && !focusMode && !workspaceMode) {
+                    if (activity.showOnlyFavoritesInitially && !focusMode && !workspaceMode &&
+                        !com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
                         val favorites = appListManager.getFavoriteApps()
                         if (favorites.isEmpty()) {
                             activity.showOnlyFavoritesInitially = false

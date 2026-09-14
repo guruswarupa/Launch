@@ -14,6 +14,7 @@ class FocusModeApplier(
     private val backgroundExecutor: Executor,
     private val appListManager: AppListManager,
     private val appDockManager: AppDockManager,
+    private val sharedPreferences: android.content.SharedPreferences,
     private val searchContainer: LinearLayout,
     private var adapter: AppAdapter?,
     private val fullAppList: MutableList<android.content.pm.ResolveInfo>,
@@ -51,7 +52,11 @@ class FocusModeApplier(
                     appList.clear()
                     appList.addAll(listWithSeparators)
 
-                    searchContainer.visibility = View.VISIBLE
+                    searchContainer.visibility = if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
+                    }
                     appDockManager.lockDrawerForFocusMode(isFocusMode)
                     adapter?.updateAppList(listWithSeparators)
 

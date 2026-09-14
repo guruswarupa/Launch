@@ -24,11 +24,18 @@ class SettingsChangeCoordinator(
 
     private var lastIconPackPackage: String? = null
     private var lastIconPackEnabled: Boolean = false
+    private var lastViewPreference: String
+    private var lastStockDrawerEnabled: Boolean
+    private var lastStockHotseatCount: Int
 
     init {
         val sharedPreferences = activity.sharedPreferences
         lastIconPackPackage = sharedPreferences.getString(Constants.Prefs.ICON_PACK_PACKAGE, null)
         lastIconPackEnabled = sharedPreferences.getBoolean(Constants.Prefs.ICON_PACK_ENABLED, false)
+        lastViewPreference = sharedPreferences.getString(Constants.Prefs.VIEW_PREFERENCE, Constants.Prefs.VIEW_PREFERENCE_LIST)
+            ?: Constants.Prefs.VIEW_PREFERENCE_LIST
+        lastStockDrawerEnabled = sharedPreferences.getBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, true)
+        lastStockHotseatCount = sharedPreferences.getInt(Constants.Prefs.STOCK_HOTSEAT_COUNT, 4)
     }
 
 
@@ -99,10 +106,14 @@ class SettingsChangeCoordinator(
 
         val iconPackPackage = sharedPreferences.getString(Constants.Prefs.ICON_PACK_PACKAGE, null)
         val iconPackEnabled = sharedPreferences.getBoolean(Constants.Prefs.ICON_PACK_ENABLED, false)
-        if (iconPackPackage != lastIconPackPackage || iconPackEnabled != lastIconPackEnabled) {
+        val iconPackChanged = iconPackPackage != lastIconPackPackage || iconPackEnabled != lastIconPackEnabled
+        if (iconPackChanged) {
             lastIconPackPackage = iconPackPackage
             lastIconPackEnabled = iconPackEnabled
             adapter?.refreshIcons()
+        }
+        if (activity.isStockDrawerManagerInitialized()) {
+            activity.stockDrawerManager.refreshAppearance(iconPackChanged)
         }
 
         applyThemeBasedWidgetBackgrounds()
@@ -127,6 +138,16 @@ class SettingsChangeCoordinator(
                 params.topMargin = 0
             }
             views.searchContainer.layoutParams = params
+
+            // Stock's home page is meant to stay minimal, like a real launcher's - its own
+            // drawer already has a search box, so the home page search bar is redundant there.
+            views.searchContainer.visibility = if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
+                android.view.View.GONE
+            } else {
+                android.view.View.VISIBLE
+            }
+
+            activity.activityInitializer.applyTopWidgetStyle()
         }
 
         if (activity.isWallpaperMediaControllerInitialized()) {
@@ -140,9 +161,61 @@ class SettingsChangeCoordinator(
             Constants.Prefs.VIEW_PREFERENCE,
             Constants.Prefs.VIEW_PREFERENCE_LIST
         ) ?: Constants.Prefs.VIEW_PREFERENCE_LIST
-        val newIsGridMode = viewPreference == Constants.Prefs.VIEW_PREFERENCE_GRID
+        val enteringOrLeavingStock = viewPreference != lastViewPreference &&
+            (viewPreference == Constants.Prefs.VIEW_PREFERENCE_STOCK || lastViewPreference == Constants.Prefs.VIEW_PREFERENCE_STOCK)
+        lastViewPreference = viewPreference
+        val newIsGridMode = com.guruswarupa.launch.utils.LayoutMode.isGridRendering(sharedPreferences)
         val desiredColumns = activity.getPreferredGridColumns()
         val currentIsGridMode = if (views.isRecyclerViewInitialized()) views.recyclerView.layoutManager is GridLayoutManager else false
+
+        if (enteringOrLeavingStock) {
+            // main_content_stack has animateLayoutChanges="true" for things like the top widget
+            // being toggled on/off - but switching into/out of Stock changes several of its
+            // children's visibility at once (search bar, dock, top widget restyling), and
+            // animating all of that together as one LayoutTransition can settle the dock at the
+            // wrong height (it read as correct only after a cold start, which never animates).
+            // Suppress it for just this one change and restore it once the new layout has
+            // actually been measured, so future individual toggles still animate normally.
+            val mainContentStack = activity.findViewById<android.view.ViewGroup>(com.guruswarupa.launch.R.id.main_content_stack)
+            val originalTransition = mainContentStack?.layoutTransition
+            mainContentStack?.let { it.layoutTransition = null }
+
+            if (viewPreference == Constants.Prefs.VIEW_PREFERENCE_STOCK) {
+                // Stock's home page is always the favorites grid - if the user had scrolled
+                // into "all apps" in List/Grid mode right before switching, force back to
+                // favorites-only so it doesn't try to render the all-apps letter-separator
+                // layout inside what's supposed to be a small favorites grid.
+                activity.showOnlyFavoritesInitially = true
+                // Workspaces don't fit Stock's model (its drawer is meant to show every app) -
+                // fully deactivate any active workspace, not just hide its dock icon.
+                appDockManagerProvider()?.turnOffWorkspace()
+            } else if (activity.isStockDrawerManagerInitialized()) {
+                activity.stockDrawerManager.hide(animated = false)
+                activity.stockDrawerManager.hideHotseat()
+            }
+            activity.appListLoader.loadApps(forceRefresh = false)
+
+            // loadApps() finishes asynchronously (cache/query work on a background thread, then
+            // posted back) - a single post{} here would fire before that completes and the dock's
+            // own visibility actually changes, re-arming the animation right before the change it
+            // was meant to skip. A short delay comfortably covers the normal reload time instead.
+            mainContentStack?.let { stack ->
+                stack.postDelayed({ stack.layoutTransition = originalTransition }, 300)
+            }
+        } else if (viewPreference == Constants.Prefs.VIEW_PREFERENCE_STOCK) {
+            // Already in Stock - reload if the drawer toggle or hotseat size changed, since
+            // neither is reflected until the home/hotseat/drawer lists are recomputed.
+            val stockDrawerEnabled = sharedPreferences.getBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, true)
+            val stockHotseatCount = sharedPreferences.getInt(Constants.Prefs.STOCK_HOTSEAT_COUNT, 4)
+            if (stockDrawerEnabled != lastStockDrawerEnabled || stockHotseatCount != lastStockHotseatCount) {
+                lastStockDrawerEnabled = stockDrawerEnabled
+                lastStockHotseatCount = stockHotseatCount
+                if (!stockDrawerEnabled && activity.isStockDrawerManagerInitialized()) {
+                    activity.stockDrawerManager.hide(animated = false)
+                }
+                activity.appListLoader.loadApps(forceRefresh = false)
+            }
+        }
 
         if (newIsGridMode != currentIsGridMode && adapter != null) {
 

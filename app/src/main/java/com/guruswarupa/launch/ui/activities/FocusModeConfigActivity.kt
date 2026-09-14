@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +34,8 @@ class FocusModeConfigActivity : AppCompatActivity() {
     private lateinit var themeOverlay: View
     private lateinit var titleText: TextView
     private lateinit var subtitleText: TextView
-    private lateinit var appsContainer: LinearLayout
+    private lateinit var blockedCountText: TextView
+    private lateinit var searchBox: EditText
     private lateinit var saveButton: Button
     private lateinit var cancelButton: Button
 
@@ -60,24 +63,49 @@ class FocusModeConfigActivity : AppCompatActivity() {
         applyBackgroundTranslucency()
         titleText = findViewById(R.id.title_text)
         subtitleText = findViewById(R.id.subtitle_text)
-        appsContainer = findViewById(R.id.apps_container)
+        blockedCountText = findViewById(R.id.blocked_count_text)
+        searchBox = findViewById(R.id.app_search_box)
         saveButton = findViewById(R.id.save_focus_config)
         cancelButton = findViewById(R.id.cancel_focus_config)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.itemAnimator = null
 
-
         applyThemeAndWallpaper()
 
-        loadApps()
+        // Querying every launchable activity and resolving all their labels is real work - do
+        // it off the main thread, adapter construction included (it only touches data, no
+        // views), so the screen appears instantly instead of blocking onCreate.
+        backgroundExecutor.execute {
+            val apps = queryLaunchableApps()
+            val newAdapter = FocusModeAppAdapter(
+                appList = apps,
+                packageManager = packageManager,
+                focusModeManager = focusModeManager,
+                iconExecutor = backgroundExecutor,
+                onSelectionChanged = { updateBlockedCount(it) }
+            )
+            runOnUiThread {
+                if (isFinishing || isDestroyed) return@runOnUiThread
+                appList = apps.toMutableList()
+                adapter = newAdapter
+                recyclerView.adapter = adapter
+                updateBlockedCount(adapter.blockedCount())
+            }
+        }
 
-        adapter = FocusModeAppAdapter(appList, focusModeManager)
-        recyclerView.adapter = adapter
+        searchBox.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (::adapter.isInitialized) adapter.filter(s?.toString().orEmpty())
+            }
+        })
 
         saveButton.setOnClickListener {
-
-            focusModeManager.updateAllowedApps(adapter.getSelectedApps())
+            if (::adapter.isInitialized) {
+                focusModeManager.updateBlockedApps(adapter.getBlockedApps())
+            }
 
             Toast.makeText(this, this.getString(R.string.toast_focus_mode_configuration_saved), Toast.LENGTH_SHORT).show()
 
@@ -94,37 +122,36 @@ class FocusModeConfigActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateBlockedCount(count: Int) {
+        blockedCountText.text = resources.getQuantityString(R.plurals.focus_mode_blocked_count, count, count)
+    }
+
     private fun applyThemeAndWallpaper() {
 
         WallpaperDisplayHelper.applySystemWallpaper(wallpaperBackground, fallbackRes = R.drawable.wallpaper_overlay)
 
         applyBackgroundTranslucency()
 
-        appsContainer.setBackgroundResource(R.drawable.widget_background)
-
         val textColor = ThemeManager.color(this, R.attr.appTextPrimary)
         val subTextColor = ThemeManager.color(this, R.attr.appTextSecondary)
 
         titleText.setTextColor(textColor)
         subtitleText.setTextColor(subTextColor)
-        saveButton.setTextColor(textColor)
         cancelButton.setTextColor(textColor)
 
-        saveButton.setBackgroundResource(R.drawable.settings_card_background)
         cancelButton.setBackgroundResource(R.drawable.settings_card_background)
     }
 
-    private fun loadApps() {
+    /** Runs on [backgroundExecutor] - must not touch any view. */
+    private fun queryLaunchableApps(): List<ResolveInfo> {
         val intent = Intent(Intent.ACTION_MAIN, null).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
 
-        val apps = (packageManager.queryIntentActivities(intent, 0) + webAppManager.getResolveInfos())
+        return (packageManager.queryIntentActivities(intent, 0) + webAppManager.getResolveInfos())
             .filter { it.activityInfo.packageName != packageName }
             .distinctBy { it.activityInfo.packageName }
             .sortedBy { AppDisplayHelper.getLabel(it, packageManager).lowercase() }
-
-        appList = apps.toMutableList()
     }
 
     override fun onDestroy() {

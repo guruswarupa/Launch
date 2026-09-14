@@ -26,8 +26,13 @@ class WidgetThemeManager(
         val widgetBackground = R.drawable.widget_background
         val emptyStateBackground = R.drawable.drawer_widgets_empty_state_bg
 
-
-        activity.findViewById<View>(R.id.top_widget_container)?.setBackgroundResource(widgetBackground)
+        // Stock's top widget is a deliberately card-free clock (see
+        // ActivityInitializer.applyTopWidgetStyle) - leave its background alone here, or every
+        // theme/settings refresh would clobber it back to the boxed List/Grid look.
+        val prefs = activity.getSharedPreferences(com.guruswarupa.launch.models.Constants.Prefs.PREFS_NAME, android.content.Context.MODE_PRIVATE)
+        if (!com.guruswarupa.launch.utils.LayoutMode.isStock(prefs)) {
+            activity.findViewById<View>(R.id.top_widget_container)?.setBackgroundResource(widgetBackground)
+        }
 
 
         activity.findViewById<View>(R.id.widget_settings_header)?.setBackgroundResource(widgetBackground)

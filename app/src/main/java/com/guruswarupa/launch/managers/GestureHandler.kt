@@ -26,15 +26,21 @@ class GestureHandler(
     private var touchStartY = 0f
     private var isSwipeFromLeftEdge = false
     private var isSwipeFromRightEdge = false
+    private var isSwipeUpCandidate = false
     private var isGesturesEnabled = true
 
     private val edgeThresholdPx: Int
     private val minSwipeDistancePx: Int
+    private val minSwipeUpDistancePx: Int
+
+    /** Fired on an upward swipe starting on blank home-screen space (not over any clickable view). */
+    var onSwipeUpFromHome: (() -> Boolean)? = null
 
     init {
         val density = activity.resources.displayMetrics.density
         edgeThresholdPx = (50 * density).toInt()
         minSwipeDistancePx = (50 * density).toInt()
+        minSwipeUpDistancePx = (24 * density).toInt()
     }
 
 
@@ -138,7 +144,8 @@ class GestureHandler(
                     val isLeftSide = event.x < screenWidth / 2
                     isSwipeFromLeftEdge = isLeftSide && event.y < (v.height / 2)
                     isSwipeFromRightEdge = !isLeftSide && event.y < (v.height / 2)
-                    isSwipeFromLeftEdge || isSwipeFromRightEdge
+                    isSwipeUpCandidate = onSwipeUpFromHome != null && !isSwipeFromLeftEdge && !isSwipeFromRightEdge
+                    isSwipeFromLeftEdge || isSwipeFromRightEdge || isSwipeUpCandidate
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (isSwipeFromLeftEdge) {
@@ -160,6 +167,20 @@ class GestureHandler(
                         } else {
                             isSwipeFromRightEdge = false
                             false
+                        }
+                    } else if (isSwipeUpCandidate) {
+                        val deltaY = touchStartY - event.y
+                        val deltaX = event.x - touchStartX
+
+                        if (deltaY > minSwipeUpDistancePx && deltaY > abs(deltaX) * 1.2f) {
+                            isSwipeUpCandidate = false
+                            onSwipeUpFromHome?.invoke()
+                            true
+                        } else if (abs(deltaX) > abs(deltaY) * 1.2f) {
+                            isSwipeUpCandidate = false
+                            false
+                        } else {
+                            true
                         }
                     } else {
                         false
@@ -190,7 +211,9 @@ class GestureHandler(
                         isSwipeFromRightEdge = false
                         true
                     } else {
-                        false
+                        val wasSwipeUpCandidate = isSwipeUpCandidate
+                        isSwipeUpCandidate = false
+                        wasSwipeUpCandidate
                     }
                 }
                 else -> false

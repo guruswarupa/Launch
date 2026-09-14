@@ -39,12 +39,7 @@
     <string name="accessibility_description">डबल टैप पर स्क्रीन लॉक करने और फिंगरप्रिंट अनलॉक को सक्षम करने के लिए उपयोग किया जाता है। यह सेवा किसी भी व्यक्तिगत डेटा को एकत्र, संग्रहीत या प्रसारित नहीं करती है। यह केवल सिस्टम-स्तर की कार्रवाइयां करती है, जैसे स्क्रीन लॉक करना और स्क्रीनशॉट कैप्चर करना, जब स्पष्ट रूप से उपयोगकर्ता के इशारों द्वारा ट्रिगर किया जाता है।</string>
     
     
-    <string name="app_data_disclosure_title">गोपनीयता और प्रकटीकरण</string>
-    <string name="app_data_disclosure_message">एक कार्यात्मक लॉन्चर अनुभव प्रदान करने के लिए, Launch आपके इंस्टॉल किए गए ऐप्स के बारे में जानकारी संसाधित करता है। सभी डेटा &lt;b&gt;आपके डिवाइस पर स्थानीय रूप से&lt;/b&gt; संग्रहीत किया जाता है और कभी भी तीसरे पक्ष के साथ साझा नहीं किया जाता है।&lt;br/&gt;&lt;br/&gt;&lt;b&gt;हम क्या एकत्र करते हैं:&lt;/b&gt;&lt;br/&gt;• पैकेज नाम, ऐप नाम और आइकन&lt;br/&gt;• लॉन्च इंटेंट जानकारी&lt;br/&gt;&lt;br/&gt;&lt;b&gt;हम इसका उपयोग कैसे करते हैं:&lt;/b&gt;&lt;br/&gt;• आपके ऐप्स प्रदर्शित करना और खोजना&lt;br/&gt;• ऐप संगठन सुविधाओं को सक्षम करना&lt;br/&gt;\'स्वीकार करें\' पर क्लिक करके, आप इन डेटा प्रथाओं से सहमत होते हैं।</string>
-    <string name="data_disclosure_links">&lt;a href="https://github.com/guruswarupa/launch/blob/master/PRIVACY_POLICY.md"&gt;गोपनीयता नीति&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;  •  &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;लाइसेंस&lt;/a&gt;</string>
     <string name="github_project_links">• &lt;a href="https://github.com/guruswarupa/launch"&gt;GitHub पर रिपॉज़िटरी को स्टार दें&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/README.md"&gt;README&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/CONTRIBUTING.md"&gt;योगदान करें&lt;/a&gt;\n• &lt;a href="https://github.com/guruswarupa/launch/blob/master/LICENSE"&gt;लाइसेंस&lt;/a&gt;</string>
-    <string name="i_agree">स्वीकार करें और जारी रखें</string>
-    <string name="decline">बाहर निकलें</string>
     <string name="accessibility_permission_title">एक्सेसिबिलिटी अनुमति</string>
     <string name="accessibility_permission_message">स्क्रीन लॉक करने और फिंगरप्रिंट अनलॉक बनाए रखने के लिए, कृपया एक्सेसिबिलिटी सेटिंग्स में Launch को सक्षम करें।</string>
 
@@ -459,7 +454,6 @@
     <!-- Auto-extracted layout strings (language selection support) -->
     <string name="welcome">स्वागत है</string>
     <string name="to_launch">LAUNCH में</string>
-    <string name="resources">संसाधन</string>
     <string name="import_data">डेटा आयात करें</string>
     <string name="restore_your_previous_configuration_from_a_backu">बैकअप फ़ाइल से अपनी पिछली कॉन्फ़िगरेशन पुनर्स्थापित करें, या डिफ़ॉल्ट सेटिंग्स के साथ नई शुरुआत करें।</string>
     <string name="choose_backup_file">बैकअप फ़ाइल चुनें</string>

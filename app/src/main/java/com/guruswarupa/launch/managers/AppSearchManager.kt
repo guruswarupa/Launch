@@ -44,7 +44,13 @@ class AppSearchManager @Inject constructor(
     private var isFocusModeActive: (() -> Boolean)? = null
     private val lifecycleScope = (context as LifecycleOwner).lifecycleScope
     private var searchJob: Job? = null
-    private var searchListenerAttached = false
+    // This one engine is shared by whichever surface currently owns search input - normally the
+    // home page's search box, but Stock's drawer retargets it to its own box (and its own
+    // full/home/contacts data) for the duration it's open, then hands it back. Tracking the
+    // actual attached box (not just "has configure() ever run") is what makes that handoff safe:
+    // configure()/retarget can be called again for a *different* box without being a no-op.
+    private var attachedSearchBox: AutoCompleteTextView? = null
+    private var attachedWatcher: android.text.TextWatcher? = null
 
 
     var onSearchQueryChanged: ((String) -> Unit)? = null
@@ -69,17 +75,19 @@ class AppSearchManager @Inject constructor(
         this.searchBox = searchBox
         this.adapter = adapter
         updateData(fullAppList, homeAppList, contactsList)
-        attachSearchListener(searchBox)
+        attachTo(searchBox)
     }
 
-    fun isConfigured(): Boolean = searchListenerAttached
+    /** True once anything has ever called [configure] - unrelated to *which* box is current. */
+    fun isConfigured(): Boolean = attachedSearchBox != null
 
-    private fun attachSearchListener(searchBox: AutoCompleteTextView) {
-        if (searchListenerAttached) {
-            return
-        }
-        searchListenerAttached = true
-        searchBox.addTextChangedListener(object : android.text.TextWatcher {
+    /** True when [searchBox] specifically is the one currently receiving search input. */
+    fun isAttachedTo(searchBox: AutoCompleteTextView): Boolean = attachedSearchBox === searchBox
+
+    private fun attachTo(newSearchBox: AutoCompleteTextView) {
+        if (attachedSearchBox === newSearchBox) return
+        attachedWatcher?.let { attachedSearchBox?.removeTextChangedListener(it) }
+        val watcher = object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -89,7 +97,10 @@ class AppSearchManager @Inject constructor(
             }
 
             override fun afterTextChanged(s: android.text.Editable?) {}
-        })
+        }
+        newSearchBox.addTextChangedListener(watcher)
+        attachedWatcher = watcher
+        attachedSearchBox = newSearchBox
     }
 
     fun setAdapter(adapter: AppAdapter) {

@@ -110,7 +110,7 @@ class ActivityInitializer(
             setupLayoutManager(recyclerView)
             setupHeaderVisibilityOnScroll(recyclerView)
             setupTimeDateListeners(timeTextView, dateTextView)
-            applyPhoneLandscapeOptimizations()
+            applyTopWidgetStyle()
 
 
             val topWidgetEnabled = sharedPreferences.getBoolean(
@@ -137,7 +137,7 @@ class ActivityInitializer(
         if (!views.isRecyclerViewInitialized()) return
         pinnedSearchTopMargin = activity.resources.getDimensionPixelSize(R.dimen.search_bar_top_margin_pinned)
         applyFastScrollerLayout()
-        applyPhoneLandscapeOptimizations()
+        applyTopWidgetStyle()
     }
 
     private fun applyFastScrollerLayout() {
@@ -150,6 +150,80 @@ class ActivityInitializer(
         scrollerParams.gravity = Gravity.BOTTOM or Gravity.END
         views.fastScroller.layoutParams = scrollerParams
         views.fastScroller.requestLayout()
+    }
+
+    /**
+     * Stock's home page has room (and, being a minimal favorites-only page, the visual need) for
+     * a bigger, card-free clock - closer to an AOD/always-on-display look than the boxed
+     * List/Grid widget. Lays the orientation-aware baseline down first via
+     * [applyPhoneLandscapeOptimizations], then overrides on top for Stock; the non-stock branch
+     * explicitly resets the shadow/letter-spacing/background Stock adds, in case this is a
+     * switch *away* from Stock.
+     */
+    fun applyTopWidgetStyle() {
+        if (!views.isRecyclerViewInitialized()) return
+
+        val density = activity.resources.displayMetrics.density
+        val usageTextView = activity.findViewById<TextView>(R.id.daily_usage_time)
+        val isStock = com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)
+
+        if (isStock) {
+            views.topWidgetContainer.background = null
+            val horizontalPadding = (8 * density).toInt()
+            val verticalPadding = (28 * density).toInt()
+            views.topWidgetContainer.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            (views.topWidgetContainer.layoutParams as? MarginLayoutParams)?.let { params ->
+                params.topMargin = 0
+                params.bottomMargin = (20 * density).toInt()
+                views.topWidgetContainer.layoutParams = params
+            }
+
+            views.timeTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 64f)
+            views.timeTextView.letterSpacing = 0.02f
+            views.dateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+            views.dateTextView.letterSpacing = 0.2f
+            usageTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+
+            // The big 64sp clock's own font leading already reads as space below it - the
+            // date's XML paddingTop (meant for the much smaller default size) piles on top of
+            // that, so pull it back here instead of just relying on the shared XML padding.
+            views.dateTextView.setPadding(views.dateTextView.paddingLeft, 0, views.dateTextView.paddingRight, views.dateTextView.paddingBottom)
+            (views.dateTextView.layoutParams as? MarginLayoutParams)?.let { params ->
+                params.topMargin = (-10 * density).toInt()
+                views.dateTextView.layoutParams = params
+            }
+
+            // No card behind the text anymore - a soft shadow keeps it legible over any
+            // wallpaper, the same trick the app grid's own labels already use.
+            val shadowColor = android.graphics.Color.argb(160, 0, 0, 0)
+            views.timeTextView.setShadowLayer(10f, 0f, 2f, shadowColor)
+            views.dateTextView.setShadowLayer(6f, 0f, 1f, shadowColor)
+            views.weatherText.setShadowLayer(6f, 0f, 1f, shadowColor)
+            usageTextView?.setShadowLayer(6f, 0f, 1f, shadowColor)
+        } else {
+            // The original, unmodified List/Grid widget - applied fresh every time (not just
+            // relied on as leftover state) so a switch away from Stock can never leave any of
+            // its overrides behind, regardless of call order.
+            views.topWidgetContainer.background = androidx.core.content.ContextCompat.getDrawable(activity, R.drawable.widget_background)
+            views.timeTextView.letterSpacing = 0.05f
+            views.dateTextView.letterSpacing = 0f
+            views.timeTextView.setShadowLayer(0f, 0f, 0f, 0)
+            views.dateTextView.setShadowLayer(0f, 0f, 0f, 0)
+            views.weatherText.setShadowLayer(0f, 0f, 0f, 0)
+            usageTextView?.setShadowLayer(0f, 0f, 0f, 0)
+
+            val defaultDatePaddingTop = (8 * density).toInt()
+            views.dateTextView.setPadding(views.dateTextView.paddingLeft, defaultDatePaddingTop, views.dateTextView.paddingRight, views.dateTextView.paddingBottom)
+            (views.dateTextView.layoutParams as? MarginLayoutParams)?.let { params ->
+                params.topMargin = 0
+                views.dateTextView.layoutParams = params
+            }
+
+            // Sizes/padding/margins for the container itself and time/date/weather/usage text
+            // are entirely owned by the orientation-aware logic below - call it last so nothing
+            // above can be mistaken for having already set them.
+            applyPhoneLandscapeOptimizations()
+        }
     }
 
     private fun applyPhoneLandscapeOptimizations() {
@@ -239,11 +313,7 @@ class ActivityInitializer(
     }
 
     private fun setupLayoutManager(recyclerView: RecyclerView) {
-        val viewPreference = sharedPreferences.getString(
-            Constants.Prefs.VIEW_PREFERENCE,
-            Constants.Prefs.VIEW_PREFERENCE_LIST
-        )
-        val isGridMode = viewPreference == Constants.Prefs.VIEW_PREFERENCE_GRID
+        val isGridMode = com.guruswarupa.launch.utils.LayoutMode.isGridRendering(sharedPreferences)
 
         if (isGridMode) {
             val columns = (activity as? MainActivity)?.getPreferredGridColumns()

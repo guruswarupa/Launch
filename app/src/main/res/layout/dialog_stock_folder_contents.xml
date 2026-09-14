@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Styled after Samsung One UI's folder popup: a spacious card (the rounded ?attr/appSurfaceElevated
+     chrome already comes from R.style.CustomDialogTheme, so this content has no background/border
+     of its own) with a large centered, directly-editable name and a subtle corner delete icon
+     instead of a heavy divider-and-row footer. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="20dp"
+    android:paddingBottom="12dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp">
+
+        <EditText
+            android:id="@+id/folder_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:gravity="center"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:imeOptions="actionDone"
+            android:inputType="textCapWords"
+            android:importantForAutofill="no"
+            android:background="@android:color/transparent"/>
+
+        <ImageButton
+            android:id="@+id/folder_delete_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end|center_vertical"
+            android:padding="7dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            app:tint="?attr/appTextSecondary"
+            android:contentDescription="@string/stock_folder_delete"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/folder_contents_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="140dp"
+            android:maxHeight="380dp"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="72dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <FrameLayout
+                android:id="@+id/folder_add_to_home_zone"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/translucent_black_pill"
+                android:visibility="gone"
+                android:elevation="20dp"
+                android:translationZ="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_arrow_right"
+                    android:rotation="270"
+                    app:tint="?attr/appAccent"
+                    android:contentDescription="@string/stock_drag_to_add_to_home"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/folder_remove_zone"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/translucent_black_pill"
+                android:visibility="gone"
+                android:elevation="20dp"
+                android:translationZ="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_delete"
+                    android:contentDescription="@string/stock_drag_to_remove"/>
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>
