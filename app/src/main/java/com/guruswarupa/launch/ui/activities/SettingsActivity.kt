@@ -94,6 +94,7 @@ import com.guruswarupa.launch.ui.theme.ThemePalette
 class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     companion object {
         const val EXTRA_OPEN_SUPPORT_SECTION = "open_support_section"
+        const val EXTRA_OPEN_AI_SECTION = "open_ai_section"
         private const val STATE_WIDGETS_SECTION_EXPANDED = "state_widgets_section_expanded"
         private const val STATE_NEWS_SECTION_EXPANDED = "state_news_section_expanded"
         private const val STATE_SYSTEM_MONITOR_SECTION_EXPANDED = "state_system_monitor_section_expanded"
@@ -180,6 +181,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         setupSupportSection()
         setupVersionInfo()
         openSupportSectionIfRequested()
+        openAiSectionIfRequested()
     }
 
     override fun onResume() {
@@ -1060,6 +1062,26 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             scrollView.postDelayed({
                 supportCard.requestFocus()
                 scrollView.smoothScrollTo(0, supportCard.top)
+            }, 180)
+        }
+    }
+
+    private fun openAiSectionIfRequested() {
+        if (!intent.getBooleanExtra(EXTRA_OPEN_AI_SECTION, false)) {
+            return
+        }
+        val aiHeader = findViewById<LinearLayout>(R.id.ai_assistant_header)
+        val aiContent = findViewById<LinearLayout>(R.id.ai_assistant_content)
+        val scrollView = findViewById<ScrollView>(R.id.settings_scroll_view)
+        val aiCard = aiHeader.parent?.parent as? View ?: aiHeader
+        intent.removeExtra(EXTRA_OPEN_AI_SECTION)
+        aiHeader.post {
+            if (aiContent.visibility != View.VISIBLE) {
+                aiHeader.performClick()
+            }
+            scrollView.postDelayed({
+                aiCard.requestFocus()
+                scrollView.smoothScrollTo(0, aiCard.top)
             }, 180)
         }
     }

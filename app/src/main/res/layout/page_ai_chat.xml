@@ -67,6 +67,16 @@
             </LinearLayout>
 
             <ImageButton
+                android:id="@+id/ai_chat_settings_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/drawer_widgets_action_bg"
+                android:contentDescription="@string/ai_chat_open_settings"
+                android:src="@drawable/ic_settings_icon"
+                android:tint="?attr/appIconTint" />
+
+            <ImageButton
                 android:id="@+id/ai_chat_clear_button"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
@@ -189,6 +199,67 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/ai_chat_webview_error_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/drawer_widgets_empty_icon_bg"
+            android:foregroundGravity="center">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_alert_circle"
+                android:tint="?attr/appIconTint" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ai_chat_webview_error_title"
+            android:textColor="?attr/appTextPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ai_chat_webview_error_message"
+            android:textColor="?attr/appTextPrimary"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:alpha="0.78"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/ai_chat_webview_retry_button"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:minWidth="140dp"
+            android:paddingHorizontal="24dp"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:background="@drawable/drawer_widgets_action_bg"
+            android:textColor="?attr/appTextPrimary"
+            android:text="@string/ai_chat_webview_retry" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/ai_chat_webview_fullscreen_container"

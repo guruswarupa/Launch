@@ -433,6 +433,10 @@
     <string name="ai_assistant_use_web_provider">Use this</string>
     <string name="ai_chat_subtitle">On-device, offline, private</string>
     <string name="ai_chat_clear">Clear conversation</string>
+    <string name="ai_chat_open_settings">AI Assistant settings</string>
+    <string name="ai_chat_webview_error_title">Couldn\'t load</string>
+    <string name="ai_chat_webview_error_message">Check your internet connection and try again.</string>
+    <string name="ai_chat_webview_retry">Retry</string>
     <string name="ai_chat_empty_title">Ask me anything</string>
     <string name="ai_chat_empty_message">Runs entirely on this device — nothing you type ever leaves your phone.</string>
     <string name="ai_chat_not_ready_title">Assistant not set up yet</string>

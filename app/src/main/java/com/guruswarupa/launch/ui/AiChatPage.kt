@@ -1,7 +1,11 @@
 package com.guruswarupa.launch.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.view.KeyEvent
 import android.view.View
@@ -9,11 +13,13 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.CookieManager
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -63,16 +69,20 @@ class AiChatPage(
     private val inputField: EditText = rootView.findViewById(R.id.ai_chat_input)
     private val sendButton: ImageButton = rootView.findViewById(R.id.ai_chat_send_button)
     private val clearButton: ImageButton = rootView.findViewById(R.id.ai_chat_clear_button)
+    private val settingsButton: ImageButton = rootView.findViewById(R.id.ai_chat_settings_button)
     private val contentContainer: View = rootView.findViewById(R.id.ai_chat_content_container)
 
     private val webView: WebView = rootView.findViewById(R.id.ai_chat_webview)
     private val webViewFullscreenContainer: FrameLayout = rootView.findViewById(R.id.ai_chat_webview_fullscreen_container)
     private val webViewProgress: ProgressBar = rootView.findViewById(R.id.ai_chat_webview_progress)
+    private val webViewErrorContainer: View = rootView.findViewById(R.id.ai_chat_webview_error_container)
+    private val webViewRetryButton: Button = rootView.findViewById(R.id.ai_chat_webview_retry_button)
 
     private val adapter = AiChatAdapter()
     private var isWaitingForResponse = false
 
     private var webViewInitialized = false
+    private var webViewLoadFailed = false
     private var loadedWebProviderId: String? = null
     private var webCustomView: View? = null
     private var webCustomViewCallback: WebChromeClient.CustomViewCallback? = null
@@ -84,6 +94,23 @@ class AiChatPage(
             } else if (webViewInitialized && webView.canGoBack()) {
                 webView.goBack()
             }
+        }
+    }
+
+    // Chromium's WebView network stack can keep failing with the same connection error for a
+    // moment after connectivity is actually restored (it needs the system to *validate* the
+    // network, not just report a link), so a manual retry right after reconnecting can still
+    // fail. Listening for validated connectivity and retrying then — in addition to the manual
+    // retry button — covers that gap instead of leaving the page stuck until the user notices
+    // and taps retry again.
+    private var networkCallbackRegistered = false
+    private val connectivityManager: ConnectivityManager by lazy {
+        activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+            if (!webViewLoadFailed || !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) return
+            activity.runOnUiThread { retryFailedLoad() }
         }
     }
 
@@ -110,6 +137,16 @@ class AiChatPage(
             adapter.clear()
             refreshAvailability()
         }
+
+        settingsButton.setOnClickListener {
+            val intent = Intent(activity, com.guruswarupa.launch.ui.activities.SettingsActivity::class.java).apply {
+                putExtra(com.guruswarupa.launch.ui.activities.SettingsActivity.EXTRA_OPEN_AI_SECTION, true)
+            }
+            activity.startActivity(intent)
+        }
+
+        webViewRetryButton.setOnClickListener { retryFailedLoad() }
+        registerNetworkCallback()
 
         updateTypography()
         refreshAvailability()
@@ -159,9 +196,37 @@ class AiChatPage(
     }
 
     fun onActivityDestroy() {
+        unregisterNetworkCallback()
         if (webViewInitialized) {
             releaseWebView()
         }
+    }
+
+    private fun registerNetworkCallback() {
+        if (networkCallbackRegistered) return
+        try {
+            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+            networkCallbackRegistered = true
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun unregisterNetworkCallback() {
+        if (!networkCallbackRegistered) return
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
+        } catch (_: Exception) {
+        }
+        networkCallbackRegistered = false
+    }
+
+    /** Retries the currently selected web provider after a failed load — used by both the manual retry button and [networkCallback]'s auto-recovery. No-op if nothing has failed or the source has since changed away from web. */
+    private fun retryFailedLoad() {
+        if (!webViewLoadFailed) return
+        val provider = WebAiProvider.byId(
+            activity.sharedPreferences.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID, null)
+        )
+        if (provider != null && isWebSourceSelected()) loadProviderUrl(provider.url)
     }
 
     /** Applies the user's configured font scale/style/intensity/color — same mechanism RssFeedPage uses — so this page matches the News/Widgets pages instead of looking themed differently. */
@@ -191,18 +256,29 @@ class AiChatPage(
 
         if (isWebSourceSelected() && provider != null) {
             contentContainer.isVisible = false
-            webView.isVisible = true
             ensureWebViewInitialized()
             if (loadedWebProviderId != provider.id) {
                 loadedWebProviderId = provider.id
-                webView.loadUrl(provider.url)
+                loadProviderUrl(provider.url)
+            } else {
+                webView.isVisible = !webViewLoadFailed
+                webViewErrorContainer.isVisible = webViewLoadFailed
             }
         } else {
             webView.isVisible = false
             webViewProgress.isVisible = false
+            webViewErrorContainer.isVisible = false
             contentContainer.isVisible = true
         }
         updateBackCallbackEnabled()
+    }
+
+    /** Kicks off (or retries) loading [url] in the WebView, clearing any previous error state. */
+    private fun loadProviderUrl(url: String) {
+        webViewLoadFailed = false
+        webViewErrorContainer.isVisible = false
+        webView.isVisible = true
+        webView.loadUrl(url)
     }
 
     private fun updateBackCallbackEnabled() {
@@ -296,10 +372,36 @@ class AiChatPage(
                 }
             }
 
+            override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
+                super.onReceivedError(view, request, error)
+                if (request?.isForMainFrame != false) showWebViewError()
+            }
+
+            // Some WebView builds report connection-level failures (no internet, DNS) only
+            // through this deprecated callback instead of the WebResourceRequest-based one
+            // above — override both so the error screen reliably replaces the WebView's own
+            // dead-end "Web page not available" page rather than leaving it stuck on screen.
+            @Suppress("DEPRECATION")
+            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
+                super.onReceivedError(view, errorCode, description, failingUrl)
+                showWebViewError()
+            }
+
             override fun onPageFinished(view: WebView?, url: String?) {
+                if (webViewLoadFailed) {
+                    webView.isVisible = false
+                    webViewErrorContainer.isVisible = true
+                }
                 updateBackCallbackEnabled()
             }
         }
+    }
+
+    private fun showWebViewError() {
+        webViewLoadFailed = true
+        webViewProgress.isVisible = false
+        webView.isVisible = false
+        webViewErrorContainer.isVisible = true
     }
 
     private fun exitWebFullscreen() {
