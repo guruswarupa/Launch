@@ -66,7 +66,17 @@ class SettingsChangeCoordinator(
         activity.findViewById<android.view.View>(com.guruswarupa.launch.R.id.rss_drawer_translucency_overlay)?.setBackgroundColor(color)
         activity.findViewById<android.view.View>(com.guruswarupa.launch.R.id.ai_chat_translucency_overlay)?.setBackgroundColor(color)
 
-        activity.systemBarManager.updateSystemBars(false)
+        try {
+            val currentPage = activity.screenPagerManager.getCurrentPage()
+            val isFullyTransparentPage = currentPage == com.guruswarupa.launch.managers.ScreenPagerManager.Page.WALLPAPER ||
+                    currentPage == com.guruswarupa.launch.managers.ScreenPagerManager.Page.WIDGETS ||
+                    currentPage == com.guruswarupa.launch.managers.ScreenPagerManager.Page.RSS ||
+                    currentPage == com.guruswarupa.launch.managers.ScreenPagerManager.Page.AI_CHAT ||
+                    currentPage == com.guruswarupa.launch.managers.ScreenPagerManager.Page.CENTER
+            activity.systemBarManager.updateSystemBars(isFullyTransparentPage)
+        } catch (e: UninitializedPropertyAccessException) {
+            // screenPagerManager not set up yet (e.g. during initial onCreate)
+        }
     }
 
 

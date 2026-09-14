@@ -28,9 +28,6 @@ class SystemBarManager(
 
     fun updateSystemBars(isFullyTransparent: Boolean) {
         val scrimColor = if (isFullyTransparent) Color.TRANSPARENT else currentTranslucencyScrimColor()
-        // Dedupe on the resolved color rather than the flag: this still skips redundant
-        // re-applies during a page swipe (avoiding the mid-gesture status bar flicker),
-        // while still reacting when the translucency preference itself changes.
         if (scrimColor == lastAppliedScrimColor) {
             return
         }

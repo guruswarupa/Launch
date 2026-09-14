@@ -22,12 +22,6 @@ class GestureHandler(
     private val drawerLayout: DrawerLayout,
     private val mainContent: FrameLayout
 ) {
-    private val mainScrollView: View? = null
-    private val initialPaddingLeft = mainScrollView?.paddingLeft ?: 0
-    private val initialPaddingTop = mainScrollView?.paddingTop ?: 0
-    private val initialPaddingRight = mainScrollView?.paddingRight ?: 0
-    private val initialPaddingBottom = mainScrollView?.paddingBottom ?: 0
-
     private var touchStartX = 0f
     private var touchStartY = 0f
     private var isSwipeFromLeftEdge = false
@@ -60,13 +54,22 @@ class GestureHandler(
 
 
     fun setupGestureExclusion() {
-        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+        // Pad main_content_stack (the actual interactive content), not mainContent itself:
+        // mainContent also holds wallpaper_background/background_translucency_overlay, which
+        // need to stay edge-to-edge under the status bar just like the other pages' own
+        // backgrounds do. Padding mainContent directly would inset those too.
+        val contentStack = mainContent.findViewById<View>(R.id.main_content_stack) ?: mainContent
+        val initialLeft = contentStack.paddingLeft
+        val initialTop = contentStack.paddingTop
+        val initialRight = contentStack.paddingRight
+        val initialBottom = contentStack.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            (mainScrollView ?: view).setPadding(
-                initialPaddingLeft,
-                initialPaddingTop + systemBars.top,
-                initialPaddingRight,
-                initialPaddingBottom
+            contentStack.setPadding(
+                initialLeft + systemBars.left,
+                initialTop + systemBars.top,
+                initialRight + systemBars.right,
+                initialBottom + systemBars.bottom
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 updateGestureExclusion()
