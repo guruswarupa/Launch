@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -452,6 +453,11 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     fun notifyWidgetConfigurationChanged() {
         setResult(RESULT_OK)
+        // MainActivity.onResume() consumes this flag to refresh widget visibility. Needed
+        // because this activity is sometimes launched via a plain startActivity() (from
+        // Settings) rather than an ActivityResult launcher, so setResult() alone isn't always
+        // observed by anything.
+        prefs.edit { putBoolean("saved_widgets_changed", true) }
     }
 
     private fun refreshSectionHeaders() {

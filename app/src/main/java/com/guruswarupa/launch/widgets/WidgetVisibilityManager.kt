@@ -417,7 +417,13 @@ class WidgetVisibilityManager(
     }
 
     private fun getWidgetViewById(widgetId: String): View? {
-        // Always try to find the view from activity first, regardless of current parent
+        // Once a widget is disabled, reorderWidgetsInLayout() detaches its container from
+        // drawer_content_layout entirely - after that, activity.findViewById() can no longer
+        // reach it (it's no longer part of the attached view tree), so re-enabling it later would
+        // silently fail to find the view without this cache. A detached View object stays fully
+        // usable and re-attachable, so the cached reference remains valid indefinitely.
+        widgetViewCache[widgetId]?.let { return it }
+
         val view = when (widgetId) {
             "calendar_events_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.calendar_events_widget_container)
             "countdown_widget_container" -> activity.findViewById(com.guruswarupa.launch.R.id.countdown_widget_container)
