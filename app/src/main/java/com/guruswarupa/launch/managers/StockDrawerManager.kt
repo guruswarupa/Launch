@@ -769,7 +769,9 @@ class StockDrawerManager(
             }
         }
 
-        contentsRecyclerView.layoutManager = GridLayoutManager(activity, activity.getPreferredGridColumns())
+        // Cap at 4 columns regardless of the home screen's own grid density setting - a folder
+        // with only a couple of apps looks sparse and inconsistent at a wider column count.
+        contentsRecyclerView.layoutManager = GridLayoutManager(activity, activity.getPreferredGridColumns().coerceAtMost(4))
         val contentsAdapter = AppAdapter(activity, appsInFolder.toMutableList(), searchBox, true, activity, sharedPreferences)
         contentsRecyclerView.adapter = contentsAdapter
 
@@ -800,9 +802,16 @@ class StockDrawerManager(
         }
 
         deleteButton.setOnClickListener {
-            folderManager.deleteFolder(foldersKey, folder.id)
-            dialog.dismiss()
-            refresh()
+            AlertDialog.Builder(activity, R.style.CustomDialogTheme)
+                .setTitle(activity.getString(R.string.stock_folder_delete_confirm_title))
+                .setMessage(activity.getString(R.string.stock_folder_delete_confirm_message, lastSavedName))
+                .setPositiveButton(activity.getString(R.string.delete_button)) { _, _ ->
+                    folderManager.deleteFolder(foldersKey, folder.id)
+                    dialog.dismiss()
+                    refresh()
+                }
+                .setNegativeButton(activity.getString(R.string.cancel_button), null)
+                .show()
         }
 
         // No button bar - tap outside (or back) to dismiss, like Samsung's folder popup, which

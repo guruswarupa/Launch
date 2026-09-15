@@ -528,6 +528,8 @@
     <string name="stock_folder_create_title">Name this folder</string>
     <string name="stock_folder_rename_title">Rename folder</string>
     <string name="stock_folder_delete">Delete folder</string>
+    <string name="stock_folder_delete_confirm_title">Delete folder?</string>
+    <string name="stock_folder_delete_confirm_message">Delete \"%1$s\"? Its apps will stay - they\'ll just no longer be grouped.</string>
     <string name="you_can_change_this_later_in_settings">You can change this later in settings</string>
     <string name="app_lock">App Lock</string>
     <string name="protect_your_apps_with_pin_or_biometric_authenti">Protect your apps with PIN or biometric authentication</string>

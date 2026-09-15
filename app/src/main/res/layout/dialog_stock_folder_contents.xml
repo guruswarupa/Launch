@@ -52,9 +52,9 @@
             android:id="@+id/folder_contents_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="140dp"
+            android:minHeight="110dp"
             android:maxHeight="380dp"
-            android:paddingHorizontal="12dp"
+            android:paddingHorizontal="20dp"
             android:paddingBottom="72dp"
             android:clipToPadding="false"
             android:scrollbars="vertical" />
