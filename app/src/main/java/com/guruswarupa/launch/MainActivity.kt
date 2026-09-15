@@ -1004,9 +1004,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (::stockDrawerManager.isInitialized) {
-            stockDrawerManager.hide(animated = false)
-        }
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onPause()
         }
@@ -1018,6 +1015,17 @@ class MainActivity : AppCompatActivity() {
         }
         if (::stockTopWidgetMediaController.isInitialized) {
             stockTopWidgetMediaController.onActivityPause()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Deferred from onPause(): our window is still visible during the incoming activity's
+        // enter transition (e.g. tapping an app in the drawer), so hiding it there caused a
+        // visible flash of the bare home page before the launched app appeared. onStop() only
+        // fires once this window is no longer on screen, so the drawer closes silently instead.
+        if (::stockDrawerManager.isInitialized) {
+            stockDrawerManager.hide(animated = false)
         }
     }
 

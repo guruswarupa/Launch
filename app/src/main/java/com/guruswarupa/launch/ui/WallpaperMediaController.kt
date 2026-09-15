@@ -1,15 +1,24 @@
 package com.guruswarupa.launch.ui
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.media.session.PlaybackState
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.WindowCompat
+import androidx.core.widget.NestedScrollView
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.LrcParser
@@ -18,6 +27,8 @@ import com.guruswarupa.launch.managers.LyricsResult
 import com.guruswarupa.launch.managers.MediaSessionListener
 import com.guruswarupa.launch.managers.NowPlaying
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.ui.theme.ThemeManager
+import com.guruswarupa.launch.utils.dpToPx
 
 /**
  * A now-playing presence: a small floating transport-control pill plus, just below it,
@@ -48,6 +59,16 @@ class WallpaperMediaController(
 
     private val lyricsManager by lazy { LyricsManager(activity, activity.backgroundExecutor) }
     private val tickHandler = Handler(Looper.getMainLooper())
+    // A resource id (not a Drawable) - Drawables are stateful (ripple bounds/state), so this is
+    // resolved once but a fresh instance is created per line view via newSelectableItemBackground().
+    private val selectableItemBackgroundResId: Int by lazy {
+        val typedValue = TypedValue()
+        activity.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
+        typedValue.resourceId
+    }
+
+    private fun newSelectableItemBackground(): Drawable? =
+        androidx.core.content.ContextCompat.getDrawable(activity, selectableItemBackgroundResId)
 
     private var currentTrack: NowPlaying? = null
     private var lyricsResult: LyricsResult? = null
@@ -56,6 +77,18 @@ class WallpaperMediaController(
     private var listenerAttached = false
     private var pageVisible = false
     private var activityResumed = true
+
+    private var fullLyricsDialog: Dialog? = null
+    private var fullLyricsScrollView: NestedScrollView? = null
+    private val fullLyricsLineViews = mutableListOf<TextView>()
+    private var fullLyricsLastIndex = Int.MIN_VALUE
+
+    private val fullLyricsTicker = object : Runnable {
+        override fun run() {
+            updateFullLyricsHighlight()
+            tickHandler.postDelayed(this, TICK_INTERVAL_MS)
+        }
+    }
 
     private val ticker = object : Runnable {
         override fun run() {
@@ -76,6 +109,7 @@ class WallpaperMediaController(
             }
         }
         permissionPrompt.setOnClickListener { openNotificationSettings() }
+        lyricsContainer.setOnClickListener { showFullLyricsDialog() }
     }
 
     /** Same notification-listener request flow used elsewhere in the app (e.g. PermissionManager). */
@@ -118,9 +152,147 @@ class WallpaperMediaController(
 
     fun onActivityDestroy() {
         stopTicker()
+        tickHandler.removeCallbacks(fullLyricsTicker)
+        fullLyricsDialog?.dismiss()
+        fullLyricsDialog = null
         if (listenerAttached) {
             activity.mediaSessionMonitor.removeListener(this)
             listenerAttached = false
+        }
+    }
+
+    /** Opens the complete lyrics: synced lines with the current one highlighted and
+     *  auto-scrolled into view, or the plain text as one readable scrollable paragraph. */
+    private fun showFullLyricsDialog() {
+        if (fullLyricsDialog?.isShowing == true) return
+        val result = lyricsResult
+        if (result == null || result is LyricsResult.NotFound) return
+
+        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_full_lyrics, null)
+        val titleView = dialogView.findViewById<TextView>(R.id.full_lyrics_title)
+        val subtitleView = dialogView.findViewById<TextView>(R.id.full_lyrics_subtitle)
+        val closeButton = dialogView.findViewById<ImageButton>(R.id.full_lyrics_close)
+        val scrollView = dialogView.findViewById<NestedScrollView>(R.id.full_lyrics_scroll)
+        val linesContainer = dialogView.findViewById<LinearLayout>(R.id.full_lyrics_lines_container)
+
+        val primaryColor = ThemeManager.color(activity, R.attr.appTextPrimary)
+        val secondaryColor = ThemeManager.color(activity, R.attr.appTextSecondary)
+
+        titleView.setTextColor(primaryColor)
+        titleView.text = currentTrack?.title.orEmpty()
+        subtitleView.setTextColor(secondaryColor)
+        subtitleView.text = currentTrack?.artist.orEmpty()
+
+        fullLyricsLineViews.clear()
+        fullLyricsLastIndex = Int.MIN_VALUE
+        fullLyricsScrollView = scrollView
+
+        when (result) {
+            is LyricsResult.Synced -> {
+                result.lines.forEachIndexed { index, line ->
+                    val lineView = TextView(activity).apply {
+                        text = line.text.ifBlank { "♪" }
+                        gravity = Gravity.CENTER
+                        textSize = 17f
+                        setPadding(0, activity.dpToPx(6), 0, activity.dpToPx(6))
+                        setTextColor(secondaryColor)
+                        alpha = 0.6f
+                        isClickable = true
+                        isFocusable = true
+                        background = newSelectableItemBackground()
+                        // Tapping a line seeks the song there - only meaningful because each line
+                        // here has a real timestamp (LyricsResult.Synced); plain/unsynced lyrics
+                        // have no per-line timing to seek to, so they get no click handling at all.
+                        setOnClickListener {
+                            activity.mediaSessionMonitor.activeController?.transportControls?.seekTo(line.timeMs)
+                            applyFullLyricsHighlight(index, animateScroll = true)
+                        }
+                    }
+                    fullLyricsLineViews.add(lineView)
+                    linesContainer.addView(lineView)
+                }
+            }
+            is LyricsResult.Plain -> {
+                val textView = TextView(activity).apply {
+                    text = result.text
+                    textSize = 16f
+                    setTextColor(primaryColor)
+                    setLineSpacing(activity.dpToPx(6).toFloat(), 1f)
+                }
+                linesContainer.addView(textView)
+            }
+            LyricsResult.NotFound -> return
+        }
+
+        // A plain fullscreen Dialog rather than the app's usual floating CustomDialogTheme card -
+        // this needs to cover the whole screen with an opaque background, not a dimmed home
+        // screen behind a small centered popup. Theme_Black_NoTitleBar (not the _Fullscreen
+        // variant) keeps the status bar showing rather than hiding it outright, so it can be
+        // recolored to match instead of just disappearing.
+        val backgroundColor = ThemeManager.color(activity, R.attr.appBackground)
+        val dialog = Dialog(activity, android.R.style.Theme_Black_NoTitleBar)
+        dialog.setContentView(dialogView)
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(backgroundColor))
+            statusBarColor = backgroundColor
+            navigationBarColor = backgroundColor
+        }
+        dialog.window?.let { window ->
+            WindowCompat.getInsetsController(window, dialogView).apply {
+                isAppearanceLightStatusBars = ThemeManager.isLight(activity)
+                isAppearanceLightNavigationBars = ThemeManager.isLight(activity)
+            }
+        }
+        closeButton.setOnClickListener { dialog.dismiss() }
+        dialog.setOnDismissListener {
+            tickHandler.removeCallbacks(fullLyricsTicker)
+            fullLyricsLineViews.clear()
+            fullLyricsScrollView = null
+            fullLyricsDialog = null
+        }
+        fullLyricsDialog = dialog
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
+        if (result is LyricsResult.Synced) {
+            // Deferred until after the dialog is shown/attached, so scrollView.height and each
+            // line's measured position are real numbers rather than the pre-layout zeroes an
+            // un-attached view would report.
+            scrollView.post { updateFullLyricsHighlight(animateScroll = false) }
+            tickHandler.post(fullLyricsTicker)
+        }
+    }
+
+    private fun updateFullLyricsHighlight(animateScroll: Boolean = true) {
+        val lines = (lyricsResult as? LyricsResult.Synced)?.lines ?: return
+        val posMs = activity.mediaSessionMonitor.estimatedPositionMs()
+        val index = LrcParser.indexAt(lines, posMs)
+        applyFullLyricsHighlight(index, animateScroll)
+    }
+
+    /** Shared by the position ticker and by tapping a line to seek - both just need to move the
+     *  highlight/scroll to a given line index, only the source of that index differs. */
+    private fun applyFullLyricsHighlight(index: Int, animateScroll: Boolean) {
+        val scrollView = fullLyricsScrollView ?: return
+        if (index == fullLyricsLastIndex) return
+        fullLyricsLastIndex = index
+
+        val primaryColor = ThemeManager.color(activity, R.attr.appTextPrimary)
+        val secondaryColor = ThemeManager.color(activity, R.attr.appTextSecondary)
+
+        fullLyricsLineViews.forEachIndexed { i, view ->
+            val isCurrent = i == index
+            view.setTextColor(if (isCurrent) primaryColor else secondaryColor)
+            view.alpha = if (isCurrent) 1f else 0.6f
+            view.setTypeface(view.typeface, if (isCurrent) Typeface.BOLD else Typeface.NORMAL)
+        }
+
+        val target = fullLyricsLineViews.getOrNull(index) ?: return
+        val targetY = (target.top - scrollView.height / 2 + target.height / 2).coerceAtLeast(0)
+        if (animateScroll) {
+            scrollView.smoothScrollTo(0, targetY)
+        } else {
+            scrollView.post { scrollView.scrollTo(0, targetY) }
         }
     }
 
