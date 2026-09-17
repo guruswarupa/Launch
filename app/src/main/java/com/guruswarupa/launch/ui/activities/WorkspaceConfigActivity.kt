@@ -9,17 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.managers.WorkspaceManager
-import com.guruswarupa.launch.managers.WebAppManager
 import java.util.concurrent.Executors
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.Workspace
-import com.guruswarupa.launch.ui.adapters.WorkspacesAppsAdapter
-import com.guruswarupa.launch.utils.AppDisplayHelper
-import com.guruswarupa.launch.utils.DialogStyler
-import com.guruswarupa.launch.utils.setDialogInputView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import android.graphics.Color
 import com.guruswarupa.launch.models.Constants
@@ -27,7 +20,6 @@ import com.guruswarupa.launch.ui.theme.ThemeManager
 
 class WorkspaceConfigActivity : AppCompatActivity() {
     private lateinit var workspaceManager: WorkspaceManager
-    private lateinit var webAppManager: WebAppManager
     private lateinit var workspaceList: ListView
     private lateinit var createWorkspaceButton: Button
     private lateinit var wallpaperBackground: ImageView
@@ -51,7 +43,6 @@ class WorkspaceConfigActivity : AppCompatActivity() {
         setContentView(R.layout.activity_workspace_config)
 
         workspaceManager = WorkspaceManager(prefs)
-        webAppManager = WebAppManager(prefs)
 
         workspaceList = findViewById(R.id.workspace_list)
         createWorkspaceButton = findViewById(R.id.create_workspace_button)
@@ -66,7 +57,7 @@ class WorkspaceConfigActivity : AppCompatActivity() {
         applyThemeAndWallpaper()
 
         createWorkspaceButton.setOnClickListener {
-            showCreateWorkspaceDialog()
+            startActivity(Intent(this, WorkspaceNameActivity::class.java))
         }
 
         loadWorkspaces()
@@ -138,102 +129,6 @@ class WorkspaceConfigActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCreateWorkspaceDialog() {
-        val input = EditText(this)
-        input.hint = getString(R.string.a11y_workspace_name)
-        DialogStyler.styleInput(this, input)
-
-        AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(getString(R.string.create_workspace))
-            .setDialogInputView(this, input)
-            .setPositiveButton(getString(R.string.dlg_create)) { _, _ ->
-                val workspaceName = input.text.toString().trim()
-                if (workspaceName.isNotEmpty()) {
-                    showAppPickerForWorkspace(workspaceName, null)
-                } else {
-                    Toast.makeText(this, this.getString(R.string.toast_please_enter_a_workspace_name), Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton(getString(R.string.cancel_button), null)
-            .show()
-    }
-
-    private fun showAppPickerForWorkspace(workspaceName: String, existingWorkspaceId: String?) {
-        val mainIntent = Intent(Intent.ACTION_MAIN, null)
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-        val pm = packageManager
-
-        val launcherApps = pm.queryIntentActivities(mainIntent, 0)
-            .filter { it.activityInfo.packageName != "com.guruswarupa.launch" }
-        val allAppsRaw = (launcherApps + webAppManager.getResolveInfos())
-            .distinctBy { it.activityInfo.packageName }
-
-        val appsInOtherWorkspaces = workspaceManager.getAppsInWorkspaces(existingWorkspaceId)
-
-        val allApps = allAppsRaw.filter { app ->
-            val packageName = app.activityInfo.packageName
-            !appsInOtherWorkspaces.contains(packageName)
-        }.sortedBy { AppDisplayHelper.getLabel(it, pm).lowercase() }
-
-        if (allApps.isEmpty()) {
-            if (appsInOtherWorkspaces.isNotEmpty()) {
-                Toast.makeText(this, this.getString(R.string.toast_all_apps_are_already_assigned_to_other_workspace), Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, this.getString(R.string.toast_no_apps_found), Toast.LENGTH_SHORT).show()
-            }
-            return
-        }
-
-        val selectedApps = mutableSetOf<String>()
-        if (existingWorkspaceId != null) {
-            val existingWorkspace = workspaceManager.getWorkspace(existingWorkspaceId)
-            selectedApps.addAll(existingWorkspace?.appPackageNames ?: emptySet())
-        }
-
-        val dialogView = layoutInflater.inflate(R.layout.dialog_workspace_app_picker, null)
-        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.app_picker_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = WorkspacesAppsAdapter(allApps, selectedApps) { packageName, isChecked ->
-            if (isChecked) {
-                selectedApps.add(packageName)
-            } else {
-                selectedApps.remove(packageName)
-            }
-        }
-
-        val positiveLabel = if (existingWorkspaceId != null) "Save" else "Create"
-        val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(getString(R.string.dlg_select_apps_for, workspaceName))
-            .setView(dialogView)
-            .setPositiveButton(positiveLabel, null)
-            .setNegativeButton(getString(R.string.cancel_button), null)
-            .create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                if (selectedApps.isEmpty()) {
-                    Toast.makeText(this, this.getString(R.string.toast_please_select_at_least_one_app), Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                try {
-                    if (existingWorkspaceId != null) {
-                        workspaceManager.updateWorkspace(existingWorkspaceId, workspaceName, selectedApps)
-                        Toast.makeText(this, this.getString(R.string.toast_workspace_updated), Toast.LENGTH_SHORT).show()
-                    } else {
-                        workspaceManager.createWorkspace(workspaceName, selectedApps)
-                        Toast.makeText(this, this.getString(R.string.toast_workspace_created_with_apps, selectedApps.size), Toast.LENGTH_SHORT).show()
-                    }
-                    loadWorkspaces()
-                    dialog.dismiss()
-                } catch (e: Exception) {
-                    Toast.makeText(this, this.getString(R.string.toast_error, e.message), Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-        dialog.show()
-    }
-
     private fun showWorkspaceEditor(workspace: Workspace) {
         val options = arrayOf("Edit Apps", "Rename", "Activate")
 
@@ -241,36 +136,21 @@ class WorkspaceConfigActivity : AppCompatActivity() {
             .setTitle(workspace.name)
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> showAppPickerForWorkspace(workspace.name, workspace.id)
-                    1 -> showRenameWorkspaceDialog(workspace)
+                    0 -> startActivity(
+                        Intent(this, WorkspaceAppPickerActivity::class.java)
+                            .putExtra(WorkspaceAppPickerActivity.EXTRA_WORKSPACE_NAME, workspace.name)
+                            .putExtra(WorkspaceAppPickerActivity.EXTRA_WORKSPACE_ID, workspace.id)
+                    )
+                    1 -> startActivity(
+                        Intent(this, WorkspaceNameActivity::class.java)
+                            .putExtra(WorkspaceNameActivity.EXTRA_WORKSPACE_ID, workspace.id)
+                            .putExtra(WorkspaceNameActivity.EXTRA_WORKSPACE_NAME, workspace.name)
+                    )
                     2 -> {
                         workspaceManager.setActiveWorkspaceId(workspace.id)
                         Toast.makeText(this, this.getString(R.string.toast_workspace_activated, workspace.name), Toast.LENGTH_SHORT).show()
                         finish()
                     }
-                }
-            }
-            .setNegativeButton(getString(R.string.cancel_button), null)
-            .show()
-    }
-
-    private fun showRenameWorkspaceDialog(workspace: Workspace) {
-        val input = EditText(this)
-        input.setText(workspace.name)
-        input.hint = getString(R.string.a11y_workspace_name)
-        DialogStyler.styleInput(this, input)
-
-        AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(getString(R.string.dlg_rename_workspace))
-            .setDialogInputView(this, input)
-            .setPositiveButton(getString(R.string.dlg_rename)) { _, _ ->
-                val newName = input.text.toString().trim()
-                if (newName.isNotEmpty()) {
-                    workspaceManager.updateWorkspace(workspace.id, newName, workspace.appPackageNames)
-                    Toast.makeText(this, this.getString(R.string.toast_workspace_renamed), Toast.LENGTH_SHORT).show()
-                    loadWorkspaces()
-                } else {
-                    Toast.makeText(this, this.getString(R.string.toast_please_enter_a_workspace_name), Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton(getString(R.string.cancel_button), null)

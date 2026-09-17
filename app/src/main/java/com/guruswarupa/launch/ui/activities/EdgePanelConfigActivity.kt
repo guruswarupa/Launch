@@ -154,7 +154,7 @@ class EdgePanelConfigActivity : AppCompatActivity() {
             .sortedBy { it.loadLabel(packageManager).toString().lowercase() }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = WorkspacesAppsAdapter(apps, selectedApps) { packageName, isChecked ->
+        recyclerView.adapter = WorkspacesAppsAdapter(apps, packageManager, selectedApps) { packageName, isChecked ->
             if (isChecked) {
                 selectedApps.add(packageName)
             } else {

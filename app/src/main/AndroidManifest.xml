@@ -97,6 +97,18 @@
             android:excludeFromRecents="true" />
 
         <activity
+            android:name=".ui.activities.WorkspaceNameActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch"
+            android:excludeFromRecents="true" />
+
+        <activity
+            android:name=".ui.activities.WorkspaceAppPickerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch"
+            android:excludeFromRecents="true" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"

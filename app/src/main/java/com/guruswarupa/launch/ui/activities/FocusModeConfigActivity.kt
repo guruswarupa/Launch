@@ -11,6 +11,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.R
@@ -52,6 +54,7 @@ class FocusModeConfigActivity : AppCompatActivity() {
         )
 
         setContentView(R.layout.activity_focus_mode_config)
+        applyContentInsets()
 
         focusModeManager = FocusModeManager(this, getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE))
         webAppManager = WebAppManager(prefs)
@@ -120,6 +123,24 @@ class FocusModeConfigActivity : AppCompatActivity() {
         cancelButton.setOnClickListener {
             finish()
         }
+    }
+
+    private fun applyContentInsets() {
+        val mainContent = findViewById<View>(R.id.main_content)
+        ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                systemBars.top + 20.toPx(),
+                view.paddingRight,
+                systemBars.bottom + 20.toPx()
+            )
+            insets
+        }
+    }
+
+    private fun Int.toPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
     private fun updateBlockedCount(count: Int) {

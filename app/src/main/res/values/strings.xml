@@ -569,6 +569,12 @@
         <item quantity="one">%1$d app hidden</item>
         <item quantity="other">%1$d apps hidden</item>
     </plurals>
+    <string name="workspace_select_apps_subtitle">Choose which apps belong to this workspace</string>
+    <plurals name="workspace_selected_count">
+        <item quantity="zero">No apps selected</item>
+        <item quantity="one">%1$d app selected</item>
+        <item quantity="other">%1$d apps selected</item>
+    </plurals>
     <string name="hidden_apps">Hidden Apps</string>
     <string name="manage_apps_hidden_from_your_home_screen">Manage apps hidden from your home screen</string>
     <string name="privacy_vault_is_empty">Privacy vault is empty</string>

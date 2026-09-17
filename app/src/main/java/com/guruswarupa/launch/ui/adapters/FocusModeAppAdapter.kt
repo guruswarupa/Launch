@@ -101,6 +101,7 @@ class FocusModeAppAdapter(
 
         holder.appCheckbox.setOnCheckedChangeListener(null)
         holder.appCheckbox.isChecked = blockedApps.contains(packageName)
+        holder.appCheckbox.jumpDrawablesToCurrentState()
 
         holder.appCheckbox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {

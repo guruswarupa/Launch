@@ -4,14 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:id="@+id/wallpaper_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:contentDescription="@string/background"/>
-
 
     <View
         android:id="@+id/theme_overlay"
@@ -39,22 +37,21 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_focus_mode"
+                android:src="@drawable/ic_apps_grid_icon"
                 app:tint="?attr/appAccent"
-                android:contentDescription="@string/focus_mode"/>
+                android:contentDescription="@string/workspaces"/>
 
             <TextView
                 android:id="@+id/title_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/focus_mode"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:textColor="?attr/appTextPrimary"/>
 
             <TextView
-                android:id="@+id/blocked_count_text"
+                android:id="@+id/selected_count_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="12dp"
@@ -69,7 +66,7 @@
             android:id="@+id/subtitle_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_apps_allowed_in_focus_mode"
+            android:text="@string/workspace_select_apps_subtitle"
             android:textSize="14sp"
             android:textColor="?attr/appTextSecondary"
             android:layout_marginBottom="16dp" />
@@ -96,7 +93,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/focus_mode_search_hint"
+                android:hint="@string/search_apps"
                 android:textColor="?attr/appTextPrimary"
                 android:textColorHint="?attr/appTextHint"
                 android:padding="12dp"
@@ -107,7 +104,6 @@
                 android:imeOptions="actionDone"/>
         </LinearLayout>
 
-
         <LinearLayout
             android:id="@+id/apps_container"
             android:layout_width="match_parent"
@@ -117,13 +113,12 @@
             android:layout_marginBottom="16dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/focus_mode_app_list"
+                android:id="@+id/workspace_app_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"/>
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -131,7 +126,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/cancel_focus_config"
+                android:id="@+id/cancel_workspace_apps"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -143,7 +138,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <Button
-                android:id="@+id/save_focus_config"
+                android:id="@+id/save_workspace_apps"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

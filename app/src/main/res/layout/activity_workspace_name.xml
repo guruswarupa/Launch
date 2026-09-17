@@ -4,14 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:id="@+id/wallpaper_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:contentDescription="@string/background"/>
-
 
     <View
         android:id="@+id/theme_overlay"
@@ -39,91 +37,56 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_focus_mode"
+                android:src="@drawable/ic_workspace_active_icon"
                 app:tint="?attr/appAccent"
-                android:contentDescription="@string/focus_mode"/>
+                android:contentDescription="@string/workspaces"/>
 
             <TextView
                 android:id="@+id/title_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/focus_mode"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:textColor="?attr/appTextPrimary"/>
-
-            <TextView
-                android:id="@+id/blocked_count_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="5dp"
-                android:background="@drawable/focus_mode_app_item_bg"
-                android:textColor="?attr/appAccent"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif-medium"/>
         </LinearLayout>
 
         <TextView
             android:id="@+id/subtitle_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_apps_allowed_in_focus_mode"
+            android:text="@string/a11y_workspace_name"
             android:textSize="14sp"
             android:textColor="?attr/appTextSecondary"
             android:layout_marginBottom="16dp" />
 
         <LinearLayout
-            android:id="@+id/search_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
             android:background="@drawable/stock_drawer_search_bg"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="14dp"
-                android:src="@drawable/ic_search"
-                app:tint="?attr/appTextSecondary"
-                android:contentDescription="@string/search_type"/>
-
             <EditText
-                android:id="@+id/app_search_box"
+                android:id="@+id/workspace_name_input"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/focus_mode_search_hint"
+                android:hint="@string/a11y_workspace_name"
                 android:textColor="?attr/appTextPrimary"
                 android:textColorHint="?attr/appTextHint"
-                android:padding="12dp"
+                android:padding="14dp"
                 android:background="@null"
                 android:textSize="15sp"
                 android:singleLine="true"
-                android:inputType="text"
+                android:inputType="textCapWords"
                 android:imeOptions="actionDone"/>
         </LinearLayout>
 
-
-        <LinearLayout
-            android:id="@+id/apps_container"
+        <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/focus_mode_app_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"/>
-
-        </LinearLayout>
-
+            android:layout_weight="1"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -131,7 +94,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/cancel_focus_config"
+                android:id="@+id/cancel_workspace_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -143,7 +106,7 @@
                 android:layout_marginEnd="8dp"/>
 
             <Button
-                android:id="@+id/save_focus_config"
+                android:id="@+id/save_workspace_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
