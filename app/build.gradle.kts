@@ -10,11 +10,11 @@ android {
     namespace = "com.guruswarupa.launch"
     compileSdk = 35
     defaultConfig {
-        applicationId = "com.guruswarupa.launch"
+        applicationId = "com.guruswarupa.launchh"
         minSdk = 26
         targetSdk = 36
-        versionCode = 67
-        versionName = "7.7"
+        versionCode = 68
+        versionName = "7.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
