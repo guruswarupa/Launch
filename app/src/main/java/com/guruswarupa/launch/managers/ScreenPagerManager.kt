@@ -310,8 +310,14 @@ class ScreenPagerManager(
         }
     }
 
-    private fun setupDoubleTapToLock(view: View) {
-        val gestureDetector = GestureDetector(activity, object : GestureDetector.SimpleOnGestureListener() {
+    /**
+     * A [GestureDetector] that locks the screen on double-tap, for reuse by anything that
+     * already owns a view's whole touch stream (like [com.guruswarupa.launch.managers.StockDrawerManager]'s
+     * swipe-up-to-open target, which must consume every event itself and so can't simply layer
+     * an independent [android.view.View.OnTouchListener] on top without one starving the other).
+     */
+    fun createDoubleTapToLockDetector(): GestureDetector {
+        return GestureDetector(activity, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDoubleTap(e: MotionEvent): Boolean {
                 val service = ScreenLockAccessibilityService.instance
                 if (service != null) {
@@ -325,6 +331,10 @@ class ScreenPagerManager(
                 return true
             }
         })
+    }
+
+    private fun setupDoubleTapToLock(view: View) {
+        val gestureDetector = createDoubleTapToLockDetector()
 
         view.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {

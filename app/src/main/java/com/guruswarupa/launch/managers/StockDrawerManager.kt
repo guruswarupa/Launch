@@ -1050,6 +1050,11 @@ class StockDrawerManager(
      * RecyclerView - specifically the home page's empty-state text, which is what's actually
      * showing (with the app grid set to View.GONE) whenever there are no favorites yet. Without
      * this, an empty Stock home page had no way to reach the drawer at all.
+     *
+     * Since this always consumes the whole gesture (a plain View, unlike a RecyclerView, only
+     * gets ACTION_MOVE/UP if it already claimed ACTION_DOWN), it also has to run double-tap-to-lock
+     * itself - otherwise the empty Stock home page would silently swallow every double-tap
+     * instead of ever letting it reach the page-level lock gesture in [ScreenPagerManager].
      */
     @android.annotation.SuppressLint("ClickableViewAccessibility")
     fun attachOpenGestureToView(view: View) {
@@ -1058,9 +1063,11 @@ class StockDrawerManager(
         var startX = 0f
         var startY = 0f
         var tracking = false
+        val doubleTapToLockDetector = screenPagerManager.createDoubleTapToLockDetector()
 
         view.setOnTouchListener { _, event ->
             if (!LayoutMode.isStock(sharedPreferences) || isOpen || !isDrawerEnabled()) return@setOnTouchListener false
+            doubleTapToLockDetector.onTouchEvent(event)
             when (event.actionMasked) {
                 android.view.MotionEvent.ACTION_DOWN -> {
                     startX = event.x
