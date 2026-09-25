@@ -98,12 +98,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v${VERSION_NAME}" \
-            --title "Launch-v${VERSION_NAME}" \
-            --generate-notes \
-            --target "${{ github.sha }}" \
-            app/build/outputs/bundle/release/app-release.aab \
-            app/build/outputs/apk/release/app-release.apk
+          if gh release view "v${VERSION_NAME}" >/dev/null 2>&1; then
+            echo "Release v${VERSION_NAME} already exists - re-uploading assets instead of failing"
+            gh release upload "v${VERSION_NAME}" \
+              app/build/outputs/bundle/release/app-release.aab \
+              app/build/outputs/apk/release/app-release.apk \
+              --clobber
+          else
+            gh release create "v${VERSION_NAME}" \
+              --title "Launch-v${VERSION_NAME}" \
+              --generate-notes \
+              --target "${{ github.sha }}" \
+              app/build/outputs/bundle/release/app-release.aab \
+              app/build/outputs/apk/release/app-release.apk
+          fi
 
       - name: Publish to Play Store (production)
         uses: r0adkll/upload-google-play@v1
