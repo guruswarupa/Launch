@@ -412,7 +412,39 @@ class ScreenPagerManager(
             else -> startPage
         }
 
-        scrollToPage(target, animated = true)
+        if (kotlin.math.abs(pageIndex(target) - pageIndex(startPage)) > 1) {
+            scrollToPageWrapped(target)
+        } else {
+            scrollToPage(target, animated = true)
+        }
+    }
+
+    private fun scrollToPageWrapped(page: Page) {
+        if (!::pagerScrollView.isInitialized || !activePages.contains(page)) {
+            return
+        }
+        updatePageWidth()
+        if (pageWidth <= 0) {
+            return
+        }
+
+        val pageStrip = pagerScrollView.getChildAt(0) ?: return
+        val targetX = pageIndex(page) * pageWidth
+
+        pageStrip.animate().cancel()
+        pageStrip.animate()
+            .alpha(0f)
+            .setDuration(110L)
+            .withEndAction {
+                pagerScrollView.scrollTo(targetX, 0)
+                applyPageTransitions(targetX)
+                notifyPageChanged(page, force = false)
+                pageStrip.animate()
+                    .alpha(1f)
+                    .setDuration(150L)
+                    .start()
+            }
+            .start()
     }
 
     private fun scrollToPage(page: Page, animated: Boolean) {
