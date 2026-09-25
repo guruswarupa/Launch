@@ -230,11 +230,11 @@ class ScreenPagerManager(
         val aiAssistantEnabled = prefs.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)
         val pages = mutableListOf<Page>()
 
-        if (!com.guruswarupa.launch.utils.LayoutMode.isStock(prefs)) {
-            pages.add(Page.WALLPAPER)
-        }
         if (aiAssistantEnabled) {
             pages.add(Page.AI_CHAT)
+        }
+        if (!com.guruswarupa.launch.utils.LayoutMode.isStock(prefs)) {
+            pages.add(Page.WALLPAPER)
         }
         pages.add(Page.CENTER)
         if (widgetsEnabled) {
