@@ -181,8 +181,19 @@ class ActivityInitializer(
         } else {
 
             views.topWidgetContainer.background = androidx.core.content.ContextCompat.getDrawable(activity, R.drawable.widget_background)
+            val defaultPadding = (16 * density).toInt()
+            views.topWidgetContainer.setPadding(defaultPadding, defaultPadding, defaultPadding, defaultPadding)
+            (views.topWidgetContainer.layoutParams as? MarginLayoutParams)?.let { params ->
+                params.topMargin = 0
+                params.bottomMargin = (16 * density).toInt()
+                views.topWidgetContainer.layoutParams = params
+            }
+
+            views.timeTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32f)
             views.timeTextView.letterSpacing = 0.05f
+            views.dateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
             views.dateTextView.letterSpacing = 0f
+            usageTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             views.timeTextView.setShadowLayer(0f, 0f, 0f, 0)
             views.dateTextView.setShadowLayer(0f, 0f, 0f, 0)
             views.weatherText.setShadowLayer(0f, 0f, 0f, 0)

@@ -954,6 +954,10 @@ class MainActivity : AppCompatActivity() {
             stockTopWidgetMediaController.onActivityResume()
         }
 
+        if (::activityInitializer.isInitialized) {
+            activityInitializer.applyTopWidgetStyle()
+        }
+
         if (widgetsChanged) {
             sharedPreferences.edit { putBoolean("saved_widgets_changed", false) }
             if (deferredWidgetsInitialized) {
