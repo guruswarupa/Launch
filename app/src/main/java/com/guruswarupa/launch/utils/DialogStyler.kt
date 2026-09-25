@@ -42,11 +42,9 @@ object DialogStyler {
 
             titleView?.setTextColor(themeColor)
 
-
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(themeColor)
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(secondaryColor)
             dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(secondaryColor)
-
 
             dialog.listView?.let { listView ->
                 for (i in 0 until listView.childCount) {
@@ -62,17 +60,12 @@ object DialogStyler {
     private fun applyDialogTranslucency(dialog: AlertDialog, prefs: android.content.SharedPreferences) {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
-        // appScrim carries the RGB base for this overlay (opaque black on today's dark palettes,
-        // opaque white on the Light palette) — resolving it here rather than hardcoding
-        // Color.argb(alpha, 0, 0, 0) is what makes dialogs readable once a light theme exists.
+
         val scrimBase = ThemeManager.color(dialog.context, R.attr.appScrim)
         val color = Color.argb(alpha, Color.red(scrimBase), Color.green(scrimBase), Color.blue(scrimBase))
 
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(color))
     }
-
-
-
 
     fun createThemedTextAdapter(context: Context, items: Array<String>): ArrayAdapter<String> {
         val themeColor = TypographyManager.getConfiguredFontColor(context) ?: ThemeManager.color(context, R.attr.appTextPrimary)

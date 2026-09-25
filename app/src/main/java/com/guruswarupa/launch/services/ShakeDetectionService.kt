@@ -9,7 +9,6 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.handlers.GestureCoordinator
@@ -17,10 +16,6 @@ import com.guruswarupa.launch.handlers.ShakeDetector
 import com.guruswarupa.launch.managers.ServiceNotificationManager
 import com.guruswarupa.launch.managers.TorchManager
 import com.guruswarupa.launch.models.Constants
-
-
-
-
 
 class ShakeDetectionService : Service() {
 
@@ -44,10 +39,7 @@ class ShakeDetectionService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-
-
         startForegroundServiceStatus()
-
 
         torchManager = TorchManager(this)
         shakeDetector = ShakeDetector(this) {
@@ -55,7 +47,6 @@ class ShakeDetectionService : Service() {
                 try {
                     torchManager?.toggleTorch()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error toggling torch", e)
                 }
             }
         }
@@ -65,7 +56,6 @@ class ShakeDetectionService : Service() {
         try {
 
             val notification = ServiceNotificationManager.createNotification(this)
-
 
             ServiceNotificationManager.updateServiceStatus(this, SERVICE_NAME, true)
 
@@ -79,13 +69,11 @@ class ShakeDetectionService : Service() {
                 )
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
-
                 startForeground(ServiceNotificationManager.NOTIFICATION_ID, notification)
             } else {
                 startForeground(ServiceNotificationManager.NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start foreground service", e)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 
                 stopSelf()
@@ -121,7 +109,6 @@ class ShakeDetectionService : Service() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onStartCommand", e)
         }
         return START_STICKY
     }

@@ -18,12 +18,6 @@ sealed class LyricsResult {
     object NotFound : LyricsResult()
 }
 
-/**
- * Fetches synced/plain lyrics for the currently playing track from lrclib.net (free, no API
- * key), caching results (including "not found") as small JSON files under filesDir so a song
- * isn't re-fetched every time it plays. Mirrors RssFeedManager's HttpURLConnection + executor +
- * main-handler-callback pattern.
- */
 class LyricsManager(
     private val context: Context,
     private val backgroundExecutor: ExecutorService
@@ -41,11 +35,6 @@ class LyricsManager(
 
     @Volatile private var requestToken = 0
 
-    /**
-     * [callback] runs on the main thread. If a newer [fetch] call is made before this one
-     * completes, this one's callback is dropped - guards against rapid track-skipping
-     * resurrecting stale lyrics on screen.
-     */
     fun fetch(track: NowPlaying, callback: (LyricsResult) -> Unit) {
         val token = ++requestToken
         val artist = track.artist.trim()
@@ -76,7 +65,6 @@ class LyricsManager(
         }
     }
 
-    /** Returns null on a 404 (caller should fall back to search), a parsed result otherwise. */
     private fun requestGet(artist: String, title: String, album: String?, durationSec: Int): LyricsResult? {
         val url = buildString {
             append("$BASE_URL/get?artist_name=${encode(artist)}&track_name=${encode(title)}")
@@ -95,7 +83,6 @@ class LyricsManager(
         }
     }
 
-    /** Looser fallback: search by "artist title" and take the closest duration match. */
     private fun requestSearch(artist: String, title: String, durationSec: Int): LyricsResult? {
         val connection = openConnection("$BASE_URL/search?q=${encode("$artist $title")}")
         return try {

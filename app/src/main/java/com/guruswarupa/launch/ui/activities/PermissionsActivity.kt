@@ -41,7 +41,6 @@ class PermissionsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
@@ -93,7 +92,6 @@ class PermissionsActivity : AppCompatActivity() {
         list.add(PermItem("Usage Stats", "App time tracking", hasUsageStats(), type = "USAGE"))
         list.add(PermItem("Overlay", "Screen dimming tools", Settings.canDrawOverlays(this), type = "OVERLAY"))
         list.add(PermItem("Accessibility", "Double tap lock", hasAccessibility(), type = "ACCESSIBILITY"))
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             list.add(PermItem("Physical Activity", "Track steps and distance", check(Manifest.permission.ACTIVITY_RECOGNITION), Manifest.permission.ACTIVITY_RECOGNITION))

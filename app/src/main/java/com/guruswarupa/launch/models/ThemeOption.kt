@@ -9,17 +9,17 @@ data class ThemeOption(
 ) {
     companion object {
         val PREDEFINED_THEMES = listOf(
-            
+
             ThemeOption(
-                "stardust", 
-                "Deep Stardust", 
-                "https://i.pinimg.com/1200x/0e/dd/70/0edd7082a53fb8ad4cfe4d361904a0a1.jpg", 
+                "stardust",
+                "Deep Stardust",
+                "https://i.pinimg.com/1200x/0e/dd/70/0edd7082a53fb8ad4cfe4d361904a0a1.jpg",
                 "Landscape"
             ),
             ThemeOption(
-                "forest", 
-                "Evergreen Forest", 
-                "https://i.pinimg.com/1200x/f4/7d/d5/f47dd53023bf5efbdf2968ae145e30f8.jpg", 
+                "forest",
+                "Evergreen Forest",
+                "https://i.pinimg.com/1200x/f4/7d/d5/f47dd53023bf5efbdf2968ae145e30f8.jpg",
                 "Landscape"
             ),
             ThemeOption(
@@ -29,9 +29,9 @@ data class ThemeOption(
                 "Landscape"
             ),
             ThemeOption(
-                "desert", 
-                "Golden Sands", 
-                "https://i.pinimg.com/1200x/1a/77/dc/1a77dcc2b9b830d835d5ce97670fd893.jpg", 
+                "desert",
+                "Golden Sands",
+                "https://i.pinimg.com/1200x/1a/77/dc/1a77dcc2b9b830d835d5ce97670fd893.jpg",
                 "Landscape"
             ),
             ThemeOption(
@@ -41,9 +41,9 @@ data class ThemeOption(
                 "Landscape"
             ),
             ThemeOption(
-                "ocean", 
-                "Pacific Blue", 
-                "https://i.pinimg.com/736x/2c/90/d7/2c90d74fed30e3563155d3158a23d856.jpg", 
+                "ocean",
+                "Pacific Blue",
+                "https://i.pinimg.com/736x/2c/90/d7/2c90d74fed30e3563155d3158a23d856.jpg",
                 "Landscape"
             ),
             ThemeOption(
@@ -64,8 +64,7 @@ data class ThemeOption(
                 "https://i.pinimg.com/736x/52/ad/27/52ad271bc262700a52108d8a53035bda.jpg",
                 "Landscape"
             ),
-            
-            
+
             ThemeOption(
                 "cyber",
                 "Cyber City",
@@ -97,7 +96,6 @@ data class ThemeOption(
                 "City"
             ),
 
-            
             ThemeOption(
                 "lavender",
                 "Lavender Mist",
@@ -129,7 +127,6 @@ data class ThemeOption(
                 "Abstract"
             ),
 
-            
             ThemeOption(
                 "nordic",
                 "Nordic Ice",
@@ -143,9 +140,9 @@ data class ThemeOption(
                 "Minimal"
             ),
             ThemeOption(
-                "minimalist", 
-                "Minimal Slate", 
-                "https://i.pinimg.com/1200x/b1/05/65/b105650530a4584e120758f032026a78.jpg", 
+                "minimalist",
+                "Minimal Slate",
+                "https://i.pinimg.com/1200x/b1/05/65/b105650530a4584e120758f032026a78.jpg",
                 "Minimal"
             ),
             ThemeOption(
@@ -162,7 +159,6 @@ data class ThemeOption(
                 isDark = false
             ),
 
-            
             ThemeOption(
                 "nebula",
                 "Cosmic Nebula",
@@ -182,7 +178,6 @@ data class ThemeOption(
                 "Space"
             ),
 
-            
             ThemeOption(
                 "pixel_sunset",
                 "8-Bit Sunset",
@@ -202,7 +197,6 @@ data class ThemeOption(
                 "Retro"
             ),
 
-            
             ThemeOption(
                 "monstera",
                 "Monstera Leaf",
@@ -222,7 +216,6 @@ data class ThemeOption(
                 "Nature"
             ),
 
-            
             ThemeOption(
                 "eiffel",
                 "Eiffel Tower",
@@ -248,7 +241,6 @@ data class ThemeOption(
                 "Architecture"
             ),
 
-            
             ThemeOption(
                 "mercury",
                 "Mercury",

@@ -45,7 +45,6 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
         val heightSeekbar = findViewById<View>(R.id.control_center_trigger_height_seekbar) as SeekBar
         val widthSeekbar = findViewById<View>(R.id.control_center_trigger_width_seekbar) as SeekBar
 
-
         val positions = arrayOf(getString(R.string.control_center_trigger_position_left), getString(R.string.control_center_trigger_position_right))
         val adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, positions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -62,12 +61,10 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-
         lockSwitch.isChecked = prefs.getBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_LOCKED, false)
         lockSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_LOCKED, isChecked).apply()
         }
-
 
         val savedAlpha = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_ALPHA, 80)
         alphaSeekbar.progress = savedAlpha - 20
@@ -80,7 +77,6 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-
         val savedHeight = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_HEIGHT_DP, 72)
         heightSeekbar.progress = savedHeight - 40
         heightSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -91,7 +87,6 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-
 
         val savedWidth = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_WIDTH_DP, 18)
         widthSeekbar.progress = savedWidth - 12
@@ -104,11 +99,9 @@ class ControlCenterTriggerConfigActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-
         findViewById<Button>(R.id.cancel_control_center_trigger_config).setOnClickListener {
             finish()
         }
-
 
         findViewById<Button>(R.id.save_control_center_trigger_config).setOnClickListener {
 

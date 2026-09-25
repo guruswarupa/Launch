@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun handleMessage(msg: Message) {
             weakActivity.get() ?: return
-            // Specific message handling can be added here if needed
+
         }
     }
 
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var financeWidgetManager: FinanceWidgetManager
 
     lateinit var usageStatsDisplayManager: UsageStatsDisplayManager
-    
+
     lateinit var rssFeedManager: RssFeedManager
 
     lateinit var widgetSetupManager: WidgetSetupManager
@@ -179,9 +179,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var wallpaperMediaController: com.guruswarupa.launch.ui.WallpaperMediaController
     fun isWallpaperMediaControllerInitialized() = ::wallpaperMediaController.isInitialized
 
-    // Stock's home page has no separate "wallpaper page" to swipe to (see
-    // ScreenPagerManager.buildActivePages), so the same now-playing controls + lyrics get a
-    // second instance living directly in Stock's top clock widget instead.
     lateinit var stockTopWidgetMediaController: com.guruswarupa.launch.ui.WallpaperMediaController
     fun isStockTopWidgetMediaControllerInitialized() = ::stockTopWidgetMediaController.isInitialized
 
@@ -223,10 +220,8 @@ class MainActivity : AppCompatActivity() {
     val appList: MutableList<ResolveInfo> = java.util.Collections.synchronizedList(mutableListOf())
     val fullAppList: MutableList<ResolveInfo> = java.util.Collections.synchronizedList(mutableListOf())
 
-
     var showOnlyFavoritesInitially = true
     var pendingScrollToTop = false
-
 
     private var lastToggleTime = 0L
     private val TOGGLE_DEBOUNCE_MS = 500L
@@ -255,14 +250,12 @@ class MainActivity : AppCompatActivity() {
 
         if (!showOnlyFavoritesInitially) return
 
-
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastToggleTime < TOGGLE_DEBOUNCE_MS) return
 
         lastToggleTime = currentTime
         showOnlyFavoritesInitially = false
         pendingScrollToTop = true
-
 
         appListLoader.loadApps(forceRefresh = false)
     }
@@ -271,13 +264,11 @@ class MainActivity : AppCompatActivity() {
         if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) return
         if (showOnlyFavoritesInitially) return
 
-
         val favorites = favoriteAppManager.getFavoriteApps()
         if (favorites.isEmpty()) {
 
             return
         }
-
 
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastToggleTime < TOGGLE_DEBOUNCE_MS) return
@@ -285,7 +276,6 @@ class MainActivity : AppCompatActivity() {
         lastToggleTime = currentTime
         showOnlyFavoritesInitially = true
         pendingScrollToTop = true
-
 
         appListLoader.loadApps(forceRefresh = false)
     }
@@ -369,8 +359,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun ensureContactsLoadedForSearch() {
         if (contactManager.hasLoadedContacts()) return
 
@@ -413,7 +401,6 @@ class MainActivity : AppCompatActivity() {
         val workspaceMode = appDockManager.isWorkspaceModeActive()
         val showFastScroller = sharedPreferences.getBoolean(Constants.Prefs.SHOW_FAST_SCROLLER, true)
         val hasVisibleItems = (::adapter.isInitialized && adapter.getCurrentListSize() > 0) || appList.isNotEmpty()
-
 
         if (showOnlyFavoritesInitially && !focusMode && !workspaceMode) {
             views.fastScroller.visibility = View.GONE
@@ -470,14 +457,6 @@ class MainActivity : AppCompatActivity() {
         widgetSetupManager.setupWeather(views.weatherIcon, views.weatherText)
     }
 
-    // deferredWidgetsInitialized (below) lives in the ViewModel's SavedStateHandle, so it
-    // survives an Activity recreate - including the one AppCompatDelegate.setApplicationLocales()
-    // triggers on language change, since MainActivity doesn't declare "locale" in its manifest
-    // configChanges. But widgetLifecycleCoordinator/todoManager/financeWidgetManager etc. are all
-    // fresh, uninitialized objects on the new instance. Without this instance-local flag, the
-    // ViewModel's stale "already initialized" would make initializeDeferredWidgets() skip
-    // DeferredWidgetInitializer forever for that instance, leaving every in-app widget's content
-    // unpopulated even though their containers still get toggled visible.
     private var deferredWidgetsReadyForThisInstance = false
 
     internal fun initializeDeferredWidgets() {
@@ -486,7 +465,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (deferredWidgetsInitialized && deferredWidgetsReadyForThisInstance) {
-            // Always update widget visibility to ensure all enabled widgets are shown
+
             widgetVisibilityManager.update(
                 if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
                 if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
@@ -561,10 +540,7 @@ class MainActivity : AppCompatActivity() {
         val targetHomeList = newHomeList ?: appList
 
         if (!views.isSearchBoxInitialized()) return
-        // The Stock drawer retargets this same shared engine to its own search box while it's
-        // open (see StockDrawerManager.show/hide) - app-list refreshes fire this same update
-        // path while that's active, so don't steal search input back to the (hidden, in Stock)
-        // home search box out from under it.
+
         if (isStockDrawerManagerInitialized() && stockDrawerManager.isShown()) {
             return
         }
@@ -572,7 +548,6 @@ class MainActivity : AppCompatActivity() {
         if (!appSearchManager.isAttachedTo(views.searchBox)) {
 
             if (!::adapter.isInitialized) return
-
 
             appSearchManager.onSearchQueryChanged = { query ->
                 updateSearchQueryAndUI(query)
@@ -843,8 +818,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun clearAppCacheAndReload() {
-        // loadApps(forceRefresh = true) only bypasses the in-memory cache; this entry point's
-        // name promises a full wipe, so clear the disk cache explicitly before reloading.
+
         backgroundExecutor.execute {
             cacheManager.clearCache()
             appListLoader.loadApps(forceRefresh = true)
@@ -907,9 +881,6 @@ class MainActivity : AppCompatActivity() {
         backgroundExecutor.execute {
             cacheManager.removeMetadata(packageName)
 
-            // Only this package's icon may have changed (install/update) or needs dropping
-            // (uninstall) - invalidate just its cache entries instead of wiping every app's
-            // cached icon and forcing a full re-decode on the next draw.
             if (::adapter.isInitialized) {
                 handler.post {
                     if (!isFinishing && !isDestroyed) {
@@ -929,9 +900,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
         if (::widgetManager.isInitialized) {
-            // Matches WidgetConfigurationActivity's own pairing of this call with its
-            // WidgetManager's init { retainListening(...) } — needed now that recreate() is a
-            // real, repeatable path (theme switching), not just process death.
+
             widgetManager.onDestroy()
         }
         if (::navigationManager.isInitialized) {
@@ -965,15 +934,13 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (!::sharedPreferences.isInitialized) return
 
-        // Belt-and-braces: if the theme changed while this activity was stopped (e.g. the
-        // SETTINGS_UPDATED broadcast that normally triggers this was missed), catch it here.
         if (com.guruswarupa.launch.ui.theme.ThemeManager.isStale(this, sharedPreferences)) {
             recreate()
             return
         }
 
         val widgetsChanged = sharedPreferences.getBoolean("saved_widgets_changed", false)
-        
+
         if (::lifecycleManager.isInitialized) {
             lifecycleManager.onResume()
         }
@@ -987,15 +954,13 @@ class MainActivity : AppCompatActivity() {
             stockTopWidgetMediaController.onActivityResume()
         }
 
-        // If widgets were changed in configuration, ensure they are reordered correctly
         if (widgetsChanged) {
             sharedPreferences.edit { putBoolean("saved_widgets_changed", false) }
             if (deferredWidgetsInitialized) {
                 initializeDeferredWidgets()
             }
         }
-        
-        // Force refresh fastscroller typography on resume to pick up any settings changes
+
         if (views.isFastScrollerInitialized()) {
             views.fastScroller.refreshTypography(sharedPreferences)
         }
@@ -1034,10 +999,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        // Deferred from onPause(): our window is still visible during the incoming activity's
-        // enter transition (e.g. tapping an app in the drawer), so hiding it there caused a
-        // visible flash of the bare home page before the launched app appeared. onStop() only
-        // fires once this window is no longer on screen, so the drawer closes silently instead.
+
         if (::stockDrawerManager.isInitialized) {
             stockDrawerManager.hide(animated = false)
         }
@@ -1056,10 +1018,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (level >= TRIM_MEMORY_UI_HIDDEN) {
-            // Evict in-memory icon caches (the actual bitmap memory) rather than wiping the
-            // disk cache: this fires every time the launcher is backgrounded, and clearing the
-            // disk cache here forced a full re-decode of every icon on the next foreground for
-            // no memory benefit (the disk cache isn't held in RAM).
+
             if (::adapter.isInitialized) {
                 adapter.trimMemoryCaches()
             }

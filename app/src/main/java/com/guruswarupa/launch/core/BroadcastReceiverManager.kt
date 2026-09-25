@@ -11,8 +11,6 @@ import android.os.UserHandle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 
-
-
 class BroadcastReceiverManager(
     private val activity: FragmentActivity,
     @Suppress("UNUSED_PARAMETER") private val sharedPreferences: android.content.SharedPreferences,
@@ -131,9 +129,6 @@ class BroadcastReceiverManager(
         }
     }
 
-
-
-
     fun registerReceivers() {
 
         val settingsFilter = IntentFilter("com.guruswarupa.launch.SETTINGS_UPDATED")
@@ -147,18 +142,14 @@ class BroadcastReceiverManager(
         }
         registerReceiverCompat(packageReceiver, packageFilter, exported = true)
 
-
         @Suppress("DEPRECATION")
         val wallpaperFilter = IntentFilter(Intent.ACTION_WALLPAPER_CHANGED)
         registerReceiverCompat(wallpaperChangeReceiver, wallpaperFilter, exported = true)
 
-
         registerReceiverCompat(batteryChangeReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED), exported = true)
-
 
         val activityRecognitionFilter = IntentFilter("com.guruswarupa.launch.ACTIVITY_RECOGNITION_PERMISSION_GRANTED")
         registerReceiverCompat(activityRecognitionPermissionReceiver, activityRecognitionFilter, exported = false)
-
 
         registerReceiverCompat(dndReceiver, IntentFilter(NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED), exported = true)
 
@@ -179,9 +170,6 @@ class BroadcastReceiverManager(
             )
         }
     }
-
-
-
 
     fun unregisterReceivers() {
         val receivers = listOf(

@@ -44,20 +44,6 @@ import com.guruswarupa.launch.managers.WebAppAdBlocker
 import com.guruswarupa.launch.models.Constants
 import kotlinx.coroutines.launch
 
-/**
- * The AI chat page in the home-screen pager (see ScreenPagerManager.Page.AI_CHAT) — a
- * dedicated conversational screen, distinct from the one-shot "Ask AI" search result.
- *
- * Two mutually exclusive sources, chosen in Settings:
- *  - On-device (see [AssistantResult]/OnDeviceAssistant): the custom chat UI below, offline.
- *  - Web (see [WebAiProvider]): the provider's real site loaded full-screen in a WebView —
- *    needed for hosted assistants like ChatGPT/Claude that have no on-device equivalent.
- *    Deliberately not domain-locked the way WebAppActivity locks user-added web apps: these
- *    are curated, trusted, provider-controlled URLs, and login flows for them routinely
- *    redirect across domains (Google/Microsoft SSO), which a domain lock would break.
- *
- * Chat history is kept in memory only for this MainActivity instance; nothing is persisted.
- */
 class AiChatPage(
     private val activity: MainActivity,
     private val rootView: View
@@ -97,12 +83,6 @@ class AiChatPage(
         }
     }
 
-    // Chromium's WebView network stack can keep failing with the same connection error for a
-    // moment after connectivity is actually restored (it needs the system to *validate* the
-    // network, not just report a link), so a manual retry right after reconnecting can still
-    // fail. Listening for validated connectivity and retrying then — in addition to the manual
-    // retry button — covers that gap instead of leaving the page stuck until the user notices
-    // and taps retry again.
     private var networkCallbackRegistered = false
     private val connectivityManager: ConnectivityManager by lazy {
         activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -150,13 +130,9 @@ class AiChatPage(
 
         updateTypography()
         refreshAvailability()
-        // Deliberately not calling refreshSource() here: it would eagerly start loading a
-        // web provider's full site on every cold launcher start even when this page is never
-        // visited. onPageShown()/onActivityResume() call it lazily once this page is actually
-        // the visible one (including the initial restore-to-this-page case).
+
     }
 
-    /** Called whenever this page becomes the visible pager page. */
     fun onPageShown() {
         refreshAvailability()
         refreshSource()
@@ -166,7 +142,6 @@ class AiChatPage(
         }
     }
 
-    /** Called whenever the pager scrolls to a different page — stops this page's back-press/WebView activity from interfering elsewhere. */
     fun onPageHidden() {
         if (webViewInitialized) {
             webView.onPause()
@@ -177,8 +152,7 @@ class AiChatPage(
 
     fun onActivityResume() {
         if (isCurrentPage()) {
-            // Catches switching source/model (in Settings) and returning here without the
-            // pager itself changing page, which is the only other trigger for these refreshes.
+
             refreshAvailability()
             refreshSource()
             if (webViewInitialized) {
@@ -220,7 +194,6 @@ class AiChatPage(
         networkCallbackRegistered = false
     }
 
-    /** Retries the currently selected web provider after a failed load — used by both the manual retry button and [networkCallback]'s auto-recovery. No-op if nothing has failed or the source has since changed away from web. */
     private fun retryFailedLoad() {
         if (!webViewLoadFailed) return
         val provider = WebAiProvider.byId(
@@ -229,7 +202,6 @@ class AiChatPage(
         if (provider != null && isWebSourceSelected()) loadProviderUrl(provider.url)
     }
 
-    /** Applies the user's configured font scale/style/intensity/color — same mechanism RssFeedPage uses — so this page matches the News/Widgets pages instead of looking themed differently. */
     fun updateTypography() {
         val prefs = activity.sharedPreferences
         val scale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100) / 100f
@@ -248,7 +220,6 @@ class AiChatPage(
         activity.sharedPreferences.getString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_ON_DEVICE) ==
             Constants.Prefs.AI_ASSISTANT_SOURCE_WEB
 
-    /** Switches between the on-device chat UI and the web provider's WebView, and loads the selected provider's URL if it changed. Safe to call repeatedly — a no-op unless something actually changed. */
     private fun refreshSource() {
         val provider = WebAiProvider.byId(
             activity.sharedPreferences.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID, null)
@@ -273,7 +244,6 @@ class AiChatPage(
         updateBackCallbackEnabled()
     }
 
-    /** Kicks off (or retries) loading [url] in the WebView, clearing any previous error state. */
     private fun loadProviderUrl(url: String) {
         webViewLoadFailed = false
         webViewErrorContainer.isVisible = false
@@ -363,7 +333,7 @@ class AiChatPage(
                 val targetUri = request?.url ?: return false
                 val scheme = targetUri.scheme?.lowercase().orEmpty()
                 if (scheme == "http" || scheme == "https") return false
-                // Non-web scheme (mailto:, intent:, market:, etc.) — hand off to the system, since the WebView can't render it.
+
                 return try {
                     activity.startActivity(Intent(Intent.ACTION_VIEW, targetUri))
                     true
@@ -377,10 +347,6 @@ class AiChatPage(
                 if (request?.isForMainFrame != false) showWebViewError()
             }
 
-            // Some WebView builds report connection-level failures (no internet, DNS) only
-            // through this deprecated callback instead of the WebResourceRequest-based one
-            // above — override both so the error screen reliably replaces the WebView's own
-            // dead-end "Web page not available" page rather than leaving it stuck on screen.
             @Suppress("DEPRECATION")
             override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
                 super.onReceivedError(view, errorCode, description, failingUrl)
@@ -437,7 +403,6 @@ class AiChatPage(
         }
     }
 
-    /** Pushes the input bar above the on-screen keyboard and the navigation bar by shrinking the content column with bottom padding equal to whichever is taller, instead of relying on windowSoftInputMode (which would resize every page in the shared pager, not just this one). IME insets already extend past the nav bar when the keyboard is up, so the two are maxed rather than summed. */
     private fun setupKeyboardAvoidance() {
         val initialBottomPadding = contentContainer.paddingBottom
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->

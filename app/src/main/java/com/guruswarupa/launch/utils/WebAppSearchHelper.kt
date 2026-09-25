@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.utils
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -16,7 +15,6 @@ data class SearchSuggestion(
 
 object WebAppSearchHelper {
     private const val TAG = "WebAppSearchHelper"
-
 
     val POPULAR_WEBSITES = listOf(
         SearchSuggestion("Google", "https://www.google.com", "Search engine"),
@@ -34,15 +32,11 @@ object WebAppSearchHelper {
         SearchSuggestion("GitHub", "https://github.com", "Code repository"),
         SearchSuggestion("Stack Overflow", "https://stackoverflow.com", "Q&A for developers")
     )
-    
-    /**
-     * Search Google and return top results
-     */
+
     suspend fun searchGoogle(query: String): List<SearchSuggestion> {
         return withContext(Dispatchers.IO) {
             try {
                 val encodedQuery = URLEncoder.encode(query, "UTF-8")
-
 
                 var results = searchDuckDuckGo(encodedQuery)
 
@@ -56,18 +50,16 @@ object WebAppSearchHelper {
 
                 results
             } catch (e: Exception) {
-                Log.e(TAG, "Search failed", e)
 
                 searchWithAutocomplete(URLEncoder.encode(query, "UTF-8"))
             }
         }
     }
 
-
     private suspend fun searchDuckDuckGo(encodedQuery: String): List<SearchSuggestion> {
         return try {
             val searchUrl = "https://html.duckduckgo.com/html/?q=$encodedQuery"
-            
+
             val doc = Jsoup.connect(searchUrl)
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .header("Accept", "text/html,application/xhtml+xml")
@@ -75,7 +67,6 @@ object WebAppSearchHelper {
                 .get()
 
             val results = mutableListOf<SearchSuggestion>()
-
 
             val elements = doc.select("div.results_links_deep")
 
@@ -87,7 +78,6 @@ object WebAppSearchHelper {
                     if (titleElement != null) {
                         val title = titleElement.text()
                         var url = titleElement.attr("href")
-
 
                         if (url.contains("uddg=")) {
                             url = url.substringAfter("uddg=").substringBefore("&")
@@ -103,22 +93,19 @@ object WebAppSearchHelper {
                         }
                     }
                 } catch (e: Exception) {
-                    Log.w(TAG, "Error parsing DuckDuckGo result", e)
                 }
             }
 
             results
         } catch (e: Exception) {
-            Log.w(TAG, "DuckDuckGo search failed", e)
             emptyList()
         }
     }
 
-
     private suspend fun searchWithMobileUserAgent(encodedQuery: String): List<SearchSuggestion> {
         return try {
             val searchUrl = "https://www.google.com/search?q=$encodedQuery&num=10&hl=en"
-            
+
             val doc = Jsoup.connect(searchUrl)
                 .userAgent("Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
@@ -126,10 +113,9 @@ object WebAppSearchHelper {
                 .timeout(10000)
                 .followRedirects(true)
                 .get()
-            
+
             val results = mutableListOf<SearchSuggestion>()
-            
-            // Try different selectors for Google's search results
+
             val selectors = listOf(
                 "div.g",
                 "div[data-sokoposition]",
@@ -137,65 +123,56 @@ object WebAppSearchHelper {
                 "div.tF2Cxc",
                 "div.MjjYud"
             )
-            
+
             var elements = org.jsoup.select.Elements()
             for (selector in selectors) {
                 elements = doc.select(selector)
                 if (elements.isNotEmpty()) break
             }
-            
+
             for (element in elements.take(10)) {
                 try {
                     val titleElement = element.selectFirst("h3") ?: element.selectFirst("h2")
                     val linkElement = element.selectFirst("a[href]")
-                    
+
                     if (titleElement != null && linkElement != null) {
                         val title = titleElement.text()
                         var url = linkElement.attr("abs:href")
-                        
-                        // Extract actual URL from Google redirect
+
                         if (url.contains("/url?q=")) {
                             url = url.substringAfter("/url?q=").substringBefore("&")
                             url = java.net.URLDecoder.decode(url, "UTF-8")
                         }
-                        
-                        // Clean URL
+
                         url = url.substringBefore("#")
-                        
+
                         val descElement = element.selectFirst("[data-sncf], [data-content-snippet], .VwiC3b, .lyLwlc")
                         val description = descElement?.text() ?: ""
-                        
-                        // Filter valid URLs
-                        if (url.startsWith("http") && 
+
+                        if (url.startsWith("http") &&
                             !url.contains("google.") &&
                             !url.contains("youtube.com/redirect") &&
                             url.split("/").getOrNull(2)?.contains(".") == true) {
-                            
-                            // Avoid duplicates
+
                             if (results.none { it.url == url }) {
                                 results.add(SearchSuggestion(title, url, description))
                             }
                         }
                     }
                 } catch (e: Exception) {
-                    Log.w(TAG, "Error parsing result", e)
                 }
             }
-            
+
             results
         } catch (e: Exception) {
-            Log.w(TAG, "Mobile search failed", e)
             emptyList()
         }
     }
-    
-    /**
-     * Fallback: Use Google's autocomplete suggestions
-     */
+
     private suspend fun searchWithAutocomplete(encodedQuery: String): List<SearchSuggestion> {
         return try {
             val url = "https://suggestqueries.google.com/complete/search?client=firefox&q=$encodedQuery"
-            
+
             val response = Jsoup.connect(url)
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .ignoreContentType(true)
@@ -224,11 +201,9 @@ object WebAppSearchHelper {
                 emptyList()
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Autocomplete search failed", e)
             emptyList()
         }
     }
-
 
     suspend fun fetchPageTitle(url: String): String? {
         return withContext(Dispatchers.IO) {
@@ -240,12 +215,10 @@ object WebAppSearchHelper {
 
                 doc.title()?.takeIf { it.isNotBlank() }
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to fetch title for $url", e)
                 null
             }
         }
     }
-
 
     fun filterHttpsOnly(suggestions: List<SearchSuggestion>): List<SearchSuggestion> {
         return suggestions.filter { it.url.startsWith("https://", ignoreCase = true) }

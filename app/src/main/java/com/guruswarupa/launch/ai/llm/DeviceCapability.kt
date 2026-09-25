@@ -16,18 +16,13 @@ sealed interface DeviceCapabilityResult {
     enum class Reason { LOW_RAM, UNSUPPORTED_ABI, LOW_STORAGE }
 }
 
-/**
- * Gates the on-device AI assistant behind a capability check so it is never offered
- * on a device where it would run poorly or fail to download. Checked once when the
- * user opens the AI settings section, not on every app launch.
- */
 @Singleton
 class DeviceCapability @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     companion object {
-        private const val MIN_TOTAL_RAM_BYTES = 3L * 1024 * 1024 * 1024 // 3 GB
-        private const val MIN_FREE_STORAGE_BYTES = 1_500_000_000L // 1.5 GB, covers download + final copy
+        private const val MIN_TOTAL_RAM_BYTES = 3L * 1024 * 1024 * 1024
+        private const val MIN_FREE_STORAGE_BYTES = 1_500_000_000L
         private val SUPPORTED_64_BIT_ABIS = setOf("arm64-v8a", "x86_64")
     }
 

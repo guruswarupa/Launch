@@ -12,8 +12,6 @@ import android.widget.TextView
 import com.guruswarupa.launch.managers.WidgetConfigurationManager
 import com.guruswarupa.launch.R
 
-
-
 class WidgetPreviewDialog(
     context: Context,
     private val widgetInfo: WidgetConfigurationManager.WidgetInfo,
@@ -33,7 +31,6 @@ class WidgetPreviewDialog(
         setContentView(R.layout.dialog_widget_preview)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-
         previewImage = findViewById(R.id.dialog_preview_image)
         loadingProgress = findViewById(R.id.dialog_loading_progress)
         widgetName = findViewById(R.id.dialog_widget_name)
@@ -41,10 +38,8 @@ class WidgetPreviewDialog(
         closeButton = findViewById(R.id.btn_close)
         enableButton = findViewById(R.id.btn_enable)
 
-
         widgetName.text = widgetInfo.name
         widgetDescription.text = getWidgetDescription(widgetInfo.id)
-
 
         val isEnabled = widgetInfo.enabled
         enableButton.text = if (isEnabled) "Disable" else "Enable"
@@ -53,9 +48,7 @@ class WidgetPreviewDialog(
             else R.drawable.dialog_preview_primary_button
         )
 
-
         loadPreview()
-
 
         closeButton.setOnClickListener {
             dismiss()

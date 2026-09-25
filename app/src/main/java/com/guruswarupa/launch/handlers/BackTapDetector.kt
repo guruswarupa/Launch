@@ -9,10 +9,6 @@ import com.guruswarupa.launch.handlers.GestureCoordinator
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-
-
-
-
 class BackTapDetector(
     context: Context,
     private val onBackTap: (Int) -> Unit
@@ -35,7 +31,6 @@ class BackTapDetector(
     private var lastUpdateTime = 0L
     private var isListening = false
     private var isUsingLinearAcc = sensor?.type == Sensor.TYPE_LINEAR_ACCELERATION
-
 
     private var lastX = 0f
     private var lastY = 0f
@@ -60,24 +55,16 @@ class BackTapDetector(
 
     fun updateSensitivity(sensitivity: Int) {
 
-
-
         val baseMin = if (isUsingLinearAcc) 4.0f else 12.0f
         val baseMax = if (isUsingLinearAcc) 25.0f else 40.0f
 
-
-
         tapThreshold = baseMax - (sensitivity.coerceIn(1, 10) - 1) * ((baseMax - baseMin) / 9f)
-
-
-
 
         maxTapThreshold = tapThreshold * 2.2f
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
-
 
         if (GestureCoordinator.isInCooldown()) {
             tapCount = 0
@@ -109,10 +96,7 @@ class BackTapDetector(
         lastY = y
         lastZ = z
 
-
-
         val isMostlyZ = zAcceleration > (acceleration * 0.6f)
-
 
         if (acceleration > tapThreshold && acceleration < maxTapThreshold && isMostlyZ) {
             val now = System.currentTimeMillis()

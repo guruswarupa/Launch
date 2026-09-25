@@ -63,7 +63,6 @@ class WeeklyUsageGraphView @JvmOverloads constructor(
         strokeWidth = 1f
     }
 
-
     private val reusableRectF = RectF()
     private val shadowPaint = Paint().apply {
         isAntiAlias = true
@@ -157,21 +156,16 @@ class WeeklyUsageGraphView @JvmOverloads constructor(
         val cardHeight = 100f
         val topPadding = 4f
 
-
         val startY = topPadding
-
 
         dataToUse.forEachIndexed { dayIndex, (day, appUsages) ->
             val cardY = startY + (dayIndex * (cardHeight + cardSpacing))
             val cardRight = width - padding
             val cardBottom = cardY + cardHeight
 
-
             val totalUsage = appUsages.values.sum()
 
-
             reusableRectF.set(padding, cardY, cardRight, cardBottom)
-
 
             val isNightMode = (resources.configuration.uiMode and
                 android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
@@ -184,22 +178,18 @@ class WeeklyUsageGraphView @JvmOverloads constructor(
                 )
             }
 
-
             canvas.drawRoundRect(reusableRectF, 14f, 14f, cardPaint)
             canvas.drawRoundRect(reusableRectF, 14f, 14f, cardStrokePaint)
-
 
             dayTextPaint.textAlign = Paint.Align.LEFT
             dayTextPaint.textSize = 36f
             val dayY = cardY + cardHeight / 2f - 15f
             canvas.drawText(day, padding + 24f, dayY, dayTextPaint)
 
-
             val usageText = formatUsageTimeInHours(totalUsage)
             timeTextPaint.textAlign = Paint.Align.RIGHT
             timeTextPaint.textSize = 28f
             canvas.drawText(usageText, cardRight - 24f, dayY + 8f, timeTextPaint)
-
 
             val dividerY = cardY + cardHeight - 1f
             canvas.drawLine(padding + 24f, dividerY, cardRight - 24f, dividerY, dividerPaint)
@@ -229,7 +219,6 @@ class WeeklyUsageGraphView @JvmOverloads constructor(
                 touchDownY = event.y
                 touchedCardIndex = -1
 
-
                 dataToUse.forEachIndexed { dayIndex, _ ->
                     val cardY = topPadding + (dayIndex * (cardHeight + cardSpacing))
                     val cardRight = width - padding
@@ -250,7 +239,6 @@ class WeeklyUsageGraphView @JvmOverloads constructor(
                     val deltaX = abs(event.x - touchDownX)
                     val deltaY = abs(event.y - touchDownY)
                     val distance = sqrt((deltaX * deltaX + deltaY * deltaY).toDouble()).toFloat()
-
 
                     if (distance < tapThreshold) {
                         val (day, appUsages) = dataToUse[touchedCardIndex]

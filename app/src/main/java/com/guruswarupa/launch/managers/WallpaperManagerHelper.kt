@@ -8,15 +8,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.models.Constants
 import java.util.concurrent.RejectedExecutionException
-
-
-
 
 class WallpaperManagerHelper(
     private val activity: androidx.fragment.app.FragmentActivity,
@@ -29,9 +25,6 @@ class WallpaperManagerHelper(
     private val handler = Handler(Looper.getMainLooper())
     private var currentWallpaperBitmap: Bitmap? = null
     private var lastWallpaperId: Int = -1
-
-
-
 
     fun setWallpaperBackground(forceReload: Boolean = false) {
         val prefs = activity.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -56,7 +49,6 @@ class WallpaperManagerHelper(
             -1
         }
 
-
         val bitmap = currentWallpaperBitmap
         val needsReload = forceReload ||
                          bitmap == null ||
@@ -69,9 +61,7 @@ class WallpaperManagerHelper(
 
         lastWallpaperId = wallpaperId
 
-
         if ((backgroundExecutor as? java.util.concurrent.ExecutorService)?.isShutdown == true) {
-            Log.w("WallpaperManagerHelper", "Background executor is shut down, skipping wallpaper load")
             setDefaultWallpaper()
             return
         }
@@ -85,7 +75,6 @@ class WallpaperManagerHelper(
                     handler.post { setDefaultWallpaper() }
                     return@execute
                 }
-
 
                 val bitmap = if (drawable is BitmapDrawable) {
                     val sourceBitmap = drawable.bitmap
@@ -116,15 +105,12 @@ class WallpaperManagerHelper(
                     handler.post { setDefaultWallpaper() }
                 }
             } catch (e: SecurityException) {
-                Log.w("WallpaperManagerHelper", "No permission to read wallpaper", e)
                 handler.post { setDefaultWallpaper() }
             } catch (e: Exception) {
-                Log.e("WallpaperManagerHelper", "Error loading wallpaper", e)
                 handler.post { setDefaultWallpaper() }
             }
         }
         } catch (e: RejectedExecutionException) {
-            Log.w("WallpaperManagerHelper", "Wallpaper load task rejected", e)
             setDefaultWallpaper()
         }
     }
@@ -171,9 +157,6 @@ class WallpaperManagerHelper(
         aiChatWallpaperBackground?.setImageResource(R.drawable.wallpaper_background)
     }
 
-
-
-
     fun applyBlurToViews() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             wallpaperBackground.setRenderEffect(null)
@@ -184,29 +167,18 @@ class WallpaperManagerHelper(
         }
     }
 
-
-
-
     fun clearCache() {
-
 
         currentWallpaperBitmap = null
         lastWallpaperId = -1
 
-
-
     }
-
-
-
 
     fun cleanup() {
         wallpaperBackground.setImageDrawable(null)
         drawerWallpaperBackground?.setImageDrawable(null)
         rssWallpaperBackground?.setImageDrawable(null)
         aiChatWallpaperBackground?.setImageDrawable(null)
-
-
 
         currentWallpaperBitmap = null
         lastWallpaperId = -1

@@ -15,10 +15,7 @@ class WidgetConfigurationManager(
     companion object {
         private const val PREF_WIDGET_ORDER = "widget_order"
         private const val PREFS_SYSTEM_WIDGETS_KEY = "saved_widgets"
-        // Widget ids that used to be offered but no longer are - kept here (rather than deleted
-        // outright) so a saved order from before the removal doesn't resurrect a dead/broken
-        // entry. Media Controller moved to the wallpaper page and Stock's home widget instead of
-        // being a Widgets-page entry (see WallpaperMediaController).
+
         private val REMOVED_WIDGET_IDS = setOf("notifications_widget_container", "media_controller_widget_container")
 
         val IN_APP_WIDGETS = listOf(
@@ -44,7 +41,6 @@ class WidgetConfigurationManager(
             WidgetInfo("github_contributions_widget_container", "GitHub Contributions", false)
         )
     }
-
 
     @Volatile
     private var cachedWidgetConfiguration: List<WidgetInfo>? = null
@@ -119,7 +115,6 @@ class WidgetConfigurationManager(
         val boundSystemWidgets = getBoundSystemWidgets()
         val boundIds = boundSystemWidgets.map { it.id }.toSet()
 
-
         val seenIds = mutableSetOf<String>()
         val deduplicatedSaved = savedWidgetsList.filter { widget ->
             if (seenIds.contains(widget.id)) {
@@ -130,14 +125,12 @@ class WidgetConfigurationManager(
             }
         }.toMutableList()
 
-
         if (deduplicatedSaved.size != savedWidgetsList.size) {
             saveWidgetOrder(deduplicatedSaved)
         }
 
         val result = deduplicatedSaved.filter { !it.isSystemWidget || boundIds.contains(it.id) }.toMutableList()
 
-        // Sync IDs and states: if a saved widget has an appWidgetId but that ID is no longer bound, clear it.
         for (i in result.indices) {
             val widget = result[i]
             if (widget.isSystemWidget && widget.appWidgetId != null && !boundIds.contains(widget.id)) {
@@ -145,10 +138,9 @@ class WidgetConfigurationManager(
             }
         }
 
-        // Sync relative order of existing system widgets with the drawer order (boundSystemWidgets)
         val existingSystemIds = result.filter { it.isSystemWidget }.map { it.id }.toSet()
         val orderedSystemWidgets = boundSystemWidgets.filter { it.id in existingSystemIds }
-        
+
         var systemInsertionIdx = 0
         for (i in result.indices) {
             if (result[i].isSystemWidget) {
@@ -158,12 +150,11 @@ class WidgetConfigurationManager(
             }
         }
 
-        // Add new bound system widgets that weren't in the saved order yet
         val currentIds = result.map { it.id }.toSet()
-        
+
         boundSystemWidgets.forEach { systemWidget ->
             if (!currentIds.contains(systemWidget.id)) {
-                // Add new system widgets to the end of the list.
+
                 result.add(systemWidget)
             }
         }
@@ -205,16 +196,15 @@ class WidgetConfigurationManager(
         }
 
         val enabledWidgets = result.filter { it.enabled }
-        
+
         val allDisabled = result.filter { !it.enabled }
             .sortedWith(
-                compareBy<WidgetInfo> { it.isProvider } // Put actual disabled widgets before "TAP TO ADD" providers
+                compareBy<WidgetInfo> { it.isProvider }
                     .thenBy { it.appName ?: "" }
                     .thenBy { it.name }
             )
 
         val finalResult = enabledWidgets + allDisabled
-
 
         cachedWidgetConfiguration = finalResult
         cacheTimestamp = System.currentTimeMillis()
@@ -241,7 +231,6 @@ class WidgetConfigurationManager(
     fun getWidgetOrder(): List<WidgetInfo> {
         return getWidgetConfiguration(includeProviders = false)
     }
-
 
     fun forceRefresh() {
         invalidateCache()
@@ -317,7 +306,6 @@ class WidgetConfigurationManager(
         } catch (_: Exception) {}
         return false
     }
-
 
     fun invalidateCache() {
         cachedWidgetConfiguration = null

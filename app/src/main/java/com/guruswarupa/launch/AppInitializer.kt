@@ -26,7 +26,7 @@ class AppInitializer(private val activity: MainActivity) {
             setContentView(R.layout.activity_main)
 
             setupCoreManagers()
-            
+
             if (!sharedPreferences.getBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, false)) {
                 startActivity(Intent(activity, AppDataDisclosureActivity::class.java))
                 finish()
@@ -77,8 +77,7 @@ class AppInitializer(private val activity: MainActivity) {
     private fun MainActivity.setupAppList() {
         appDockManager = AppDockManager(activity, sharedPreferences, views.appDock)
         if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
-            // Covers cold start with Stock already selected and a workspace left active from a
-            // previous session - live switches are handled in SettingsChangeCoordinator.
+
             appDockManager.turnOffWorkspace()
             if (views.isSearchContainerInitialized()) {
                 views.searchContainer.visibility = android.view.View.GONE
@@ -224,11 +223,7 @@ class AppInitializer(private val activity: MainActivity) {
         val drawerContentLayout = findViewById<LinearLayout>(R.id.drawer_content_layout)
         widgetManager = WidgetManager(activity, drawerContentLayout, listenOnlyWhileStarted = true)
         widgetManager.onWidgetsRefreshed = {
-            // Guard against running before the in-app widgets have been set up for the first
-            // time: update() detaches disabled in-app widget containers from the view tree, and
-            // DeferredWidgetInitializer's first pass needs them still attached to find them via
-            // findViewById. Once deferred widgets are initialized, its own onComplete already
-            // calls update() - this just keeps things in sync afterwards.
+
             if (deferredWidgetsInitialized) {
                 widgetVisibilityManager.update(
                     if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,

@@ -2,7 +2,6 @@ package com.guruswarupa.launch.managers
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -16,7 +15,7 @@ class NetworkStatsManager {
 
     private val executor = Executors.newSingleThreadExecutor()
     private val handler = Handler(Looper.getMainLooper())
-    private val speedTestTimeout = 30L // seconds
+    private val speedTestTimeout = 30L
 
     data class SpeedTestResult(
         val downloadSpeedMbps: Float,
@@ -31,10 +30,10 @@ class NetworkStatsManager {
         executor.execute {
             try {
                 val testStartTime = System.currentTimeMillis()
-                
+
                 onProgress("Measuring latency...")
                 val (ping, jitter) = measurePing()
-                
+
                 if (System.currentTimeMillis() - testStartTime > speedTestTimeout * 1000) {
                     handler.post { onError("Speed test timed out") }
                     return@execute
@@ -42,7 +41,7 @@ class NetworkStatsManager {
 
                 onProgress("Measuring download speed...")
                 val downloadSpeed = measureDownloadSpeed()
-                
+
                 if (System.currentTimeMillis() - testStartTime > speedTestTimeout * 1000) {
                     handler.post { onError("Speed test timed out") }
                     return@execute
@@ -55,7 +54,6 @@ class NetworkStatsManager {
                     callback(SpeedTestResult(downloadSpeed, uploadSpeed, ping, jitter))
                 }
             } catch (e: Exception) {
-                Log.e("NetworkStatsManager", "Speedtest failed", e)
                 handler.post {
                     onError("Failed: ${e.message}")
                 }
@@ -77,14 +75,12 @@ class NetworkStatsManager {
                     pings.add(end - start)
                 }
             } catch (e: Exception) {
-                Log.w("NetworkStatsManager", "Ping attempt failed: ${e.message}")
             }
         }
 
         if (pings.isEmpty()) return 0L to 0L
 
         val avgPing = pings.average().toLong()
-
 
         var jitterSum = 0.0
         for (p in pings) {
@@ -97,17 +93,17 @@ class NetworkStatsManager {
 
     private fun measureDownloadSpeed(): Float {
         val urls = listOf(
-            "https://speed.cloudflare.com/__down?bytes=10485760", 
+            "https://speed.cloudflare.com/__down?bytes=10485760",
             "https://dl.google.com/android/repository/platform-tools-latest-linux.zip",
             "https://speedtest.tele2.net/10MB.zip"
         )
-        
-        val overallTimeout = 8000L // 8 seconds max
+
+        val overallTimeout = 8000L
         val startTime = System.currentTimeMillis()
 
         for (fileUrl in urls) {
             if (System.currentTimeMillis() - startTime > overallTimeout) break
-            
+
             var totalBytesRead = 0L
             val maxDuration = 5000L
 
@@ -146,7 +142,6 @@ class NetworkStatsManager {
                     return (mbps * 10).roundToInt() / 10.0f
                 }
             } catch (e: Exception) {
-                Log.e("NetworkStatsManager", "Download test failed for $fileUrl", e)
             }
         }
         return 0f
@@ -157,13 +152,13 @@ class NetworkStatsManager {
             "https://speedtest.tele2.net/upload.php",
             "http://speedtest.belwue.net/upload-dummy.php"
         )
-        
-        val overallTimeout = 8000L // 8 seconds max
+
+        val overallTimeout = 8000L
         val startTime = System.currentTimeMillis()
 
         for (uploadUrl in uploadUrls) {
             if (System.currentTimeMillis() - startTime > overallTimeout) break
-            
+
             var totalBytesWritten = 0L
             val maxDuration = 5000L
 
@@ -174,7 +169,6 @@ class NetworkStatsManager {
                 connection.requestMethod = "POST"
                 connection.connectTimeout = 5000
                 connection.readTimeout = 7000
-
 
                 connection.setChunkedStreamingMode(0)
                 connection.setRequestProperty("Content-Type", "application/octet-stream")
@@ -208,7 +202,6 @@ class NetworkStatsManager {
                     }
                 }
             } catch (e: Exception) {
-                Log.e("NetworkStatsManager", "Upload test failed for $uploadUrl", e)
             }
         }
         return 0f
@@ -258,9 +251,6 @@ class NetworkStatsManager {
         val gb = mb / 1024.0
         return String.format(Locale.getDefault(), "%.1f GB", gb)
     }
-
-
-
 
     fun cleanup() {
         executor.shutdown()

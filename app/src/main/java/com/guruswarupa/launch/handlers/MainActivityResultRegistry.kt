@@ -16,17 +16,12 @@ import com.guruswarupa.launch.widgets.WidgetLifecycleCoordinator
 
 class MainActivityResultRegistry(private val activity: FragmentActivity) {
 
-
     val widgetPickerLauncher: ActivityResultLauncher<Intent>
     val widgetConfigurationLauncher: ActivityResultLauncher<Intent>
     val voiceSearchLauncher: ActivityResultLauncher<Intent>
     val aiChatMediaPickerLauncher: ActivityResultLauncher<String>
 
-    /** Set by the AI chat page's WebView file-chooser callback right before launching; consumed and cleared on result. */
     var onAiChatMediaPicked: ((List<Uri>) -> Unit)? = null
-
-
-
 
     data class DependencyContainer(
         var widgetManager: WidgetManager? = null,
@@ -52,7 +47,6 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
             }
         }
 
-
         widgetConfigurationLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val yearProgress = deps.widgetLifecycleCoordinator?.let { if (it.isYearProgressWidgetInitialized()) it.yearProgressWidget else null }
@@ -64,7 +58,6 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
 
                 deps.widgetVisibilityManager?.update(yearProgress, githubContribution)
 
-
                 deps.widgetLifecycleCoordinator?.let { coordinator ->
                     if (coordinator.isCalendarEventsWidgetInitialized()) {
                         val isEnabled = deps.widgetConfigurationManager?.isWidgetEnabled("calendar_events_widget_container") ?: false
@@ -73,7 +66,6 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
                         }
                     }
                 }
-
 
                 deps.widgetLifecycleCoordinator?.let { coordinator ->
                     if (coordinator.isCountdownWidgetInitialized()) {
@@ -85,7 +77,6 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
                 }
             }
         }
-
 
         voiceSearchLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -116,23 +107,14 @@ class MainActivityResultRegistry(private val activity: FragmentActivity) {
         }
     }
 
-
-
-
     fun setDependencies(dependencies: DependencyContainer) {
         this.deps = dependencies
     }
-
-
-
 
     private fun refreshSystemWidgets() {
 
         deps.widgetManager?.reloadWidgets()
     }
-
-
-
 
     fun showWidgetConfigurationDialog() {
         val intent = Intent(activity, WidgetConfigurationActivity::class.java)

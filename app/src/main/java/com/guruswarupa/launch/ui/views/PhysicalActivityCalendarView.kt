@@ -99,20 +99,16 @@ class ActivityCalendarAdapter(
     private fun updateDays() {
         days.clear()
 
-
         val firstDayOfMonth = calendar.clone() as Calendar
         firstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1)
         val firstDayOfWeek = firstDayOfMonth.get(Calendar.DAY_OF_WEEK)
 
-
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-
 
         val startOffset = (firstDayOfWeek - Calendar.SUNDAY + 7) % 7
         repeat(startOffset) {
             days.add(DayItem(day = null))
         }
-
 
         val currentDate = Calendar.getInstance()
         val today = currentDate.get(Calendar.DAY_OF_MONTH)
@@ -166,20 +162,17 @@ class ActivityCalendarAdapter(
             holder.dayText.text = dayItem.day.toString()
             holder.dayText.visibility = View.VISIBLE
 
-
             if (dayItem.hasActivity) {
                 holder.workoutIndicator.visibility = View.VISIBLE
             } else {
                 holder.workoutIndicator.visibility = View.GONE
             }
 
-
             if (dayItem.isToday) {
                 holder.itemView.setBackgroundResource(R.drawable.today_highlight)
             } else {
                 holder.itemView.background = null
             }
-
 
             if (dayItem.hasActivity && dayItem.dateString != null && dayItem.activityData != null) {
                 holder.itemView.setOnClickListener {

@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.widgets
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.guruswarupa.launch.core.LifecycleManager
 
 class DeferredWidgetInitializer(
@@ -15,15 +14,10 @@ class DeferredWidgetInitializer(
         private const val TAG = "DeferredWidgetInit"
     }
 
-    // A failure setting up one widget (e.g. its container view couldn't be found) must not take
-    // down the rest of the widgets, or worse, the final onComplete() callback that marks
-    // deferred-widget init as done and syncs widget visibility - skipping that would leave every
-    // widget unsynced for the rest of the session.
     private inline fun setup(name: String, block: () -> Unit) {
         try {
             block()
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to set up $name widget, skipping it", e)
         }
     }
 

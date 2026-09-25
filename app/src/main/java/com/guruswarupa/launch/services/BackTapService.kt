@@ -11,7 +11,6 @@ import android.media.MediaActionSound
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.handlers.BackTapDetector
@@ -19,10 +18,6 @@ import com.guruswarupa.launch.handlers.GestureCoordinator
 import com.guruswarupa.launch.managers.ServiceNotificationManager
 import com.guruswarupa.launch.managers.TorchManager
 import com.guruswarupa.launch.models.Constants
-
-
-
-
 
 class BackTapService : Service() {
 
@@ -37,7 +32,6 @@ class BackTapService : Service() {
     private val audioManager: AudioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
-
 
     private var doubleTapAction = ACTION_SOUND_TOGGLE
 
@@ -69,7 +63,6 @@ class BackTapService : Service() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onCreate: ${e.message}")
         }
     }
 
@@ -92,8 +85,6 @@ class BackTapService : Service() {
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
         val sensitivity = prefs.getInt(Constants.Prefs.BACK_TAP_SENSITIVITY, 5)
 
-
-
         doubleTapAction = prefs.getString(Constants.Prefs.BACK_TAP_DOUBLE_ACTION, ACTION_SOUND_TOGGLE) ?: ACTION_SOUND_TOGGLE
 
         backTapDetector?.updateSensitivity(sensitivity)
@@ -101,11 +92,9 @@ class BackTapService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-
         try {
             startForegroundServiceStatus()
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start foreground service", e)
 
             stopSelf()
             return START_NOT_STICKY
@@ -129,7 +118,6 @@ class BackTapService : Service() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onStartCommand: ${e.message}")
         }
         return START_STICKY
     }
@@ -207,7 +195,6 @@ class BackTapService : Service() {
 
             executeAction(action)
         } catch (e: Exception) {
-            Log.e(TAG, "Error handling back tap action: ${e.message}")
         }
     }
 
@@ -230,7 +217,6 @@ class BackTapService : Service() {
                 audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error toggling sound: ${e.message}")
         }
     }
 
@@ -269,7 +255,6 @@ class BackTapService : Service() {
             isRunning = false
             ServiceNotificationManager.updateServiceStatus(this, SERVICE_NAME, false)
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onDestroy: ${e.message}")
         }
         super.onDestroy()
     }

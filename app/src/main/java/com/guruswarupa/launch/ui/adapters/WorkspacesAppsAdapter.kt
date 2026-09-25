@@ -78,7 +78,6 @@ class WorkspacesAppsAdapter(
         }
     }
 
-    /** Narrows the visible rows to those whose label contains [query] (case-insensitive). */
     fun filter(query: String) {
         filtered = if (query.isBlank()) {
             apps

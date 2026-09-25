@@ -7,9 +7,6 @@ import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.handlers.ActivityInitializer
 import com.guruswarupa.launch.handlers.NavigationManager
 
-
-
-
 class DrawerManager(
     private val activity: FragmentActivity,
     private val screenPagerManager: ScreenPagerManager,
@@ -24,9 +21,6 @@ class DrawerManager(
     lateinit var navigationManager: NavigationManager
         private set
 
-
-
-
     fun setup() {
         gestureHandler.setupGestureExclusion()
         activityInitializer.setupDrawerLayout()
@@ -39,7 +33,6 @@ class DrawerManager(
             }
         }
 
-
         activity.onBackPressedDispatcher.addCallback(activity, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (stockDrawerShownProvider()) {
@@ -48,7 +41,6 @@ class DrawerManager(
                 }
                 if (::navigationManager.isInitialized) {
                     navigationManager.handleBackPressed {
-
 
                     }
                 }

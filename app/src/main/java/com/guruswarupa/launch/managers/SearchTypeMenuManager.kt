@@ -8,27 +8,17 @@ import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.ui.theme.ThemeManager
 
-
-
-
-
 class SearchTypeMenuManager(
     private val context: Context,
     private val searchTypeButton: ImageButton,
     private val appSearchManagerProvider: () -> AppSearchManager?
 ) {
 
-
-
-
     fun setup() {
         searchTypeButton.setOnClickListener { view ->
             showSearchTypeMenu(view)
         }
     }
-
-
-
 
     private fun showSearchTypeMenu(anchor: View) {
 
@@ -52,7 +42,6 @@ class SearchTypeMenuManager(
                 appSearchManager.setSearchMode(mode)
             }
 
-
             updateButtonIcon(mode)
 
             true
@@ -60,9 +49,6 @@ class SearchTypeMenuManager(
         popup.show()
         applyThemeColorToPopupMenu(popup)
     }
-
-
-
 
     private fun updateButtonIcon(mode: AppSearchManager.SearchMode) {
         val iconRes = when (mode) {
@@ -78,17 +64,11 @@ class SearchTypeMenuManager(
         searchTypeButton.setImageResource(iconRes)
     }
 
-
-
-
     private fun createTranslucentPopupMenu(anchor: View): PopupMenu {
 
-        // AppCompat's own ContextThemeWrapper, not ThemeManager.themedContext()'s framework one —
-        // PopupMenu relies on AppCompat's resource remapping to style correctly.
         val wrapper = androidx.appcompat.view.ContextThemeWrapper(context, R.style.Theme_Launch)
         ThemeManager.applyOverlaysOnly(wrapper)
         val popup = PopupMenu(wrapper, anchor)
-
 
         try {
 
@@ -97,9 +77,7 @@ class SearchTypeMenuManager(
             val menuPopupHelper = popupField.get(popup)
             val cls = menuPopupHelper.javaClass
 
-
             val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.menu_background)
-
 
             val methodsToTry = listOf(
                 "setBackgroundDrawable" to arrayOf(android.graphics.drawable.Drawable::class.java),
@@ -118,7 +96,6 @@ class SearchTypeMenuManager(
                 }
             }
 
-
             if (!backgroundSet) {
                 try {
                     val popupWindowField = cls.getDeclaredField("mPopup")
@@ -131,7 +108,6 @@ class SearchTypeMenuManager(
                 } catch (_: Exception) {}
             }
 
-
             try {
                 cls.getMethod("setPopupStyle", Int::class.java)
                     .invoke(menuPopupHelper, R.style.PopupMenuStyle)
@@ -139,14 +115,10 @@ class SearchTypeMenuManager(
 
         } catch (_: Exception) {
 
-
         }
 
         return popup
     }
-
-
-
 
     private fun applyThemeColorToPopupMenu(popup: PopupMenu) {
         try {
@@ -155,7 +127,6 @@ class SearchTypeMenuManager(
             popupField.isAccessible = true
             val menuPopupHelper = popupField.get(popup)
             val cls = menuPopupHelper.javaClass
-
 
             val listViewFieldNames = arrayOf("mDropDownList", "mPopup", "mListView")
             var listView: android.widget.ListView? = null
@@ -171,7 +142,6 @@ class SearchTypeMenuManager(
                     }
                 } catch (_: NoSuchFieldException) {}
             }
-
 
             listView?.let { lv ->
 

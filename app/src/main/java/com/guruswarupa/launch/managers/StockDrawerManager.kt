@@ -26,16 +26,6 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.LayoutMode
 
-/**
- * Owns the stock-layout app drawer: a full-screen, vertically-scrolling grid of every app,
- * opened with a swipe up from the home screen, with drag-to-reorder persisted via
- * [AppOrderManager]. Also wires drag-to-reorder (and folder creation) for the stock home page's
- * favorites grid via [attachHomeReorder]. Only relevant when the Stock display style is active.
- *
- * Folders: dragging one app onto another (or onto an existing folder) merges them, prompting
- * for a name on creation. Tapping a folder (or long-pressing it without moving) opens a dialog
- * listing its apps, with rename-by-tapping-the-title and a delete action.
- */
 class StockDrawerManager(
     private val activity: MainActivity,
     private val drawerRoot: View,
@@ -67,10 +57,7 @@ class StockDrawerManager(
     private var hotseatLayoutManager: GridLayoutManager? = null
 
     fun setup() {
-        // ?attr/appSurface (drawerRoot's XML background) is intentionally translucent on some
-        // palettes - fine for overlays meant to show a blurred wallpaper through them, but the
-        // drawer is supposed to fully cover the home page underneath. Force it fully opaque
-        // here, keeping the palette's own hue, so home content never bleeds through.
+
         val surfaceColor = com.guruswarupa.launch.ui.theme.ThemeManager.color(activity, R.attr.appSurface)
         drawerRoot.setBackgroundColor(
             android.graphics.Color.argb(
@@ -148,15 +135,12 @@ class StockDrawerManager(
         drawerRoot.setOnClickListener { }
     }
 
-    /** Called whenever the master app list changes (installs/uninstalls/focus/workspace). */
     fun onFullAppListUpdated(fullList: List<ResolveInfo>) {
         if (!LayoutMode.isStock(sharedPreferences)) return
         recomputeOrderedApps(fullList)
         applyCurrentFilter()
         recomputeHotseat(fullList)
-        // Keep the retargeted search engine's own snapshot fresh too, so an active search
-        // reflects installs/uninstalls/focus-mode changes just like the plain list does -
-        // harmless no-op if the drawer isn't the one currently holding it (see hide()).
+
         if (isOpen) {
             activity.appSearchManager.updateData(
                 activity.fullAppList, allOrderedApps, activity.contactManager.getContactsList()
@@ -176,17 +160,13 @@ class StockDrawerManager(
 
     private fun recomputeOrderedApps(fullList: List<ResolveInfo>) {
         val focusMode = appDockManager.getCurrentMode()
-        // The drawer's whole point is to show every app - workspaces (a different
-        // app-organization feature, disabled while Stock is active) must never filter it, even
-        // defensively if one were somehow still active.
+
         val filtered = appListManager.filterAndPrepareApps(fullList, focusMode, workspaceMode = false)
         val folders = folderManager.getFolders(com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_FOLDERS)
         val ordered = appOrderManager.applyOrder(
             filtered, appListManager, com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_APP_ORDER, folders
         )
-        // Launcher shortcuts are pinned to the very bottom of the drawer, below a full-width
-        // separator - matching how the regular all-apps list surfaces them - and are excluded
-        // from drag-reorder/merge in attachReorderAndFolders.
+
         allOrderedApps = ordered +
             appListManager.createSeparatorInfo("SMALL") +
             appListManager.createLauncherShortcut("launcher_settings_shortcut") +
@@ -213,15 +193,6 @@ class StockDrawerManager(
         recyclerView.isVisible = visible.isNotEmpty()
     }
 
-    /**
-     * The empty-query state is still this simple label filter over [allOrderedApps] (custom
-     * order, folders included) - exactly what the drawer should show with nothing typed. A
-     * non-empty query is handed off entirely to [retargetSearchToDrawer]'s [AppSearchManager]
-     * watcher (attached once in [show]), which adds contacts/files/settings/maps/Play
-     * Store/YouTube/web/math/Ask AI results the same way the home page's search already does -
-     * this watcher just gets out of the way rather than fighting it with a second, simpler
-     * update for the same keystroke.
-     */
     private fun setupSearch() {
         searchBox.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -237,12 +208,6 @@ class StockDrawerManager(
         })
     }
 
-    /**
-     * Points the shared [AppSearchManager] - normally the home page's search engine - at the
-     * drawer's own search box/adapter/app-list for as long as the drawer is open, giving it the
-     * exact same contacts/files/settings/maps/Play Store/YouTube/web/math/Ask AI results as
-     * List/Grid's search. [hide] hands it back via [MainActivity.updateAppSearchManager].
-     */
     private fun retargetSearchToDrawer() {
         activity.appSearchManager.onSearchQueryChanged = { query ->
             if (query.isNotEmpty()) ensureContactsLoadedForDrawerSearch()
@@ -259,7 +224,6 @@ class StockDrawerManager(
         )
     }
 
-    /** Contacts load lazily on first use, same as the home page's search - see MainActivity. */
     private fun ensureContactsLoadedForDrawerSearch() {
         if (activity.contactManager.hasLoadedContacts()) return
         activity.contactManager.loadContacts { _ ->
@@ -268,13 +232,6 @@ class StockDrawerManager(
         }
     }
 
-    /**
-     * Focus mode and work profile switching live on the home dock's pill row in List/Grid, but
-     * that whole row is hidden in Stock (see [AppDockManager.updateDockVisibility]) to keep the
-     * home page minimal - surface them here instead, below the drawer's search bar, as full-text
-     * buttons rather than icon-only pills. Reuses [AppDockManager]'s existing toggle/state logic
-     * so behavior (work profile creation prompt, focus mode persistence, etc.) stays identical.
-     */
     private fun setupModeToggles() {
         val focusToggle = drawerRoot.findViewById<View>(R.id.stock_drawer_focus_toggle) ?: return
         val focusIcon = drawerRoot.findViewById<android.widget.ImageView>(R.id.stock_drawer_focus_icon)
@@ -335,7 +292,6 @@ class StockDrawerManager(
         workToggle.isVisible = !hideWork
     }
 
-    /** Separators and the pinned "Launch Settings"/"Launch Vault" shortcuts never move or merge. */
     private fun isReorderable(entry: ResolveInfo): Boolean {
         val packageName = entry.activityInfo.packageName
         return packageName != AppAdapter.SEPARATOR_PACKAGE && !packageName.startsWith("launcher_")
@@ -364,13 +320,6 @@ class StockDrawerManager(
         return if (targetArea > 0) overlapArea / targetArea else 0f
     }
 
-    /**
-     * True once the dragged item's center point (in screen coordinates) falls inside [zone]'s
-     * bounds - used for drop zones that live outside the dragged item's own RecyclerView (the
-     * drawer's "add to Home" banner sits above its grid, the home page's remove target sits at
-     * the bottom of the screen), where a simple rect-overlap or single-axis threshold wouldn't
-     * correctly express "dropped precisely on this target."
-     */
     private fun isDraggedOverZone(hostRecyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, zone: View): Boolean {
         if (!zone.isVisible) return false
 
@@ -387,21 +336,8 @@ class StockDrawerManager(
         return itemCenterX in zoneLeft..(zoneLeft + zone.width) && itemCenterY in zoneTop..(zoneTop + zone.height)
     }
 
-    /** A special drag target, shown only for the duration of a drag; dropping on it fires [onDrop] instead of the normal reorder/merge handling. */
     private class DropZone(val view: View, val onDrop: (AppAdapter, Int) -> Unit)
 
-    /**
-     * Wires drag-to-reorder and drag-to-merge (folder creation) for a stock grid. Shared by the
-     * drawer ([setup]), the home page ([attachHomeReorder]) and the home page's hotseat
-     * ([attachHotseatReorder]) since all three operate the same way over their own [AppAdapter]
-     * instance.
-     *
-     * [dropZones] are shown together for the duration of any drag; dropping on whichever one the
-     * item's center lands in fires that zone's own handler instead of the normal reorder/merge
-     * handling. [hiddenWhileDropZonesShown] is an optional other view that swaps out for the
-     * duration (e.g. the drawer's search bar making room for its "add to Home" banner) - leave
-     * null when the drop zones float independently, like the home page's remove target.
-     */
     private fun attachReorderAndFolders(
         targetRecyclerView: RecyclerView,
         adapterOf: () -> AppAdapter?,
@@ -587,10 +523,7 @@ class StockDrawerManager(
             val alreadyOnHome = folderManager.getFolders(homeFoldersKey).any { it.appKeys.toSet() == folder.appKeys.toSet() }
             if (!alreadyOnHome) {
                 folderManager.createFolder(homeFoldersKey, folder.name, folder.appKeys.toList())
-                // Any of these apps that already had their own standalone slot on Home need
-                // that slot cleared - otherwise applyOrder() finds the app's old token still in
-                // the saved order, sees it now belongs to this folder, and swaps the folder into
-                // that exact spot instead of the folder just being added like anything else.
+
                 appOrderManager.removeTokens(
                     com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_APP_ORDER,
                     folder.appKeys.toSet()
@@ -611,13 +544,6 @@ class StockDrawerManager(
         hide(animated = true)
     }
 
-    /**
-     * Dropping a grid item on the dock adds it there (the dock is its own independent, fully
-     * explicit list - never auto-derived from home order). If that pushes the dock past its
-     * configured capacity, the oldest dock member is evicted; it needs no special handling since
-     * it simply stops being referenced by the dock's order and reappears in the home grid the
-     * moment [computeStockHomeOrdered] excludes it from the dock's covered keys instead.
-     */
     private fun promoteToHotseat(gridAdapter: AppAdapter, gridPosition: Int) {
         val draggedEntry = gridAdapter.currentList.getOrNull(gridPosition) ?: return
         val dockCapacity = appListManager.getStockHotseatCount()
@@ -677,9 +603,7 @@ class StockDrawerManager(
             val updated = list.toMutableList()
             updated.removeAt(draggedPosition)
             if (refreshedFolder != null) {
-                // Swap in a freshly-built placeholder (not the stale one still in `list`) so
-                // AppAdapter's DiffUtil sees the membership change and rebinds the icon preview
-                // immediately instead of leaving the old mini-icon grid showing.
+
                 val newTargetIndex = (if (draggedPosition < targetPosition) targetPosition - 1 else targetPosition)
                     .coerceIn(updated.indices)
                 updated[newTargetIndex] = appOrderManager.createFolderInfo(refreshedFolder)
@@ -702,9 +626,6 @@ class StockDrawerManager(
             adapter.updateAppList(updated)
             appOrderManager.saveOrder(updated, orderKey)
 
-            // One UI-style flow: open the freshly-created folder immediately with its name
-            // field focused and selected, instead of a blocking "name this folder" popup
-            // before it even exists.
             showFolderContents(
                 orderKey = orderKey,
                 foldersKey = foldersKey,
@@ -715,7 +636,6 @@ class StockDrawerManager(
         }
     }
 
-    /** Re-derives the visible list for whichever surface [orderKey]/[foldersKey] belongs to. */
     private fun onOrderChangedForFolder(orderKey: String, foldersKey: String) {
         if (orderKey == com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_APP_ORDER) {
             recomputeOrderedApps(activity.fullAppList)
@@ -769,8 +689,6 @@ class StockDrawerManager(
             }
         }
 
-        // Cap at 4 columns regardless of the home screen's own grid density setting - a folder
-        // with only a couple of apps looks sparse and inconsistent at a wider column count.
         contentsRecyclerView.layoutManager = GridLayoutManager(activity, activity.getPreferredGridColumns().coerceAtMost(4))
         val contentsAdapter = AppAdapter(activity, appsInFolder.toMutableList(), searchBox, true, activity, sharedPreferences)
         contentsRecyclerView.adapter = contentsAdapter
@@ -779,8 +697,7 @@ class StockDrawerManager(
 
         val removeZone = dialogView.findViewById<View>(R.id.folder_remove_zone)
         val addToHomeZone = dialogView.findViewById<View>(R.id.folder_add_to_home_zone)
-        // Only the drawer's own folders make sense to drag straight to Home from here - a
-        // folder opened from Home is already there.
+
         val showAddToHome = foldersKey == com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_FOLDERS
 
         val dragHelper = attachFolderContentsDrag(
@@ -814,8 +731,6 @@ class StockDrawerManager(
                 .show()
         }
 
-        // No button bar - tap outside (or back) to dismiss, like Samsung's folder popup, which
-        // is just the card itself with no "Close" action.
         dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
             .setView(dialogView)
             .create()
@@ -845,15 +760,6 @@ class StockDrawerManager(
         imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    /**
-     * Drag-to-act for a folder's contents popup: long-press then drag onto [removeZone] takes
-     * the app out of the folder (and, per [FolderManager.removeAppFromFolder], auto-deletes the
-     * folder once fewer than two apps remain); dragging onto [addToHomeZone] (only offered for
-     * drawer folders - a folder opened from Home is already there) does the same plus favorites
-     * the app straight onto Home, mirroring [addDraggedEntryToHome]'s single-app case. Positions
-     * are never swapped (onMove always declines) - items only ever leave via a zone, so the grid
-     * can't drift out of sync with the folder's own stored order.
-     */
     private fun attachFolderContentsDrag(
         contentsRecyclerView: RecyclerView,
         contentsAdapter: AppAdapter,
@@ -1006,7 +912,6 @@ class StockDrawerManager(
         })
     }
 
-    /** Installs the swipe-up-to-open gesture on the home screen's own app grid. */
     fun attachOpenGesture(homeRecyclerView: RecyclerView) {
         val density = activity.resources.displayMetrics.density
         val openThresholdPx = (24 * density).toInt()
@@ -1045,17 +950,6 @@ class StockDrawerManager(
         })
     }
 
-    /**
-     * Same swipe-up-to-open gesture as [attachOpenGesture], for plain [View]s rather than a
-     * RecyclerView - specifically the home page's empty-state text, which is what's actually
-     * showing (with the app grid set to View.GONE) whenever there are no favorites yet. Without
-     * this, an empty Stock home page had no way to reach the drawer at all.
-     *
-     * Since this always consumes the whole gesture (a plain View, unlike a RecyclerView, only
-     * gets ACTION_MOVE/UP if it already claimed ACTION_DOWN), it also has to run double-tap-to-lock
-     * itself - otherwise the empty Stock home page would silently swallow every double-tap
-     * instead of ever letting it reach the page-level lock gesture in [ScreenPagerManager].
-     */
     @android.annotation.SuppressLint("ClickableViewAccessibility")
     fun attachOpenGestureToView(view: View) {
         val density = activity.resources.displayMetrics.density
@@ -1095,54 +989,25 @@ class StockDrawerManager(
         }
     }
 
-    /**
-     * Wires drag-to-reorder and drag-to-merge (folder creation) for the stock home page's own
-     * favorites grid (a separate [AppAdapter] instance from the drawer's, backed by
-     * [MainActivity.adapter]) and its fixed-row hotseat (a third, independent [AppAdapter] this
-     * class owns and keeps in sync via [onFullAppListUpdated]). Long-press starts a drag when in
-     * stock mode; releasing without moving falls through to the normal context menu, matching
-     * the drawer's behavior.
-     *
-     * Dropping on [removeZone] (a floating button shown only during the drag, from either the
-     * grid or the hotseat) removes the app - or every app in a dragged folder, plus the folder
-     * itself - from Home. Dropping a *grid* item on [hotseatRecyclerView] itself promotes it into
-     * the hotseat, evicting the hotseat's oldest member back to the top of the grid to keep the
-     * hotseat at its configured size.
-     */
     fun attachHomeReorder(homeRecyclerView: RecyclerView, homeAdapter: AppAdapter, hotseatRecyclerView: RecyclerView, removeZone: View) {
         val orderKey = com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_APP_ORDER
         val foldersKey = com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_FOLDERS
-        // The dock shares the same folder store as the grid (a folder's identity doesn't change
-        // when it moves between them) but has its own, independent order list - reordering or
-        // merging within the dock must never write into the grid's order.
+
         val dockOrderKey = com.guruswarupa.launch.models.Constants.Prefs.STOCK_DOCK_ORDER
 
         hotseatView = hotseatRecyclerView
-        // app_item_grid.xml's root is match_parent-wide, which correctly fills one column of a
-        // GridLayoutManager but would try to fill the *entire* row inside a horizontal
-        // LinearLayoutManager (only the first icon would show, centered, with the rest pushed
-        // off-screen). A GridLayoutManager sized to the dock's capacity lays out evenly-sized
-        // cells correctly and - since the dock never holds more items than that capacity - never
-        // needs a second row, giving exactly the fixed single-row tray a dock should be.
+
         val dockCapacity = appListManager.getStockHotseatCount()
-        // A single row never needs to scroll, but RecyclerView still intercepts vertical
-        // touch/fling by default regardless of whether there's anything to scroll to - which
-        // eats the swipe-up-to-open-drawer gesture whenever it starts on the dock. Disable it
-        // outright rather than relying on content height happening to match the view's.
+
         val gridLayoutManager = object : GridLayoutManager(activity, dockCapacity) {
             override fun canScrollVertically(): Boolean = false
         }
         hotseatLayoutManager = gridLayoutManager
         hotseatRecyclerView.layoutManager = gridLayoutManager
-        // NOT setHasFixedSize(true): that tells RecyclerView its own size never depends on
-        // adapter content, but this view's wrap_content height *does* - it's one row now, but
-        // can briefly need two (e.g. before the span count/capacity has synced). With the flag
-        // set, a height measured once while it briefly needed two rows can keep being reused on
-        // later, correct single-row updates instead of being re-measured down.
+
         hotseatRecyclerView.itemAnimator = null
         val newHotseatAdapter = AppAdapter(activity, mutableListOf(), searchBox, true, activity, sharedPreferences)
-        // The dock is a compact icon-only tray, like a real launcher's hotseat - always hide
-        // labels here regardless of the "show app names" grid setting.
+
         newHotseatAdapter.updateShowAppNamesInGrid(false)
         hotseatAdapter = newHotseatAdapter
         hotseatRecyclerView.adapter = newHotseatAdapter
@@ -1205,12 +1070,6 @@ class StockDrawerManager(
         homeAdapter.folderAppsResolver = { folderId -> resolveFolderApps(foldersKey, folderId) }
     }
 
-    /**
-     * Resolves a folder's member apps for its preview icon and its "tap to open" contents dialog.
-     * Members blocked by focus mode are left out here too - otherwise a folder that still shows
-     * (because at least one member isn't blocked) would leak the hidden ones through its preview
-     * or contents list, defeating the point of hiding them everywhere else.
-     */
     private fun resolveFolderApps(foldersKey: String, folderId: String): List<ResolveInfo> {
         val folder = folderManager.findFolder(foldersKey, folderId) ?: return emptyList()
         return folder.appKeys.mapNotNull { key ->
@@ -1221,7 +1080,6 @@ class StockDrawerManager(
     fun isDrawerEnabled(): Boolean =
         sharedPreferences.getBoolean(com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_ENABLED, true)
 
-    /** Hides the hotseat row outright - used when leaving Stock mode, where it has no home to show. */
     fun hideHotseat() {
         hotseatView?.isVisible = false
     }
@@ -1233,9 +1091,7 @@ class StockDrawerManager(
         applyCurrentFilter()
         refreshModeToggles()
         retargetSearchToDrawer()
-        // Reset scroll position on every open instead of leaving whatever position was left
-        // over from the last time the drawer was scrolled - matches stock Android launcher
-        // behavior of always showing the top of the list.
+
         recyclerView.scrollToPosition(0)
 
         isOpen = true
@@ -1247,9 +1103,6 @@ class StockDrawerManager(
         drawerRoot.translationY = startTranslation
         drawerRoot.alpha = 0f
 
-        // The fade finishes well before the slide does, so the content reads as fully in
-        // place while it's still gliding the last bit of the way up - reads noticeably
-        // smoother than fading and sliding for the same, full duration.
         val translate = ObjectAnimator.ofFloat(drawerRoot, View.TRANSLATION_Y, startTranslation, 0f).apply {
             duration = 300
             interpolator = DecelerateInterpolator(1.5f)
@@ -1267,8 +1120,7 @@ class StockDrawerManager(
     fun hide(animated: Boolean = true) {
         if (!isOpen) return
         isOpen = false
-        // Hand the shared search engine back to the home page now that the drawer no longer
-        // needs it - see retargetSearchToDrawer().
+
         activity.updateAppSearchManager()
         searchBox.text?.clear()
         screenPagerManager.setPagingEnabled(true)
@@ -1303,18 +1155,9 @@ class StockDrawerManager(
 
     fun isShown(): Boolean = isOpen
 
-    /**
-     * The drawer keeps its own [AppAdapter]/[IconLoader], separate from the home page's, so
-     * settings changes (icon size, shape, names, icon pack) never reach it automatically -
-     * [SettingsChangeCoordinator] calls this alongside its home-adapter updates to keep both in
-     * sync.
-     */
     fun refreshAppearance(iconPackChanged: Boolean) {
         val currentAdapter = adapter ?: return
 
-        // The drawer's own GridLayoutManager is created once in setup() and otherwise never
-        // hears about the "apps per row" setting changing - sync it here alongside everything
-        // else, same as the home page's grid already does.
         val desiredColumns = activity.getPreferredGridColumns()
         if (desiredColumns != currentColumns) {
             currentColumns = desiredColumns
@@ -1347,8 +1190,6 @@ class StockDrawerManager(
             target.updateIconSize(iconSize)
         }
 
-        // The dock is a compact icon-only tray, like a real launcher's hotseat - always hide
-        // labels there regardless of the "show app names" grid setting.
         val showAppNamesInGrid = !forceHideNames &&
             sharedPreferences.getBoolean(com.guruswarupa.launch.models.Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
         target.updateShowAppNamesInGrid(showAppNamesInGrid)

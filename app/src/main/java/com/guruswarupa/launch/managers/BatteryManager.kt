@@ -68,7 +68,7 @@ class BatteryManager(private val context: Context) {
 
             isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                     status == BatteryManager.BATTERY_STATUS_FULL
-            
+
             isFull = status == BatteryManager.BATTERY_STATUS_FULL || percentage == 100
 
             if (isCharging) {
@@ -108,7 +108,7 @@ class BatteryManager(private val context: Context) {
             health = health,
             timeRemaining = timeRemaining,
             designCapacity = designCapacity,
-            currentFullCapacity = liveCapacity, // This was original behavior, will fix in widget/activity
+            currentFullCapacity = liveCapacity,
             liveCapacity = liveCapacity,
             isFull = isFull
         )

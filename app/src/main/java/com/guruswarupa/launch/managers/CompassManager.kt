@@ -5,7 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import kotlin.math.*
 
 class CompassManager(context: Context) : SensorEventListener {
@@ -38,7 +37,6 @@ class CompassManager(context: Context) : SensorEventListener {
         magnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
 
         if (accelerometerSensor == null || magnetometerSensor == null) {
-            Log.w(TAG, "Required sensors not available for compass")
         }
     }
 
@@ -56,7 +54,6 @@ class CompassManager(context: Context) : SensorEventListener {
 
     fun startTracking() {
         if (!hasRequiredSensors()) {
-            Log.w(TAG, "Cannot start tracking: sensors not available")
             return
         }
 
@@ -79,8 +76,7 @@ class CompassManager(context: Context) : SensorEventListener {
         if (success1 && success2) {
             isListening = true
         } else {
-            // Partial registration: a listener may already be active, so unregister
-            // the whole listener to avoid leaking a sensor registration.
+
             sensorManager.unregisterListener(this)
             isListening = false
         }
@@ -92,9 +88,6 @@ class CompassManager(context: Context) : SensorEventListener {
             isListening = false
         }
     }
-
-
-
 
     fun cleanup() {
         stopTracking()
@@ -133,10 +126,7 @@ class CompassManager(context: Context) : SensorEventListener {
             magnetometerReading
         )
 
-
         SensorManager.getOrientation(rotationMatrix, orientationAngles)
-
-
 
         val azimuth = Math.toDegrees(orientationAngles[0].toDouble()).toFloat()
         val normalizedAzimuth = ((azimuth + 360) % 360)

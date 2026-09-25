@@ -119,7 +119,6 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
         val transactionData = "$type:$amount:$timestamp:$description"
         sharedPreferences.edit { putString(transactionKey, transactionData) }
 
-
         cleanupOldTransactions()
     }
 
@@ -133,7 +132,6 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
                 val type = parts[0]
                 val amount = parts[1].toDoubleOrNull() ?: 0.0
 
-
                 val absAmountCents = amountToCents(kotlin.math.abs(amount))
                 val currentBalanceCents = if (type == "income") {
                     getBalanceCents() - absAmountCents
@@ -141,7 +139,6 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
                     getBalanceCents() + absAmountCents
                 }
                 sharedPreferences.edit { putLong(BALANCE_KEY, currentBalanceCents) }
-
 
                 val date = Date(timestamp)
                 val monthStr = dateFormat.format(date)
@@ -207,7 +204,6 @@ class FinanceManager(private val sharedPreferences: SharedPreferences) {
             val sortedKeys = transactionKeys.sortedByDescending { key ->
                 key.removePrefix("transaction_").substringBefore("_").toLongOrNull() ?: 0L
             }
-
 
             sharedPreferences.edit {
                 sortedKeys.drop(100).forEach { key ->

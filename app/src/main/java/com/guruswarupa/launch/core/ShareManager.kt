@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.FileProvider
@@ -22,17 +21,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.Executors
 
-
-
-
 data class ShareableApp(
     val name: String,
     val packageName: String
 )
-
-
-
-
 
 class ShareManager(private val context: Context) {
     private val executor = Executors.newSingleThreadExecutor()
@@ -45,9 +37,6 @@ class ShareManager(private val context: Context) {
         private const val DIALOG_OPTION_SHARE_APK = 0
         private const val DIALOG_OPTION_SHARE_FILE = 1
     }
-
-
-
 
     fun showApkSharingDialog() {
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
@@ -65,9 +54,6 @@ class ShareManager(private val context: Context) {
             .setNegativeButton(context.getString(android.R.string.cancel), null)
             .show()
     }
-
-
-
 
     private fun showAppSharingDialog() {
         val installedApps = getInstalledApps()
@@ -89,9 +75,6 @@ class ShareManager(private val context: Context) {
             .setNegativeButton(context.getString(android.R.string.cancel), null)
             .show()
     }
-
-
-
 
     @Suppress("DEPRECATION")
     private fun showFileSharingDialog() {
@@ -131,9 +114,6 @@ class ShareManager(private val context: Context) {
         }
     }
 
-
-
-
     fun handleFilePickerResult(uri: Uri?) {
         if (uri != null) {
             shareFile(uri)
@@ -141,9 +121,6 @@ class ShareManager(private val context: Context) {
             showToast(context.getString(R.string.no_file_selected))
         }
     }
-
-
-
 
     private fun shareFile(uri: Uri) {
         try {
@@ -162,18 +139,11 @@ class ShareManager(private val context: Context) {
         }
     }
 
-
-
-
     private fun showToast(message: String) {
         handler.post {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
-
-
-
-
 
     private fun getInstalledApps(): List<ShareableApp> {
         val packageManager = context.packageManager
@@ -191,10 +161,8 @@ class ShareManager(private val context: Context) {
                         val appName = packageManager.getApplicationLabel(app).toString()
                         ShareableApp(appName, app.packageName)
                     } catch (e: PackageManager.NameNotFoundException) {
-                        Log.w(TAG, "Package not found: ${app.packageName}", e)
                         null
                     } catch (e: Exception) {
-                        Log.w(TAG, "Error getting app label for ${app.packageName}", e)
                         null
                     }
                 }
@@ -203,11 +171,6 @@ class ShareManager(private val context: Context) {
             emptyList()
         }
     }
-
-
-
-
-
 
     fun shareApk(packageName: String, appName: String) {
         showToast(context.getString(R.string.preparing_apk_for_sharing))
@@ -230,10 +193,6 @@ class ShareManager(private val context: Context) {
         }
     }
 
-
-
-
-
     private fun prepareApkForSharing(packageName: String, appName: String): Uri? {
         val packageManager = context.packageManager
         val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
@@ -244,13 +203,11 @@ class ShareManager(private val context: Context) {
             return null
         }
 
-
         val cacheDir = File(context.cacheDir, Constants.SHARED_APKS_DIR)
         if (!cacheDir.exists() && !cacheDir.mkdirs()) {
             showToast(context.getString(R.string.error_creating_cache_directory))
             return null
         }
-
 
         val sanitizedAppName = appName.replace(
             Constants.APP_NAME_SANITIZE_REGEX.toRegex(),
@@ -258,13 +215,11 @@ class ShareManager(private val context: Context) {
         )
         val copiedApk = File(cacheDir, "$sanitizedAppName${Constants.APK_EXTENSION}")
 
-
         FileInputStream(sourceApk).use { input ->
             FileOutputStream(copiedApk).use { output ->
                 input.copyTo(output)
             }
         }
-
 
         return FileProvider.getUriForFile(
             context,
@@ -272,9 +227,6 @@ class ShareManager(private val context: Context) {
             copiedApk
         )
     }
-
-
-
 
     private fun launchShareIntent(apkUri: Uri, appName: String) {
         try {
@@ -292,9 +244,6 @@ class ShareManager(private val context: Context) {
             showToast(context.getString(R.string.error_sharing_apk, e.message ?: ""))
         }
     }
-
-
-
 
     fun cleanup() {
         executor.shutdown()

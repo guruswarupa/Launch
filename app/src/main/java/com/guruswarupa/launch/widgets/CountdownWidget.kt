@@ -149,7 +149,6 @@ class CountdownWidget(
         countdownsRecyclerView.layoutManager = LinearLayoutManager(context)
         countdownsRecyclerView.adapter = adapter
 
-
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
 
@@ -228,7 +227,6 @@ class CountdownWidget(
     fun showCountdownOptionsDialog(countdown: CountdownItem) {
         val options = mutableListOf<String>()
 
-
         if (!countdown.isFromCalendar) {
             options.add("Edit")
         }
@@ -258,7 +256,6 @@ class CountdownWidget(
             }
             .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
-
 
         fixDialogTextColors(dialog)
     }
@@ -305,7 +302,6 @@ class CountdownWidget(
         val timeInput: EditText = dialogView.findViewById(R.id.countdown_time_input)
         val fromCalendarButton: Button = dialogView.findViewById(R.id.from_calendar_button)
 
-
         val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
         val secondaryTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
         titleInput.setTextColor(textColor)
@@ -314,7 +310,6 @@ class CountdownWidget(
         dateInput.setHintTextColor(secondaryTextColor)
         timeInput.setTextColor(textColor)
         timeInput.setHintTextColor(secondaryTextColor)
-
 
         val calendar = Calendar.getInstance()
         dateInput.setOnClickListener {
@@ -333,7 +328,6 @@ class CountdownWidget(
             ).show()
         }
 
-
         timeInput.setOnClickListener {
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
@@ -351,7 +345,6 @@ class CountdownWidget(
                 hour, minute, false
             ).show()
         }
-
 
         val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
         val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
@@ -400,7 +393,6 @@ class CountdownWidget(
         val timeInput: EditText = dialogView.findViewById(R.id.countdown_time_input)
         val fromCalendarButton: Button = dialogView.findViewById(R.id.from_calendar_button)
 
-
         val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
         val secondaryTextColor = ThemeManager.color(context, R.attr.appTextSecondary)
         titleInput.setTextColor(textColor)
@@ -421,7 +413,6 @@ class CountdownWidget(
         dateInput.setText(dateFormat.format(calendar.time))
         timeInput.setText(timeFormat.format(calendar.time))
 
-
         dateInput.setOnClickListener {
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
@@ -436,7 +427,6 @@ class CountdownWidget(
                 year, month, day
             ).show()
         }
-
 
         timeInput.setOnClickListener {
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -520,7 +510,6 @@ class CountdownWidget(
             }
             .setNegativeButton(context.getString(R.string.cancel_button), null)
             .show()
-
 
         fixDialogTextColors(dialog)
     }
@@ -711,7 +700,6 @@ class CountdownAdapter(
         holder.timeText.text = dateFormat.format(Date(countdown.targetTime))
 
         holder.remainingText.text = countdown.formatRemainingTime()
-
 
         val color = if (countdown.isExpired()) {
             ThemeManager.color(holder.itemView.context, R.attr.appError)

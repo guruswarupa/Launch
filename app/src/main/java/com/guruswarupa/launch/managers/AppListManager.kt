@@ -64,7 +64,6 @@ class AppListManager @Inject constructor(
 
             val isWorkApp = app.preferredOrder != mainUserSerial
 
-
             if (focusMode) {
                 return@filter if (isWorkApp) true else !dockManager.isAppHiddenInFocusMode(packageName)
             }
@@ -96,20 +95,10 @@ class AppListManager @Inject constructor(
             { it.activityInfo.name }
         )
 
-
-
-        // In List/Grid, focus/workspace/work-profile mode replaces the favorites-only home view
-        // with a flat, curated list of whatever's currently allowed - there's no separate
-        // drawer, so the home list has to be the "everything you can use right now" view. Stock
-        // always has that separate drawer, so its home page must stay favorites-only regardless
-        // of these modes; skip the shortcut and let it fall through to the same routing used
-        // when none of these modes are active.
         if ((focusMode || workspaceMode || isWorkProfileEnabled) &&
             !com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
             return apps.sortedWith(comparator)
         }
-
-
 
         if (showOnlyFavorites) {
             return if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
@@ -123,11 +112,6 @@ class AppListManager @Inject constructor(
         }
     }
 
-    /**
-     * The Stock apps eligible for the home page and dock: favorites, unless
-     * [Constants.Prefs.STOCK_DRAWER_ENABLED] is off, in which case every app is eligible since
-     * the home page is then the only place to find them.
-     */
     private fun computeStockEligibleApps(filteredApps: List<ResolveInfo>): List<ResolveInfo> {
         val includeAllApps = !sharedPreferences.getBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, true)
         return if (includeAllApps) {
@@ -138,11 +122,6 @@ class AppListManager @Inject constructor(
         }
     }
 
-    /**
-     * The Stock dock's contents: only apps/folders the user explicitly placed there (dragged
-     * in), never auto-derived from home order - membership is its own independent, persisted
-     * list, capped at [getStockHotseatCount].
-     */
     fun computeStockDock(filteredApps: List<ResolveInfo>): List<ResolveInfo> {
         val sourceApps = computeStockEligibleApps(filteredApps)
         val folders = folderManager.getFolders(Constants.Prefs.STOCK_HOME_FOLDERS)
@@ -151,12 +130,6 @@ class AppListManager @Inject constructor(
         ).take(getStockHotseatCount())
     }
 
-    /**
-     * Computes the Stock home page's own ordered grid, from [filteredApps] already filtered for
-     * focus/workspace/work-profile - excluding whatever's currently placed in the dock (an app
-     * moves out of the grid the moment it's dragged into the dock, and reappears here the moment
-     * it's removed from the dock, with no separate bookkeeping needed).
-     */
     fun computeStockHomeOrdered(filteredApps: List<ResolveInfo>): List<ResolveInfo> {
         val sourceApps = computeStockEligibleApps(filteredApps)
         val dockCoveredKeys = computeStockDockCoveredKeys()
@@ -169,11 +142,6 @@ class AppListManager @Inject constructor(
         return appOrderManager.applyOrder(eligibleForGrid, this, Constants.Prefs.STOCK_HOME_APP_ORDER, folders)
     }
 
-    /**
-     * Reads the dock's raw saved tokens directly (not via [computeStockDock]'s full apps-list
-     * resolution) to determine which app keys the dock currently covers - simpler, and
-     * independent of whatever's actually installed/eligible right now.
-     */
     private fun computeStockDockCoveredKeys(): Set<String> {
         val tokens = appOrderManager.loadOrderTokens(Constants.Prefs.STOCK_DOCK_ORDER)
         if (tokens.isEmpty()) return emptySet()
@@ -205,10 +173,7 @@ class AppListManager @Inject constructor(
 
     fun addSeparators(apps: List<ResolveInfo>, showOnlyFavorites: Boolean = false): List<ResolveInfo> {
         if (showOnlyFavorites && com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
-            // Stock mode's home grid needs none of the spacer/letter-separator scaffolding that
-            // exists to fake the scroll-to-all-apps transition the other display styles use -
-            // unless the drawer itself is disabled, in which case the launcher shortcuts need to
-            // live at the bottom of the home list instead, same as they would in the drawer.
+
             val drawerEnabled = sharedPreferences.getBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, true)
             return if (drawerEnabled) {
                 apps
@@ -227,15 +192,12 @@ class AppListManager @Inject constructor(
         val workspaceMode = dockManager.isWorkspaceModeActive()
         val isWorkProfileEnabled = workProfileManager.isWorkProfileEnabled()
 
-
         val showFavoritesSection = showOnlyFavorites && !focusMode && !workspaceMode && !isWorkProfileEnabled
-
-
 
         if (!showOnlyFavorites && !focusMode && !workspaceMode && !isWorkProfileEnabled) {
             val favorites = favoriteAppManager.getFavoriteApps()
             if (favorites.isNotEmpty()) {
-                // Add enough spacers to ensure scrollability back to favorites
+
                 for (i in 0 until 3) {
                     result.add(createSeparatorInfo("all_apps_top_spacer_$i"))
                 }
@@ -252,7 +214,6 @@ class AppListManager @Inject constructor(
                 val label = getDisplayLabel(app)
                 val firstChar = if (label.isNotEmpty()) label[0].uppercaseChar() else null
 
-                // Only add letter separators when NOT in favorites-only mode
                 if (!showOnlyFavorites && firstChar != null) {
                     val separatorLetter = if (firstChar.isLetter()) firstChar else '#'
                     if (separatorLetter != lastLetter) {
@@ -261,7 +222,7 @@ class AppListManager @Inject constructor(
                     }
                 }
             } else if (lastLetter != null) {
-                // Add large separator before system apps (Settings/Vault) to force new row
+
                 if (lastLetter != '⚙') {
                     result.add(createSeparatorInfo("system_separator"))
                     lastLetter = '⚙'
@@ -271,10 +232,6 @@ class AppListManager @Inject constructor(
             result.add(app)
         }
 
-
-
-
-
         if (showOnlyFavorites && !focusMode && !workspaceMode && !isWorkProfileEnabled) {
             val favorites = favoriteAppManager.getFavoriteApps()
             val favoriteCount = favorites.size
@@ -283,13 +240,13 @@ class AppListManager @Inject constructor(
             val isGridMode = com.guruswarupa.launch.utils.LayoutMode.isGridRendering(sharedPreferences)
 
             if (isGridMode) {
-                // Grid mode: add more spacers when top widget is hidden
+
                 val spacerCount = if (isTopWidgetVisible) 15 else 20
                 for (i in 0 until spacerCount) {
                     result.add(createSeparatorInfo("favorites_bottom_spacer_$i"))
                 }
             } else {
-                // List mode: dynamic spacer count
+
                 val baseCount = if (isTopWidgetVisible) 20 else 25
                 val spacerCount = maxOf(8, baseCount - (favoriteCount - 1).coerceAtLeast(0))
 
@@ -302,7 +259,6 @@ class AppListManager @Inject constructor(
                 result.add(createSeparatorInfo("bottom_system_separator"))
             }
         }
-
 
         if (!showOnlyFavorites || focusMode || workspaceMode || isWorkProfileEnabled) {
             result.add(createSeparatorInfo("SMALL"))

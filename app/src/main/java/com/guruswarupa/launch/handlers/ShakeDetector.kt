@@ -7,14 +7,8 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import kotlin.math.abs
 import kotlin.math.sqrt
-
-
-
-
-
 
 class ShakeDetector(
     context: Context,
@@ -23,7 +17,6 @@ class ShakeDetector(
 
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
 
     private var shakeThreshold = 25.0f
     private val shakeTimeWindow = 1000L
@@ -41,9 +34,6 @@ class ShakeDetector(
 
     private var isListening = false
 
-
-
-
     fun start() {
         if (isListening) return
 
@@ -54,18 +44,10 @@ class ShakeDetector(
         }
     }
 
-
-
-
     fun updateSensitivity(sensitivity: Int) {
-
-
 
         shakeThreshold = 45f - (sensitivity.coerceIn(1, 10) - 1) * 3.33f
     }
-
-
-
 
     fun stop() {
         if (!isListening) return
@@ -78,7 +60,6 @@ class ShakeDetector(
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type != Sensor.TYPE_ACCELEROMETER) return
-
 
         if (GestureCoordinator.isInCooldown()) {
             shakeCount = 0
@@ -106,17 +87,14 @@ class ShakeDetector(
         val deltaY = abs(y - lastY)
         val deltaZ = abs(z - lastZ)
 
-
         val acceleration = sqrt((deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ).toDouble()).toFloat()
 
         if (acceleration > shakeThreshold) {
             val timeSinceLastShake = currentTime - lastShakeTime
 
-
             if (timeSinceLastShake > minTimeBetweenShakes) {
                 shakeCount++
                 lastShakeTime = currentTime
-
 
                 resetShakeCountRunnable?.let { handler.removeCallbacks(it) }
 

@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Process
 import android.os.UserHandle
 import android.os.UserManager
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import com.guruswarupa.launch.receivers.WorkProfileProvisioningReceiver
@@ -51,7 +50,6 @@ class WorkProfileManager @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.P)
     fun createWorkProfile(activity: androidx.activity.ComponentActivity) {
         if (!isWorkProfileSupported()) {
-            Log.e(TAG, "Work profile is not supported on this device")
             return
         }
 
@@ -68,7 +66,6 @@ class WorkProfileManager @Inject constructor(
             @Suppress("DEPRECATION")
             activity.startActivityForResult(intent, REQUEST_CODE_CREATE_WORK_PROFILE)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start work profile provisioning", e)
         }
     }
 
@@ -97,7 +94,6 @@ class WorkProfileManager @Inject constructor(
             }
             success
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to update work profile quiet mode", e)
             false
         }
     }
@@ -112,7 +108,6 @@ class WorkProfileManager @Inject constructor(
             val myUserHandle = Process.myUserHandle()
             launcherApps.profiles.firstOrNull { it != myUserHandle }
         } catch (e: Exception) {
-            Log.e(TAG, "Error finding work profile user handle", e)
             null
         }
     }
@@ -122,7 +117,6 @@ class WorkProfileManager @Inject constructor(
             val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
             userManager.isQuietModeEnabled(userHandle)
         } catch (e: Exception) {
-            Log.e(TAG, "Error checking work profile quiet mode", e)
             true
         }
     }

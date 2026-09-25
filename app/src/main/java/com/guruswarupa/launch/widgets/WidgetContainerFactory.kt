@@ -95,7 +95,7 @@ class WidgetContainerFactory(
                 return true
             }
         })
-        
+
         val touchListener = View.OnTouchListener { _, event ->
             resizeGestureDetector.onTouchEvent(event)
             false

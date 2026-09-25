@@ -40,12 +40,10 @@ class ControlCenterConfigActivity : AppCompatActivity() {
     private lateinit var adapter: ShortcutConfigAdapter
     private val prefs by lazy { getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE) }
 
-
     private lateinit var tabCustomize: Button
     private lateinit var tabHandle: Button
     private lateinit var shortcutsCard: View
     private lateinit var triggerCard: View
-
 
     private lateinit var triggerPositionSpinner: Spinner
     private lateinit var triggerLockSwitch: SwitchCompat
@@ -82,16 +80,12 @@ class ControlCenterConfigActivity : AppCompatActivity() {
 
         applyThemeAndWallpaper()
 
-
         tabCustomize.setOnClickListener { switchTab(0) }
         tabHandle.setOnClickListener { switchTab(1) }
 
-
         setupShortcutList()
 
-
         setupTriggerSettings()
-
 
         switchTab(0)
 
@@ -175,7 +169,6 @@ class ControlCenterConfigActivity : AppCompatActivity() {
         triggerHeightSeekbar = findViewById(R.id.trigger_height_seekbar)
         triggerWidthSeekbar = findViewById(R.id.trigger_width_seekbar)
 
-
         val positions = arrayOf(
             getString(R.string.control_center_trigger_position_left),
             getString(R.string.control_center_trigger_position_right)
@@ -194,13 +187,11 @@ class ControlCenterConfigActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-
         triggerLockSwitch.isChecked = prefs.getBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_LOCKED, false)
         triggerLockSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit { putBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_LOCKED, isChecked) }
             notifySettingsChanged()
         }
-
 
         val currentAlpha = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_ALPHA, 80).coerceIn(20, 100)
         triggerAlphaSeekbar.progress = currentAlpha - 20
@@ -209,14 +200,12 @@ class ControlCenterConfigActivity : AppCompatActivity() {
             notifySettingsChanged()
         })
 
-
         val currentHeight = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_HEIGHT_DP, 72).coerceIn(40, 112)
         triggerHeightSeekbar.progress = currentHeight - 40
         triggerHeightSeekbar.setOnSeekBarChangeListener(simpleSeekBarListener { progress ->
             prefs.edit { putInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_HEIGHT_DP, progress + 40) }
             notifySettingsChanged()
         })
-
 
         val currentWidth = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_WIDTH_DP, 18).coerceIn(12, 36)
         triggerWidthSeekbar.progress = currentWidth - 12

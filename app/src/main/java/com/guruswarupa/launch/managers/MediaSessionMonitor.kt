@@ -22,12 +22,6 @@ interface MediaSessionListener {
     fun onPlaybackStateChanged(state: PlaybackState?)
 }
 
-/**
- * Single shared observer of the device's active media session, backed by the notification-
- * listener access the app already requires for media controls. Multiple consumers (the media
- * controller widget, the wallpaper-page lyrics view) can subscribe without each registering
- * their own MediaSessionManager listener.
- */
 class MediaSessionMonitor(private val context: Context) {
     private val mediaSessionManager = context.getSystemService(Context.MEDIA_SESSION_SERVICE) as MediaSessionManager
     private val componentName = ComponentName(context, LaunchNotificationListenerService::class.java)
@@ -91,7 +85,6 @@ class MediaSessionMonitor(private val context: Context) {
         }
     }
 
-    /** Re-pick the active session. Safe to call repeatedly (e.g. on every onResume). */
     fun refresh() {
         if (!isNotificationListenerEnabled()) return
         try {
@@ -118,11 +111,6 @@ class MediaSessionMonitor(private val context: Context) {
         }
     }
 
-    /**
-     * PlaybackState.getPosition() is a snapshot taken at getLastPositionUpdateTime() (on the
-     * elapsedRealtime clock) - extrapolate forward while playing so a UI ticker can stay smooth
-     * without polling the system for position on every frame.
-     */
     fun estimatedPositionMs(): Long {
         val state = activeController?.playbackState ?: return 0L
         if (state.state != PlaybackState.STATE_PLAYING) return state.position

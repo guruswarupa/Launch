@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Process
 import android.os.UserManager
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -43,7 +42,7 @@ class AppListLoader(
 ) {
     companion object {
         private const val TAG = "AppListLoader"
-        // Constants moved to Constants.Timeouts for centralized management
+
     }
 
     @Volatile
@@ -51,11 +50,11 @@ class AppListLoader(
     @Volatile
     private var lastCacheTime = 0L
     private val cacheDuration = Constants.Timeouts.APP_LIST_CACHE_DURATION_MS
-    
+
     private val retryLock = Any()
     private var workProfileEmptyRetryCount = 0
     private var generalEmptyRetryCount = 0
-    
+
     @Volatile
     private var lastWorkProfileEnabledState = false
     @Volatile
@@ -92,11 +91,7 @@ class AppListLoader(
 
         safeExecute loadTask@{
         if (forceRefresh) {
-            // Only bypass the in-memory/time-based cache to force a fresh PackageManager
-            // query below (which overwrites the stale disk app-list cache on its own via
-            // saveAppListToCache). Do NOT wipe the metadata/icon disk caches here - this path
-            // runs on every routine refresh (resume, work-profile toggle, single app install),
-            // and clearing them would force every icon to be re-decoded from scratch each time.
+
             cachedUnsortedList = null
         } else if (cacheManager != null && cacheManager.isCacheValid()) {
             val cachedAppsRaw = cacheManager.loadAppListFromCache()
@@ -110,7 +105,6 @@ class AppListLoader(
 
                     val cachedAppsWithWebApps = appendWebApps(cachedApps).distinctBy { "${it.activityInfo.packageName}|${it.activityInfo.name}|${it.preferredOrder}" }
                     val cachedFinalList = appListManager.prepareSortedList(cachedAppsWithWebApps, focusMode, workspaceMode, activity.showOnlyFavoritesInitially)
-
 
                     if (activity.showOnlyFavoritesInitially && !focusMode && !workspaceMode &&
                         !com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
@@ -142,7 +136,6 @@ class AppListLoader(
                         return@loadTask
                     }
                 } catch (e: Exception) {
-                    Log.w(TAG, "Error checking work profile app list availability", e)
                 }
             }
         }
@@ -170,7 +163,6 @@ class AppListLoader(
                     }
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "Error loading apps from cache", e)
             }
         }
 
@@ -201,12 +193,9 @@ class AppListLoader(
                     val launcherApps = activity.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
                     val userManager = activity.getSystemService(Context.USER_SERVICE) as UserManager
 
-
                     for (user in launcherApps.profiles) {
                         val serial = userManager.getSerialNumberForUser(user).toInt()
                         val apps = launcherApps.getActivityList(null, user)
-
-                        Log.d("AppListLoader", "Loading apps for user profile - Serial: $serial, App count: ${apps.size}")
 
                         for (app in apps) {
                             val packageName = app.componentName.packageName
@@ -235,7 +224,6 @@ class AppListLoader(
 
                                 cm.preloadAppMetadata(list)
                             } catch (e: Exception) {
-                                Log.w(TAG, "Error saving app list to cache", e)
                             }
                         }
                     }
@@ -273,8 +261,6 @@ class AppListLoader(
                         }
                     }
 
-
-
                     resourceLoader.execute {
                         try {
                             val metadataCacheInner = cacheManager?.getMetadataCache() ?: emptyMap()
@@ -294,13 +280,11 @@ class AppListLoader(
                                             )
                                         )
                                     } catch (e: Exception) {
-                                        Log.w(TAG, "Error updating metadata cache for $packageName", e)
                                     }
                                 }
                             }
 
                             cacheManager?.saveAppMetadataToCache(cacheManager.getMetadataCache())
-
 
                             val sortedApps = finalAppList
                             handler.post {
@@ -315,25 +299,8 @@ class AppListLoader(
                                 }
                             }
                         } catch (e: Exception) {
-                            Log.w(TAG, "Error updating adapter with loaded apps", e)
                         }
                     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 }
             } catch (e: Exception) {
@@ -347,18 +314,13 @@ class AppListLoader(
                                 shouldRetry = true
                             }
                         }
-                        
+
                         if (shouldRetry) {
-                            Log.d(
-                                TAG,
-                                "App list empty after error; retrying load (${generalEmptyRetryCount}/${Constants.Timeouts.MAX_GENERAL_EMPTY_RETRIES})"
-                            )
                             handler.postDelayed(
                                 { loadApps(forceRefresh = true, fullAppList, appList, adapter) },
                                 Constants.Timeouts.GENERAL_EMPTY_RETRY_DELAY_MS
                             )
                         } else {
-                            Log.w(TAG, "App list still empty after max retries; showing error state")
                         }
                     }
                     if (appList.isEmpty()) {
@@ -384,18 +346,15 @@ class AppListLoader(
         val currentTime = System.currentTimeMillis()
 
         synchronized(retryLock) {
-            // Reset retry counter if work profile state changed since last check
+
             if (lastWorkProfileEnabledState != isWorkProfileModeEnabled) {
                 workProfileEmptyRetryCount = 0
                 lastWorkProfileEnabledState = isWorkProfileModeEnabled
-                Log.d(TAG, "Work profile state changed to $isWorkProfileModeEnabled, resetting retry counter")
             }
 
-            // Reset retry counter if enough time has passed since last retry attempt
             if (lastWorkProfileRetryTime > 0 &&
                 (currentTime - lastWorkProfileRetryTime) > Constants.Timeouts.WORK_PROFILE_RETRY_RESET_TIMEOUT_MS) {
                 workProfileEmptyRetryCount = 0
-                Log.d(TAG, "Work profile retry timeout exceeded, resetting retry counter")
             }
 
             if (!isWorkProfileModeEnabled || finalAppList.isNotEmpty()) {
@@ -412,18 +371,13 @@ class AppListLoader(
             }
 
             if (workProfileEmptyRetryCount >= Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES) {
-                Log.w(TAG, "Work profile list still empty after retries; showing empty state")
                 return false
             }
 
             workProfileEmptyRetryCount += 1
             lastWorkProfileRetryTime = currentTime
-            Log.d(
-                TAG,
-                "Work profile apps not available yet; retrying load (${workProfileEmptyRetryCount}/${Constants.Timeouts.MAX_WORK_PROFILE_EMPTY_RETRIES})"
-            )
         }
-        
+
         handler.postDelayed({
             if (!activity.isFinishing && !activity.isDestroyed) {
                 loadApps(
@@ -502,13 +456,10 @@ class AppListLoader(
     }
 
     fun cleanup() {
-        // Clear callbacks to prevent memory leaks
+
         onAppListUpdated = null
         onAdapterNeedsUpdate = null
 
-        // Drop the in-memory list only; the disk cache is intentionally kept so the
-        // next cold start (or recreate() from a theme switch) can load from it instead
-        // of forcing a full PackageManager re-scan and icon re-decode.
         cachedUnsortedList = null
     }
 }

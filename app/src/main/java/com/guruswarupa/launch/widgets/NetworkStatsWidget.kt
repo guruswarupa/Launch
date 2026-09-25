@@ -28,7 +28,6 @@ class NetworkStatsWidget(
     private val networkStatsManager = NetworkStatsManager()
     private val handler = Handler(Looper.getMainLooper())
 
-
     private val updateRunnable = object : Runnable {
         override fun run() {
             if (isInitialized) {
@@ -64,7 +63,6 @@ class NetworkStatsWidget(
 
         updateDataUsage()
         isInitialized = true
-
 
         handler.post(updateRunnable)
     }

@@ -30,7 +30,6 @@ class EncryptedFolderManager(private val context: Context) {
         private const val TEMP_DIR = "vault_temp"
         private const val CONFIG_FILE = ".vault_config"
 
-
         private var masterKey: SecretKey? = null
     }
 
@@ -52,7 +51,6 @@ class EncryptedFolderManager(private val context: Context) {
         try {
             val salt = ByteArray(SALT_SIZE).apply { SecureRandom().nextBytes(this) }
             val key = deriveKey(password, salt)
-
 
             val verificationData = "VAULT_OPEN".toByteArray()
             val iv = ByteArray(IV_SIZE).apply { SecureRandom().nextBytes(this) }
@@ -141,7 +139,6 @@ class EncryptedFolderManager(private val context: Context) {
     fun encryptFile(sourceUri: Uri, fileName: String) {
         val key = masterKey ?: throw IllegalStateException("Vault is locked")
         val destinationFile = resolveVaultFile(fileName)
-
 
         generateThumbnail(sourceUri, fileName)
 
@@ -297,7 +294,6 @@ class EncryptedFolderManager(private val context: Context) {
         }
     }
 
-
     private fun generateThumbnail(uri: Uri, fileName: String) {
         val key = masterKey ?: return
         var mimeType = context.contentResolver.getType(uri)
@@ -435,7 +431,6 @@ class EncryptedFolderManager(private val context: Context) {
         }
         return inSampleSize
     }
-
 
     fun exportVault(outputStream: OutputStream): Boolean {
         return try {

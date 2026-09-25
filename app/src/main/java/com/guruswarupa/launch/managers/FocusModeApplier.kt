@@ -1,7 +1,6 @@
 package com.guruswarupa.launch.managers
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.fragment.app.FragmentActivity
@@ -66,7 +65,6 @@ class FocusModeApplier(
                     }
                 }
             } catch (e: Exception) {
-                Log.e("FocusModeApplier", "Error applying focus mode", e)
                 activity.runOnUiThread {
                     if (!activity.isFinishing && !activity.isDestroyed) {
                         @SuppressLint("NotifyDataSetChanged")

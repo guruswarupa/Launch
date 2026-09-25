@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import android.util.Log
 
 class FocusModeManager(private val context: Context, private val sharedPreferences: SharedPreferences) {
 
@@ -13,10 +12,7 @@ class FocusModeManager(private val context: Context, private val sharedPreferenc
 
     companion object {
         private const val FOCUS_MODE_ENABLED = "focus_mode_enabled"
-        // A blocklist (apps hidden *during* focus mode) rather than the old allowlist - for most
-        // people the set of apps they want to keep away during focus is far smaller than the set
-        // they want to keep, so this is a separate key rather than reinterpreting the old one
-        // (which would otherwise flip existing users' saved "keep these" list into "hide these").
+
         private const val FOCUS_MODE_BLOCKED_APPS = "focus_mode_blocked_apps"
         private const val TAG = "FocusModeManager"
     }
@@ -27,7 +23,6 @@ class FocusModeManager(private val context: Context, private val sharedPreferenc
 
     fun setFocusModeEnabled(enabled: Boolean) {
         sharedPreferences.edit { putBoolean(FOCUS_MODE_ENABLED, enabled) }
-
 
         val intent = Intent("com.guruswarupa.launch.FOCUS_MODE_CHANGED").apply {
             `package` = context.packageName
@@ -56,7 +51,6 @@ class FocusModeManager(private val context: Context, private val sharedPreferenc
         return try {
             sharedPreferences.getStringSet(FOCUS_MODE_BLOCKED_APPS, emptySet()) ?: emptySet()
         } catch (e: ClassCastException) {
-            Log.e(TAG, "Data corruption: $FOCUS_MODE_BLOCKED_APPS is not a Set. Attempting recovery.", e)
             val stringValue = try { sharedPreferences.getString(FOCUS_MODE_BLOCKED_APPS, null) } catch (_: Exception) { null }
             val recoveredSet = if (stringValue != null) {
                 if (stringValue.startsWith("[") && stringValue.endsWith("]")) {

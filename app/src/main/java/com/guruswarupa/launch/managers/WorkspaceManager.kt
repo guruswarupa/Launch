@@ -36,7 +36,6 @@ class WorkspaceManager @Inject constructor(private val sharedPreferences: Shared
         workspaces.removeAll { it.id == workspaceId }
         saveAllWorkspaces(workspaces)
 
-
         if (getActiveWorkspaceId() == workspaceId) {
             setActiveWorkspaceId(null)
         }
@@ -59,7 +58,6 @@ class WorkspaceManager @Inject constructor(private val sharedPreferences: Shared
         } catch (_: Exception) {
             emptyList()
         }
-
 
         return userWorkspaces
     }
@@ -132,16 +130,11 @@ class WorkspaceManager @Inject constructor(private val sharedPreferences: Shared
 
             activeWorkspace != null && !activeWorkspace.appPackageNames.contains(packageName) -> false
 
-
             isWorkProfileEnabled -> true
 
             else -> true
         }
     }
-
-
-
-
 
     fun getAppsInWorkspaces(excludeWorkspaceId: String? = null): Set<String> {
         val allWorkspaces = getAllWorkspaces()

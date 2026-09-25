@@ -72,12 +72,6 @@ class ReviewPromptManager(
         return true
     }
 
-    /**
-     * Opens this app's Play Store listing directly. Deliberately not using the Play Core
-     * In-App Review API here: that API shows a small in-app star-rating card, not the Play
-     * Store page, and is quota-limited — it commonly completes "successfully" while silently
-     * showing nothing at all, which left this button doing nothing when that happened.
-     */
     private fun openPlayStoreListing() {
         val marketIntent = Intent(
             Intent.ACTION_VIEW,

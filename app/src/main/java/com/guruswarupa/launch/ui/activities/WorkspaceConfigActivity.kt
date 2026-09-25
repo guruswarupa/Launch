@@ -34,7 +34,6 @@ class WorkspaceConfigActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
@@ -52,7 +51,6 @@ class WorkspaceConfigActivity : AppCompatActivity() {
         titleText = findViewById(R.id.title_text)
         subtitleText = findViewById(R.id.subtitle_text)
         workspacesContainer = findViewById(R.id.workspaces_container)
-
 
         applyThemeAndWallpaper()
 
@@ -98,14 +96,12 @@ class WorkspaceConfigActivity : AppCompatActivity() {
     private fun loadWorkspaces() {
         val workspaces = workspaceManager.getAllWorkspaces()
 
-
         val allWorkspaces = workspaces
 
         val workspaceNames = allWorkspaces.map {
             val appCount = it.appPackageNames.size
             "${it.name} ($appCount apps)"
         }.toTypedArray()
-
 
         val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, workspaceNames) {
             override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {

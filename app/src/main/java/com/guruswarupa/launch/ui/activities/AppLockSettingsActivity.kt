@@ -149,10 +149,7 @@ class AppLockSettingsActivity : AppCompatActivity() {
         appsRecyclerView.adapter = AppLockAdapter(
             getInstalledApps(), appLockManager,
             requestPinAuth = { onSuccess ->
-                // AppLockManager.verifyPin already short-circuits to an immediate success within
-                // its own re-auth window (PREF_LAST_AUTH_TIME/AUTH_TIMEOUT) - no need to cache
-                // "verified" locally, which never expired here and let PIN entry auth an
-                // unbounded number of later toggles for the lifetime of this Activity instance.
+
                 appLockManager.verifyPin { success: Boolean ->
                     if (success) onSuccess() else recreateAppsList()
                 }

@@ -11,10 +11,7 @@ class SecureStorageManager(private val context: Context) {
         return try {
             createEncryptedPrefs(fileName)
         } catch (_: Exception) {
-            // The encrypted prefs file is likely corrupt or the master key is no longer
-            // available (common after a device lock-screen change or Keystore reset).
-            // Delete the unreadable file and try once more with a fresh key before
-            // giving up, so we never silently downgrade secrets to plaintext.
+
             deletePrefsFile(fileName)
             createEncryptedPrefs(fileName)
         }
@@ -39,7 +36,7 @@ class SecureStorageManager(private val context: Context) {
             val prefsDir = context.filesDir.parentFile?.resolve("shared_prefs")
             prefsDir?.resolve("$fileName.xml")?.delete()
         } catch (_: Exception) {
-            // Best-effort cleanup only.
+
         }
     }
 

@@ -21,10 +21,6 @@ data class LaunchEventStat(
     val contextCounts: List<Int>
 )
 
-/**
- * Learns per-key (app package or "contact:<name>") launch frequency, recency, and
- * time-of-day/weekend affinity, purely from on-device usage. Backs [SuggestionRanker].
- */
 @Singleton
 class LaunchEventStore @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -45,13 +41,11 @@ class LaunchEventStore @Inject constructor(
     private val statsLock = Any()
     private val stats = mutableMapOf<String, Stats>()
 
-    /** Bumped on every recorded event so callers can cheaply detect staleness (e.g. cache keys). */
     val generation = AtomicInteger(0)
 
     @Volatile
     private var loaded = false
 
-    /** Increments the launch/use counter for [key] and persists in the background. Safe to call from the main thread. */
     fun recordEvent(key: String, nowMillis: Long = System.currentTimeMillis()) {
         backgroundExecutor.execute {
             loadIfNeeded()
@@ -71,7 +65,6 @@ class LaunchEventStore @Inject constructor(
         }
     }
 
-    /** Immutable point-in-time copy of everything learned so far. Loads from disk on first call, so avoid calling from the main thread until warmed up. */
     fun snapshot(): Map<String, Stats> {
         loadIfNeeded()
         synchronized(statsLock) {
@@ -96,17 +89,14 @@ class LaunchEventStore @Inject constructor(
                     }
                 }
             } catch (_: Exception) {
-                // Corrupt or missing store — start fresh rather than blocking suggestions.
+
             }
             loaded = true
         }
     }
 
     private fun persist() {
-        // backgroundExecutor is a shared 4-thread pool, so recordEvent() can dispatch persist()
-        // from multiple threads in quick succession. Holding statsLock for the whole
-        // snapshot+write (not just the snapshot) prevents two threads from interleaving writes
-        // to the same FileOutputStream, which previously could truncate/corrupt the store.
+
         synchronized(statsLock) {
             try {
                 val snapshotToSave = stats.mapValues { (_, s) -> LaunchEventStat(s.launchCount, s.lastLaunchMillis, s.contextCounts.toList()) }

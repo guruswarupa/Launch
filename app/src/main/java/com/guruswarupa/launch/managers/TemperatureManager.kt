@@ -5,7 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import kotlin.math.*
 
 class TemperatureManager(context: Context) : SensorEventListener {
@@ -29,14 +28,12 @@ class TemperatureManager(context: Context) : SensorEventListener {
 
         temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
 
-
         if (temperatureSensor == null) {
             @Suppress("DEPRECATION")
             temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE)
         }
 
         if (temperatureSensor == null) {
-            Log.w(TAG, "Temperature sensor not available on this device")
         }
     }
 
@@ -50,7 +47,6 @@ class TemperatureManager(context: Context) : SensorEventListener {
 
     fun startTracking() {
         if (!hasTemperatureSensor()) {
-            Log.w(TAG, "Cannot start tracking: temperature sensor not available")
             return
         }
 
@@ -76,9 +72,6 @@ class TemperatureManager(context: Context) : SensorEventListener {
         sensorManager.unregisterListener(this)
         isListening = false
     }
-
-
-
 
     fun cleanup() {
         stopTracking()

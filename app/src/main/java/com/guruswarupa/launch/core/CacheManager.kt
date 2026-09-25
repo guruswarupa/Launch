@@ -39,7 +39,7 @@ class CacheManager @Inject constructor(
     private val appMetadataCacheFile: File = File(context.cacheDir, "app_metadata_cache.dat")
     private val appListVersionFile: File = File(context.cacheDir, "app_list_version.txt")
     private val packageManager: PackageManager = context.packageManager
-    
+
     private val iconCacheDir: File = File(context.cacheDir, "icon_cache").apply { mkdirs() }
     private val iconCacheVersionFile: File = File(iconCacheDir, "icon_cache_version.txt")
 
@@ -97,7 +97,6 @@ class CacheManager @Inject constructor(
             val cacheData = appListCacheFile.readText().lines().filter { it.isNotBlank() }
             if (cacheData.isEmpty()) return emptyList()
 
-
             val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
             val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
 
@@ -128,9 +127,7 @@ class CacheManager @Inject constructor(
                     var found: ResolveInfo? = null
                     val mainUserSerial = userManager.getSerialNumberForUser(android.os.Process.myUserHandle()).toInt()
 
-
                     found = allAppsMap["$line|$mainUserSerial"]
-
 
                     if (found == null) {
                         found = allAppsMap.values.find { "${it.activityInfo.packageName}|${it.activityInfo.name}" == line }
@@ -276,11 +273,11 @@ class CacheManager @Inject constructor(
         val prefix = "$packageName|"
         appMetadataCache.keys.removeIf { it == packageName || it.startsWith(prefix) }
     }
-    
+
     fun getIconCacheKey(iconStyle: String, iconSize: Int): String {
         return "${iconStyle}_${iconSize}"
     }
-    
+
     fun getIconCacheVersion(): String {
         return try {
             if (iconCacheVersionFile.exists()) {
@@ -292,7 +289,7 @@ class CacheManager @Inject constructor(
             ""
         }
     }
-    
+
     fun setIconCacheVersion(version: String) {
         backgroundExecutor.execute {
             try {
@@ -301,12 +298,12 @@ class CacheManager @Inject constructor(
             }
         }
     }
-    
+
     fun getCachedIcon(cacheKey: String, version: String = ""): android.graphics.drawable.Drawable? {
         return try {
             val iconFile = File(iconCacheDir, "${version}_${cacheKey.replace("/", "_")}.png")
             if (!iconFile.exists()) return null
-            
+
             val bitmap = android.graphics.BitmapFactory.decodeFile(iconFile.absolutePath)
             if (bitmap != null) {
                 android.graphics.drawable.BitmapDrawable(context.resources, bitmap)
@@ -317,12 +314,12 @@ class CacheManager @Inject constructor(
             null
         }
     }
-    
+
     fun cacheIcon(cacheKey: String, drawable: android.graphics.drawable.Drawable, version: String = "") {
         backgroundExecutor.execute {
             try {
                 val iconFile = File(iconCacheDir, "${version}_${cacheKey.replace("/", "_")}.png")
-                
+
                 val bitmap = when (drawable) {
                     is android.graphics.drawable.BitmapDrawable -> drawable.bitmap
                     else -> {
@@ -335,7 +332,7 @@ class CacheManager @Inject constructor(
                         tempBitmap
                     }
                 }
-                
+
                 val outputStream = java.io.FileOutputStream(iconFile)
                 outputStream.use { os ->
                     bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, os)
@@ -344,7 +341,7 @@ class CacheManager @Inject constructor(
             }
         }
     }
-    
+
     fun clearIconCache() {
         backgroundExecutor.execute {
             try {
@@ -355,8 +352,6 @@ class CacheManager @Inject constructor(
         }
     }
 
-    // Icon disk filenames are "${version}_${packageName}|${preferredOrder}.png" (see cacheIcon),
-    // so a package's own icon(s) can be evicted without wiping every other app's cached icon.
     fun removeIconsForPackage(packageName: String) {
         backgroundExecutor.execute {
             try {
@@ -368,7 +363,7 @@ class CacheManager @Inject constructor(
             }
         }
     }
-    
+
     fun isIconCacheValid(currentIconStyle: String, currentIconSize: Int): Boolean {
         val currentVersion = getIconCacheKey(currentIconStyle, currentIconSize)
         val cachedVersion = getIconCacheVersion()

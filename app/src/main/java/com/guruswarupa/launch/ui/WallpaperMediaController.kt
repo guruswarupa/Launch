@@ -30,16 +30,6 @@ import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.dpToPx
 
-/**
- * A now-playing presence: a small floating transport-control pill plus, just below it,
- * auto-scrolling synced lyrics - used both on the wallpaper page (see
- * ScreenPagerManager.Page.WALLPAPER) and, as a second instance, inside Stock's home top widget
- * (see MainActivity.stockTopWidgetMediaController). Both pieces share one MediaSessionMonitor
- * subscription. The controls pill shows whenever a media session exists; the lyrics block
- * additionally requires the Settings toggle (on by default) and a lyrics match. When
- * notification listener access - what the whole media session depends on - isn't granted, a
- * tappable prompt takes this spot instead of it just staying silently blank.
- */
 class WallpaperMediaController(
     private val activity: MainActivity,
     rootView: View
@@ -59,8 +49,7 @@ class WallpaperMediaController(
 
     private val lyricsManager by lazy { LyricsManager(activity, activity.backgroundExecutor) }
     private val tickHandler = Handler(Looper.getMainLooper())
-    // A resource id (not a Drawable) - Drawables are stateful (ripple bounds/state), so this is
-    // resolved once but a fresh instance is created per line view via newSelectableItemBackground().
+
     private val selectableItemBackgroundResId: Int by lazy {
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
@@ -112,7 +101,6 @@ class WallpaperMediaController(
         lyricsContainer.setOnClickListener { showFullLyricsDialog() }
     }
 
-    /** Same notification-listener request flow used elsewhere in the app (e.g. PermissionManager). */
     private fun openNotificationSettings() {
         try {
             val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
@@ -126,8 +114,7 @@ class WallpaperMediaController(
     }
 
     fun setup() {
-        // Listening starts lazily from onPageShown/onActivityResume so an idle launcher never
-        // registers a media-session listener for a page that isn't displayed.
+
     }
 
     fun onPageShown() {
@@ -161,8 +148,6 @@ class WallpaperMediaController(
         }
     }
 
-    /** Opens the complete lyrics: synced lines with the current one highlighted and
-     *  auto-scrolled into view, or the plain text as one readable scrollable paragraph. */
     private fun showFullLyricsDialog() {
         if (fullLyricsDialog?.isShowing == true) return
         val result = lyricsResult
@@ -200,9 +185,7 @@ class WallpaperMediaController(
                         isClickable = true
                         isFocusable = true
                         background = newSelectableItemBackground()
-                        // Tapping a line seeks the song there - only meaningful because each line
-                        // here has a real timestamp (LyricsResult.Synced); plain/unsynced lyrics
-                        // have no per-line timing to seek to, so they get no click handling at all.
+
                         setOnClickListener {
                             activity.mediaSessionMonitor.activeController?.transportControls?.seekTo(line.timeMs)
                             applyFullLyricsHighlight(index, animateScroll = true)
@@ -224,11 +207,6 @@ class WallpaperMediaController(
             LyricsResult.NotFound -> return
         }
 
-        // A plain fullscreen Dialog rather than the app's usual floating CustomDialogTheme card -
-        // this needs to cover the whole screen with an opaque background, not a dimmed home
-        // screen behind a small centered popup. Theme_Black_NoTitleBar (not the _Fullscreen
-        // variant) keeps the status bar showing rather than hiding it outright, so it can be
-        // recolored to match instead of just disappearing.
         val backgroundColor = ThemeManager.color(activity, R.attr.appBackground)
         val dialog = Dialog(activity, android.R.style.Theme_Black_NoTitleBar)
         dialog.setContentView(dialogView)
@@ -255,9 +233,7 @@ class WallpaperMediaController(
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
         if (result is LyricsResult.Synced) {
-            // Deferred until after the dialog is shown/attached, so scrollView.height and each
-            // line's measured position are real numbers rather than the pre-layout zeroes an
-            // un-attached view would report.
+
             scrollView.post { updateFullLyricsHighlight(animateScroll = false) }
             tickHandler.post(fullLyricsTicker)
         }
@@ -270,8 +246,6 @@ class WallpaperMediaController(
         applyFullLyricsHighlight(index, animateScroll)
     }
 
-    /** Shared by the position ticker and by tapping a line to seek - both just need to move the
-     *  highlight/scroll to a given line index, only the source of that index differs. */
     private fun applyFullLyricsHighlight(index: Int, animateScroll: Boolean) {
         val scrollView = fullLyricsScrollView ?: return
         if (index == fullLyricsLastIndex) return
@@ -305,9 +279,7 @@ class WallpaperMediaController(
 
     private fun updateActiveState() {
         val shouldListen = pageVisible && activityResumed
-        // Notification listener access is what backs the whole media session - without it this
-        // spot used to just stay permanently blank with nothing telling the user why. Surface a
-        // tappable prompt in its place instead whenever this spot would otherwise be showing.
+
         val hasPermission = activity.mediaSessionMonitor.isNotificationListenerEnabled()
         permissionPrompt.visibility = if (shouldListen && !hasPermission) View.VISIBLE else View.GONE
 
@@ -318,8 +290,7 @@ class WallpaperMediaController(
         } else if (!shouldListenNow && listenerAttached) {
             activity.mediaSessionMonitor.removeListener(this)
             listenerAttached = false
-            // Reset so re-attaching later (song unchanged) still re-fetches/re-renders instead
-            // of short-circuiting on an unchanged NowPlaying and leaving the view hidden.
+
             currentTrack = null
             lyricsResult = null
             latestPlaybackState = null

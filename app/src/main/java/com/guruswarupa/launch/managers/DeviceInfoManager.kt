@@ -28,7 +28,7 @@ class DeviceInfoManager(private val context: Context) {
     private var lastCpuIdle: Long = 0
     private val lastCoreTotal = LongArray(32)
     private val lastCoreIdle = LongArray(32)
-    
+
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
     fun getCpuModel(): String {
@@ -95,7 +95,7 @@ class DeviceInfoManager(private val context: Context) {
         val coreUsages = mutableListOf<Int>()
         try {
             BufferedReader(FileReader("/proc/stat")).use { reader ->
-                reader.readLine() // skip first line (total)
+                reader.readLine()
                 var line = reader.readLine()
                 var coreIdx = 0
                 while (line != null && line.startsWith("cpu") && coreIdx < 32) {
@@ -164,17 +164,17 @@ class DeviceInfoManager(private val context: Context) {
             val coreCount = Runtime.getRuntime().availableProcessors()
             var totalMax = 0L
             var totalCur = 0L
-            
+
             for (i in 0 until coreCount) {
                 val maxFreq = readLongFile("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq")
                 val curFreq = readLongFile("/sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq")
-                
+
                 if (maxFreq > 0 && curFreq > 0) {
                     totalMax += maxFreq
                     totalCur += curFreq
                 }
             }
-            
+
             if (totalMax > 0) {
                 ((totalCur * 100) / totalMax).toInt().coerceIn(5, 100)
             } else 10
@@ -207,7 +207,7 @@ class DeviceInfoManager(private val context: Context) {
             val temp = readTempFromFile(path)
             if (temp in 10f..100f) return temp
         }
-        
+
         for (i in 0..60) {
             try {
                 val type = readStringFile("/sys/class/thermal/thermal_zone$i/type")?.lowercase() ?: ""
@@ -306,12 +306,10 @@ class DeviceInfoManager(private val context: Context) {
                 val file = File(path)
                 if (file.exists() && file.canRead()) {
                     val content = BufferedReader(FileReader(file)).use { it.readText() }
-                    
-                    // Specific Mali extraction from gpuinfo or version
+
                     val maliMatch = Regex("(Mali-[GT]\\d+)", RegexOption.IGNORE_CASE).find(content)
                     if (maliMatch != null) return maliMatch.value.trim().uppercase()
 
-                    // Look for any Mali or Adreno pattern
                     val patterns = listOf("Mali-G\\d+", "Mali-T\\d+", "Adreno\\s*\\d+")
                     for (p in patterns) {
                         val match = Regex(p, RegexOption.IGNORE_CASE).find(content)
@@ -352,15 +350,15 @@ class DeviceInfoManager(private val context: Context) {
 
     fun getGpuClockInfo(): String {
         val clockPaths = listOf(
-            "/sys/class/kgsl/kgsl-3d0/gpuclk", // Adreno
+            "/sys/class/kgsl/kgsl-3d0/gpuclk",
             "/sys/class/kgsl/kgsl-3d0/cur_freq",
-            "/sys/class/misc/mali0/device/cur_freq", // Mali
+            "/sys/class/misc/mali0/device/cur_freq",
             "/sys/devices/platform/soc/soc:mali/cur_freq",
             "/sys/kernel/gpu/gpu_clock",
             "/sys/class/devfreq/fb000000.gpu/cur_freq",
             "/sys/class/devfreq/5000000.gpu/cur_freq"
         )
-        
+
         val maxPaths = listOf(
             "/sys/class/kgsl/kgsl-3d0/max_gpuclk",
             "/sys/class/misc/mali0/device/max_freq",
@@ -373,7 +371,7 @@ class DeviceInfoManager(private val context: Context) {
                 curFreq = readLongFile(path)
                 if (curFreq > 0) break
             }
-            
+
             var maxFreq = 0L
             for (path in maxPaths) {
                 maxFreq = readLongFile(path)
@@ -381,14 +379,14 @@ class DeviceInfoManager(private val context: Context) {
             }
 
             if (curFreq > 0) {
-                // Frequency might be in Hz or KHz
+
                 val mhz = if (curFreq > 100000000) curFreq / 1000000 else if (curFreq > 100000) curFreq / 1000 else curFreq
                 val maxMhz = if (maxFreq > 100000000) maxFreq / 1000000 else if (maxFreq > 100000) maxFreq / 1000 else maxFreq
-                
+
                 return if (maxMhz > 0) "$mhz / $maxMhz MHz" else "$mhz MHz"
             }
         } catch (_: Exception) {}
-        
+
         return ""
     }
 
@@ -410,7 +408,7 @@ class DeviceInfoManager(private val context: Context) {
                 if (temp in 10f..100f) return temp
             }
         }
-        
+
         val bTemp = getBatteryTemperature()
         if (bTemp > 0) return bTemp + 1f
 
@@ -438,8 +436,7 @@ class DeviceInfoManager(private val context: Context) {
             val type = readStringFile(path)
             if (!type.isNullOrEmpty()) return type.trim()
         }
-        
-        // Fallback: guess based on SOC
+
         val hw = Build.HARDWARE.lowercase()
         return when {
             hw.contains("9810") || hw.contains("961") -> "LPDDR4X"
@@ -473,7 +470,7 @@ class DeviceInfoManager(private val context: Context) {
             "/sys/devices/platform/soc/1d84000.ufshc/ufs_version",
             "/sys/class/scsi_host/host0/ufs_version"
         )
-        
+
         var ufsVer = ""
         for (path in ufsVersionPaths) {
             val version = readStringFile(path)
@@ -571,7 +568,7 @@ class DeviceInfoManager(private val context: Context) {
         val info = mutableMapOf<String, String>()
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        
+
         val activeNetwork = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
         val linkProperties = connectivityManager.getLinkProperties(activeNetwork)
@@ -582,8 +579,7 @@ class DeviceInfoManager(private val context: Context) {
             info["Link Speed"] = "${wifiInfo.linkSpeed} Mbps"
             info["Signal"] = "${wifiInfo.rssi} dBm"
             info["Frequency"] = "${wifiInfo.frequency} MHz"
-            
-            // Standard detection
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val standard = when (wifiInfo.wifiStandard) {
                     4 -> "Wi-Fi 4 (802.11n)"
@@ -595,7 +591,6 @@ class DeviceInfoManager(private val context: Context) {
                 info["Standard"] = standard
             }
 
-            // Frequency to Channel
             val channel = if (wifiInfo.frequency >= 2412 && wifiInfo.frequency <= 2484) {
                 (wifiInfo.frequency - 2412) / 5 + 1
             } else if (wifiInfo.frequency >= 5170 && wifiInfo.frequency <= 5825) {
@@ -614,7 +609,7 @@ class DeviceInfoManager(private val context: Context) {
                 info["IP Address"] = addr.address.hostAddress ?: ""
                 info["Subnet Mask"] = prefixToMask(addr.prefixLength)
             }
-            
+
             val gateways = lp.routes.filter { it.isDefaultRoute && it.gateway is Inet4Address }
             if (gateways.isNotEmpty()) {
                 info["Gateway"] = gateways[0].gateway?.hostAddress ?: ""
@@ -654,7 +649,7 @@ class DeviceInfoManager(private val context: Context) {
                 val char = manager.getCameraCharacteristics(id)
                 val info = mutableMapOf<String, String>()
                 info["ID"] = id
-                
+
                 val facing = char.get(CameraCharacteristics.LENS_FACING)
                 info["Facing"] = when(facing) {
                     CameraCharacteristics.LENS_FACING_FRONT -> "Front"

@@ -89,7 +89,6 @@ class NightModeService : Service() {
 
         overlayView = View(this)
 
-
         overlayView?.setBackgroundColor(Color.rgb(255, 165, 0))
 
         overlayView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or

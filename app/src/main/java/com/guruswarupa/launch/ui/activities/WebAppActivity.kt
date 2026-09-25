@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.ValueCallback
@@ -94,9 +93,7 @@ class WebAppActivity : AppCompatActivity() {
             return
         }
 
-
         allowedDomain = extractDomain(url)
-
 
         blockRedirects = intent.getBooleanExtra(EXTRA_BLOCK_REDIRECTS, true)
 
@@ -126,7 +123,7 @@ class WebAppActivity : AppCompatActivity() {
         }
 
         titleView = findViewById<TextView>(R.id.web_app_title).apply { text = appName }
-        addressView = findViewById<TextView>(R.id.web_app_address).apply { 
+        addressView = findViewById<TextView>(R.id.web_app_address).apply {
             text = url
             setOnLongClickListener {
                 if (trustedDomains.isNotEmpty()) {
@@ -136,7 +133,6 @@ class WebAppActivity : AppCompatActivity() {
                         .setPositiveButton(getString(R.string.weather_condition_clear)) { _, _ ->
                             trustedDomains.clear()
                             Toast.makeText(this@WebAppActivity, this@WebAppActivity.getString(R.string.toast_trusted_domains_cleared), Toast.LENGTH_SHORT).show()
-                            Log.i(TAG, "Manually cleared trusted domains")
                         }
                         .setNegativeButton(getString(R.string.cancel_button), null)
                         .show()
@@ -252,13 +248,11 @@ class WebAppActivity : AppCompatActivity() {
                 val targetUri = request?.url ?: return false
                 val targetUrl = targetUri.toString()
 
-
                 if (WebAppAdBlocker.shouldBlock(targetUri)) {
                     return true
                 }
 
                 val scheme = targetUri.scheme.orEmpty().lowercase()
-
 
                 if (scheme != "http" && scheme != "https") {
                     if (scheme in BLOCKED_SCHEMES) {
@@ -285,17 +279,13 @@ class WebAppActivity : AppCompatActivity() {
                     return shouldOpen
                 }
 
-
                 val targetDomain = extractDomain(targetUrl)
                 val isSameDomain = targetDomain != null && isDomainAllowed(targetDomain)
-
 
                 if (!isSameDomain) {
                     val targetDomainSafe = targetDomain ?: "unknown domain"
 
-                    // Trusted domains are always allowed, even when redirects are blocked
                     if (targetDomainSafe in trustedDomains) {
-                        Log.d(TAG, "Navigating to trusted external domain: $targetDomainSafe")
                         return false
                     }
 
@@ -304,14 +294,10 @@ class WebAppActivity : AppCompatActivity() {
                         return true
                     }
 
-                    Log.w(TAG, "External domain navigation attempt: $targetDomainSafe (from: $allowedDomain)")
-                    
-                    Log.w(TAG, "External domain navigation attempt: $targetDomainSafe (from: $allowedDomain)")
-                    
                     val shouldProceed = try {
                         val dialogView = layoutInflater.inflate(R.layout.dialog_security_warning, null)
                         val trustCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.trust_domain_checkbox)
-                        
+
                         android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
                             .setTitle(getString(R.string.dlg_security_warning))
                             .setView(dialogView)
@@ -319,26 +305,21 @@ class WebAppActivity : AppCompatActivity() {
                             .setPositiveButton(getString(R.string.app_lock_action_continue)) { _, _ ->
                                 if (trustCheckbox.isChecked) {
                                     trustedDomains.add(targetDomainSafe)
-                                    Log.i(TAG, "User trusted external domain: $targetDomainSafe")
                                 }
-                                Log.i(TAG, "User allowed navigation to: $targetDomainSafe")
                             }
                             .setNegativeButton(getString(R.string.cancel_button)) { _, _ ->
-                                Log.i(TAG, "User cancelled navigation to: $targetDomainSafe")
                             }
                             .show()
                         false
                     } catch (e: Exception) {
-                        // Fallback to simple dialog if custom view fails
+
                         android.app.AlertDialog.Builder(this@WebAppActivity, R.style.CustomDialogTheme)
                             .setTitle(getString(R.string.dlg_security_warning))
                             .setMessage(getString(R.string.dlg_you_are_about_to_navigate_to_an_external_domain, targetDomainSafe, allowedDomain))
                             .setPositiveButton(getString(R.string.app_lock_action_continue)) { _, _ ->
                                 trustedDomains.add(targetDomainSafe)
-                                Log.i(TAG, "User trusted external domain: $targetDomainSafe (fallback dialog)")
                             }
                             .setNegativeButton(getString(R.string.cancel_button)) { _, _ ->
-                                Log.i(TAG, "User cancelled navigation to: $targetDomainSafe (fallback dialog)")
                             }
                             .show()
                         false
@@ -346,22 +327,18 @@ class WebAppActivity : AppCompatActivity() {
                     return shouldProceed
                 }
 
-
                 return false
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 addressView.text = url ?: intent.getStringExtra(EXTRA_WEB_APP_URL).orEmpty()
-                
-                // Reset error counter on page navigation
+
                 subResourceErrorCount = 0
-                
-                // Show visual indicator for external trusted domains
+
                 val currentDomain = extractDomain(url ?: "")
                 val isExternalTrusted = currentDomain != null && currentDomain != allowedDomain && currentDomain in trustedDomains
                 if (isExternalTrusted) {
                     addressView.alpha = 0.7f
-                    Log.d(TAG, "Showing external trusted domain indicator: $currentDomain")
                 } else {
                     addressView.alpha = 1.0f
                 }
@@ -376,14 +353,11 @@ class WebAppActivity : AppCompatActivity() {
                 val isMainFrame = request?.isForMainFrame == true
 
                 if (isMainFrame) {
-                    Log.e(TAG, "Main frame load error: ${error?.description} ($url)")
                     Toast.makeText(this@WebAppActivity, R.string.web_app_load_failed, Toast.LENGTH_SHORT).show()
                 } else {
-                    // Log sub-resource errors
-                    subResourceErrorCount++
-                    Log.w(TAG, "Sub-resource error #$subResourceErrorCount: ${error?.description} ($url)")
 
-                    // Show toast after multiple sub-resource errors to avoid spam
+                    subResourceErrorCount++
+
                     if (subResourceErrorCount == 5) {
                         Toast.makeText(this@WebAppActivity, this@WebAppActivity.getString(R.string.toast_resource_loading_errors_occurred_some_page_conte, subResourceErrorCount), Toast.LENGTH_LONG).show()
                     }
@@ -438,12 +412,10 @@ class WebAppActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         exitFullscreen()
-        
-        // Clear trusted domains for security
+
         trustedDomains.clear()
         subResourceErrorCount = 0
-        Log.d(TAG, "Cleared trusted domains and reset error counters on activity destroy")
-        
+
         releaseWebView()
         fileUploadCallback = null
         super.onDestroy()
@@ -460,7 +432,6 @@ class WebAppActivity : AppCompatActivity() {
         webView.visibility = View.VISIBLE
     }
 
-
     private fun extractDomain(url: String): String? {
         return try {
             val uri = Uri.parse(url)
@@ -470,7 +441,6 @@ class WebAppActivity : AppCompatActivity() {
         }
     }
 
-
     private fun isDomainAllowed(domain: String): Boolean {
         val allowed = allowedDomain ?: return false
 
@@ -478,17 +448,11 @@ class WebAppActivity : AppCompatActivity() {
 
         if (domain == allowed) return true
 
-
         val domainWithoutWww = domain.removePrefix("www.")
         val allowedWithoutWww = allowed.removePrefix("www.")
 
         if (domainWithoutWww == allowedWithoutWww) return true
 
-
-
-        // Only the subdomain direction is safe: a page pinned to mail.example.com must not be
-        // able to navigate to example.com (or any other ancestor) and treat it as in-sandbox -
-        // that would silently defeat the per-webapp domain restriction this check exists for.
         if (domainWithoutWww.endsWith(".$allowedWithoutWww")) return true
 
         return false
@@ -498,11 +462,11 @@ class WebAppActivity : AppCompatActivity() {
         if (!::webView.isInitialized) {
             return
         }
-        
+
         try {
             fileUploadCallback?.onReceiveValue(null)
             fileUploadCallback = null
-            
+
             webView.apply {
                 try {
                     stopLoading()
@@ -512,31 +476,27 @@ class WebAppActivity : AppCompatActivity() {
                     clearHistory()
                     clearCache(false)
                 } catch (e: Exception) {
-                    android.util.Log.w("WebAppActivity", "Error during WebView cleanup operations", e)
                 } finally {
-                    // Always clear clients and views even if above fails
+
                     webChromeClient = WebChromeClient()
                     webViewClient = WebViewClient()
                     removeAllViews()
-                    
+
                     val parentView = parent as? ViewGroup
                     if (parentView != null) {
                         try {
                             parentView.removeView(this)
                         } catch (e: Exception) {
-                            android.util.Log.w("WebAppActivity", "WebView already removed from parent", e)
                         }
                     }
                 }
             }
         } catch (e: Exception) {
-            android.util.Log.w("WebAppActivity", "Unexpected error during WebView release", e)
         } finally {
-            // Ensure destroy is always called
+
             try {
                 webView.destroy()
             } catch (e: Exception) {
-                android.util.Log.w("WebAppActivity", "Error destroying WebView", e)
             }
         }
     }

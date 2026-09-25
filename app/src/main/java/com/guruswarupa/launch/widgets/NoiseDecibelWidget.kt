@@ -90,7 +90,6 @@ class NoiseDecibelWidget(
             requestMicrophonePermission()
         }
 
-
         if (!sharedPreferences.contains(PREF_NOISE_ENABLED)) {
             sharedPreferences.edit { putBoolean(PREF_NOISE_ENABLED, false) }
         }
@@ -113,12 +112,10 @@ class NoiseDecibelWidget(
             widgetContainer.visibility = View.VISIBLE
             toggleButton.setText(R.string.noise_button_disable)
 
-
             if (!hasMicrophonePermission()) {
                 setupWithoutPermission()
                 return
             }
-
 
             if (noiseManager.hasMicrophone()) {
                 setupWithMicrophone()
@@ -217,7 +214,6 @@ class NoiseDecibelWidget(
     private fun updateDecibelDisplay(decibel: Double) {
         decibelText.text = context.getString(R.string.decibel_format, df.format(decibel))
 
-
         val levelRes = when {
             decibel < 30 -> R.string.noise_level_quiet
             decibel < 50 -> R.string.noise_level_moderate
@@ -229,12 +225,11 @@ class NoiseDecibelWidget(
             decibel < 30 -> ThemeManager.color(context, R.attr.appHighlight)
             decibel < 50 -> ThemeManager.color(context, R.attr.appAccent)
             decibel < 70 -> ThemeManager.color(context, R.attr.appError)
-            else -> ContextCompat.getColor(context, R.color.nord12) // most severe step, no themed attr yet
+            else -> ContextCompat.getColor(context, R.color.nord12)
         }
 
         noiseLevelText.setText(levelRes)
         noiseLevelText.setTextColor(color)
-
 
         val indicatorWidth = (decibel / 120.0).coerceIn(0.0, 1.0)
         val parentWidth = decibelIndicator.parent as? View
@@ -242,7 +237,6 @@ class NoiseDecibelWidget(
             val layoutParams = decibelIndicator.layoutParams
             layoutParams.width = (parent.width * indicatorWidth).toInt()
             decibelIndicator.layoutParams = layoutParams
-
 
             decibelIndicator.setBackgroundColor(color)
         }

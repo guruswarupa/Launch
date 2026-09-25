@@ -46,15 +46,7 @@ class ScreenPagerManager(
     private var velocityTracker: VelocityTracker? = null
     private val viewConfiguration = ViewConfiguration.get(activity)
     private val minimumFlingVelocity = viewConfiguration.scaledMinimumFlingVelocity
-    // Matches GestureHandler.minSwipeUpDistancePx/its 1.2x ratio (see onInterceptTouchEvent
-    // below): pagerScrollView is an ancestor of the view GestureHandler's swipe-up-to-open-drawer
-    // listener is attached to (mainContent is re-parented into this pager's CENTER page), so its
-    // own onInterceptTouchEvent gets first refusal on every MOVE event before that listener ever
-    // sees it. With a much smaller/looser threshold than GestureHandler's, this pager could - and
-    // did - win the race and start a horizontal page-swipe out from under a gesture the user
-    // intended as a vertical swipe-up, just because of a few pixels of early diagonal jitter.
-    // Matching both thresholds makes the two conditions mutually exclusive at every instant, so
-    // whichever axis actually dominates by the required margin correctly wins instead.
+
     private val horizontalInterceptThresholdPx = (24 * activity.resources.displayMetrics.density).toInt()
     private val pageViews = linkedMapOf<Page, View>()
     private var activePages = listOf(Page.WALLPAPER, Page.CENTER, Page.WIDGETS)
@@ -62,10 +54,7 @@ class ScreenPagerManager(
     private var pagingEnabled = true
 
     companion object {
-        // A committed drag needs to cross ~a third of the page before it counts as a swipe (was
-        // 0.12 - just a light flick was enough to change pages, which read as accidental) -
-        // matches roughly how Android's own ViewPager behaves by default. A fast fling still
-        // switches pages regardless of distance, same as before.
+
         private const val PAGE_SWITCH_THRESHOLD = 0.3f
         private const val PAGE_SWITCH_SETTLE_THRESHOLD = 0.42f
         private const val FLING_VELOCITY_MULTIPLIER = 5
@@ -240,8 +229,7 @@ class ScreenPagerManager(
         val widgetsEnabled = prefs.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
         val aiAssistantEnabled = prefs.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)
         val pages = mutableListOf<Page>()
-        // The wallpaper page's big clock duplicates Stock's own top-of-home clock - drop it
-        // there rather than showing the same thing twice a swipe away.
+
         if (!com.guruswarupa.launch.utils.LayoutMode.isStock(prefs)) {
             pages.add(Page.WALLPAPER)
         }
@@ -291,15 +279,6 @@ class ScreenPagerManager(
         }
     }
 
-    /**
-     * Each page (RSS, Widgets, Home, AI Chat, Wallpaper) draws its own full opaque background
-     * with nothing shared behind the page strip - scaling or extra-translating a page during the
-     * swipe (an earlier version of this did both, for a "depth" look) shrinks/shifts it away from
-     * its neighbor and opens a gap that shows raw window background through it, which reads as
-     * visually broken rather than a nicer transition. Alpha is the one transform that's free of
-     * that risk (it never changes a page's bounds), so lean on that alone, just far more visibly
-     * than before.
-     */
     private fun applyPageTransitions(scrollX: Int) {
         if (pageWidth <= 0) {
             return
@@ -319,12 +298,6 @@ class ScreenPagerManager(
         }
     }
 
-    /**
-     * A [GestureDetector] that locks the screen on double-tap, for reuse by anything that
-     * already owns a view's whole touch stream (like [com.guruswarupa.launch.managers.StockDrawerManager]'s
-     * swipe-up-to-open target, which must consume every event itself and so can't simply layer
-     * an independent [android.view.View.OnTouchListener] on top without one starving the other).
-     */
     fun createDoubleTapToLockDetector(): GestureDetector {
         return GestureDetector(activity, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDoubleTap(e: MotionEvent): Boolean {
@@ -384,7 +357,6 @@ class ScreenPagerManager(
         }
     }
 
-    /** Disables horizontal page swiping entirely, e.g. while the stock app drawer is open. */
     fun setPagingEnabled(enabled: Boolean) {
         pagingEnabled = enabled
     }

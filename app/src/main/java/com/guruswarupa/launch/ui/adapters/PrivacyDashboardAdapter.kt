@@ -186,10 +186,8 @@ class PrivacyDashboardAdapter(
 
         apps = newAppsWithState
 
-
         previousApps.clear()
         newAppsWithState.forEach { previousApps[it.packageName] = it }
-
 
         diffResult.dispatchUpdatesTo(this)
     }

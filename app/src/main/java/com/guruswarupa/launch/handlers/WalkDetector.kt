@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.SystemClock
-import android.util.Log
 
 class WalkDetector(
     context: Context,
@@ -31,7 +30,6 @@ class WalkDetector(
     fun start() {
         if (isListening) return
         if (stepDetector == null) {
-            Log.w(TAG, "TYPE_STEP_DETECTOR not available on this device")
             return
         }
 

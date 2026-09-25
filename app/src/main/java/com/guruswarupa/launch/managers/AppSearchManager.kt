@@ -44,14 +44,9 @@ class AppSearchManager @Inject constructor(
     private var isFocusModeActive: (() -> Boolean)? = null
     private val lifecycleScope = (context as LifecycleOwner).lifecycleScope
     private var searchJob: Job? = null
-    // This one engine is shared by whichever surface currently owns search input - normally the
-    // home page's search box, but Stock's drawer retargets it to its own box (and its own
-    // full/home/contacts data) for the duration it's open, then hands it back. Tracking the
-    // actual attached box (not just "has configure() ever run") is what makes that handoff safe:
-    // configure()/retarget can be called again for a *different* box without being a no-op.
+
     private var attachedSearchBox: AutoCompleteTextView? = null
     private var attachedWatcher: android.text.TextWatcher? = null
-
 
     var onSearchQueryChanged: ((String) -> Unit)? = null
 
@@ -78,10 +73,8 @@ class AppSearchManager @Inject constructor(
         attachTo(searchBox)
     }
 
-    /** True once anything has ever called [configure] - unrelated to *which* box is current. */
     fun isConfigured(): Boolean = attachedSearchBox != null
 
-    /** True when [searchBox] specifically is the one currently receiving search input. */
     fun isAttachedTo(searchBox: AutoCompleteTextView): Boolean = attachedSearchBox === searchBox
 
     private fun attachTo(newSearchBox: AutoCompleteTextView) {
@@ -132,7 +125,7 @@ class AppSearchManager @Inject constructor(
         val packageName = info.activityInfo.packageName
         val serial = info.preferredOrder
         val cacheKey = "${packageName}|$serial"
-        
+
         synchronized(dataLock) {
             appMetadataCache?.get(cacheKey)?.label?.lowercase()?.let { return it }
             appLabelCache[cacheKey]?.let { return it }
@@ -395,7 +388,6 @@ class AppSearchManager @Inject constructor(
         }
         return newFilteredList
     }
-
 
     private val cachedResolveInfos = object : LinkedHashMap<String, ResolveInfo>(MAX_CACHE_SIZE, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, ResolveInfo>?): Boolean {

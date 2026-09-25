@@ -37,11 +37,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
-
-
-
-
-
 class AppTimerManagementActivity : AppCompatActivity() {
     companion object {
         private val iconCache = ConcurrentHashMap<String, Drawable>()

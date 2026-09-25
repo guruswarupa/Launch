@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.guruswarupa.launch.MainActivity
@@ -134,7 +133,6 @@ class WorkspaceProfileDialogs(
                 context.startActivity(targetIntent)
                 return
             } catch (e: Exception) {
-                Log.e("AppDockManager", "Failed to open work profile settings", e)
             }
         }
 

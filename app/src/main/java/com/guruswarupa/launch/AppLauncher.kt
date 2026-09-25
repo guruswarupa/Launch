@@ -27,7 +27,6 @@ class AppLauncher(
         }
     }
 
-
     fun launchAppWithLockCheck(packageName: String, appName: String) {
         if (appLockManager.isAppLocked(packageName)) {
             appLockManager.verifyPin { isAuthenticated ->

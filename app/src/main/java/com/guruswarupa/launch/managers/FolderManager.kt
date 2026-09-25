@@ -14,11 +14,6 @@ data class AppFolder(
     val appKeys: MutableList<String>
 )
 
-/**
- * Persists named folders of apps for the stock layout, under a caller-supplied SharedPreferences
- * key (home page vs drawer folders are independent). An app is referenced by its
- * "packageName|activityName" key, matching [AppOrderManager]'s key format.
- */
 @Singleton
 class FolderManager @Inject constructor(
     private val sharedPreferences: SharedPreferences
@@ -81,7 +76,6 @@ class FolderManager @Inject constructor(
         saveFolders(prefKey, updated)
     }
 
-    /** Removes [appKey] from the folder; the folder is dropped entirely once it has fewer than 2 apps left. */
     fun removeAppFromFolder(prefKey: String, folderId: String, appKey: String) {
         val folders = getFolders(prefKey)
         val updated = folders.mapNotNull { folder ->

@@ -5,15 +5,6 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import com.guruswarupa.launch.R
 
-/**
- * One selectable color theme. [overlayRes] and [opaqueOverlayRes] point at the
- * ThemeOverlay.Launch.Palette.* styles in res/values/themes_palettes.xml, which
- * [ThemeManager.apply] layers on top of the base Theme.Launch / Theme.Launch.Light.
- *
- * [previewBackground]/[previewSurface]/[previewAccent] are plain literal color ints — NOT
- * resolved from the currently active theme — so a palette picker card always renders in that
- * palette's own colors regardless of which theme is active when the picker is drawn.
- */
 data class ThemePalette(
     val id: String,
     @StringRes val nameRes: Int,
@@ -66,7 +57,6 @@ data class ThemePalette(
             previewAccent = Color.parseColor("#FFFFFF"),
         )
 
-        /** Ordered for display in the Settings palette picker. Nord stays first/default. */
         val ALL = listOf(NORD, DRACULA, CATPPUCCIN_MOCHA, MONOCHROME)
 
         fun of(id: String?): ThemePalette = ALL.firstOrNull { it.id == id } ?: NORD

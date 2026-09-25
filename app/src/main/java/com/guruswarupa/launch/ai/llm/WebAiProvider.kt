@@ -1,11 +1,5 @@
 package com.guruswarupa.launch.ai.llm
 
-/**
- * A cloud AI assistant reached by loading its real website in an embedded WebView, as an
- * alternative to the on-device models in [AssistantModel]. Unlike those, this needs network
- * access every time and (for most of these) a login on that provider's own site — the
- * trade-off is access to a far larger hosted model than anything that fits on a phone.
- */
 data class WebAiProviderInfo(
     val id: String,
     val displayName: String,

@@ -3,7 +3,6 @@ package com.guruswarupa.launch.services
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.app.Service
 import com.guruswarupa.launch.managers.PhysicalActivityManager
 import com.guruswarupa.launch.managers.ServiceNotificationManager
@@ -20,7 +19,6 @@ class PhysicalActivityTrackingService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-
         try {
             val notification = ServiceNotificationManager.updateServiceStatus(this, SERVICE_NAME, true)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -29,9 +27,7 @@ class PhysicalActivityTrackingService : Service() {
                 startForeground(ServiceNotificationManager.NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to call startForeground", e)
         }
-
 
         activityManager = PhysicalActivityManager(this)
         activityManager?.initializeAsync(autoStartTracking = true)
@@ -47,15 +43,12 @@ class PhysicalActivityTrackingService : Service() {
                 startForeground(ServiceNotificationManager.NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to re-assert startForeground", e)
         }
-
 
         activityManager?.let { manager ->
             if (manager.hasActivityRecognitionPermission()) {
                 manager.startTracking()
             } else {
-                Log.w(TAG, "Activity recognition permission not granted")
                 stopSelf()
             }
         }

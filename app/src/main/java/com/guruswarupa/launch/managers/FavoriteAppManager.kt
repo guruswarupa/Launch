@@ -2,7 +2,6 @@ package com.guruswarupa.launch.managers
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,7 +12,6 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
         private const val FAVORITE_APPS_KEY = "favorite_apps"
         private const val TAG = "FavoriteAppManager"
     }
-
 
     @Volatile
     private var favoritesCache: Set<String>? = null
@@ -26,7 +24,6 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
             try {
                 favoritesCache = (sharedPreferences.getStringSet(FAVORITE_APPS_KEY, emptySet()) ?: emptySet()).toSet()
             } catch (e: ClassCastException) {
-                Log.e(TAG, "Data corruption: $FAVORITE_APPS_KEY is not a Set. Attempting recovery.", e)
 
                 val stringValue = try { sharedPreferences.getString(FAVORITE_APPS_KEY, null) } catch (_: Exception) { null }
                 val recoveredSet = if (stringValue != null) {
@@ -44,7 +41,6 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
                 } else {
                     emptySet()
                 }
-
 
                 sharedPreferences.edit {
                     remove(FAVORITE_APPS_KEY)

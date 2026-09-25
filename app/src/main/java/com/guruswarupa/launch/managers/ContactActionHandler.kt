@@ -7,10 +7,6 @@ import android.widget.AutoCompleteTextView
 import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.utils.VoiceCommandHandler
 
-
-
-
-
 class ContactActionHandler(
     private val activity: FragmentActivity,
     private val packageManager: PackageManager,
@@ -20,9 +16,6 @@ class ContactActionHandler(
     private val onHandlerCreated: (VoiceCommandHandler) -> Unit
 ) {
     private var voiceCommandHandler: VoiceCommandHandler? = null
-
-
-
 
     private fun getHandler(): VoiceCommandHandler {
         return voiceCommandHandler ?: VoiceCommandHandler(
@@ -37,15 +30,9 @@ class ContactActionHandler(
         }
     }
 
-
-
-
     fun openWhatsAppChat(contactName: String) {
         getHandler().openWhatsAppChat(contactName)
     }
-
-
-
 
     fun openSMSChat(contactName: String) {
         getHandler().openSMSChat(contactName)

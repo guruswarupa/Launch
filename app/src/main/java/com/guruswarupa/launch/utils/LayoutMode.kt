@@ -12,7 +12,6 @@ object LayoutMode {
     fun isStock(prefs: SharedPreferences): Boolean =
         viewPreference(prefs) == Constants.Prefs.VIEW_PREFERENCE_STOCK
 
-    /** True whenever the app list should render as a grid (Grid or Stock display style). */
     fun isGridRendering(prefs: SharedPreferences): Boolean {
         val preference = viewPreference(prefs)
         return preference == Constants.Prefs.VIEW_PREFERENCE_GRID || preference == Constants.Prefs.VIEW_PREFERENCE_STOCK

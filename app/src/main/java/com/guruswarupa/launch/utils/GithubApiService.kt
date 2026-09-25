@@ -41,7 +41,7 @@ class GithubApiService(private val context: Context) {
               }
             }
         """.trimIndent()
-        
+
         val apiUrl = "https://api.github.com/graphql"
         val postData = JSONObject()
         postData.put("query", graphqlQuery)
@@ -59,7 +59,6 @@ class GithubApiService(private val context: Context) {
             connection.setRequestProperty("User-Agent", "Launch-App")
             connection.doOutput = true
 
-
             val outputStream = connection.outputStream
             outputStream.write(postData.toString().toByteArray())
             outputStream.flush()
@@ -70,14 +69,12 @@ class GithubApiService(private val context: Context) {
                 val response = connection.inputStream.bufferedReader().readText()
                 val jsonResponse = JSONObject(response)
 
-
                 val data = jsonResponse.getJSONObject("data")
                 val user = data.getJSONObject("user")
                 val contributionsCollection = user.getJSONObject("contributionsCollection")
                 val contributionCalendar = contributionsCollection.getJSONObject("contributionCalendar")
 
                 val totalContributions = contributionCalendar.getInt("totalContributions")
-
 
                 val weeksArray = contributionCalendar.getJSONArray("weeks")
                 val contributions = mutableMapOf<String, Int>()
@@ -94,7 +91,6 @@ class GithubApiService(private val context: Context) {
                         contributions[date] = count
                     }
                 }
-
 
                 val streaks = calculateStreaks(contributions)
 
@@ -136,7 +132,6 @@ class GithubApiService(private val context: Context) {
             }
         }
 
-
         if (tempStreak > maxStreak) {
             maxStreak = tempStreak
         }
@@ -144,13 +139,11 @@ class GithubApiService(private val context: Context) {
         return Pair(currentStreak, maxStreak)
     }
 
-
     fun getTodaysContributions(username: String, token: String, year: Int = LocalDate.now().year): Int {
         val today = LocalDate.now().toString()
         val data = fetchContributionData(username, token, year)
         return data.contributions[today] ?: 0
     }
-
 
     fun getThisWeeksContributions(username: String, token: String, year: Int = LocalDate.now().year): Int {
         val data = fetchContributionData(username, token, year)
@@ -164,7 +157,6 @@ class GithubApiService(private val context: Context) {
 
         return weeklyTotal
     }
-
 
     fun getAvailableContributionYears(username: String, token: String): List<Int> {
         val graphqlQuery = """
@@ -194,7 +186,6 @@ class GithubApiService(private val context: Context) {
             connection.setRequestProperty("User-Agent", "Launch-App")
             connection.doOutput = true
 
-
             val outputStream = connection.outputStream
             outputStream.write(postData.toString().toByteArray())
             outputStream.flush()
@@ -204,7 +195,6 @@ class GithubApiService(private val context: Context) {
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 val response = connection.inputStream.bufferedReader().readText()
                 val jsonResponse = JSONObject(response)
-
 
                 val data = jsonResponse.getJSONObject("data")
                 val user = data.getJSONObject("user")

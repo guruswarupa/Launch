@@ -11,10 +11,6 @@ import com.guruswarupa.launch.widgets.WidgetThemeManager
 import com.guruswarupa.launch.managers.TypographyManager
 import com.guruswarupa.launch.ui.theme.ThemeManager
 
-
-
-
-
 class SettingsChangeCoordinator(
     private val activity: MainActivity,
     private val adapterProvider: () -> AppAdapter?,
@@ -38,8 +34,6 @@ class SettingsChangeCoordinator(
         lastStockHotseatCount = sharedPreferences.getInt(Constants.Prefs.STOCK_HOTSEAT_COUNT, 4)
     }
 
-
-
     fun applyThemeBasedWidgetBackgrounds() {
         val widgetThemeManager = widgetThemeManagerProvider() ?: return
         val views = activity.views
@@ -53,9 +47,6 @@ class SettingsChangeCoordinator(
             appDockManager = appDockManager
         )
     }
-
-
-
 
     fun applyBackgroundTranslucency() {
         val sharedPreferences = activity.sharedPreferences
@@ -82,19 +73,13 @@ class SettingsChangeCoordinator(
                     currentPage == com.guruswarupa.launch.managers.ScreenPagerManager.Page.CENTER
             activity.systemBarManager.updateSystemBars(isFullyTransparentPage)
         } catch (e: UninitializedPropertyAccessException) {
-            // screenPagerManager not set up yet (e.g. during initial onCreate)
+
         }
     }
-
-
-
 
     fun handleSettingsUpdate() {
         val sharedPreferences = activity.sharedPreferences
 
-        // If the color theme (palette/accent/opaque-surfaces) changed, everything below this
-        // point is about to be redone by the recreate anyway — bail out early rather than
-        // running the full settings-update pass on views that are seconds from being torn down.
         if (ThemeManager.isStale(activity, sharedPreferences)) {
             activity.recreate()
             return
@@ -122,11 +107,9 @@ class SettingsChangeCoordinator(
         adapter?.refreshTypography()
         views.fastScroller.refreshTypography(sharedPreferences)
 
-
         val topWidgetEnabled = sharedPreferences.getBoolean(Constants.Prefs.TOP_WIDGET_ENABLED, true)
         if (views.isRecyclerViewInitialized()) {
             views.topWidgetContainer.visibility = if (topWidgetEnabled) android.view.View.VISIBLE else android.view.View.GONE
-
 
             val params = views.searchContainer.layoutParams as android.view.ViewGroup.MarginLayoutParams
             if (!topWidgetEnabled) {
@@ -139,8 +122,6 @@ class SettingsChangeCoordinator(
             }
             views.searchContainer.layoutParams = params
 
-            // Stock's home page is meant to stay minimal, like a real launcher's - its own
-            // drawer already has a search box, so the home page search bar is redundant there.
             views.searchContainer.visibility = if (com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
                 android.view.View.GONE
             } else {
@@ -159,7 +140,6 @@ class SettingsChangeCoordinator(
 
         activity.timeDateManager.setUse24HourFormat(use24HourClock)
 
-
         val viewPreference = sharedPreferences.getString(
             Constants.Prefs.VIEW_PREFERENCE,
             Constants.Prefs.VIEW_PREFERENCE_LIST
@@ -172,25 +152,15 @@ class SettingsChangeCoordinator(
         val currentIsGridMode = if (views.isRecyclerViewInitialized()) views.recyclerView.layoutManager is GridLayoutManager else false
 
         if (enteringOrLeavingStock) {
-            // main_content_stack has animateLayoutChanges="true" for things like the top widget
-            // being toggled on/off - but switching into/out of Stock changes several of its
-            // children's visibility at once (search bar, dock, top widget restyling), and
-            // animating all of that together as one LayoutTransition can settle the dock at the
-            // wrong height (it read as correct only after a cold start, which never animates).
-            // Suppress it for just this one change and restore it once the new layout has
-            // actually been measured, so future individual toggles still animate normally.
+
             val mainContentStack = activity.findViewById<android.view.ViewGroup>(com.guruswarupa.launch.R.id.main_content_stack)
             val originalTransition = mainContentStack?.layoutTransition
             mainContentStack?.let { it.layoutTransition = null }
 
             if (viewPreference == Constants.Prefs.VIEW_PREFERENCE_STOCK) {
-                // Stock's home page is always the favorites grid - if the user had scrolled
-                // into "all apps" in List/Grid mode right before switching, force back to
-                // favorites-only so it doesn't try to render the all-apps letter-separator
-                // layout inside what's supposed to be a small favorites grid.
+
                 activity.showOnlyFavoritesInitially = true
-                // Workspaces don't fit Stock's model (its drawer is meant to show every app) -
-                // fully deactivate any active workspace, not just hide its dock icon.
+
                 appDockManagerProvider()?.turnOffWorkspace()
             } else if (activity.isStockDrawerManagerInitialized()) {
                 activity.stockDrawerManager.hide(animated = false)
@@ -198,16 +168,11 @@ class SettingsChangeCoordinator(
             }
             activity.appListLoader.loadApps(forceRefresh = false)
 
-            // loadApps() finishes asynchronously (cache/query work on a background thread, then
-            // posted back) - a single post{} here would fire before that completes and the dock's
-            // own visibility actually changes, re-arming the animation right before the change it
-            // was meant to skip. A short delay comfortably covers the normal reload time instead.
             mainContentStack?.let { stack ->
                 stack.postDelayed({ stack.layoutTransition = originalTransition }, 300)
             }
         } else if (viewPreference == Constants.Prefs.VIEW_PREFERENCE_STOCK) {
-            // Already in Stock - reload if the drawer toggle or hotseat size changed, since
-            // neither is reflected until the home/hotseat/drawer lists are recomputed.
+
             val stockDrawerEnabled = sharedPreferences.getBoolean(Constants.Prefs.STOCK_DRAWER_ENABLED, true)
             val stockHotseatCount = sharedPreferences.getInt(Constants.Prefs.STOCK_HOTSEAT_COUNT, 4)
             if (stockDrawerEnabled != lastStockDrawerEnabled || stockHotseatCount != lastStockHotseatCount) {
@@ -239,10 +204,7 @@ class SettingsChangeCoordinator(
                 LinearLayoutManager(activity)
             }
 
-
             adapter.updateViewMode(newIsGridMode)
-
-
 
             activity.updateAppSearchManager()
         } else if (newIsGridMode && currentIsGridMode) {
@@ -266,21 +228,17 @@ class SettingsChangeCoordinator(
             }
         }
 
-
-        // Only update icon style if it actually changed
         val iconStyle = sharedPreferences.getString(Constants.Prefs.ICON_STYLE, "squircle") ?: "round"
         val currentIconStyle = adapter?.getCurrentIconStyle()
         if (iconStyle != currentIconStyle) {
             adapter?.updateIconStyle(iconStyle)
         }
 
-        // Only update icon size if it actually changed
         val iconSize = sharedPreferences.getInt(Constants.Prefs.ICON_SIZE, 40)
         val currentIconSize = adapter?.getCurrentIconSize()
         if (iconSize != currentIconSize) {
             adapter?.updateIconSize(iconSize)
         }
-
 
         val showAppNamesInGrid = sharedPreferences.getBoolean(Constants.Prefs.SHOW_APP_NAME_IN_GRID, true)
         adapter?.updateShowAppNamesInGrid(showAppNamesInGrid)
@@ -290,7 +248,6 @@ class SettingsChangeCoordinator(
 
         activity.updateFastScrollerVisibility()
 
-
         activity.serviceManager.updateShakeDetectionService()
         activity.serviceManager.updateWalkDetectionService()
         activity.serviceManager.updateScreenDimmerService()
@@ -298,9 +255,7 @@ class SettingsChangeCoordinator(
         activity.serviceManager.updateFlipToDndService()
         activity.serviceManager.updateBackTapService()
 
-
         activity.hiddenAppManager.forceRefresh()
-
 
         activity.appListLoader.loadApps(forceRefresh = false)
 
@@ -308,7 +263,6 @@ class SettingsChangeCoordinator(
             activity.financeWidgetManager.updateDisplay()
         } catch (_: Exception) {
         }
-
 
         activity.wallpaperManagerHelper.applyBlurToViews()
         activity.wallpaperManagerHelper.clearCache()
@@ -323,7 +277,6 @@ class SettingsChangeCoordinator(
         }
 
         activity.activityInitializer.setupDrawerLayout()
-
 
         appDockManagerProvider()?.let { dockManager ->
             try {

@@ -33,7 +33,6 @@ class DeviceInfoWidget(
     private val deviceInfoManager = DeviceInfoManager(context)
     private val handler = Handler(Looper.getMainLooper())
 
-
     private val updateRunnable = object : Runnable {
         override fun run() {
             if (isInitialized && !isDestroyed) {
@@ -62,14 +61,12 @@ class DeviceInfoWidget(
         hardwareText = widgetView.findViewById(R.id.hardware_text)
         kernelText = widgetView.findViewById(R.id.kernel_text)
 
-
         cpuModelText.text = deviceInfoManager.getCpuModel()
         androidVersionText.text = deviceInfoManager.getAndroidVersion()
         hardwareText.text = deviceInfoManager.getHardwareInfo()
         kernelText.text = deviceInfoManager.getKernelVersion()
 
         updateDisplay()
-
 
         handler.post(updateRunnable)
 
@@ -78,7 +75,6 @@ class DeviceInfoWidget(
 
     private fun updateDisplay() {
         uptimeText.text = deviceInfoManager.getUptime()
-
 
         val (usedRam, totalRam) = deviceInfoManager.getRamUsage()
         val usedRamGb = deviceInfoManager.formatBytes(usedRam)
@@ -89,7 +85,6 @@ class DeviceInfoWidget(
             ramProgressBar.progress = ((usedRam.toDouble() / totalRam.toDouble()) * 100).toInt()
         }
 
-
         val (usedStorage, totalStorage) = deviceInfoManager.getStorageUsage()
         val usedStorageGb = deviceInfoManager.formatBytes(usedStorage)
         val totalStorageGb = deviceInfoManager.formatBytes(totalStorage)
@@ -98,7 +93,6 @@ class DeviceInfoWidget(
         if (totalStorage > 0) {
             storageProgressBar.progress = ((usedStorage.toDouble() / totalStorage.toDouble()) * 100).toInt()
         }
-
 
         val temp = deviceInfoManager.getCpuTemperature()
         if (temp > 0) {

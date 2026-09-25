@@ -28,14 +28,12 @@ class BootReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED || intent.action == "android.intent.action.QUICKBOOT_POWERON") {
             val prefs = context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
 
-
             val isDimmerEnabled = prefs.getBoolean(Constants.Prefs.SCREEN_DIMMER_ENABLED, false)
             val dimLevel = prefs.getInt(Constants.Prefs.SCREEN_DIMMER_LEVEL, 50)
 
             if (isDimmerEnabled && Settings.canDrawOverlays(context)) {
                 ScreenDimmerService.startService(context, dimLevel)
             }
-
 
             val isNightModeEnabled = prefs.getBoolean(Constants.Prefs.NIGHT_MODE_ENABLED, false)
             val intensity = prefs.getInt(Constants.Prefs.NIGHT_MODE_INTENSITY, 10)
@@ -44,13 +42,11 @@ class BootReceiver : BroadcastReceiver() {
                 NightModeService.startService(context, intensity)
             }
 
-
             val isFlipEnabled = prefs.getBoolean(Constants.Prefs.FLIP_DND_ENABLED, false)
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             if (isFlipEnabled && notificationManager.isNotificationPolicyAccessGranted) {
                 FlipToDndService.startService(context)
             }
-
 
             val isBackTapEnabled = prefs.getBoolean(Constants.Prefs.BACK_TAP_ENABLED, false)
             if (isBackTapEnabled) {
@@ -59,7 +55,6 @@ class BootReceiver : BroadcastReceiver() {
                 }
                 ContextCompat.startForegroundService(context, backTapIntent)
             }
-
 
             val isShakeEnabled = prefs.getBoolean(Constants.Prefs.SHAKE_TORCH_ENABLED, false)
             if (isShakeEnabled) {
@@ -87,9 +82,6 @@ class BootReceiver : BroadcastReceiver() {
         }
     }
 
-    // AlarmManager drops all setExactAndAllowWhileIdle alarms on reboot. Todo reminders were
-    // otherwise only re-armed once MainActivity/TodoManager.initialize() happened to run, which
-    // isn't guaranteed to be the first thing that starts after boot.
     private fun rescheduleTodoAlarms(context: Context, prefs: android.content.SharedPreferences) {
         val jsonString = prefs.getString("todo_items_json", null) ?: return
         try {

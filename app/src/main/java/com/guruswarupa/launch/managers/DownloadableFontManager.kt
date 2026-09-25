@@ -127,8 +127,6 @@ object DownloadableFontManager {
             }
         }
 
-
-
         FontsContractCompat.requestFont(
             context,
             request,

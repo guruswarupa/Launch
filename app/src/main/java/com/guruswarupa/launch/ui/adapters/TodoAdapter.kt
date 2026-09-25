@@ -54,12 +54,11 @@ class TodoAdapter(
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val todoItem = todoItems[position]
         val context = holder.itemView.context
-        
+
         TypographyManager.applyToView(holder.itemView)
 
         holder.todoCheckBox.setOnCheckedChangeListener(null)
         holder.todoCheckBox.isChecked = todoItem.isChecked
-
 
         val priorityDrawable = when (todoItem.priority) {
             TodoItem.Priority.HIGH -> ContextCompat.getDrawable(context, R.drawable.priority_high)
@@ -68,14 +67,12 @@ class TodoAdapter(
         }
         holder.priorityIndicator.background = priorityDrawable
 
-
         holder.todoText.text = todoItem.text
         if (todoItem.isChecked) {
             holder.todoText.paintFlags = holder.todoText.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         } else {
             holder.todoText.paintFlags = holder.todoText.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
         }
-
 
         if (todoItem.category.isNotEmpty() && todoItem.category != "General") {
             holder.categoryText.text = todoItem.category
@@ -84,14 +81,12 @@ class TodoAdapter(
             holder.categoryText.visibility = View.GONE
         }
 
-
         if (todoItem.dueTime != null) {
             holder.dueTimeText.text = context.getString(R.string.todo_due_format, todoItem.dueTime)
             holder.dueTimeText.visibility = View.VISIBLE
         } else {
             holder.dueTimeText.visibility = View.GONE
         }
-
 
         if (todoItem.isIntervalBased() && todoItem.recurrenceInterval != null) {
             val intervalLabel = when (todoItem.recurrenceInterval) {
@@ -115,7 +110,6 @@ class TodoAdapter(
         } else {
             holder.intervalText.visibility = View.GONE
         }
-
 
         if (todoItem.isRecurring && todoItem.selectedDays.isNotEmpty()) {
             holder.daysContainer.visibility = View.VISIBLE
@@ -143,7 +137,6 @@ class TodoAdapter(
             holder.daysContainer.visibility = View.GONE
         }
 
-
         holder.todoCheckBox.setOnCheckedChangeListener { _, isChecked ->
             todoItem.isChecked = isChecked
 
@@ -160,7 +153,6 @@ class TodoAdapter(
                 todoItem.lastCompletedDate = null
             }
 
-
             if (isChecked) {
                 holder.todoText.paintFlags = holder.todoText.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } else {
@@ -169,7 +161,6 @@ class TodoAdapter(
 
             onTaskStateChanged()
         }
-
 
         holder.deleteButton.setOnClickListener {
             onDeleteClick(todoItem)

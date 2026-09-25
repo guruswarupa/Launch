@@ -14,9 +14,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.guruswarupa.launch.R
 import kotlin.math.abs
 
-
-
-
 class GestureHandler(
     private val activity: androidx.fragment.app.FragmentActivity,
     private val drawerLayout: DrawerLayout,
@@ -33,7 +30,6 @@ class GestureHandler(
     private val minSwipeDistancePx: Int
     private val minSwipeUpDistancePx: Int
 
-    /** Fired on an upward swipe starting on blank home-screen space (not over any clickable view). */
     var onSwipeUpFromHome: (() -> Boolean)? = null
 
     init {
@@ -42,9 +38,6 @@ class GestureHandler(
         minSwipeDistancePx = (50 * density).toInt()
         minSwipeUpDistancePx = (24 * density).toInt()
     }
-
-
-
 
     @Suppress("unused")
     fun setGesturesEnabled(enabled: Boolean) {
@@ -56,14 +49,8 @@ class GestureHandler(
         }
     }
 
-
-
-
     fun setupGestureExclusion() {
-        // Pad main_content_stack (the actual interactive content), not mainContent itself:
-        // mainContent also holds wallpaper_background/background_translucency_overlay, which
-        // need to stay edge-to-edge under the status bar just like the other pages' own
-        // backgrounds do. Padding mainContent directly would inset those too.
+
         val contentStack = mainContent.findViewById<View>(R.id.main_content_stack) ?: mainContent
         val initialLeft = contentStack.paddingLeft
         val initialTop = contentStack.paddingTop
@@ -91,9 +78,6 @@ class GestureHandler(
         }
     }
 
-
-
-
     fun updateGestureExclusion() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             mainContent.post {
@@ -113,9 +97,6 @@ class GestureHandler(
         }
     }
 
-
-
-
     fun updateGestureExclusionForWidgetOpening() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             mainContent.post {
@@ -126,9 +107,6 @@ class GestureHandler(
             }
         }
     }
-
-
-
 
     @SuppressLint("ClickableViewAccessibility")
     fun setupTouchListener() {
@@ -177,12 +155,7 @@ class GestureHandler(
                             onSwipeUpFromHome?.invoke()
                             true
                         } else if (abs(deltaX) > minSwipeUpDistancePx && abs(deltaX) > abs(deltaY) * 1.2f) {
-                            // Requiring the same minimum distance here (not just the ratio) as the
-                            // swipe-up branch above stops a few pixels of natural jitter right at
-                            // the start of a swipe from permanently declaring "this is horizontal"
-                            // and handing the rest of the gesture to the page pager underneath -
-                            // that's what was making a genuine swipe-up-to-open-drawer gesture
-                            // occasionally page-swipe the home screen instead of opening the drawer.
+
                             isSwipeUpCandidate = false
                             false
                         } else {
@@ -227,18 +200,9 @@ class GestureHandler(
         }
     }
 
-
-
-
     private fun openDrawerWithFastAnimation(gravity: Int) {
 
         drawerLayout.openDrawer(gravity)
-
-
-
-
-
-
 
     }
 }

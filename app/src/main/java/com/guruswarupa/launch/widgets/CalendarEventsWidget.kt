@@ -104,10 +104,7 @@ class CalendarEventsWidget(
             toggleView()
         }
 
-
         initializeCalendarView()
-
-
 
         if (hasCalendarPermission()) {
             setupWithPermission()
@@ -138,9 +135,6 @@ class CalendarEventsWidget(
         }
 
         val displayDate = parsedDate?.let { displayFormat.format(it) } ?: date
-
-
-
 
         val uniqueEvents = dayEvents.distinctBy { event ->
             val cal = Calendar.getInstance().apply { timeInMillis = event.startTime }
@@ -268,7 +262,6 @@ class CalendarEventsWidget(
             allEvents.clear()
             allEvents.addAll(allNewEvents)
 
-
             val now = System.currentTimeMillis()
             val twoDaysFromNow = now + (2 * 24 * 60 * 60 * 1000)
             val upcomingEvents = allNewEvents.filter { event ->
@@ -278,7 +271,6 @@ class CalendarEventsWidget(
             events.clear()
             events.addAll(upcomingEvents)
             adapter.notifyDataSetChanged()
-
 
             calendarView?.updateEvents(allEvents)
 
@@ -301,7 +293,6 @@ class CalendarEventsWidget(
         val eventsList = mutableListOf<CalendarEvent>()
         val seenEvents = mutableSetOf<String>()
 
-
         val projection = arrayOf(
             CalendarContract.Instances.EVENT_ID,
             CalendarContract.Instances.TITLE,
@@ -317,8 +308,6 @@ class CalendarEventsWidget(
 
         val oneYearAgo = now - (365 * 24 * 60 * 60 * 1000L)
         val twoYearsFromNow = now + (730 * 24 * 60 * 60 * 1000L)
-
-
 
         val sortOrder = "${CalendarContract.Instances.BEGIN} ASC"
 
@@ -357,7 +346,7 @@ class CalendarEventsWidget(
                     val allDay = allDayIndex >= 0 && cursor.getInt(allDayIndex) == 1
                     val calendarId = if (calendarIdIndex >= 0) cursor.getLong(calendarIdIndex) else 0L
                     val calendarDisplayName = if (calendarDisplayNameIndex >= 0) cursor.getString(calendarDisplayNameIndex) ?: "" else ""
-                    // ... (rest of the processing logic)
+
                     val isFestival = calendarDisplayName.lowercase().let { name ->
                         name.contains("festival") || name.contains("holiday") ||
                         name.contains("holidays") || name.contains("festivals") ||
@@ -487,7 +476,6 @@ class CalendarEventAdapter(
 
         holder.titleText.text = event.title
 
-
         val titleColor = if (event.isFestival) {
             ThemeManager.color(holder.itemView.context, R.attr.appError)
         } else {
@@ -503,7 +491,6 @@ class CalendarEventAdapter(
 
         val startTime = Date(event.startTime)
         val timeString = timeFormat.format(startTime)
-
 
         val now = Calendar.getInstance()
         val eventDate = Calendar.getInstance().apply { time = startTime }

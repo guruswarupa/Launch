@@ -7,7 +7,6 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.recyclerview.widget.RecyclerView
 
-
 class SafeRecyclerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

@@ -10,10 +10,6 @@ import android.provider.ContactsContract
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executor
 
-
-
-
-
 class ContactManager(
     private val context: Context,
     private val contentResolver: ContentResolver,
@@ -26,13 +22,6 @@ class ContactManager(
     @Volatile
     private var contactsLoading = false
 
-
-
-
-
-    /** Guarantees [onComplete] always runs on the main thread, regardless of which
-     *  path in [loadContacts] triggers it - callers touch RecyclerView/UI state
-     *  from this callback and must never receive it on a background thread. */
     private fun complete(onComplete: ((List<String>) -> Unit)?, result: List<String>) {
         if (onComplete == null) return
         mainHandler.post { onComplete(result) }
@@ -77,7 +66,6 @@ class ContactManager(
                     }
                 }
 
-
                 tempContactsList.sort()
 
                 contactsList.clear()
@@ -94,13 +82,8 @@ class ContactManager(
         }
     }
 
-
-
-
-
     fun loadContactsEagerly() {
         loadContacts { loadedList ->
-
 
         }
     }

@@ -26,14 +26,10 @@ class WidgetThemeManager(
         val widgetBackground = R.drawable.widget_background
         val emptyStateBackground = R.drawable.drawer_widgets_empty_state_bg
 
-        // Stock's top widget is a deliberately card-free clock (see
-        // ActivityInitializer.applyTopWidgetStyle) - leave its background alone here, or every
-        // theme/settings refresh would clobber it back to the boxed List/Grid look.
         val prefs = activity.getSharedPreferences(com.guruswarupa.launch.models.Constants.Prefs.PREFS_NAME, android.content.Context.MODE_PRIVATE)
         if (!com.guruswarupa.launch.utils.LayoutMode.isStock(prefs)) {
             activity.findViewById<View>(R.id.top_widget_container)?.setBackgroundResource(widgetBackground)
         }
-
 
         activity.findViewById<View>(R.id.widget_settings_header)?.setBackgroundResource(widgetBackground)
         activity.findViewById<View>(R.id.widget_config_button)?.setBackgroundResource(widgetBackground)
@@ -50,7 +46,6 @@ class WidgetThemeManager(
             val textColor = ThemeManager.color(activity, R.attr.appTextPrimary)
             val hintColor = ThemeManager.color(activity, R.attr.appTextPrimary)
 
-
             searchContainer?.let { sc ->
                 sc.setBackgroundResource(searchBg)
                 sb.background = null
@@ -62,24 +57,18 @@ class WidgetThemeManager(
             sb.setHintTextColor(hintColor)
             TypographyManager.applyToView(sb)
 
-
             val iconColor = ThemeManager.color(activity, R.attr.appIconTint)
             sb.compoundDrawablesRelative[0]?.setTint(iconColor)
             voiceSearchButton?.setColorFilter(iconColor)
             searchTypeButton?.setColorFilter(iconColor)
         }
 
-
         activity.findViewById<ImageView>(R.id.weather_icon)?.setColorFilter(
             ThemeManager.color(activity, R.attr.appIconTint)
         )
 
-
         appDockManager?.updateDockIcons()
     }
-
-
-
 
     fun checkAndUpdateThemeIfNeeded(
         todoManager: TodoManager? = null,

@@ -98,7 +98,7 @@ class AppClickHandler(
                 }
                 return LaunchResolution.Failed
             }
-            // No user handle for this serial: do not fall through to the main profile.
+
             return LaunchResolution.Failed
         }
 

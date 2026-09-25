@@ -102,7 +102,6 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         widgetConfigManager = WidgetConfigurationManager(this, sharedPreferences)
         previewManager = WidgetPreviewManager(this)
 
-
         widgetManager = WidgetManager(this, android.widget.LinearLayout(this), shouldLoadWidgets = false)
 
         val wallpaperBackground = findViewById<ImageView>(R.id.wallpaper_background)
@@ -124,11 +123,9 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         }
         TypographyManager.applyToView(searchInput)
 
-
         loadWidgets()
 
         widgetsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -145,7 +142,6 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                     return false
                 }
 
-                // If searching, we need to map filtered positions back to the original list
                 val movedItem = filteredWidgets.removeAt(fromPos)
                 filteredWidgets.add(toPos, movedItem)
 
@@ -209,9 +205,9 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                 previewManager.clearCache()
                 widgetConfigManager.getWidgetConfiguration()
             }
-            
+
             allWidgets = widgets.toMutableList()
-            
+
             if (currentQuery.isEmpty()) {
                 filteredWidgets = allWidgets.toMutableList()
             } else {
@@ -311,7 +307,6 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         val filteredPosition = filteredWidgets.indexOfFirst { it.id == widgetId }
         val originalPosition = allWidgets.indexOfFirst { it.id == widgetId }
 
-
         if (filteredPosition >= 0) {
             filteredWidgets[filteredPosition] = filteredWidgets[filteredPosition].copy(enabled = enabled)
         }
@@ -319,17 +314,15 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         if (originalPosition >= 0) {
             val widget = allWidgets[originalPosition]
             allWidgets[originalPosition] = widget.copy(enabled = enabled)
-            
-            // If it's a system widget being disabled, we must destroy the widget ID to properly remove it from the system
+
             if (widget.isSystemWidget && !enabled && widget.appWidgetId != null) {
                 widgetManager.removeWidget(widget.appWidgetId)
-                // Update the item in list to remove the appWidgetId so it shows as "TAP TO ADD" again
+
                 allWidgets[originalPosition] = allWidgets[originalPosition].copy(appWidgetId = null)
             }
         }
 
         persistWidgetConfiguration()
-
 
         if (currentQuery.isEmpty()) {
             moveWidgetToCorrectSection(widgetId)
@@ -345,40 +338,32 @@ class WidgetConfigurationActivity : AppCompatActivity() {
         }
     }
 
-
     private fun moveWidgetToCorrectSection(widgetId: String) {
         val widgetIndex = allWidgets.indexOfFirst { it.id == widgetId }
         if (widgetIndex < 0) return
 
         val widget = allWidgets[widgetIndex]
 
-
         allWidgets.removeAt(widgetIndex)
-
 
         val newPosition = calculateWidgetPosition(widget)
 
-
         allWidgets.add(newPosition, widget)
-
 
         filteredWidgets = allWidgets.toMutableList()
 
-
         adapter?.updateWidgets(filteredWidgets)
         adapter?.notifyDataSetChanged()
-
 
         refreshSectionHeaders()
         updateListChrome()
         persistWidgetConfiguration()
     }
 
-
     private fun calculateWidgetPosition(widget: WidgetConfigurationManager.WidgetInfo): Int {
         return when {
             widget.enabled -> {
-                // When enabled, always place at the end of the enabled section
+
                 val lastEnabledIndex = allWidgets.indexOfLast { it.enabled }
                 if (lastEnabledIndex >= 0) {
                     lastEnabledIndex + 1
@@ -388,7 +373,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
             }
 
             else -> {
-                // For all disabled widgets, put them at the very end
+
                 allWidgets.size
             }
         }
@@ -456,10 +441,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     fun notifyWidgetConfigurationChanged() {
         setResult(RESULT_OK)
-        // MainActivity.onResume() consumes this flag to refresh widget visibility. Needed
-        // because this activity is sometimes launched via a plain startActivity() (from
-        // Settings) rather than an ActivityResult launcher, so setResult() alone isn't always
-        // observed by anything.
+
         prefs.edit { putBoolean("saved_widgets_changed", true) }
     }
 

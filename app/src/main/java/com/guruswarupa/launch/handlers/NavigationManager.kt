@@ -5,10 +5,6 @@ import android.os.Looper
 import com.guruswarupa.launch.managers.GestureHandler
 import com.guruswarupa.launch.managers.ScreenPagerManager
 
-
-
-
-
 class NavigationManager(
     private val screenPagerManager: ScreenPagerManager,
     private val gestureHandler: GestureHandler,
@@ -16,9 +12,6 @@ class NavigationManager(
 ) {
     private var isBlockingBackGesture = false
     private val backGestureBlockDuration = 800L
-
-
-
 
     fun handleBackPressed(superOnBackPressed: () -> Unit) {
 
@@ -35,15 +28,10 @@ class NavigationManager(
         }
     }
 
-
-
-
-
     fun blockBackGesturesTemporarily() {
         isBlockingBackGesture = true
 
         gestureHandler.updateGestureExclusionForWidgetOpening()
-
 
         handler.postDelayed({
             isBlockingBackGesture = false
@@ -55,9 +43,6 @@ class NavigationManager(
     fun cleanup() {
         handler.removeCallbacksAndMessages(null)
     }
-
-
-
 
     @Suppress("unused")
     fun isBlockingBackGesture(): Boolean = isBlockingBackGesture

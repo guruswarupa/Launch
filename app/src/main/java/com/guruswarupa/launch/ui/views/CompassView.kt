@@ -22,7 +22,6 @@ class CompassView @JvmOverloads constructor(
     private var directionName: String = "N"
     private var accuracy: Int = SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM
 
-
     private val outerRingColor = "#5E81AC".toColorInt()
     private val innerRingColor = "#81A1C1".toColorInt()
     private val cardinalColor = "#ECEFF4".toColorInt()
@@ -171,14 +170,12 @@ class CompassView @JvmOverloads constructor(
             Shader.TileMode.CLAMP
         )
 
-
         val outerGlowShader = RadialGradient(
             centerX, centerY, radius + 15f,
             Color.TRANSPARENT,
             "#405E81AC".toColorInt(),
             Shader.TileMode.CLAMP
         )
-
 
         backgroundShader = ComposeShader(
             baseShader, outerGlowShader, PorterDuff.Mode.ADD
@@ -197,7 +194,6 @@ class CompassView @JvmOverloads constructor(
 
         if (radius <= 0) return
 
-
         backgroundPaint.shader = backgroundShader
         canvas.drawCircle(centerX, centerY, radius + 5f, backgroundPaint)
 
@@ -206,21 +202,17 @@ class CompassView @JvmOverloads constructor(
             return
         }
 
-
         canvas.withRotation(-azimuth, centerX, centerY) {
 
             compassRingPaint.color = outerRingColor
             compassRingPaint.strokeWidth = 8f
             canvas.drawCircle(centerX, centerY, radius, compassRingPaint)
 
-
             innerRingPaint.color = innerRingColor
             innerRingPaint.strokeWidth = 2f
             canvas.drawCircle(centerX, centerY, radius * 0.92f, innerRingPaint)
 
-
             canvas.drawCircle(centerX, centerY, radius * 0.75f, innerRingPaint)
-
 
             for (i in 0 until 72) {
                 val angle = i * 5f
@@ -254,15 +246,12 @@ class CompassView @JvmOverloads constructor(
                 canvas.drawLine(startX, startY, endX, endY, tickPaint)
             }
 
-
             for (i in directions.indices) {
                 val angle = Math.toRadians(angles[i].toDouble())
                 val x = centerX + radius * 0.82f * sin(angle).toFloat()
                 val y = centerY - radius * 0.82f * cos(angle).toFloat()
 
-
                 canvas.drawCircle(x, y, 28f, cardinalBgPaint)
-
 
                 cardinalPaint.color = directionColors[i]
                 cardinalPaint.textSize = 38f
@@ -274,7 +263,6 @@ class CompassView @JvmOverloads constructor(
                     cardinalPaint
                 )
             }
-
 
             for (i in intermediateDirections.indices) {
                 val angle = Math.toRadians(intermediateAngles[i].toDouble())
@@ -292,7 +280,6 @@ class CompassView @JvmOverloads constructor(
             }
         }
 
-
         val markerY = centerY - radius - 8f
         markerPath.reset()
         markerPath.moveTo(centerX, markerY - 2f)
@@ -308,18 +295,15 @@ class CompassView @JvmOverloads constructor(
         markerPath.close()
         canvas.drawPath(markerPath, markerPaint)
 
-
         directionPaint.shader = centerShader
         directionPaint.style = Paint.Style.FILL
         canvas.drawCircle(centerX, centerY, 35f, directionPaint)
-
 
         directionPaint.shader = null
         directionPaint.style = Paint.Style.STROKE
         directionPaint.color = outerRingColor
         directionPaint.strokeWidth = 3f
         canvas.drawCircle(centerX, centerY, 35f, directionPaint)
-
 
         textPaint.textSize = 64f
         textPaint.color = ThemeManager.color(context, R.attr.appTextPrimary)
@@ -330,7 +314,6 @@ class CompassView @JvmOverloads constructor(
             centerY + textBounds.height() / 2f - 5f,
             textPaint
         )
-
 
         textPaint.textSize = 28f
         val azimuthText = "${azimuth.toInt()}°"
@@ -347,7 +330,6 @@ class CompassView @JvmOverloads constructor(
         val path = Path()
         val size = radius * 0.6f
 
-
         for (i in 0..100) {
             val t = (i / 100f) * 2 * PI.toFloat()
             val scale = 2 / (3 - cos(2 * t))
@@ -360,7 +342,6 @@ class CompassView @JvmOverloads constructor(
         path.close()
 
         canvas.drawPath(path, calibrationPaint)
-
 
         val dotT = calibrationPhase
         val dotScale = 2 / (3 - cos(2 * dotT))

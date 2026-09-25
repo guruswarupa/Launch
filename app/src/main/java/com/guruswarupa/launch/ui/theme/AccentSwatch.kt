@@ -4,15 +4,6 @@ import android.graphics.Color
 import androidx.annotation.StyleRes
 import com.guruswarupa.launch.R
 
-/**
- * A curated accent color, layered on top of the selected [ThemePalette] via
- * [ThemeManager.apply]. [overlayRes] is null for [PALETTE], the default sentinel meaning "use
- * the palette's own native accent" — no overlay is applied in that case, which is why existing
- * users see no change until they deliberately pick a swatch.
- *
- * [previewColor] is a literal int (not resolved from the active theme) so the swatch grid in
- * Settings always shows each option's true color.
- */
 data class AccentSwatch(
     val id: String,
     @StyleRes val overlayRes: Int?,
@@ -38,7 +29,6 @@ data class AccentSwatch(
         val SAND = swatch("sand", R.style.ThemeOverlay_Launch_Accent_Sand, "#C9A97E")
         val MONO = swatch("mono", R.style.ThemeOverlay_Launch_Accent_Mono, "#E6E6E6")
 
-        /** PALETTE first — it's the default so it leads the swatch grid too. */
         val ALL = listOf(
             PALETTE, BLUE, INDIGO, VIOLET, MAGENTA, PINK, RED, CORAL,
             AMBER, LIME, GREEN, TEAL, CYAN, SKY, SLATE, SAND, MONO

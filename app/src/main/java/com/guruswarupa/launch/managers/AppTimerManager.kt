@@ -231,7 +231,6 @@ class AppTimerManager(private val context: Context) {
 
         currentDialog = dialog
 
-
         fixDialogItemsTextColor(dialog)
     }
 
@@ -257,7 +256,6 @@ class AppTimerManager(private val context: Context) {
 
                     }
                 }
-
 
                 listView.doOnLayout {
                     try {
@@ -346,7 +344,6 @@ class AppTimerManager(private val context: Context) {
                     prefs.edit { remove("timer_remaining_$packageName") }
                 }
 
-
                 mainHandler.post {
                     Toast.makeText(context, context.getString(R.string.toast_time_s_up_closing_app_and_returning_to_launcher), Toast.LENGTH_SHORT).show()
                     returnToLauncher(packageName)
@@ -355,7 +352,6 @@ class AppTimerManager(private val context: Context) {
                 }
             }
         }.start()
-
 
         launchApp(packageName)
     }
@@ -377,7 +373,6 @@ class AppTimerManager(private val context: Context) {
 
             val launcherPackageName = context.packageName
 
-
             try {
                 val launcherIntent = context.packageManager.getLaunchIntentForPackage(launcherPackageName)
                 if (launcherIntent != null) {
@@ -387,7 +382,6 @@ class AppTimerManager(private val context: Context) {
                                           Intent.FLAG_ACTIVITY_CLEAR_TOP or
                                           Intent.FLAG_ACTIVITY_SINGLE_TOP
                     context.startActivity(launcherIntent)
-
 
                     CoroutineScope(Dispatchers.Main + NonCancellable).launch {
                         delay(500)
@@ -399,7 +393,6 @@ class AppTimerManager(private val context: Context) {
 
             }
 
-
             val intent = Intent(Intent.ACTION_MAIN)
             intent.addCategory(Intent.CATEGORY_HOME)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
@@ -407,7 +400,6 @@ class AppTimerManager(private val context: Context) {
                           Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or
                           Intent.FLAG_ACTIVITY_CLEAR_TOP
             context.startActivity(intent)
-
 
             CoroutineScope(Dispatchers.Main + NonCancellable).launch {
                 delay(500)
@@ -420,7 +412,6 @@ class AppTimerManager(private val context: Context) {
                 intent.addCategory(Intent.CATEGORY_HOME)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
-
 
                 CoroutineScope(Dispatchers.Main + NonCancellable).launch {
                     delay(500)
@@ -439,9 +430,6 @@ class AppTimerManager(private val context: Context) {
                 val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
                     ?: return@runOnBackgroundThread
 
-                // Best-effort background-process cleanup only. A third-party launcher cannot
-                // force-stop a foreground app; the real enforcement is returning the user to
-                // the home screen via returnToLauncher().
                 activityManager.killBackgroundProcesses(packageName)
             } catch (_: Exception) {
             }

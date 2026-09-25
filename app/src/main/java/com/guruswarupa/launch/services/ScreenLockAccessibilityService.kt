@@ -23,7 +23,6 @@ import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.widget.FrameLayout
@@ -89,11 +88,11 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private var isTorchOn = false
     private lateinit var focusModeManager: FocusModeManager
     private lateinit var sharedPreferences: SharedPreferences
-    
+
     private var isFocusModeReceiverRegistered = false
     private var isSettingsReceiverRegistered = false
     private var isScreenReceiverRegistered = false
-    
+
     private val focusModeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "com.guruswarupa.launch.FOCUS_MODE_CHANGED") {
@@ -208,7 +207,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         }, 500)
     }
 
-
     private data class EdgePanelAppEntry(
         val packageName: String,
         val label: String,
@@ -224,10 +222,8 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             try {
                 cameraManager.registerTorchCallback(torchCallback, null)
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to register torch callback", e)
             }
         }
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(focusModeReceiver, IntentFilter("com.guruswarupa.launch.FOCUS_MODE_CHANGED"), RECEIVER_NOT_EXPORTED)
@@ -342,7 +338,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     MotionEvent.ACTION_UP -> {
                         val dx = abs(event.rawX - initialTouchX)
                         val dy = abs(event.rawY - initialTouchY)
-
 
                         if (!isMoving) {
                             toggleMenu()
@@ -566,14 +561,12 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             val overlay = LayoutInflater.from(themedContext).inflate(R.layout.layout_edge_panel_overlay, null, false)
             edgePanelView = overlay
 
-
             val scrim = overlay.findViewById<View>(R.id.edge_panel_scrim)
             scrim?.setOnClickListener {
                 hideEdgePanel()
             }
 
             scrim?.alpha = 0f
-
 
             val customizeButton = overlay.findViewById<ImageView>(R.id.edge_panel_customize_button)
             customizeButton?.setOnClickListener {
@@ -584,10 +577,8 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     })
                     hideEdgePanel()
                 } catch (e: Exception) {
-                    Log.e("EdgePanel", "Error opening config: ${e.message}")
                 }
             }
-
 
             val params = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -606,12 +597,10 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             windowManager?.addView(overlay, params)
             isEdgePanelVisible = true
 
-
             populateEdgePanel()
             positionEdgePanelSheet()
 
         } catch (e: Exception) {
-            Log.e("EdgePanel", "Error showing panel: ${e.message}", e)
             edgePanelView = null
             isEdgePanelVisible = false
         }
@@ -630,7 +619,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 else
                     sheet.width.toFloat() + 16.dpToPx()
 
-
                 sheet.animate()
                     .translationX(slideOut)
                     .alpha(0f)
@@ -643,7 +631,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 cleanupEdgePanel(overlay)
             }
         } catch (e: Exception) {
-            Log.e("EdgePanel", "Error hiding panel: ${e.message}")
             cleanupEdgePanel(overlay)
         }
     }
@@ -652,7 +639,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         try {
             windowManager?.removeView(overlay)
         } catch (e: Exception) {
-            Log.e("EdgePanel", "Error removing panel: ${e.message}")
         } finally {
             if (edgePanelView === overlay) {
                 edgePanelView = null
@@ -745,7 +731,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                             return true
                         }
 
-
                         if (moved && abs(dx) > 30.dpToPx()) {
                             params.gravity = if (dx > 0) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
                             updateControlCenterTriggerPosition(params)
@@ -763,7 +748,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                         }
                         updateControlCenterTriggerPosition(params)
                         persistControlCenterTriggerPosition(params)
-
 
                         if (moved && isSwipeToOpenControlCenter(dx)) {
                             v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -801,7 +785,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
 
     private fun populateEdgePanel() {
         val overlay = edgePanelView ?: run {
-            Log.w("EdgePanel", "populateEdgePanel called but overlay is null")
             return
         }
 
@@ -814,17 +797,14 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             val usagePermissionButton = overlay.findViewById<ImageView>(R.id.edge_panel_usage_permission_button)
 
             if (recentContainer == null || pinnedContainer == null) {
-                Log.e("EdgePanel", "Containers not found in layout")
                 return
             }
 
             recentContainer.removeAllViews()
             pinnedContainer.removeAllViews()
 
-
             val showRecent = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
                 .getBoolean(Constants.Prefs.EDGE_PANEL_SHOW_RECENT, true)
-
 
             val pinnedPackages = getPinnedAppPackages()
 
@@ -839,18 +819,16 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 if (!pinnedPackages.contains(packageName)) {
                     resolveEdgePanelAppEntry(packageName)?.let { appInfo ->
                         recentApps.add(appInfo)
-                    } ?: Log.w("EdgePanel", "Recent app not found: $packageName")
+                    }
                 }
             }
-
 
             val pinnedApps = mutableListOf<EdgePanelAppEntry>()
             pinnedPackages.forEach { packageName ->
                 resolveEdgePanelAppEntry(packageName)?.let { appInfo ->
                     pinnedApps.add(appInfo)
-                } ?: Log.w("EdgePanel", "Pinned app not found: $packageName")
+                }
             }
-
 
             recentApps.forEach { entry ->
                 val appView = createAppIconView(entry)
@@ -859,7 +837,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 }
             }
 
-
             pinnedApps.forEach { entry ->
                 val appView = createAppIconView(entry)
                 if (appView != null) {
@@ -867,13 +844,11 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 }
             }
 
-
             recentLabel?.visibility = if (recentApps.isNotEmpty()) View.VISIBLE else View.GONE
             recentContainer.visibility = if (recentApps.isNotEmpty()) View.VISIBLE else View.GONE
             pinnedLabel?.visibility = if (pinnedApps.isNotEmpty()) View.VISIBLE else View.GONE
             pinnedContainer.visibility = if (pinnedApps.isNotEmpty()) View.VISIBLE else View.GONE
             recentEmpty?.visibility = if (recentApps.isEmpty() && pinnedApps.isEmpty()) View.VISIBLE else View.GONE
-
 
             val hasUsageAccess = appUsageStatsManager.hasUsageStatsPermission()
             usagePermissionButton?.visibility = if (hasUsageAccess) View.GONE else View.VISIBLE
@@ -884,12 +859,10 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     })
                     hideEdgePanel()
                 } catch (e: Exception) {
-                    Log.e("EdgePanel", "Error opening usage settings: ${e.message}")
                 }
             }
 
         } catch (e: Exception) {
-            Log.e("EdgePanel", "Error populating panel: ${e.message}", e)
         }
     }
 
@@ -901,7 +874,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                     packageManager.getApplicationInfo(packageName, 0)
                 ).toString()
             val icon = loadEdgePanelIcon(packageName, resolveInfo) ?: run {
-                Log.w("EdgePanel", "Skipping app without icon: $packageName")
                 return null
             }
 
@@ -911,7 +883,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 icon = icon
             )
         } catch (e: Exception) {
-            Log.w("EdgePanel", "Error resolving app entry for $packageName: ${e.message}")
             null
         }
     }
@@ -921,7 +892,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             resolveInfo?.loadIcon(packageManager)
                 ?: packageManager.getApplicationIcon(packageName)
         } catch (e: Exception) {
-            Log.w("EdgePanel", "Failed to load icon for $packageName: ${e.message}")
             null
         } ?: return null
 
@@ -948,24 +918,20 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             val view = LayoutInflater.from(this).inflate(R.layout.item_edge_panel_app, null, false)
             val iconView = view.findViewById<ImageView>(R.id.edge_panel_app_icon)
 
-
             iconView.setImageDrawable(entry.icon)
             iconView.visibility = View.VISIBLE
-
 
             view.setOnClickListener { clickView ->
                 try {
                     clickView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                     launchEdgePanelApp(entry.packageName)
                 } catch (e: Exception) {
-                    Log.e("EdgePanel", "Error launching app: ${e.message}")
                 }
             }
 
             view.contentDescription = entry.label
             view
         } catch (e: Exception) {
-            Log.e("EdgePanel", "Error creating app view for ${entry.label}: ${e.message}")
             null
         }
     }
@@ -1026,7 +992,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             return false
         }
 
-
         return try {
             val appInfo = packageManager.getApplicationInfo(packageName, 0)
 
@@ -1058,18 +1023,14 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         val screenWidth = getScreenWidth()
         val bottomInset = getBottomSystemInset()
 
-
         val isLeft = isEdgeHandleOnLeft()
-
 
         val topMargin = 12.dpToPx()
         val bottomMargin = maxOf(40.dpToPx(), bottomInset + 24.dpToPx())
         val sideMargin = 16.dpToPx()
         val triggerSideSpacing = 80.dpToPx()
 
-
         val availableHeight = (screenHeight - topMargin - bottomMargin).coerceAtLeast(220.dpToPx())
-
 
         val layoutParams = (sheet.layoutParams as? FrameLayout.LayoutParams)
             ?: FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
@@ -1082,9 +1043,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         layoutParams.gravity = if (isLeft) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
         sheet.layoutParams = layoutParams
 
-
         sheet.requestLayout()
-
 
         val slideDistance = if (isLeft) {
             (sideMargin + triggerSideSpacing).toFloat()
@@ -1092,11 +1051,9 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             -(sideMargin + triggerSideSpacing).toFloat()
         }
 
-
         sheet.translationX = slideDistance
         sheet.alpha = 0f
         sheet.visibility = View.VISIBLE
-
 
         sheet.animate()
             .translationX(0f)
@@ -1363,14 +1320,12 @@ class ScreenLockAccessibilityService : AccessibilityService() {
 
         params.gravity = Gravity.CENTER
 
-
         val menuContainer = shortcutMenu?.findViewById<View>(R.id.menu_container)
         val screenWidth = getScreenWidth()
         val targetWidth = (screenWidth * 0.8).toInt()
         menuContainer?.layoutParams = menuContainer?.layoutParams?.apply {
             width = targetWidth
         }
-
 
         shortcutMenu?.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_OUTSIDE) {
@@ -1402,7 +1357,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private fun setupMenuListeners(view: View) {
         val menuContainer = view.findViewById<View>(R.id.menu_container)
         menuContainer?.setOnClickListener {  }
-
 
         val brightnessSeekBar = view.findViewById<SeekBar>(R.id.brightness_seekbar)
         if (Settings.System.canWrite(this)) {
@@ -1436,7 +1390,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             }
         }
 
-
         val volumeMediaSeekBar = view.findViewById<SeekBar>(R.id.volume_media_seekbar)
         val imgVolumeMedia = view.findViewById<ImageView>(R.id.img_volume_media_icon)
         try {
@@ -1460,7 +1413,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             })
         } catch (_: Exception) {}
-
 
         val volumeRingSeekBar = view.findViewById<SeekBar>(R.id.volume_ring_seekbar)
         val imgVolumeRing = view.findViewById<ImageView>(R.id.img_volume_ring_icon)
@@ -1486,7 +1438,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             })
         } catch (_: Exception) {}
 
-
         val volumeAlarmSeekBar = view.findViewById<SeekBar>(R.id.volume_alarm_seekbar)
         val imgVolumeAlarm = view.findViewById<ImageView>(R.id.img_volume_alarm_icon)
         try {
@@ -1511,14 +1462,12 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             })
         } catch (_: Exception) {}
 
-
         val linearLayout = view.findViewById<LinearLayout>(R.id.shortcuts_linear_layout)
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
         val shortcutList = prefs.getString(Constants.Prefs.CONTROL_CENTER_SHORTCUTS, DEFAULT_SHORTCUTS)
             ?.split(",") ?: DEFAULT_SHORTCUTS.split(",")
 
         linearLayout?.removeAllViews()
-
 
         val itemWidth = 64.dpToPx()
         val itemMargin = 8.dpToPx()
@@ -1536,7 +1485,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 isFocusable = true
             }
 
-
             val iconSlot = View(this).apply {
                 layoutParams = LinearLayout.LayoutParams(56.dpToPx(), 56.dpToPx()).apply {
                     gravity = Gravity.CENTER
@@ -1544,14 +1492,12 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 background = resources.getDrawable(R.drawable.bg_edge_panel_icon_slot, theme)
             }
 
-
             val icon = ImageView(this).apply {
                 layoutParams = FrameLayout.LayoutParams((56.dpToPx() * 0.6).toInt(), (56.dpToPx() * 0.6).toInt()).apply {
                     gravity = Gravity.CENTER
                 }
                 setPadding(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
             }
-
 
             val slotContainer = FrameLayout(this).apply {
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
@@ -1561,7 +1507,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 addView(icon)
             }
             shortcutContainer.addView(slotContainer)
-
 
             val label = TextView(this).apply {
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
@@ -1654,7 +1599,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                         try {
                             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                         } catch (e: Exception) {
-                            Log.e("ScreenLock", "Error opening location settings: ${e.message}")
                         }
                         hideMenu()
                     }
@@ -1749,26 +1693,20 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     private fun launchQrScanner() {
         val qrIntents = mutableListOf<Intent>()
 
-
         qrIntents.add(Intent("com.google.android.googlequicksearchbox.GOOGLE_LENS").apply {
             setPackage("com.google.android.googlequicksearchbox")
         })
 
-
         val lensIntent = packageManager.getLaunchIntentForPackage("com.google.ar.lens")
         if (lensIntent != null) qrIntents.add(lensIntent)
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             qrIntents.add(Intent("android.settings.QR_CODE_SCANNER"))
         }
-        
-        
-        qrIntents.add(Intent(Intent.ACTION_VIEW, Uri.parse("googlelens://v1/scan")))
-        
-        
-        qrIntents.add(Intent("com.google.zxing.client.android.SCAN"))
 
+        qrIntents.add(Intent(Intent.ACTION_VIEW, Uri.parse("googlelens://v1/scan")))
+
+        qrIntents.add(Intent("com.google.zxing.client.android.SCAN"))
 
         qrIntents.add(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).apply {
             putExtra("android.intent.extra.USE_QR_CODE", true)
@@ -1832,7 +1770,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         try {
             startActivity(Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } catch (e: Exception) {
-            Log.e("ScreenLock", "Error opening airplane mode settings: ${e.message}")
         }
     }
 
@@ -1908,7 +1845,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                                 else NotificationManager.INTERRUPTION_FILTER_ALL
 
                 notificationManager.setInterruptionFilter(newFilter)
-
 
                 updateDndIconOnly(icon)
             } else {
@@ -2037,34 +1973,31 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && torchCallback != null) {
             cameraManager.unregisterTorchCallback(torchCallback)
         }
-        
+
         if (isFocusModeReceiverRegistered) {
             try {
                 unregisterReceiver(focusModeReceiver)
                 isFocusModeReceiverRegistered = false
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to unregister focus mode receiver", e)
             }
         }
-        
+
         if (isSettingsReceiverRegistered) {
             try {
                 unregisterReceiver(settingsReceiver)
                 isSettingsReceiverRegistered = false
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to unregister settings receiver", e)
             }
         }
-        
+
         if (isScreenReceiverRegistered && screenReceiver != null) {
             try {
                 unregisterReceiver(screenReceiver)
                 isScreenReceiverRegistered = false
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to unregister screen receiver", e)
             }
         }
-        
+
         removeEdgePanel()
         removeControlCenterTrigger()
         super.onDestroy()
@@ -2081,9 +2014,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
 
-
         if (!focusModeManager.isFocusModeEnabled()) return
-
 
         val modeType = sharedPreferences.getString(
             Constants.Prefs.FOCUS_MODE_TYPE,
@@ -2094,7 +2025,6 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             val packageName = event.packageName?.toString()
             val className = event.className?.toString()
-
 
             val blockedSettingsPackages = setOf(
                 "com.android.settings",
@@ -2112,14 +2042,12 @@ class ScreenLockAccessibilityService : AccessibilityService() {
                 Toast.makeText(this, this.getString(R.string.toast_settings_blocked_strict_focus_mode_is_active), Toast.LENGTH_SHORT).show()
             }
 
-
             if (packageName == "com.guruswarupa.launch" && className != null) {
                 if (className.contains("SettingsActivity")) {
                     performGlobalAction(GLOBAL_ACTION_BACK)
                     Toast.makeText(this, this.getString(R.string.toast_launcher_settings_blocked_strict_focus_mode_is_a), Toast.LENGTH_SHORT).show()
                 }
             }
-
 
             if (packageName == "com.android.systemui" && className != null) {
                 if (className.contains("Settings") ||

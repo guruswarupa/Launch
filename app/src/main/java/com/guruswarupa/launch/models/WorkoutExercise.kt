@@ -82,12 +82,9 @@ data class WorkoutExercise(
         val today = getCurrentDate()
         val todayCountValue = todayCount
 
-
         totalCount -= todayCountValue
 
-
         dailyCounts = dailyCounts - today
-
 
         if (todayCountValue == bestDay && todayCountValue > 0) {
             bestDay = if (dailyCounts.isNotEmpty()) {
@@ -96,7 +93,6 @@ data class WorkoutExercise(
                 0
             }
         }
-
 
         todayCount = 0
     }
@@ -134,7 +130,6 @@ data class WorkoutExercise(
                 val typeStr = parts.getOrNull(2) ?: "REPS"
                 val exerciseType = if (typeStr == "TIME") ExerciseType.TIME else ExerciseType.REPS
 
-
                 val todayCountIndex = if (typeStr == "TIME" || typeStr == "REPS") 3 else 2
                 val totalCountIndex = todayCountIndex + 1
                 val bestDayIndex = totalCountIndex + 1
@@ -148,7 +143,6 @@ data class WorkoutExercise(
                 } else {
                     emptySet()
                 }
-
 
                 val dailyCountsStr = parts.getOrNull(dailyCountsIndex)?.takeIf { it.isNotEmpty() } ?: ""
                 val dailyCounts = if (dailyCountsStr.isNotEmpty()) {

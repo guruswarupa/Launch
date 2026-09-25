@@ -20,14 +20,6 @@ import com.guruswarupa.launch.managers.WebAppManager
 import com.guruswarupa.launch.utils.AppDisplayHelper
 import java.util.concurrent.ExecutorService
 
-/**
- * Lets the user pick which apps to hide while focus mode is active - a blocklist rather than an
- * allowlist, since most people only want to shut off a handful of distracting apps and keep
- * everything else reachable. Icons load off the main thread through a small [LruCache] so
- * scrolling a long app list stays smooth (the previous version called [ResolveInfo.loadIcon]
- * synchronously in [onBindViewHolder], which is a real decode on every bind); labels are resolved
- * once up front instead of on every bind/filter pass.
- */
 class FocusModeAppAdapter(
     private val appList: List<ResolveInfo>,
     private val packageManager: PackageManager,
@@ -93,8 +85,7 @@ class FocusModeAppAdapter(
                         }
                     }
                 } catch (_: java.util.concurrent.RejectedExecutionException) {
-                    // The host activity is finishing and already shut the executor down - the
-                    // row is about to be destroyed too, so there's nothing to show it in.
+
                 }
             }
         }
@@ -117,7 +108,6 @@ class FocusModeAppAdapter(
         }
     }
 
-    /** Narrows the visible rows to those whose label contains [query] (case-insensitive). */
     fun filter(query: String) {
         filtered = if (query.isBlank()) {
             appList

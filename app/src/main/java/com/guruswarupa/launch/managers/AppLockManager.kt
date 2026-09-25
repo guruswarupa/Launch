@@ -58,18 +58,13 @@ class AppLockManager(private val context: Context) {
         return if (existingSalt != null) {
             hashPinWithSalt(pin, existingSalt)
         } else {
-            // Legacy fallback for PINs set before salting was introduced. Verification against
-            // this weaker, unsalted hash should only ever happen once per such user - see
-            // migrateUnsaltedPinIfNeeded, called right after a successful verify.
+
             val digest = MessageDigest.getInstance("SHA-256")
             val hashBytes = digest.digest(pin.toByteArray())
             hashBytes.joinToString("") { "%02x".format(it) }
         }
     }
 
-    // Upgrades a legacy unsalted PIN hash to a salted one after it's been verified correct, so
-    // the weaker comparison in hashPin() is only ever reachable once per legacy user instead of
-    // indefinitely (e.g. if PREF_PIN_SALT were ever cleared independently of PREF_PIN_HASH).
     private fun migrateUnsaltedPinIfNeeded(verifiedPin: String) {
         if (sharedPreferences.getString(PREF_PIN_SALT, null) == null) {
             saveNewPin(verifiedPin)
@@ -84,7 +79,6 @@ class AppLockManager(private val context: Context) {
             putString(PREF_PIN_HASH, hash)
         }
     }
-
 
     fun setupPin(callback: (Boolean) -> Unit) {
         val pinInput = EditText(context).apply {
@@ -134,20 +128,17 @@ class AppLockManager(private val context: Context) {
             .show()
     }
 
-
     fun verifyPin(callback: (Boolean) -> Unit) {
         if (!isPinSet()) {
             callback(true)
             return
         }
 
-
         val lastAuthTime = sharedPreferences.getLong(PREF_LAST_AUTH_TIME, 0)
         if (System.currentTimeMillis() - lastAuthTime < AUTH_TIMEOUT) {
             callback(true)
             return
         }
-
 
         if (isFingerprintEnabled()) {
             showBiometricPrompt(callback)
@@ -241,11 +232,9 @@ class AppLockManager(private val context: Context) {
             .show()
     }
 
-
     fun isPinSet(): Boolean {
         return sharedPreferences.getString(PREF_PIN_HASH, null)?.isNotEmpty() == true
     }
-
 
     fun isFingerprintAvailable(): Boolean {
         val biometricManager = BiometricManager.from(context)
@@ -255,26 +244,21 @@ class AppLockManager(private val context: Context) {
         }
     }
 
-
     fun isFingerprintEnabled(): Boolean {
         return sharedPreferences.getBoolean(PREF_FINGERPRINT_ENABLED, false) && isFingerprintAvailable()
     }
-
 
     fun setFingerprintEnabled(enabled: Boolean) {
         sharedPreferences.edit { putBoolean(PREF_FINGERPRINT_ENABLED, enabled) }
     }
 
-
     fun isAppLockEnabled(): Boolean {
         return sharedPreferences.getBoolean(PREF_IS_APP_LOCK_ENABLED, false) && isPinSet()
     }
 
-
     fun setAppLockEnabled(enabled: Boolean) {
         sharedPreferences.edit { putBoolean(PREF_IS_APP_LOCK_ENABLED, enabled) }
     }
-
 
     fun lockApp(packageName: String) {
         val lockedApps = getLockedApps().toMutableSet()
@@ -282,23 +266,19 @@ class AppLockManager(private val context: Context) {
         sharedPreferences.edit { putStringSet(PREF_LOCKED_APPS, lockedApps) }
     }
 
-
     fun unlockApp(packageName: String) {
         val lockedApps = getLockedApps().toMutableSet()
         lockedApps.remove(packageName)
         sharedPreferences.edit { putStringSet(PREF_LOCKED_APPS, lockedApps) }
     }
 
-
     fun getLockedApps(): Set<String> {
         return sharedPreferences.getStringSet(PREF_LOCKED_APPS, emptySet()) ?: emptySet()
     }
 
-
     fun isAppLocked(packageName: String): Boolean {
         return isAppLockEnabled() && getLockedApps().contains(packageName)
     }
-
 
     fun changePin(callback: (Boolean) -> Unit) {
         if (!isPinSet()) {
@@ -330,7 +310,6 @@ class AppLockManager(private val context: Context) {
             .setNegativeButton(R.string.cancel_button) { _, _ -> callback(false) }
             .show()
     }
-
 
     fun resetAppLock(callback: (Boolean) -> Unit) {
         if (!isPinSet()) {
@@ -378,7 +357,6 @@ class AppLockManager(private val context: Context) {
             remove(PREF_FINGERPRINT_ENABLED)
         }
     }
-
 
     fun clearAuthTimeout() {
         sharedPreferences.edit { remove(PREF_LAST_AUTH_TIME) }

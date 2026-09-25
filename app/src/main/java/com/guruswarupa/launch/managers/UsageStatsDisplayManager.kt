@@ -18,9 +18,6 @@ import com.guruswarupa.launch.utils.TimeUtils
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
-
-
-
 class UsageStatsDisplayManager(
     private val activity: MainActivity,
     private val usageStatsManager: AppUsageStatsManager,
@@ -38,7 +35,6 @@ class UsageStatsDisplayManager(
             showDailyUsageDialog(day, appUsages)
         }
 
-
         initializePermissionButton()
     }
 
@@ -47,7 +43,6 @@ class UsageStatsDisplayManager(
         permissionButton.setOnClickListener {
             requestUsageStatsPermission()
         }
-
 
         updatePermissionButtonVisibility()
     }
@@ -65,9 +60,6 @@ class UsageStatsDisplayManager(
         val intent = android.content.Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS)
         activity.startActivity(intent)
     }
-
-
-
 
     fun refreshPermissionButton() {
         updatePermissionButtonVisibility()
@@ -137,17 +129,13 @@ class UsageStatsDisplayManager(
         val appUsageList = dialogView.findViewById<RecyclerView>(R.id.app_usage_list)
         val closeButton = dialogView.findViewById<Button>(R.id.close_button)
 
-
         dayTitle.text = day
-
 
         val totalUsage = appUsages.values.sum()
         val totalTimeText = formatUsageTimeForDialog(totalUsage)
         totalTime.text = activity.getString(R.string.total_usage_format, totalTimeText)
 
-
         pieChart.setAppUsageData(appUsages)
-
 
         val sortedApps = appUsages.toList().sortedByDescending { it.second }
         val totalUsageFloat = totalUsage.toFloat()
@@ -159,7 +147,6 @@ class UsageStatsDisplayManager(
 
         appUsageList.layoutManager = LinearLayoutManager(activity)
         appUsageList.adapter = AppUsageAdapter(appUsageItems)
-
 
         val dialog = android.app.AlertDialog.Builder(activity, R.style.CustomDialogTheme)
             .setView(dialogView)

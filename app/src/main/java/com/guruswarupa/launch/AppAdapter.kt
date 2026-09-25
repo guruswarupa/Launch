@@ -167,22 +167,12 @@ class AppAdapter(
         }
     }
 
-    /**
-     * Consulted before the default long-press context menu. Returning true consumes the
-     * long-press (e.g. the stock drawer starts a drag reorder instead of opening the menu).
-     * Also used to start a drag for folder entries.
-     */
     var onItemLongPress: ((ViewHolder) -> Boolean)? = null
 
-    /** Fired when a folder entry (see [com.guruswarupa.launch.managers.AppOrderManager]) is tapped. Receives the folder id. */
     var onFolderClick: ((String) -> Unit)? = null
 
-    /** Supplies the (up to 9) member apps of a folder, for the mini icon-grid preview. */
     var folderAppsResolver: ((String) -> List<ResolveInfo>)? = null
 
-    // Bounded: previewKey changes whenever a folder's membership/order changes, so an unbounded
-    // map here would accumulate a composited bitmap per historical folder state for the whole
-    // session as folders get reorganized.
     private val folderPreviewCache = android.util.LruCache<String, Drawable>(30)
 
     private fun bindFolder(holder: ViewHolder, appInfo: ResolveInfo) {
@@ -198,10 +188,7 @@ class AppAdapter(
         configureLabelVisibility(holder)
         configureIconVisibility(holder)
         iconLoader.updateIconSize(holder.appIcon)
-        // Folders render as a plain, unclipped transparent square (not the user's chosen
-        // round/squircle/etc. icon shape) so the mini icon grid inside isn't cropped at the
-        // corners - both the ShapeableImageView's own clip and IconLoader.setIconDrawable's
-        // bitmap masking are bypassed here.
+
         holder.appIcon?.shapeAppearanceModel = com.google.android.material.shape.ShapeAppearanceModel.builder().build()
 
         val cachedPreview = folderPreviewCache[previewKey]
@@ -251,9 +238,7 @@ class AppAdapter(
         val bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
         val canvas = android.graphics.Canvas(bitmap)
         val count = icons.size.coerceAtMost(9)
-        // Always a square NxN virtual grid (2x2 or 3x3) so cells stay square even when there
-        // are fewer icons than cells - unused cells are simply left blank, matching how stock
-        // launchers render 2-3 app folder previews instead of stretching icons to fill space.
+
         val columns = if (count <= 4) 2 else 3
         val rows = columns
         val gap = size * 0.06f
@@ -333,9 +318,6 @@ class AppAdapter(
         notifyItemRangeChanged(0, currentList.size, PAYLOAD_TYPOGRAPHY)
     }
 
-    // For memory-pressure callbacks (onTrimMemory/onLowMemory): evicts only the in-memory
-    // icon caches, not the disk cache, so icons don't have to be fully re-decoded the next
-    // time the launcher is foregrounded - just re-read from disk.
     fun trimMemoryCaches() {
         iconLoader.clearIconCaches(clearDiskCache = false)
         iconLoader.clearContactPhotoCache()
@@ -378,8 +360,6 @@ class AppAdapter(
         }
     }
 
-    // Drops this package's cached icon (memory + disk) and rebinds only its row(s), so an
-    // app install/update doesn't force a re-decode of every other app's icon.
     fun invalidateIconForPackage(packageName: String) {
         iconLoader.invalidatePackage(packageName)
         currentList.forEachIndexed { index, appInfo ->
@@ -531,9 +511,7 @@ class AppAdapter(
         val packageName = appInfo.activityInfo.packageName
 
         if (packageName == com.guruswarupa.launch.managers.AppOrderManager.FOLDER_PACKAGE) {
-            // Payload-only rebinds (icon style/size/typography refreshes) would otherwise treat
-            // the folder placeholder as a regular app and clobber its square, unclipped preview
-            // with a shaped fallback icon - always do a full rebind instead.
+
             bindFolder(holder, appInfo)
             return
         }
@@ -761,7 +739,7 @@ class AppAdapter(
             val (phoneNumber, photoUri) = withContext(Dispatchers.IO) {
                 getPhoneNumberForContact(contactName) to getPhotoUriForContact(contactName)
             }
-            
+
             val options = listOf(
                 activity.getString(R.string.call_button) to R.drawable.ic_phone,
                 activity.getString(R.string.whatsapp) to R.drawable.ic_whatsapp,

@@ -16,9 +16,6 @@ import com.guruswarupa.launch.ui.adapters.TransactionAdapter
 import java.util.Locale
 import com.guruswarupa.launch.ui.theme.ThemeManager
 
-
-
-
 class FinanceWidgetManager(
     private val activity: MainActivity,
     private val sharedPreferences: SharedPreferences,
@@ -40,11 +37,9 @@ class FinanceWidgetManager(
             addTransaction(false)
         }
 
-
         balanceText.setOnClickListener {
             showTransactionHistory()
         }
-
 
         activity.findViewById<LinearLayout>(R.id.balance_card)?.setOnClickListener {
             showTransactionHistory()
@@ -64,7 +59,6 @@ class FinanceWidgetManager(
 
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         spinner.adapter = adapter
-
 
         val currentCurrency = financeManager.getCurrencyCode()
         val index = FinanceManager.SUPPORTED_CURRENCIES.keys.indexOf(currentCurrency)
@@ -94,9 +88,7 @@ class FinanceWidgetManager(
         val monthlyIncome = financeManager.getMonthlyIncome()
         val netSavings = monthlyIncome - monthlyExpenses
 
-
         balanceText.text = String.format(Locale.getDefault(), "%s%.2f", currencySymbol, balance)
-
 
         val netText = if (netSavings >= 0) {
             "This Month: +$currencySymbol${String.format(Locale.getDefault(), "%.2f", netSavings)}"
@@ -121,7 +113,6 @@ class FinanceWidgetManager(
                     financeManager.addExpense(amount, description)
                 }
 
-
                 amountInput.text.clear()
                 descriptionInput.text.clear()
 
@@ -145,7 +136,6 @@ class FinanceWidgetManager(
 
     private fun showTransactionHistory() {
         val currencySymbol = financeManager.getCurrency()
-
 
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_transaction_history, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.transaction_recycler_view)

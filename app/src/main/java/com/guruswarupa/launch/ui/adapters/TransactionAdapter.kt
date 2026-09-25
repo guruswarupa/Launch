@@ -26,7 +26,6 @@ class TransactionAdapter(
     private val onDeleteClick: (Transaction) -> Unit
 ) : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
-
     private val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     private val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
@@ -64,20 +63,16 @@ class TransactionAdapter(
 
         TypographyManager.applyToView(holder.itemView)
 
-
         val isIncome = transaction.type == "income"
         val typeLabel = context.getString(if (isIncome) R.string.income else R.string.expense)
         holder.typeText.text = typeLabel
 
-
         holder.descriptionText.text = transaction.description.ifEmpty { typeLabel }
-
 
         val date = Date(transaction.timestamp)
         val dateStr = dateFormat.format(date)
         val timeStr = timeFormat.format(date)
         holder.dateText.text = context.getString(R.string.date_time_divider_format, dateStr, timeStr)
-
 
         val absAmount = kotlin.math.abs(transaction.amount)
         holder.amountText.text = if (isIncome) {

@@ -52,7 +52,6 @@ class RssFeedPage(
 
         updateTypography()
 
-
         recyclerView.setHasFixedSize(true)
         recyclerView.itemAnimator = null
 
@@ -93,7 +92,7 @@ class RssFeedPage(
         val intensity = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular") ?: "regular"
         val color = TypographyManager.getConfiguredFontColor(activity)
         adapter.updateTypography(scale, style, intensity, color)
-        
+
         TypographyManager.applyToViewTree(rootView.findViewById(R.id.rss_header), scale, style, intensity, color)
         TypographyManager.applyToViewTree(emptyState, scale, style, intensity, color)
     }

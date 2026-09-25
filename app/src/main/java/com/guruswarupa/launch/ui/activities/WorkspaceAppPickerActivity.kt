@@ -27,7 +27,6 @@ import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.AppDisplayHelper
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-/** Full-screen replacement for the old "select apps for workspace" [android.app.AlertDialog]. */
 class WorkspaceAppPickerActivity : AppCompatActivity() {
 
     private lateinit var workspaceManager: WorkspaceManager

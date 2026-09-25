@@ -2,19 +2,16 @@ package com.guruswarupa.launch.models
 
 import android.annotation.SuppressLint
 
-
-
-
 object Constants {
 
     @SuppressLint("unused")
     object Prefs {
         const val PREFS_NAME = "com.guruswarupa.launch.PREFS"
-        /** Wallpaper picker (downloads an image) — NOT the app color theme. See COLOR_THEME. */
+
         const val SELECTED_THEME = "selected_theme"
-        /** App color palette id, e.g. "nord" (default), "dracula", "catppuccin_mocha", "monochrome", "light". */
+
         const val COLOR_THEME = "color_theme"
-        /** Accent swatch id layered on top of COLOR_THEME. "palette" (default) keeps the palette's native accent. */
+
         const val COLOR_ACCENT = "color_accent"
         const val VIEW_PREFERENCE = "view_preference"
         const val VIEW_PREFERENCE_LIST = "list"
@@ -24,11 +21,11 @@ object Constants {
         const val STOCK_HOME_APP_ORDER = "stock_home_app_order"
         const val STOCK_DRAWER_FOLDERS = "stock_drawer_folders"
         const val STOCK_HOME_FOLDERS = "stock_home_folders"
-        /** When false, Stock has no separate drawer - every app lives on the home page instead. */
+
         const val STOCK_DRAWER_ENABLED = "stock_drawer_enabled"
-        /** Max apps/folders the Stock dock can hold (3-5) - capacity only, membership is explicit. */
+
         const val STOCK_HOTSEAT_COUNT = "stock_hotseat_count"
-        /** Explicit, independent order of apps/folders placed in the Stock dock - never auto-derived from home order. */
+
         const val STOCK_DOCK_ORDER = "stock_dock_order"
         const val SHAKE_TORCH_ENABLED = "shake_torch_enabled"
         const val SHAKE_SENSITIVITY = "shake_sensitivity"
@@ -53,15 +50,15 @@ object Constants {
         const val SEARCH_ENGINE = "search_engine"
         const val SMART_SUGGESTIONS_ENABLED = "smart_suggestions_enabled"
         const val AI_ASSISTANT_ENABLED = "ai_assistant_enabled"
-        /** "on_device" or "web" — which of the two lists below is the active assistant. */
+
         const val AI_ASSISTANT_SOURCE_TYPE = "ai_assistant_source_type"
         const val AI_ASSISTANT_SELECTED_MODEL_ID = "ai_assistant_selected_model_id"
         const val AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID = "ai_assistant_selected_web_provider_id"
         const val AI_ASSISTANT_SOURCE_ON_DEVICE = "on_device"
         const val AI_ASSISTANT_SOURCE_WEB = "web"
-        /** Suffix with "_<modelId>" — each catalog model tracks its download state independently. */
+
         const val AI_ASSISTANT_MODEL_STATE_PREFIX = "ai_assistant_model_state_"
-        /** Suffix with "_<modelId>". */
+
         const val AI_ASSISTANT_DOWNLOAD_ID_PREFIX = "ai_assistant_download_id_"
         const val ACCESSIBILITY_SHORTCUT_ENABLED = "accessibility_shortcut_enabled"
         const val CONTROL_CENTER_SHORTCUTS = "control_center_shortcuts"
@@ -123,16 +120,13 @@ object Constants {
         const val POWER_SAVER_MODE = "power_saver_mode"
         const val MINIMAL_MODE_ENABLED = "minimal_mode_enabled"
 
-
         const val VAULT_TIMEOUT_ENABLED = "vault_timeout_enabled"
         const val VAULT_TIMEOUT_DURATION = "vault_timeout_duration"
         const val VAULT_SETUP_COMPLETE = "vault_setup_complete"
 
-
         const val FOCUS_MODE_TYPE = "focus_mode_type"
         const val FOCUS_MODE_TYPE_STRICT = "strict"
         const val FOCUS_MODE_TYPE_CASUAL = "casual"
-
 
         const val DOCK_HIDE_WORK_PROFILE = "dock_hide_work_profile"
         const val DOCK_HIDE_FOCUS_MODE = "dock_hide_focus_mode"
@@ -146,15 +140,11 @@ object Constants {
 
     const val TYPOGRAPHY_FONT_COLOR_DEFAULT = "#FFFFFF"
 
-
     const val FILE_PROVIDER_AUTHORITY_SUFFIX = ".fileprovider"
-
 
     const val SHARED_APKS_DIR = "shared_apks"
 
-
     const val APK_EXTENSION = ".apk"
-
 
     const val MIME_TYPE_APK = "application/vnd.android.package-archive"
     const val MIME_TYPE_ALL = "*/*"
@@ -173,15 +163,15 @@ object Constants {
     }
 
     object Timeouts {
-        const val APP_LIST_CACHE_DURATION_MS = 300000L // 5 minutes
+        const val APP_LIST_CACHE_DURATION_MS = 300000L
         const val WORK_PROFILE_EMPTY_RETRY_DELAY_MS = 350L
         const val MAX_WORK_PROFILE_EMPTY_RETRIES = 2
-        const val WORK_PROFILE_RETRY_RESET_TIMEOUT_MS = 30000L // 30 seconds
+        const val WORK_PROFILE_RETRY_RESET_TIMEOUT_MS = 30000L
         const val GENERAL_EMPTY_RETRY_DELAY_MS = 500L
         const val MAX_GENERAL_EMPTY_RETRIES = 3
         const val ICON_PRELOAD_DELAY_MS = 50L
-        const val APP_LIST_REFRESH_INTERVAL_MS = 2 * 60 * 1000L // 2 minutes
-        const val USAGE_REFRESH_INTERVAL_MS = 20 * 1000L // 20 seconds
+        const val APP_LIST_REFRESH_INTERVAL_MS = 2 * 60 * 1000L
+        const val USAGE_REFRESH_INTERVAL_MS = 20 * 1000L
     }
 
     object Limits {

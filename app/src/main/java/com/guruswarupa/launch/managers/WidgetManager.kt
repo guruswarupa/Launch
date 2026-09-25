@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -30,23 +29,13 @@ class WidgetManager(
     private val context: Context,
     private val widgetContainer: LinearLayout,
     private val shouldLoadWidgets: Boolean = true,
-    // MainActivity's home-screen instance wants the host listening only while the launcher is
-    // actually started/visible (onStart/onStop), so it releases its registration while another
-    // app is in the foreground. WidgetConfigurationActivity's instance has no onStart()/onStop()
-    // callers and instead wants the simpler "listening for as long as I exist" behavior.
+
     private val listenOnlyWhileStarted: Boolean = false
 ) {
 
     private val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
     private val appWidgetHost: AppWidgetHost = acquireSharedHost(context)
 
-    // AppCompatActivity installs a LayoutInflater.Factory2 on its own LayoutInflater that swaps
-    // plain framework widgets (ImageButton, TextView) for AppCompat/Material subclasses
-    // (AppCompatImageButton, MaterialTextView) when inflating layouts. RemoteViews.apply() -
-    // used internally by AppWidgetHost.createView() and every widget update - inflates the
-    // widget's layout with whatever context it's given, and rejects any resulting view class
-    // outside the platform android.widget package, throwing ActionException. Using the
-    // application context (whose LayoutInflater never gets that factory installed) avoids it.
     private val widgetViewContext: Context = context.applicationContext
     private val prefs: SharedPreferences = context.getSharedPreferences("com.guruswarupa.launch.PREFS", Context.MODE_PRIVATE)
     private val widgets = mutableListOf<SystemWidgetInfo>()
@@ -55,7 +44,6 @@ class WidgetManager(
     private var pendingBindRequest: PendingSystemWidgetBindRequest? = null
     private var startRetryAttempts = 0
 
-    /** Invoked after system widget views have been (re)created, including after retries. */
     var onWidgetsRefreshed: (() -> Unit)? = null
 
     private val containerFactory = WidgetContainerFactory(
@@ -76,14 +64,6 @@ class WidgetManager(
         private const val MAX_START_RETRY_ATTEMPTS = 5
         private const val START_RETRY_DELAY_MS = 400L
 
-        // The Android framework only supports a single AppWidgetHost per (uid, hostId)
-        // registering as the "listener" at a time. MainActivity's home-screen WidgetManager and
-        // WidgetConfigurationActivity's WidgetManager both used APPWIDGET_HOST_ID = 1024, so
-        // creating a separate AppWidgetHost object per screen caused each startListening() call
-        // to silently clobber the other's callback registration in AppWidgetService, leading to
-        // intermittent createView()/bind failures ("Cannot add this widget..."). Sharing a single
-        // process-wide host instance (ref-counted so it keeps listening as long as any screen
-        // needs it) avoids that race entirely.
         @Volatile
         private var sharedHost: AppWidgetHost? = null
         private var listenerRefCount = 0
@@ -382,7 +362,7 @@ class WidgetManager(
             putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
             putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
         }
-        
+
         try {
             @Suppress("DEPRECATION")
             widgetView.updateAppWidgetSize(options, widthDp, heightDp, widthDp, heightDp)
@@ -424,8 +404,8 @@ class WidgetManager(
             widgetOptionsCache.remove(appWidgetId)
             appWidgetHost.deleteAppWidgetId(appWidgetId)
             saveWidgets()
-            
-            prefs.edit { 
+
+            prefs.edit {
                 putBoolean(PREFS_WIDGETS_CHANGED_KEY, true)
             }
 
@@ -441,7 +421,7 @@ class WidgetManager(
             widgets.find { it.appWidgetId == id }?.let { newOrder.add(it) }
         }
         widgets.forEach { w -> if (newOrder.none { it.appWidgetId == w.appWidgetId }) newOrder.add(w) }
-        
+
         widgets.clear()
         widgets.addAll(newOrder)
         saveWidgets()
@@ -475,12 +455,6 @@ class WidgetManager(
         refreshSystemWidgetViews()
     }
 
-    /**
-     * Populates the in-memory [widgets] list from prefs without touching [widgetContainer].
-     * Always run - even by instances created with `shouldLoadWidgets = false` - so that a later
-     * [saveWidgets] call never clobbers previously bound widgets it never loaded in the first
-     * place (e.g. widgets added from a different screen/instance).
-     */
     private fun loadWidgetsMetadata() {
         try {
             val widgetsJson = prefs.getString(PREFS_WIDGETS_KEY, null) ?: return
@@ -504,9 +478,7 @@ class WidgetManager(
                     widgets.removeAll { it.appWidgetId == appWidgetId }
                     widgets.add(widgetInfo)
                 } else {
-                    // The widget id itself is gone (provider uninstalled or id revoked by the
-                    // system) - this is a genuine removal, not a transient failure, so it's safe
-                    // to prune here.
+
                     appWidgetHost.deleteAppWidgetId(appWidgetId)
                     prunedAny = true
                 }
@@ -519,12 +491,6 @@ class WidgetManager(
         }
     }
 
-    /**
-     * (Re)creates the AppWidgetHostView for every entry in [widgets] and adds it to
-     * [widgetContainer]. If a view fails to be created - e.g. right after boot or resume, when
-     * the AppWidgetService/host binder may not be fully ready yet - the widget is left in place
-     * (never deleted) and a bounded, backed-off retry is scheduled instead of silently dropping it.
-     */
     private fun refreshSystemWidgetViews() {
         if (widgets.isEmpty()) {
             startRetryAttempts = 0
@@ -548,7 +514,7 @@ class WidgetManager(
                     anyMissing = true
                 }
             } else {
-                // Transient lookup failure - retry instead of assuming the widget is gone.
+
                 anyMissing = true
             }
         }
@@ -573,9 +539,7 @@ class WidgetManager(
             widgetContainer.addView(widgetContainerView)
             true
         } catch (e: Exception) {
-            // Don't delete the widget on a transient view-creation failure - just leave it for
-            // the next retry/lifecycle event instead of silently losing it forever.
-            Log.w(TAG, "Failed to recreate view for widget ${widgetInfo.appWidgetId}, will retry", e)
+
             false
         }
     }
@@ -588,7 +552,6 @@ class WidgetManager(
                 isListeningOwned = false
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Error stopping widget host listening", e)
         }
     }
 
@@ -601,7 +564,6 @@ class WidgetManager(
             }
             refreshSystemWidgetViews()
         } catch (e: Exception) {
-            Log.w(TAG, "Error starting widget host listening", e)
         }
     }
 
@@ -636,7 +598,6 @@ class WidgetManager(
                 isListeningOwned = false
             }
         } catch (e: Exception) {
-            Log.w(TAG, "Error stopping widget host listening in destroy", e)
         }
     }
 }

@@ -7,9 +7,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
-
-
 class TimeDateManager(
     private val timeTextView: TextView,
     private val dateTextView: TextView,
@@ -20,7 +17,6 @@ class TimeDateManager(
     private val handler = Handler(Looper.getMainLooper())
     private var timeFormat = createMainTimeFormat(use24HourFormat)
     private val dateFormat = SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault())
-
 
     private var artisticTimeFormat = createDrawerTimeFormat(use24HourFormat)
     private val artisticDateFormat = SimpleDateFormat("EEEE, dd MMM", Locale.getDefault())

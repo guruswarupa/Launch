@@ -20,20 +20,16 @@ class YearProgressWidget(
     override fun initialize() {
         if (isInitialized) return
 
-
         val inflater = android.view.LayoutInflater.from(context)
         widgetView = inflater.inflate(R.layout.widget_year_progress, container, false)
         container.addView(widgetView)
-
 
         yearProgressView = widgetView.findViewById(R.id.year_progress_view)
         progressStatsText = widgetView.findViewById(R.id.progress_stats_text)
         daysRemainingText = widgetView.findViewById(R.id.days_remaining_text)
         yearProgressContainer = widgetView.findViewById(R.id.year_progress_container)
 
-
         updateProgressInfo()
-
 
         startPeriodicUpdates()
 

@@ -8,26 +8,17 @@ import java.util.concurrent.Executor
 
 import com.guruswarupa.launch.managers.AppUsageStatsManager
 
-
-
-
-
 class UsageStatsRefreshManager(
     private val activity: FragmentActivity,
     private val backgroundExecutor: Executor,
     private val usageStatsManager: AppUsageStatsManager
 ) {
 
-
-
     private fun safeExecute(task: Runnable): Boolean =
         TimeUtils.safeExecuteOn(
             isActivityAlive = { !(activity.isFinishing || activity.isDestroyed) },
             executor = backgroundExecutor
         ) { task.run() }
-
-
-
 
     fun updateUsageInBackground() {
         if (!usageStatsManager.hasUsageStatsPermission()) {

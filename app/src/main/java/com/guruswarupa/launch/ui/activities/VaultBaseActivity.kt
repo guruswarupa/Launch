@@ -36,7 +36,6 @@ abstract class VaultBaseActivity : AppCompatActivity() {
     private fun initializeAutoLock() {
         updateLastInteractionTime()
 
-
         screenOffReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == Intent.ACTION_SCREEN_OFF) {
@@ -51,9 +50,7 @@ abstract class VaultBaseActivity : AppCompatActivity() {
     private fun updateLastInteractionTime() {
         lastInteractionTime = System.currentTimeMillis()
 
-
         handler.removeCallbacks(inactiveTimeoutRunnable)
-
 
         if (isAutoLockEnabled()) {
             val timeoutDuration = getTimeoutDurationMinutes() * 60 * 1000L
@@ -83,7 +80,6 @@ abstract class VaultBaseActivity : AppCompatActivity() {
         super.onDestroy()
         activeVaultActivities--
 
-
         if (activeVaultActivities <= 0 && isFinishing) {
             EncryptedFolderManager(this).lock()
         }
@@ -91,7 +87,6 @@ abstract class VaultBaseActivity : AppCompatActivity() {
         handler.removeCallbacks(inactiveTimeoutRunnable)
         screenOffReceiver?.let { unregisterReceiver(it) }
     }
-
 
     override fun onUserInteraction() {
         super.onUserInteraction()

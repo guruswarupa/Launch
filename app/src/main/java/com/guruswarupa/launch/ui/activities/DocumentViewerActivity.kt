@@ -66,13 +66,11 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private var totalPages = 0
     private var currentPageIndex = 0
 
-
     private var scaleFactor = 1.0f
     private var lastTouchX = 0f
     private var lastTouchY = 0f
     private lateinit var scaleGestureDetector: ScaleGestureDetector
     private lateinit var gestureDetector: GestureDetector
-
 
     private var isVaultFile = false
     private var vaultFileName: String? = null
@@ -86,7 +84,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
         initViews()
         setupWallpaper()
         setupZoomAndPan()
-
 
         vaultFileName = intent.getStringExtra(EXTRA_VAULT_FILE_NAME)
         val uriString = intent.getStringExtra(EXTRA_FILE_URI)
@@ -162,7 +159,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
                 val focusX = detector.focusX
                 val focusY = detector.focusY
-
 
                 pdfRecyclerView.translationX =
                     pdfRecyclerView.translationX * relativeScale + focusX * (1 - relativeScale)
@@ -365,15 +361,14 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private fun copyUriToCache(uri: Uri, fileName: String): File {
         val cacheDir = File(cacheDir, "doc_viewer")
         if (!cacheDir.exists()) cacheDir.mkdirs()
-        
-        // Sanitize filename to prevent path traversal
+
         val sanitizedFileName = fileName.replace(Regex("[^a-zA-Z0-9._-]"), "_")
         val destFile = File(cacheDir, sanitizedFileName)
-        
+
         contentResolver.openInputStream(uri)?.use { input ->
             BufferedInputStream(input).use { bufferedInput ->
                 BufferedOutputStream(FileOutputStream(destFile)).use { bufferedOutput ->
-                    val buffer = ByteArray(8192) // 8KB buffer
+                    val buffer = ByteArray(8192)
                     var bytesRead: Int
                     while (bufferedInput.read(buffer).also { bytesRead = it } != -1) {
                         bufferedOutput.write(buffer, 0, bytesRead)
@@ -382,7 +377,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 }
             }
         } ?: throw IllegalStateException("Cannot open file")
-        
+
         return destFile
     }
 
@@ -415,8 +410,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
             }
         }
     }
-
-
 
     private fun openPdf(file: File) {
         lifecycleScope.launch {
@@ -512,8 +505,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
         return bestIndex.coerceIn(0, (totalPages - 1).coerceAtLeast(0))
     }
 
-
-
     private fun openTextFile(file: File) {
         lifecycleScope.launch {
             try {
@@ -531,8 +522,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
             }
         }
     }
-
-
 
     private fun showWebViewContent(html: String) {
 
@@ -566,15 +555,12 @@ class DocumentViewerActivity : VaultBaseActivity() {
         documentWebView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
     }
 
-
-
     private fun showLoading(message: String) {
 
         pdfRecyclerView.visibility = View.GONE
         documentWebView.visibility = View.GONE
         pdfNavBar.visibility = View.GONE
         errorContainer.visibility = View.GONE
-
 
         pdfRecyclerView.adapter = null
         documentWebView.clearHistory()
@@ -659,46 +645,37 @@ class DocumentViewerActivity : VaultBaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        // Close PDF resources separately to handle individual failures
         try {
             pdfRenderer?.close()
         } catch (e: Exception) {
-            android.util.Log.w("DocumentViewer", "Error closing PDF renderer", e)
         }
-        
+
         try {
             fileDescriptor?.close()
         } catch (e: Exception) {
-            android.util.Log.w("DocumentViewer", "Error closing file descriptor", e)
         }
 
-        // WebView cleanup with proper error handling
         try {
             documentWebView.clearHistory()
             documentWebView.clearCache(true)
             documentWebView.loadUrl("about:blank")
         } catch (e: Exception) {
-            android.util.Log.w("DocumentViewer", "Error during WebView cleanup operations", e)
         } finally {
-            // Always try to remove and destroy WebView
+
             try {
                 val parentView = documentWebView.parent as? android.view.ViewGroup
                 if (parentView != null) {
                     parentView.removeView(documentWebView)
                 }
             } catch (e: Exception) {
-                android.util.Log.w("DocumentViewer", "WebView already removed from parent", e)
             }
         }
-        
-        // Ensure destroy is always called
+
         try {
             documentWebView.destroy()
         } catch (e: Exception) {
-            android.util.Log.w("DocumentViewer", "Error destroying WebView", e)
         }
 
-        // Clean up temp file
         tempFile?.let { file ->
             try {
                 val parentDir = file.parentFile
@@ -706,7 +683,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
                     file.delete()
                 }
             } catch (e: Exception) {
-                android.util.Log.w("DocumentViewer", "Error deleting temp file", e)
             }
         }
     }
@@ -715,7 +691,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
         const val EXTRA_VAULT_FILE_NAME = "vault_file_name"
         const val EXTRA_FILE_URI = "file_uri"
         const val EXTRA_FILE_NAME = "file_name"
-
 
         val SUPPORTED_EXTENSIONS = setOf(
             "pdf",
@@ -732,9 +707,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
         }
 
         fun createVaultIntent(context: Context, fileName: String): Intent {
-            // Targets the non-exported VaultDocumentViewerActivity alias (see manifest), not
-            // this class directly - DocumentViewerActivity itself is exported (for external
-            // VIEW intents) and would let any app read vault files via this same extra.
+
             return Intent().apply {
                 setClassName(context, "com.guruswarupa.launch.ui.activities.VaultDocumentViewerActivity")
                 putExtra(EXTRA_VAULT_FILE_NAME, fileName)

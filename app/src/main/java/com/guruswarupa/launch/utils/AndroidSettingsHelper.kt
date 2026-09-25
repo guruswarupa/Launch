@@ -5,9 +5,6 @@ import android.content.Intent
 import android.provider.Settings
 import android.os.Build
 
-
-
-
 object AndroidSettingsHelper {
 
     data class SettingInfo(
@@ -17,13 +14,9 @@ object AndroidSettingsHelper {
         val searchKeywords: List<String> = emptyList()
     )
 
-
-
-
     @SuppressLint("InlinedApi")
     fun getAllSystemSettings(): List<SettingInfo> {
         val settingsList = mutableListOf<SettingInfo>()
-
 
         settingsList.add(
             SettingInfo(
@@ -34,7 +27,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Bluetooth",
@@ -43,7 +35,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("bluetooth", "pair", "connect", "device", "headphones", "speaker")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -54,7 +45,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Mobile Network",
@@ -63,7 +53,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("mobile", "network", "cellular", "roaming", "carrier", "signal")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -74,7 +63,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Sound",
@@ -83,7 +71,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("sound", "volume", "ringtone", "notification", "audio", "mute")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -94,7 +81,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Notifications",
@@ -103,7 +89,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("notifications", "alerts", "messages", "popups", "permissions")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -114,7 +99,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Security",
@@ -123,7 +107,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("security", "lock", "password", "pin", "pattern", "fingerprint", "biometric")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -134,7 +117,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Accessibility",
@@ -143,7 +125,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("accessibility", "vision", "hearing", "motor", "features", "help")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -154,7 +135,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Battery",
@@ -163,7 +143,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("battery", "power", "saver", "optimization", "charge", "life")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -174,7 +153,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Developer Options",
@@ -183,7 +161,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("developer", "debug", "advanced", "adb", "usb", "options")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -194,7 +171,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "Language & Input",
@@ -203,7 +179,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("language", "input", "keyboard", "text", "typing", "ime")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -214,7 +189,6 @@ object AndroidSettingsHelper {
             )
         )
 
-
         settingsList.add(
             SettingInfo(
                 title = "About Phone",
@@ -223,7 +197,6 @@ object AndroidSettingsHelper {
                 searchKeywords = listOf("about", "phone", "info", "software", "version", "model", "imei")
             )
         )
-
 
         settingsList.add(
             SettingInfo(
@@ -245,7 +218,6 @@ object AndroidSettingsHelper {
             )
         }
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             settingsList.add(
                 SettingInfo(
@@ -260,9 +232,6 @@ object AndroidSettingsHelper {
         return settingsList
     }
 
-
-
-
     fun searchSettings(query: String): List<SettingInfo> {
         val lowerQuery = query.lowercase().trim()
         if (lowerQuery.isEmpty()) return emptyList()
@@ -273,9 +242,6 @@ object AndroidSettingsHelper {
             setting.searchKeywords.any { it.contains(lowerQuery) }
         }
     }
-
-
-
 
     fun createSettingsIntent(settingAction: String): Intent {
         return try {

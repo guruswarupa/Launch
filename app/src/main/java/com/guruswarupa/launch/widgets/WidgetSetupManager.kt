@@ -1,6 +1,5 @@
 package com.guruswarupa.launch.widgets
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
-
-
-
 
 class WidgetSetupManager(
     private val activity: MainActivity,
@@ -23,7 +19,6 @@ class WidgetSetupManager(
         private const val TAG = "WidgetSetupManager"
     }
 
-    // Generic helper for widgets with SharedPreferences
     @Suppress("UNCHECKED_CAST")
     private inline fun <reified T> setupWidgetWithPrefs(
         @androidx.annotation.IdRes containerId: Int,
@@ -32,7 +27,6 @@ class WidgetSetupManager(
     ): T {
         val container = activity.findViewById<LinearLayout>(containerId)
         if (container == null) {
-            Log.e(TAG, "${T::class.simpleName} widget container not found!")
             throw IllegalStateException("${T::class.simpleName} container not found")
         }
         val widget = createWidget(activity, container, sharedPreferences)
@@ -41,7 +35,6 @@ class WidgetSetupManager(
         return widget
     }
 
-    // Generic helper for widgets without SharedPreferences
     @Suppress("UNCHECKED_CAST")
     private inline fun <reified T> setupWidget(
         @androidx.annotation.IdRes containerId: Int,
@@ -49,7 +42,6 @@ class WidgetSetupManager(
     ): T {
         val container = activity.findViewById<LinearLayout>(containerId)
         if (container == null) {
-            Log.e(TAG, "${T::class.simpleName} widget container not found!")
             throw IllegalStateException("${T::class.simpleName} container not found")
         }
         val widget = createWidget(activity, container)
@@ -58,7 +50,6 @@ class WidgetSetupManager(
         return widget
     }
 
-    // Generic helper for inflated widgets
     private inline fun <reified T> setupInflatedWidget(
         @androidx.annotation.IdRes containerId: Int,
         @androidx.annotation.LayoutRes layoutId: Int,
@@ -66,31 +57,27 @@ class WidgetSetupManager(
     ): T {
         val container = activity.findViewById<ViewGroup?>(containerId)
         if (container == null) {
-            Log.e(TAG, "${T::class.simpleName} widget container not found!")
             throw IllegalStateException("${T::class.simpleName} container not found")
         }
         val widgetView = LayoutInflater.from(activity).inflate(layoutId, container, false)
         container.addView(widgetView)
-        Log.d(TAG, "${T::class.simpleName} widget setup: container found, added=${widgetView.parent != null}")
         com.guruswarupa.launch.managers.TypographyManager.applyToView(widgetView)
         return createWidget(widgetView)
     }
 
     fun setupTopWidgetData() {
-        // Usage update is handled by UsageStatsRefreshManager via LifecycleManager
+
     }
 
     fun setupWeather(weatherIcon: ImageView, weatherText: TextView) {
 
         weatherManager.updateWeather(weatherIcon, weatherText)
 
-
         val weatherClickListener = View.OnClickListener {
             weatherManager.updateWeather(weatherIcon, weatherText)
         }
         weatherIcon.setOnClickListener(weatherClickListener)
         weatherText.setOnClickListener(weatherClickListener)
-
 
         val weatherLongClickListener = View.OnLongClickListener {
             weatherManager.showWeatherSettings(weatherIcon, weatherText)
@@ -175,9 +162,8 @@ class WidgetSetupManager(
             YearProgressWidget(act, container)
         }
 
-    // TODO: Implement weekly usage widget setup
     fun setupWeeklyUsageWidget() {
-        // Not yet implemented
+
     }
 
     fun setupGithubContributionWidget(sharedPreferences: android.content.SharedPreferences): GithubContributionWidget =

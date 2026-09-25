@@ -149,7 +149,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         super.onCreate(savedInstanceState)
         applyOrientationPreference()
 
-
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
@@ -163,7 +162,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         systemMonitorSectionExpanded = savedInstanceState?.getBoolean(STATE_SYSTEM_MONITOR_SECTION_EXPANDED, false) ?: false
 
         selectedThemeId = prefs.getString(Constants.Prefs.SELECTED_THEME, "stardust") ?: "stardust"
-
 
         setupWallpaper(null)
 
@@ -329,8 +327,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     setColor(accent.previewColor)
                 }
             } else {
-                // The "palette" sentinel: an outline-only ring meaning "use the palette's own
-                // native accent" rather than a solid swatch color.
+
                 fill.background = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
                     setColor(Color.TRANSPARENT)
@@ -474,7 +471,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
         }
 
-
         val iconSpinner = findViewById<Spinner>(R.id.icon_style_spinner)
         val iconSeek = findViewById<SeekBar>(R.id.icon_size_seekbar)
         val iconVal = findViewById<TextView>(R.id.icon_size_value)
@@ -539,7 +535,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         setupLanguageSpinner()
 
-
         val wallHeader = findViewById<LinearLayout>(R.id.wallpaper_header)
         val wallContent = findViewById<LinearLayout>(R.id.wallpaper_content)
         val wallArrow = findViewById<TextView>(R.id.wallpaper_arrow)
@@ -547,7 +542,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.change_wallpaper_button).setOnClickListener { chooseWallpaper() }
 
         setupThemeSelection()
-
 
         val typoHeader = findViewById<LinearLayout>(R.id.typography_header)
         val typoContent = findViewById<LinearLayout>(R.id.typography_content)
@@ -621,7 +615,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 notifySettingsChanged()
             }
         }
-
 
         val translucencySeek = findViewById<SeekBar>(R.id.background_translucency_seekbar)
         val translucencyValue = findViewById<TextView>(R.id.background_translucency_value)
@@ -697,7 +690,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
                 name.text = category
 
-
                 val isSelected = ThemeOption.PREDEFINED_THEMES.find { it.id == selectedThemeId }?.category == category
 
                 if (isSelected) {
@@ -707,7 +699,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     card.strokeColor = Color.TRANSPARENT
                     card.strokeWidth = 0
                 }
-
 
                 val firstThemeInCategory = ThemeOption.PREDEFINED_THEMES.find { it.category == category }
                 if (firstThemeInCategory != null) {
@@ -783,10 +774,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 row.addView(themeView)
             }
 
-
             applyBtn.isVisible = themes.any { it.id == selectedThemeId }
         }
-
 
         applyBtn.setOnClickListener {
             hasUnsavedThemeChanges = false
@@ -1843,8 +1832,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
         }
 
-        // Web providers need no local model, so they're offered on every device — only the
-        // on-device model list is gated on capability.
         val modelListLabel = findViewById<View>(R.id.ai_assistant_choose_model_label)
         val modelList = findViewById<LinearLayout>(R.id.ai_assistant_model_list)
         val capability = deviceCapability.check()
@@ -2069,10 +2056,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         val scale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100).coerceIn(80, 140)
 
-
         val baseStyV = mutableListOf("default", "serif", "monospace", "condensed", "rounded", "casual", "cursive")
         val baseStyL = mutableListOf("Modern Sans", "Classic Serif", "Dev Mono", "Clean Condensed", "Soft Rounded", "Casual Hand", "Creative Script")
-
 
         DownloadableFontManager.getFontOptions().forEach { font ->
             if (DownloadableFontManager.isDownloaded(this, font.styleKey)) {
@@ -2248,25 +2233,25 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val listContainer = findViewById<LinearLayout>(R.id.icon_pack_list_container)
         val emptyState = findViewById<TextView>(R.id.icon_pack_empty_state)
         val browseButton = findViewById<Button>(R.id.browse_icon_packs_button)
-        
+
         setupSectionToggle(header, content, arrow)
-        
+
         val iconPacks = IconPackManager.getInstalledIconPacks(this)
         val selectedPack = IconPackManager.getSelectedIconPack(prefs)
         val isEnabled = IconPackManager.isIconPackEnabled(prefs)
-        
+
         toggleSwitch.isChecked = isEnabled
-        
+
         fun applySwitchColors(isEnabled: Boolean) {
             val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
             toggleSwitch.thumbTintList = ColorStateList.valueOf(color)
             toggleSwitch.trackTintList = ColorStateList.valueOf(color)
         }
-        
+
         applySwitchColors(isEnabled)
         listContainer.visibility = if (isEnabled && iconPacks.isNotEmpty()) View.VISIBLE else View.GONE
         emptyState.visibility = if (isEnabled && iconPacks.isEmpty()) View.VISIBLE else View.GONE
-        
+
         toggleSwitch.setOnCheckedChangeListener { _, isChecked ->
             applySwitchColors(isChecked)
             if (isChecked) {
@@ -2278,7 +2263,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             emptyState.visibility = if (isChecked && iconPacks.isEmpty()) View.VISIBLE else View.GONE
             notifySettingsChanged()
         }
-        
+
         if (iconPacks.isNotEmpty()) {
             listContainer.removeAllViews()
             iconPacks.forEach { pack ->
@@ -2287,12 +2272,12 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 val name = view.findViewById<TextView>(R.id.icon_pack_name)
                 val status = view.findViewById<TextView>(R.id.icon_pack_status)
                 val radio = view.findViewById<RadioButton>(R.id.icon_pack_radio)
-                
+
                 icon.setImageDrawable(pack.icon)
                 name.text = pack.name
                 status.text = pack.packageName
                 radio.isChecked = selectedPack == pack.packageName
-                
+
                 view.setOnClickListener {
                     IconPackManager.setIconPack(prefs, pack.packageName)
                     toggleSwitch.isChecked = true
@@ -2303,11 +2288,11 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     notifySettingsChanged()
                     Toast.makeText(this, this.getString(R.string.toast_icon_pack_applied_icons_will_update_when_you_ret, pack.name), Toast.LENGTH_LONG).show()
                 }
-                
+
                 listContainer.addView(view)
             }
         }
-        
+
         browseButton.setOnClickListener {
             IconPackManager.browseIconPacks(this)
         }
@@ -2456,9 +2441,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 }
-
-
-
 
 class ThemedArrayAdapter(
     context: Context,

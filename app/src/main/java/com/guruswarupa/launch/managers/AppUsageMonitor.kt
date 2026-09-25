@@ -82,7 +82,6 @@ class AppUsageMonitor : Service() {
     private fun checkForegroundAppUsage() {
         val currentApp = getForegroundApp()
 
-
         if (currentApp != null && currentApp != packageName &&
             !currentApp.startsWith("com.android.systemui")) {
 

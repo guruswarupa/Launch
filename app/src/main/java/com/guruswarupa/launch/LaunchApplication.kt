@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -29,20 +28,11 @@ import java.io.StringWriter
 class LaunchApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Theme.Launch no longer parents ...DayNight..., so this pins Material's internal
-        // widgets (switches, dialog scrims, spinner popups) to dark regardless of the system
-        // theme setting. Until the Light color palette lands, forcing dark keeps behavior
-        // identical to before — without it, a system-light device would render white text on
-        // top of Material's light-mode internals. See models/Constants.kt COLOR_THEME.
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: android.os.Bundle?) {
-                // Runs from inside the framework Activity.onCreate() (which every activity's
-                // own onCreate() calls via super.onCreate() before doing anything else), so this
-                // always lands before that activity's own setContentView() — see
-                // ui/theme/ThemeManager.kt's apply() doc for why that ordering matters. A no-op
-                // for activities not on Theme.Launch/.Settings (e.g. the framework-themed
-                // ScreenRecordPermissionActivity).
+
                 ThemeManager.apply(activity)
 
                 if (activity is ComponentActivity) {
@@ -116,7 +106,6 @@ class LaunchApplication : Application() {
             try {
                 sendCrashReport(throwable)
             } catch (e: Exception) {
-                Log.e("LaunchApplication", "Failed to send crash report", e)
             } finally {
                 defaultHandler?.uncaughtException(thread, throwable)
             }

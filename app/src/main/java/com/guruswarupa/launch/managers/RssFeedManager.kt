@@ -396,8 +396,7 @@ class RssFeedManager(
                     parseFeed(parser, feedUrl, category)
                 }
             } finally {
-                // Was only reached via .also{} after a successful parse - a malformed-XML
-                // exception from parseFeed skipped it entirely, leaking the connection/socket.
+
                 connection.disconnect()
             }
         } catch (_: Exception) {

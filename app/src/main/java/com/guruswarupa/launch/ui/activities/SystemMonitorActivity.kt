@@ -86,9 +86,7 @@ class SystemMonitorActivity : AppCompatActivity() {
         setupHardwareInfo()
         setupNetworkInfo()
         setupSensorsAndCameraInfo()
-        // Not started here: onResume() always runs right after onCreate() too, and starting
-        // the loop in both would leave two independent postDelayed chains running (onPause only
-        // cancels whichever Runnable updateRunnable currently points to, leaking the other).
+
     }
 
     override fun onBackPressed() {
@@ -137,7 +135,7 @@ class SystemMonitorActivity : AppCompatActivity() {
         val cpuModel = deviceInfoManager.getCpuModel()
         cpuStatus.text = String.format(Locale.getDefault(), "CPU: %s (%d%%)", cpuModel, cpuUsage)
         cpuGraph.addDataPoint(cpuUsage.toFloat())
-        
+
         val cTemp = deviceInfoManager.getCpuTemperature()
         if (cTemp > 0) {
             cpuTempText.text = String.format(Locale.getDefault(), "CPU Temp: %.1f°C", cTemp)
@@ -151,11 +149,11 @@ class SystemMonitorActivity : AppCompatActivity() {
 
         val gpuUsage = deviceInfoManager.getGpuUsage()
         val gpuModel = deviceInfoManager.getGpuModel()
-        
+
         gpuStatus.text = String.format(Locale.getDefault(), "GPU: %s - %d%%", gpuModel, gpuUsage)
         gpuGraph.addDataPoint(gpuUsage.toFloat())
         gpuCoresContainer.visibility = View.GONE
-        
+
         val gTemp = deviceInfoManager.getGpuTemperature()
         if (gTemp > 0) {
             gpuTempText.text = String.format(Locale.getDefault(), "GPU Temp: %.1f°C", gTemp)
@@ -186,12 +184,11 @@ class SystemMonitorActivity : AppCompatActivity() {
             val usage = coreUsages[i]
             val freq = if (i < coreFreqs.size) coreFreqs[i] else "N/A"
             chip.text = String.format(Locale.getDefault(), "C%d: %d%% (%s)", i, usage, freq)
-            
-            // Visual indicator of load
+
             val strokeColor = when {
                 usage > 80 -> ContextCompat.getColor(this, R.color.red)
-                usage > 50 -> ThemeManager.color(this, R.attr.appWarning) // yellow/orange
-                else -> ThemeManager.color(this, R.attr.appAccent) // cyan/blue
+                usage > 50 -> ThemeManager.color(this, R.attr.appWarning)
+                else -> ThemeManager.color(this, R.attr.appAccent)
             }
             chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(strokeColor)
             chip.chipStrokeWidth = 2f
@@ -256,13 +253,13 @@ class SystemMonitorActivity : AppCompatActivity() {
         addInfoItem(container, "Processor", deviceInfoManager.getCpuModel())
         addInfoItem(container, "Android Version", deviceInfoManager.getAndroidVersion())
         addInfoItem(container, "Kernel", deviceInfoManager.getKernelVersion())
-        
+
         val ram = deviceInfoManager.getRamUsage()
         addInfoItem(container, "Memory (RAM)", String.format(Locale.getDefault(), "%sGB / %sGB used (%s)", deviceInfoManager.formatBytes(ram.first), deviceInfoManager.formatBytes(ram.second), deviceInfoManager.getRamType()))
-        
+
         val storage = deviceInfoManager.getStorageUsage()
         addInfoItem(container, "Storage", String.format(Locale.getDefault(), "%sGB / %sGB used (%s)", deviceInfoManager.formatBytes(storage.first), deviceInfoManager.formatBytes(storage.second), deviceInfoManager.getStorageType()))
-        
+
         val displayMetrics = resources.displayMetrics
         addInfoItem(container, "Display", String.format(Locale.getDefault(), "%dx%d (%d dpi)", displayMetrics.widthPixels, displayMetrics.heightPixels, displayMetrics.densityDpi))
 
@@ -273,7 +270,7 @@ class SystemMonitorActivity : AppCompatActivity() {
     private fun setupNetworkInfo() {
         val container = findViewById<LinearLayout>(R.id.network_info_container)
         container.removeAllViews()
-        
+
         val networkInfo = deviceInfoManager.getDetailedNetworkInfo()
         if (networkInfo.isNotEmpty()) {
             for ((label, value) in networkInfo) {
@@ -287,12 +284,11 @@ class SystemMonitorActivity : AppCompatActivity() {
     private fun setupSensorsAndCameraInfo() {
         val container = findViewById<LinearLayout>(R.id.sensors_info_container)
         container.removeAllViews()
-        
-        // Cameras Detailed
+
         val cameraInfo = deviceInfoManager.getDetailedCameraInfo()
         addInfoItem(container, "Camera Modules", "${cameraInfo.size} detected")
         addVerticalSpacer(container, 8)
-        
+
         for (cam in cameraInfo) {
             val label = "Camera ${cam["ID"]} (${cam["Facing"]})"
             val value = "Res: ${cam["Resolution"]} | Aperture: ${cam["Aperture"]} | Focal: ${cam["Focal Length"]}"
@@ -301,13 +297,12 @@ class SystemMonitorActivity : AppCompatActivity() {
 
         addVerticalSpacer(container, 16)
 
-        // Sensors
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val sensors = sensorManager.getSensorList(Sensor.TYPE_ALL)
-        
+
         addInfoItem(container, "Total Sensors", String.format(Locale.getDefault(), "%d available", sensors.size))
         addVerticalSpacer(container, 8)
-        
+
         for (s in sensors) {
             addInfoItem(container, s.name, String.format(Locale.getDefault(), "Vendor: %s | Power: %.2fmA", s.vendor, s.power))
         }

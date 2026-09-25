@@ -17,7 +17,6 @@ import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import java.io.File
 
-
 class NoteEditorActivity : VaultBaseActivity() {
     private lateinit var noteTitle: EditText
     private lateinit var noteContent: EditText
@@ -37,8 +36,6 @@ class NoteEditorActivity : VaultBaseActivity() {
         setupWallpaper()
 
         vaultManager = EncryptedFolderManager(this)
-
-
 
         if (!vaultManager.isUnlocked()) {
             Toast.makeText(this, this.getString(R.string.toast_vault_is_locked), Toast.LENGTH_SHORT).show()

@@ -63,11 +63,9 @@ class PhysicalActivityWidget(
     override fun initialize() {
         if (isInitialized) return
 
-
         val inflater = LayoutInflater.from(context)
         widgetView = inflater.inflate(R.layout.widget_physical_activity, container, false)
         container.addView(widgetView)
-
 
         stepsText = widgetView.findViewById(R.id.steps_text)
         distanceText = widgetView.findViewById(R.id.distance_text)
@@ -76,9 +74,6 @@ class PhysicalActivityWidget(
         viewToggleButton = widgetView.findViewById(R.id.view_toggle_button)
         statsViewContainer = widgetView.findViewById(R.id.stats_view_container)
         calendarViewContainer = widgetView.findViewById(R.id.calendar_view_container)
-
-
-
 
         activityManager = PhysicalActivityManager(context)
         activityManager.initializeAsync(autoStartTracking = false) {
@@ -89,7 +84,6 @@ class PhysicalActivityWidget(
                 setupWithoutPermission()
             }
         }
-
 
         viewToggleButton.setOnClickListener {
             toggleView()
@@ -124,9 +118,7 @@ class PhysicalActivityWidget(
 
         val displayDate = parsedDate?.let { displayFormat.format(it) } ?: date
 
-
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_hourly_activity, null)
-
 
         val titleText = dialogView.findViewById<TextView>(R.id.dialog_title)
         val totalStepsText = dialogView.findViewById<TextView>(R.id.total_steps_text)
@@ -135,9 +127,7 @@ class PhysicalActivityWidget(
         val hourlyChart = dialogView.findViewById<HourlyStepsChartView>(R.id.hourly_chart)
         val hourlyStatsContainer = dialogView.findViewById<LinearLayout>(R.id.hourly_stats_container)
 
-
         titleText.text = displayDate
-
 
         val df = DecimalFormat("#.##")
         val stepsFormatted = String.format(Locale.getDefault(), "%,d", activityData.steps)
@@ -146,10 +136,8 @@ class PhysicalActivityWidget(
         totalDistanceText.text = context.getString(R.string.distance_km_format, distanceFormatted)
         totalWalkingTimeText.text = formatWalkingTime(activityData.walkingMinutes)
 
-
         val hourlyData = activityManager.getHourlyActivityForDate(date)
         hourlyChart.setHourlyData(hourlyData)
-
 
         hourlyStatsContainer.removeAllViews()
         val textColor = ThemeManager.color(context, R.attr.appTextPrimary)
@@ -190,7 +178,6 @@ class PhysicalActivityWidget(
             }
         }
 
-
         AlertDialog.Builder(context, R.style.CustomDialogTheme)
             .setView(dialogView)
             .setPositiveButton(context.getString(R.string.support_thank_you_close), null)
@@ -218,12 +205,10 @@ class PhysicalActivityWidget(
         permissionButton.visibility = View.GONE
         viewToggleButton.visibility = View.VISIBLE
 
-
         startTrackingService()
 
         handler.removeCallbacks(initialDisplayRunnable)
         handler.postDelayed(initialDisplayRunnable, 1000)
-
 
         handler.postDelayed(updateRunnable, 5000)
     }
@@ -253,7 +238,6 @@ class PhysicalActivityWidget(
         statsViewContainer.visibility = View.VISIBLE
         calendarViewContainer.visibility = View.GONE
 
-
         stepsText.text = context.getString(R.string.zero_steps)
         distanceText.text = context.getString(R.string.zero_distance)
         walkingTimeText.text = context.getString(R.string.zero_walking_time)
@@ -261,7 +245,6 @@ class PhysicalActivityWidget(
         permissionButton.setOnClickListener {
             requestPermission()
         }
-
 
         val permissionDenied = sharedPreferences.getBoolean("activity_recognition_permission_denied", false)
         if (permissionDenied) {
@@ -319,7 +302,6 @@ class PhysicalActivityWidget(
 
         val activityData = activityManager.getTodayActivity()
 
-
         val df = DecimalFormat("#.##")
         val stepsFormatted = String.format(Locale.getDefault(), "%,d", activityData.steps)
         val distanceFormatted = df.format(activityData.distanceKm)
@@ -327,7 +309,6 @@ class PhysicalActivityWidget(
         stepsText.text = context.getString(R.string.steps_format, stepsFormatted)
         distanceText.text = context.getString(R.string.distance_km_format, distanceFormatted)
         walkingTimeText.text = formatWalkingTime(activityData.walkingMinutes)
-
 
         if (isCalendarView) {
             calendarView?.refreshData()

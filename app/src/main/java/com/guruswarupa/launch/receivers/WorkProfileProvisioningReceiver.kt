@@ -5,8 +5,6 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-
 
 class WorkProfileProvisioningReceiver : DeviceAdminReceiver() {
     companion object {
@@ -15,33 +13,23 @@ class WorkProfileProvisioningReceiver : DeviceAdminReceiver() {
 
     override fun onEnabled(context: Context, intent: Intent) {
         super.onEnabled(context, intent)
-        Log.i(TAG, "Work profile admin enabled")
     }
 
     override fun onDisabled(context: Context, intent: Intent) {
         super.onDisabled(context, intent)
-        Log.i(TAG, "Work profile admin disabled")
     }
 
     override fun onProfileProvisioningComplete(context: Context, intent: Intent) {
-        Log.i(TAG, "Work profile provisioning complete")
 
         try {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, WorkProfileProvisioningReceiver::class.java)
 
-
             dpm.setProfileEnabled(adminComponent)
-
 
             dpm.setProfileName(adminComponent, "Work Profile")
 
-
-
-
-            Log.i(TAG, "Work profile successfully initialized and enabled")
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to finalize work profile setup: ${e.message}", e)
         }
     }
 }

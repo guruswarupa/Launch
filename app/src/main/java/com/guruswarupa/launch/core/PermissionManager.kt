@@ -25,9 +25,6 @@ import com.guruswarupa.launch.services.ScreenLockAccessibilityService
 import com.guruswarupa.launch.services.LaunchNotificationListenerService
 import com.guruswarupa.launch.ui.theme.ThemeManager
 
-
-
-
 class PermissionManager(
     private val activity: androidx.fragment.app.FragmentActivity,
     private val sharedPreferences: SharedPreferences
@@ -45,17 +42,9 @@ class PermissionManager(
         const val NOTIFICATION_POLICY_REQUEST = 1100
     }
 
-
-    // Separate per-request-type flags: these used to share one `isRequestingPermissions` flag,
-    // so an unrelated permission request made while another was already in flight (e.g. usage
-    // stats requested while the contacts dialog is still pending) would return early and its
-    // callback would never run - silently skipping parts of first-run onboarding.
     private var isRequestingContactsPermission = false
     private var isRequestingUsageStatsPermission = false
     private var pendingContactsGranted: (() -> Unit)? = null
-
-
-
 
     fun requestContactsPermission(onGranted: () -> Unit = {}) {
 
@@ -79,9 +68,6 @@ class PermissionManager(
         }
     }
 
-
-
-
     fun requestSmsPermission() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.SEND_SMS)
             != PackageManager.PERMISSION_GRANTED
@@ -97,9 +83,6 @@ class PermissionManager(
         }
     }
 
-
-
-
     @Suppress("unused")
     fun requestCallPhonePermission() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE)
@@ -112,9 +95,6 @@ class PermissionManager(
             )
         }
     }
-
-
-
 
     fun requestUsageStatsPermission(usageStatsManager: AppUsageStatsManager, onComplete: () -> Unit = {}) {
 
@@ -153,9 +133,6 @@ class PermissionManager(
         }
     }
 
-
-
-
     fun isDefaultLauncher(): Boolean {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
@@ -168,9 +145,6 @@ class PermissionManager(
         return resolveInfo?.activityInfo?.packageName == activity.packageName
     }
 
-
-
-
     fun requestDefaultLauncher(onComplete: () -> Unit = {}) {
         if (isDefaultLauncher()) {
             onComplete()
@@ -181,10 +155,7 @@ class PermissionManager(
             val roleManager = activity.getSystemService(Context.ROLE_SERVICE) as RoleManager
             if (roleManager.isRoleAvailable(RoleManager.ROLE_HOME) &&
                 !roleManager.isRoleHeld(RoleManager.ROLE_HOME)) {
-                // Fire-and-forget: nothing reads the role request's result back in
-                // onActivityResult, so onComplete() below reflects "the prompt was shown", not
-                // "the user actually set this as their default launcher" - startActivity (not
-                // ...ForResult) makes that explicit instead of implying a result is handled.
+
                 val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME)
                 activity.startActivity(intent)
 
@@ -201,17 +172,11 @@ class PermissionManager(
         }
     }
 
-
-
-
     fun isDeviceAdminActive(): Boolean {
         val devicePolicyManager = activity.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val componentName = ComponentName(activity, ScreenOffAdminReceiver::class.java)
         return devicePolicyManager.isAdminActive(componentName)
     }
-
-
-
 
     fun requestDeviceAdminPermission() {
         val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
@@ -233,9 +198,6 @@ class PermissionManager(
         fixDialogTextColors(dialog)
     }
 
-
-
-
     fun isAccessibilityServiceEnabled(): Boolean {
         val expectedComponentName = ComponentName(activity, ScreenLockAccessibilityService::class.java)
         val enabledServices = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
@@ -253,9 +215,6 @@ class PermissionManager(
         return false
     }
 
-
-
-
     fun requestAccessibilityPermission() {
         val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
             .setTitle(activity.getString(R.string.accessibility_permission_title))
@@ -270,9 +229,6 @@ class PermissionManager(
         fixDialogTextColors(dialog)
     }
 
-
-
-
     fun isNotificationPolicyAccessGranted(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -280,9 +236,6 @@ class PermissionManager(
         }
         return false
     }
-
-
-
 
     fun requestNotificationPolicyPermission() {
         val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
@@ -297,9 +250,6 @@ class PermissionManager(
 
         fixDialogTextColors(dialog)
     }
-
-
-
 
     fun isNotificationListenerServiceEnabled(): Boolean {
         val enabledServices = Settings.Secure.getString(activity.contentResolver, "enabled_notification_listeners")
@@ -317,9 +267,6 @@ class PermissionManager(
         }
         return false
     }
-
-
-
 
     fun requestNotificationListenerPermission() {
         val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
@@ -343,9 +290,6 @@ class PermissionManager(
         } catch (_: Exception) {}
     }
 
-
-
-
     fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
@@ -358,9 +302,6 @@ class PermissionManager(
             }
         }
     }
-
-
-
 
     fun requestStoragePermission(onGranted: () -> Unit = {}) {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -384,9 +325,6 @@ class PermissionManager(
             onGranted()
         }
     }
-
-
-
 
     fun requestActivityRecognitionPermission(onGranted: () -> Unit = {}) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -415,9 +353,6 @@ class PermissionManager(
         }
     }
 
-
-
-
     @Suppress("unused")
     fun requestMicrophonePermission() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO)
@@ -429,9 +364,6 @@ class PermissionManager(
             )
         }
     }
-
-
-
 
     fun handlePermissionResult(
         requestCode: Int,

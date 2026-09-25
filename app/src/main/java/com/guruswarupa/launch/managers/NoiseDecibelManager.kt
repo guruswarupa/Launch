@@ -5,14 +5,10 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
-
-
-
 
 class NoiseDecibelManager(@Suppress("unused") private val context: android.content.Context) {
 
@@ -41,15 +37,9 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
         }
     }
 
-
-
-
     fun setOnDecibelChangedListener(listener: (Double) -> Unit) {
         onDecibelChangedListener = listener
     }
-
-
-
 
     fun startRecording(): Boolean {
         if (isRecording) return true
@@ -76,7 +66,6 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
                     bufferSize
                 )
             } catch (_: SecurityException) {
-                Log.e("NoiseDecibelManager", "Microphone permission required")
                 return false
             }
 
@@ -98,9 +87,6 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
         }
     }
 
-
-
-
     fun stopRecording() {
         isRecording = false
         handler.removeCallbacks(recordingRunnable)
@@ -116,9 +102,6 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
         readBufferSize = 0
     }
 
-
-
-
     private fun calculateDecibel(): Double {
         val currentAudioRecord = this.audioRecord ?: return 0.0
         val buffer = readBuffer ?: return 0.0
@@ -132,15 +115,11 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
                 return 0.0
             }
 
-
             var sum = 0.0
             for (i in 0 until readSize) {
                 sum += (buffer[i] * buffer[i]).toDouble()
             }
             val rms = sqrt(sum / readSize)
-
-
-
 
             val referenceValue = 32767.0
             val db = if (rms > 0) {
@@ -149,15 +128,11 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
                 -96.0
             }
 
-
             return max(0.0, min(120.0, db + 96.0))
         } catch (_: Exception) {
             return 0.0
         }
     }
-
-
-
 
     fun hasMicrophone(): Boolean {
         return try {
@@ -172,13 +147,7 @@ class NoiseDecibelManager(@Suppress("unused") private val context: android.conte
         }
     }
 
-
-
-
     fun isRecording(): Boolean = isRecording
-
-
-
 
     fun cleanup() {
         stopRecording()

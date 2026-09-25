@@ -2,10 +2,6 @@ package com.guruswarupa.launch.ai.prediction
 
 import java.util.Calendar
 
-/**
- * Pure scoring logic for on-device app/contact suggestions. No Android framework
- * dependencies, so this is directly unit-testable.
- */
 object SuggestionRanker {
 
     const val CONTEXT_BUCKETS = 8
@@ -13,12 +9,8 @@ object SuggestionRanker {
     private const val FREQUENCY_WEIGHT = 0.45
     private const val RECENCY_WEIGHT = 0.35
     private const val CONTEXT_WEIGHT = 0.20
-    private const val RECENCY_HALF_LIFE_HOURS = 72.0 // 3 days
+    private const val RECENCY_HALF_LIFE_HOURS = 72.0
 
-    /**
-     * Time-of-day (Night/Morning/Afternoon/Evening) crossed with weekday-vs-weekend,
-     * giving 8 context buckets used to learn "this app is usually opened at this time".
-     */
     fun timeBucketOf(nowMillis: Long): Int {
         val calendar = Calendar.getInstance().apply { timeInMillis = nowMillis }
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -33,13 +25,6 @@ object SuggestionRanker {
         return timeOfDay * 2 + if (isWeekend) 1 else 0
     }
 
-    /**
-     * @param launchCount total recorded launches for this key, 0 if never seen before.
-     * @param lastLaunchMillis epoch millis of the most recent launch, ignored if [launchCount] is 0.
-     * @param contextCounts per-bucket launch counts, size [CONTEXT_BUCKETS].
-     * @param usagePriorNormalized 0..1 cold-start signal (e.g. today's foreground usage,
-     *   normalized against the max across candidates) used when there is no launch history yet.
-     */
     fun score(
         launchCount: Int,
         lastLaunchMillis: Long,

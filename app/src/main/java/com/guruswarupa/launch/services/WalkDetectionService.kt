@@ -11,7 +11,6 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -86,7 +85,6 @@ class WalkDetectionService : Service() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onStartCommand", e)
         }
 
         return START_STICKY
@@ -119,7 +117,6 @@ class WalkDetectionService : Service() {
                 startForeground(ServiceNotificationManager.NOTIFICATION_ID, notification)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start foreground service", e)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 stopSelf()
             }
@@ -191,7 +188,6 @@ class WalkDetectionService : Service() {
                 ACTION_SOUND_TOGGLE -> toggleSound()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to execute walk action", e)
         }
     }
 
@@ -232,7 +228,6 @@ class WalkDetectionService : Service() {
                 AudioManager.RINGER_MODE_NORMAL
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error toggling sound", e)
         }
     }
 }

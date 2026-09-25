@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.provider.Settings
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.services.*

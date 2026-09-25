@@ -41,10 +41,6 @@ import com.guruswarupa.launch.ui.views.FastScroller
 import com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
 import java.util.Locale
 
-
-
-
-
 class ActivityInitializer(
     private val activity: FragmentActivity,
     private val sharedPreferences: android.content.SharedPreferences,
@@ -80,7 +76,6 @@ class ActivityInitializer(
             recyclerView.setHasFixedSize(true)
             applyFastScrollerLayout()
 
-
             recyclerView.itemAnimator = null
             voiceSearchButton = activity.findViewById(R.id.voice_search_button)
             appDock = activity.findViewById(R.id.app_dock)
@@ -91,10 +86,8 @@ class ActivityInitializer(
             dateTextView = activity.findViewById(R.id.date_widget)
             topWidgetContainer = activity.findViewById(R.id.top_widget_container)
 
-
             todoRecyclerView = activity.findViewById(R.id.todo_recycler_view)
             addTodoButton = activity.findViewById(R.id.add_todo_button)
-
 
             rightDrawerWallpaper = activity.findViewById(R.id.right_drawer_wallpaper)
             rightDrawerTime = activity.findViewById(R.id.right_drawer_time)
@@ -112,13 +105,11 @@ class ActivityInitializer(
             setupTimeDateListeners(timeTextView, dateTextView)
             applyTopWidgetStyle()
 
-
             val topWidgetEnabled = sharedPreferences.getBoolean(
                 com.guruswarupa.launch.models.Constants.Prefs.TOP_WIDGET_ENABLED,
                 true
             )
             topWidgetContainer.visibility = if (topWidgetEnabled) View.VISIBLE else View.GONE
-
 
             if (!topWidgetEnabled) {
                 val extraMargin = activity.resources.getDimensionPixelSize(R.dimen.search_top_margin_when_widget_hidden)
@@ -152,14 +143,6 @@ class ActivityInitializer(
         views.fastScroller.requestLayout()
     }
 
-    /**
-     * Stock's home page has room (and, being a minimal favorites-only page, the visual need) for
-     * a bigger, card-free clock - closer to an AOD/always-on-display look than the boxed
-     * List/Grid widget. Lays the orientation-aware baseline down first via
-     * [applyPhoneLandscapeOptimizations], then overrides on top for Stock; the non-stock branch
-     * explicitly resets the shadow/letter-spacing/background Stock adds, in case this is a
-     * switch *away* from Stock.
-     */
     fun applyTopWidgetStyle() {
         if (!views.isRecyclerViewInitialized()) return
 
@@ -184,26 +167,19 @@ class ActivityInitializer(
             views.dateTextView.letterSpacing = 0.2f
             usageTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
 
-            // The big 64sp clock's own font leading already reads as space below it - the
-            // date's XML paddingTop (meant for the much smaller default size) piles on top of
-            // that, so pull it back here instead of just relying on the shared XML padding.
             views.dateTextView.setPadding(views.dateTextView.paddingLeft, 0, views.dateTextView.paddingRight, views.dateTextView.paddingBottom)
             (views.dateTextView.layoutParams as? MarginLayoutParams)?.let { params ->
                 params.topMargin = (-10 * density).toInt()
                 views.dateTextView.layoutParams = params
             }
 
-            // No card behind the text anymore - a soft shadow keeps it legible over any
-            // wallpaper, the same trick the app grid's own labels already use.
             val shadowColor = android.graphics.Color.argb(160, 0, 0, 0)
             views.timeTextView.setShadowLayer(10f, 0f, 2f, shadowColor)
             views.dateTextView.setShadowLayer(6f, 0f, 1f, shadowColor)
             views.weatherText.setShadowLayer(6f, 0f, 1f, shadowColor)
             usageTextView?.setShadowLayer(6f, 0f, 1f, shadowColor)
         } else {
-            // The original, unmodified List/Grid widget - applied fresh every time (not just
-            // relied on as leftover state) so a switch away from Stock can never leave any of
-            // its overrides behind, regardless of call order.
+
             views.topWidgetContainer.background = androidx.core.content.ContextCompat.getDrawable(activity, R.drawable.widget_background)
             views.timeTextView.letterSpacing = 0.05f
             views.dateTextView.letterSpacing = 0f
@@ -219,9 +195,6 @@ class ActivityInitializer(
                 views.dateTextView.layoutParams = params
             }
 
-            // Sizes/padding/margins for the container itself and time/date/weather/usage text
-            // are entirely owned by the orientation-aware logic below - call it last so nothing
-            // above can be mistaken for having already set them.
             applyPhoneLandscapeOptimizations()
         }
     }
@@ -360,7 +333,6 @@ class ActivityInitializer(
                     val scrollRange = rv.computeVerticalScrollRange()
                     val viewportHeight = rv.height
 
-
                     val isShowingFavorites = (activity as? com.guruswarupa.launch.MainActivity)?.showOnlyFavoritesInitially ?: false
 
                     if (dy > 0 && !headerHidden && offset > hideThreshold && !isShowingFavorites) {
@@ -379,7 +351,6 @@ class ActivityInitializer(
                 }
             }
         })
-
 
         recyclerView.setOnTouchListener(object : View.OnTouchListener {
             private var startY = 0f
@@ -400,7 +371,6 @@ class ActivityInitializer(
             }
         })
 
-
         recyclerView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             if (headerHidden) {
                 val scrollRange = recyclerView.computeVerticalScrollRange()
@@ -414,17 +384,12 @@ class ActivityInitializer(
         }
     }
 
-
-
-
-
     fun setHeaderVisibility(visible: Boolean) {
         if (visible && !headerHidden) return
         if (!visible && headerHidden) return
         headerHidden = !visible
 
         val stack = views.topWidgetContainer.parent as? ViewGroup ?: return
-
 
         val topWidgetEnabled = sharedPreferences.getBoolean(
             com.guruswarupa.launch.models.Constants.Prefs.TOP_WIDGET_ENABLED,
@@ -446,7 +411,6 @@ class ActivityInitializer(
         views.topWidgetContainer.isVisible = visible && topWidgetEnabled
 
         (views.appDock.parent as? View)?.isVisible = visible
-
 
         val targetMargin = when {
             !topWidgetEnabled -> {
@@ -576,7 +540,6 @@ class ActivityInitializer(
                 }
             }
 
-
             val leftDrawerView = activity.findViewById<FrameLayout>(R.id.widgets_drawer)
             leftDrawerView?.let {
                 val params = it.layoutParams as ViewGroup.LayoutParams
@@ -604,7 +567,6 @@ class ActivityInitializer(
                 }
             }
 
-
             val rightDrawerView = activity.findViewById<FrameLayout>(R.id.wallpaper_drawer)
             rightDrawerView?.let {
                 val params = it.layoutParams as ViewGroup.LayoutParams
@@ -618,10 +580,6 @@ class ActivityInitializer(
                 params.width = targetWidth
                 it.layoutParams = params
 
-                // Pushes the header card below the status bar via extra top MARGIN, not
-                // padding: padding would grow the card's own box (status-bar-height of dead
-                // space between its border and its text); margin just repositions it, keeping
-                // it visually identical in size to the RSS/Widgets headers it's styled to match.
                 val header = activity.findViewById<View>(R.id.ai_chat_header)
                 val headerLayoutParams = header?.layoutParams as? ViewGroup.MarginLayoutParams
                 if (header != null && headerLayoutParams != null) {
@@ -635,7 +593,6 @@ class ActivityInitializer(
                 }
             }
         }
-
 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, androidx.core.view.GravityCompat.START)
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, androidx.core.view.GravityCompat.END)

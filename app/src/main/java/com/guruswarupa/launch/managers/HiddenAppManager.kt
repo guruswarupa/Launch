@@ -2,7 +2,6 @@ package com.guruswarupa.launch.managers
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,7 +12,6 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
         private const val HIDDEN_APPS_KEY = "hidden_apps"
         private const val TAG = "HiddenAppManager"
     }
-
 
     @Volatile
     private var hiddenAppsCache: Set<String>? = null
@@ -26,7 +24,6 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
             try {
                 hiddenAppsCache = (sharedPreferences.getStringSet(HIDDEN_APPS_KEY, emptySet()) ?: emptySet()).toSet()
             } catch (e: ClassCastException) {
-                Log.e(TAG, "Data corruption: $HIDDEN_APPS_KEY is not a Set. Attempting recovery.", e)
                 val stringValue = try { sharedPreferences.getString(HIDDEN_APPS_KEY, null) } catch (_: Exception) { null }
                 val recoveredSet = if (stringValue != null) {
                     if (stringValue.startsWith("[") && stringValue.endsWith("]")) {
@@ -59,9 +56,6 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
         hiddenAppsCache = null
     }
 
-
-
-
     @Synchronized
     fun hideApp(packageName: String) {
         val hiddenApps = getHiddenAppsInternal().toMutableSet()
@@ -70,9 +64,6 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
         hiddenAppsCache = hiddenApps.toSet()
         cacheValid = true
     }
-
-
-
 
     @Synchronized
     fun unhideApp(packageName: String) {
@@ -83,30 +74,17 @@ class HiddenAppManager @Inject constructor(private val sharedPreferences: Shared
         cacheValid = true
     }
 
-
-
-
     fun isAppHidden(packageName: String): Boolean {
         return getHiddenAppsInternal().contains(packageName)
     }
-
-
-
-
 
     fun forceRefresh() {
         invalidateCache()
     }
 
-
-
-
     fun getHiddenApps(): Set<String> {
         return getHiddenAppsInternal()
     }
-
-
-
 
     @Suppress("unused")
     fun filterHiddenApps(apps: List<android.content.pm.ResolveInfo>): List<android.content.pm.ResolveInfo> {

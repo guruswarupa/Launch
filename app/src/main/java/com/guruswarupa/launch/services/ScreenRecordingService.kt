@@ -133,7 +133,6 @@ class ScreenRecordingService : Service() {
             screenDensity = metrics.densityDpi
         }
 
-
         if (screenWidth % 2 != 0) screenWidth--
         if (screenHeight % 2 != 0) screenHeight--
 
@@ -249,7 +248,6 @@ class ScreenRecordingService : Service() {
 
         mediaProjection?.stop()
         mediaProjection = null
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             recordingUri?.let { uri ->

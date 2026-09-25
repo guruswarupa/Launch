@@ -5,7 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -32,7 +31,6 @@ class PressureManager(context: Context) : SensorEventListener {
         pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE)
 
         if (pressureSensor == null) {
-            Log.w(TAG, "Pressure sensor not available on this device")
         }
     }
 
@@ -46,7 +44,6 @@ class PressureManager(context: Context) : SensorEventListener {
 
     fun startTracking() {
         if (!hasPressureSensor()) {
-            Log.w(TAG, "Cannot start tracking: pressure sensor not available")
             return
         }
 
@@ -73,9 +70,6 @@ class PressureManager(context: Context) : SensorEventListener {
         isListening = false
     }
 
-
-
-
     fun cleanup() {
         stopTracking()
         onPressureChanged = null
@@ -100,19 +94,12 @@ class PressureManager(context: Context) : SensorEventListener {
         return currentPressure
     }
 
-
-
-
-
     fun getAltitude(): Float {
         if (currentPressure <= 0) return 0f
         val ratio = currentPressure / SEA_LEVEL_PRESSURE
         val power = ratio.toDouble().pow(0.1903).toFloat()
         return 44330f * (1f - power)
     }
-
-
-
 
     fun getPressureTrend(previousPressure: Float): String {
         val diff = currentPressure - previousPressure

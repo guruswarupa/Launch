@@ -14,7 +14,6 @@ class AppUsageStatsManager(private val context: Context) {
 
     private val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
-
     private var dailyUsageCache: Pair<String, Long>? = null
     private var weeklyDataCache: Pair<Long, List<Pair<String, Long>>>? = null
     private val usageCache = mutableMapOf<String, Pair<Long, Long>>()
@@ -29,9 +28,6 @@ class AppUsageStatsManager(private val context: Context) {
         dailyUsageCache = null
         weeklyDataCache = null
     }
-
-
-
 
     fun cleanup() {
         invalidateCache()
@@ -59,10 +55,6 @@ class AppUsageStatsManager(private val context: Context) {
     fun requestUsageStatsPermission(): Intent {
         return Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
     }
-
-
-
-
 
     private fun getForegroundUsageMap(startTime: Long, endTime: Long): Map<String, Long> {
         val usageMap = mutableMapOf<String, Long>()
@@ -93,7 +85,6 @@ class AppUsageStatsManager(private val context: Context) {
                 }
             }
 
-
             val now = System.currentTimeMillis()
             if (endTime >= now - 10000) {
                 for ((pkg, start) in appStartTimes) {
@@ -112,10 +103,6 @@ class AppUsageStatsManager(private val context: Context) {
         return usageMap
     }
 
-
-
-
-
     fun getUsageMapForToday(): Map<String, Long> {
         if (!hasUsageStatsPermission()) return emptyMap()
 
@@ -130,16 +117,12 @@ class AppUsageStatsManager(private val context: Context) {
         }
     }
 
-
-
-
     private fun isReportableApp(packageName: String): Boolean {
         if (packageName == "com.guruswarupa.launch" ||
             packageName == "android" ||
             packageName.startsWith("com.android.systemui")) {
             return false
         }
-
 
         return try {
             context.packageManager.getLaunchIntentForPackage(packageName) != null
@@ -150,7 +133,6 @@ class AppUsageStatsManager(private val context: Context) {
 
     fun getAppUsageTime(packageName: String): Long {
         if (!hasUsageStatsPermission()) return 0L
-
 
         val currentTime = System.currentTimeMillis()
         usageCache[packageName]?.let { (cachedUsage, timestamp) ->
@@ -163,7 +145,6 @@ class AppUsageStatsManager(private val context: Context) {
         val endTime = System.currentTimeMillis()
 
         val usageMap = getForegroundUsageMap(startTime, endTime)
-
 
         usageMap.forEach { (pkg, usage) ->
             usageCache[pkg] = Pair(usage, currentTime)

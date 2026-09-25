@@ -107,21 +107,16 @@ class CalendarEventsCalendarAdapter(
     private fun updateDays() {
         days.clear()
 
-
         val firstDayOfMonth = calendar.clone() as Calendar
         firstDayOfMonth.set(Calendar.DAY_OF_MONTH, 1)
         val firstDayOfWeek = firstDayOfMonth.get(Calendar.DAY_OF_WEEK)
 
-
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-
-
 
         val startOffset = (firstDayOfWeek - Calendar.SUNDAY + 7) % 7
         repeat(startOffset) {
             days.add(DayItem(day = null, hasEvents = false, isToday = false, dateString = null, events = emptyList()))
         }
-
 
         val monthEvents = events.filter { event ->
             val eventCalendar = Calendar.getInstance().apply { timeInMillis = event.startTime }
@@ -129,21 +124,16 @@ class CalendarEventsCalendarAdapter(
             eventCalendar.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)
         }
 
-
-
-
         val uniqueMonthEvents = monthEvents.distinctBy { event ->
             val eventCalendar = Calendar.getInstance().apply { timeInMillis = event.startTime }
 
             "${event.title.lowercase().trim()}_${eventCalendar.get(Calendar.YEAR)}_${eventCalendar.get(Calendar.MONTH)}_${eventCalendar.get(Calendar.DAY_OF_MONTH)}"
         }
 
-
         val eventsByDay = uniqueMonthEvents.groupBy { event ->
             val eventCalendar = Calendar.getInstance().apply { timeInMillis = event.startTime }
             eventCalendar.get(Calendar.DAY_OF_MONTH)
         }
-
 
         val currentDate = Calendar.getInstance()
         val today = currentDate.get(Calendar.DAY_OF_MONTH)
@@ -202,10 +192,8 @@ class CalendarEventsCalendarAdapter(
             holder.dayText.text = dayItem.day.toString()
             holder.dayText.visibility = View.VISIBLE
 
-
             val hasFestival = dayItem.events.any { it.isFestival }
             val hasCustomEvent = dayItem.events.any { !it.isFestival }
-
 
             if (hasCustomEvent) {
                 holder.eventIndicator.visibility = View.VISIBLE
@@ -216,7 +204,6 @@ class CalendarEventsCalendarAdapter(
                 holder.eventIndicator.visibility = View.GONE
             }
 
-
             if (hasFestival) {
                 holder.festivalIndicator.visibility = View.VISIBLE
                 holder.festivalIndicator.setBackgroundColor(
@@ -226,13 +213,11 @@ class CalendarEventsCalendarAdapter(
                 holder.festivalIndicator.visibility = View.GONE
             }
 
-
             if (dayItem.isToday) {
                 holder.itemView.setBackgroundResource(R.drawable.today_highlight)
             } else {
                 holder.itemView.background = null
             }
-
 
             if (dayItem.dateString != null) {
                 holder.itemView.setOnClickListener {

@@ -30,10 +30,6 @@ import org.json.JSONObject
 import java.util.concurrent.Executors
 import java.util.zip.ZipInputStream
 
-
-
-
-
 class AppDataDisclosureActivity : AppCompatActivity() {
     private val backgroundExecutor = Executors.newSingleThreadExecutor()
     private val handler = Handler(Looper.getMainLooper())
@@ -56,7 +52,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
 
-
         if (prefs.getBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, false)) {
 
             startMainActivity()
@@ -66,7 +61,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         setupViews()
         setupWallpaper()
         startWelcomeAnimation()
-
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -182,7 +176,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
         val welcomeSubtitle = findViewById<TextView>(R.id.welcome_subtitle)
         val importRoot = findViewById<LinearLayout>(R.id.import_root)
 
-
         welcomeText.animate()
             .alpha(1f)
             .scaleX(1f)
@@ -193,7 +186,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
             .setStartDelay(400)
             .start()
 
-
         welcomeSubtitle.translationY = 20f
         welcomeSubtitle.animate()
             .alpha(1f)
@@ -202,7 +194,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
             .setInterpolator(AccelerateDecelerateInterpolator())
             .setStartDelay(1000)
             .start()
-
 
         handler.postDelayed({
 
@@ -215,8 +206,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
                 .withEndAction {
                     welcomeContainer.visibility = View.GONE
 
-                    // No separate consent step anymore - reaching the first real screen is what
-                    // marks onboarding as done, same as APP_DATA_CONSENT_GIVEN always meant here.
                     getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE).edit {
                         putBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, true)
                     }
@@ -300,7 +289,6 @@ class AppDataDisclosureActivity : AppCompatActivity() {
             .start()
     }
 
-    /** A small staggered pop-in for the three mode cards, timed just behind [viewModeRoot]'s own fade-in. */
     private fun animateModeCardsIn() {
         val cards = listOf(
             findViewById<View>(R.id.list_mode_option),

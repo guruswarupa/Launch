@@ -21,7 +21,6 @@ class YearProgressView @JvmOverloads constructor(
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val rectF = RectF()
 
-
     private val colorCompleted = ThemeManager.color(context, R.attr.appSuccess)
     private val colorRemaining = Color.parseColor("#ECEFF4")
 
@@ -47,11 +46,9 @@ class YearProgressView @JvmOverloads constructor(
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
 
-
         val availableWidth = width - paddingStart - paddingEnd
         val columns = 53
         cellSize = (availableWidth - (columns - 1) * spacing) / columns
-
 
         val rows = 7
         val calculatedHeight = (rows * cellSize + (rows - 1) * spacing + paddingTop + paddingBottom).toInt()
@@ -65,14 +62,12 @@ class YearProgressView @JvmOverloads constructor(
         val startX = paddingStart.toFloat()
         val startY = paddingTop.toFloat()
 
-
         for (day in 1..daysInYear) {
             val position = getCellPosition(day)
             if (position != null) {
                 val (row, col) = position
                 val x = startX + col * (cellSize + spacing)
                 val y = startY + row * (cellSize + spacing)
-
 
                 val color = if (day <= currentDayOfYear) {
                     colorCompleted
@@ -86,13 +81,11 @@ class YearProgressView @JvmOverloads constructor(
             }
         }
 
-
         val currentPos = getCellPosition(currentDayOfYear)
         if (currentPos != null) {
             val (row, col) = currentPos
             val x = startX + col * (cellSize + spacing)
             val y = startY + row * (cellSize + spacing)
-
 
             paint.color = ThemeManager.color(context, R.attr.appTextPrimary)
             paint.style = Paint.Style.STROKE
@@ -100,18 +93,14 @@ class YearProgressView @JvmOverloads constructor(
             rectF.set(x - 1, y - 1, x + cellSize + 1, y + cellSize + 1)
             canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint)
 
-
             paint.style = Paint.Style.FILL
         }
     }
 
     private fun getCellPosition(dayOfYear: Int): Pair<Int, Int>? {
 
-
-
         val week = (dayOfYear - 1) / 7
         val dayOfWeek = (dayOfYear - 1) % 7
-
 
         if (week >= 53) return null
 
@@ -122,7 +111,6 @@ class YearProgressView @JvmOverloads constructor(
         updateCurrentDateInfo()
         invalidate()
     }
-
 
     fun getProgressInfo(): ProgressInfo {
         val percentage = (currentDayOfYear.toDouble() / daysInYear.toDouble() * 100).toInt()

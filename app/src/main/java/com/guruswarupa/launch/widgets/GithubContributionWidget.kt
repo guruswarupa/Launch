@@ -26,7 +26,6 @@ class GithubContributionWidget(
     private val executor = Executors.newSingleThreadExecutor()
     private var isInitialized = false
 
-
     private lateinit var githubContainer: LinearLayout
     private lateinit var githubIcon: ImageView
     private lateinit var githubUsername: TextView
@@ -53,11 +52,9 @@ class GithubContributionWidget(
     override fun initialize() {
         if (isInitialized) return
 
-
         val inflater = LayoutInflater.from(context)
         widgetView = inflater.inflate(R.layout.widget_github_contributions, container, false)
         container.addView(widgetView)
-
 
         githubContainer = widgetView.findViewById(R.id.github_container)
         githubIcon = widgetView.findViewById(R.id.github_icon)
@@ -72,15 +69,11 @@ class GithubContributionWidget(
         githubContributionGraphView = widgetView.findViewById(R.id.github_contribution_graph_view)
         githubStatusText = widgetView.findViewById(R.id.github_status_text)
 
-
         githubContainer.visibility = View.GONE
-
 
         githubApiService = GithubApiService(context)
 
-
         setupYearSpinner()
-
 
         githubRefreshButton.setOnClickListener {
             val savedUsername = sharedPreferences.getString(PREF_GITHUB_USERNAME, "")
@@ -95,7 +88,6 @@ class GithubContributionWidget(
         githubStatusText.setOnClickListener {
             showGithubTokenDialog()
         }
-
 
         val savedUsername = sharedPreferences.getString(PREF_GITHUB_USERNAME, "")
         val savedToken = sharedPreferences.getString(PREF_GITHUB_TOKEN, "")
@@ -115,7 +107,6 @@ class GithubContributionWidget(
 
     private fun loadAvailableYears(username: String, token: String) {
         if (executor.isShutdown) return
-
 
         val lastFetch = sharedPreferences.getLong(PREF_GITHUB_LAST_FETCH, 0L)
         val currentTime = System.currentTimeMillis()
@@ -160,7 +151,6 @@ class GithubContributionWidget(
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         githubYearSpinner.adapter = adapter
 
-
         val currentYearIndex = availableYears.indexOf(currentYear)
         if (currentYearIndex >= 0) {
             githubYearSpinner.setSelection(currentYearIndex)
@@ -191,7 +181,6 @@ class GithubContributionWidget(
             showGithubTokenDialog()
             return
         }
-
 
         if (!force) {
             val lastFetch = sharedPreferences.getLong(PREF_GITHUB_LAST_FETCH, 0L)
@@ -235,8 +224,6 @@ class GithubContributionWidget(
 
         githubContributionGraphView.setContributions(contributions)
     }
-
-
 
     private fun updateStats(total: Int, currentStreak: Int, longestStreak: Int) {
         githubTotalContributions.text = total.toString()

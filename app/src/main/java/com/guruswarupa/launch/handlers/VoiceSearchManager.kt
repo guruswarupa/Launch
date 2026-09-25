@@ -12,10 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.core.PermissionManager
 
-
-
-
-
 class VoiceSearchManager(
     private val activity: FragmentActivity,
     private val packageManager: android.content.pm.PackageManager
@@ -76,10 +72,6 @@ class VoiceSearchManager(
             Toast.makeText(activity, activity.getString(R.string.toast_voice_recognition_not_available), Toast.LENGTH_SHORT).show()
         }
     }
-
-
-
-
 
     fun triggerSystemAssistant() {
         val intent = Intent(Intent.ACTION_VOICE_COMMAND).apply {

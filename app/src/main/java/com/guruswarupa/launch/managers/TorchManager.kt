@@ -7,10 +7,6 @@ import android.hardware.camera2.CameraManager
 import android.widget.Toast
 import com.guruswarupa.launch.R
 
-
-
-
-
 class TorchManager(private val context: Context) {
 
     private val cameraManager: CameraManager? =
@@ -37,10 +33,6 @@ class TorchManager(private val context: Context) {
         }
     }
 
-
-
-
-
     fun toggleTorch(): Boolean {
         val manager = cameraManager
         val id = cameraId
@@ -63,9 +55,6 @@ class TorchManager(private val context: Context) {
             false
         }
     }
-
-
-
 
     fun turnOffTorch() {
         val manager = cameraManager

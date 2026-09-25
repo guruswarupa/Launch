@@ -7,7 +7,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
-import android.util.Log
 import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,12 +36,10 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
     private var isListening = false
     private var isDataLoaded = false
 
-
     private var lastStepCount = 0
     private var todayStepCount = 0
     private var lastResetDate = ""
     private var totalStepsBase = 0
-
 
     private var lastSavedStepCount = 0
     private val handler = android.os.Handler(android.os.Looper.getMainLooper())
@@ -50,20 +47,14 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
     private val dataLock = Any()
 
-
-
-
     private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val calendar = Calendar.getInstance()
-
 
     private var historicalDataCache: MutableMap<String, ActivityData>? = null
     private var hourlyDataCache: MutableMap<String, String>? = null
 
-
     private var todayDistanceKm: Double = 0.0
     private var todayWalkingMinutes: Int = 0
-
 
     private var currentHour = -1
     private var hourlySteps: MutableMap<Int, Int> = mutableMapOf()
@@ -85,11 +76,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         private const val PREF_USER_HEIGHT_CM = "user_height_cm"
 
         private const val SAVE_INTERVAL_MS = 30 * 1000L
-        // saveCurrentData() re-serializes the ENTIRE historical/hourly step-data map (every day
-        // ever recorded) on each call. With a threshold of 1, saveCurrentData ran on almost every
-        // sensor event during a walk. A higher threshold lets steady walking use the SAVE_INTERVAL_MS
-        // debounce below, only forcing an immediate save for a larger jump (e.g. a batched sensor
-        // report). Data still isn't lost on stopTracking()/pause, which flush unconditionally.
+
         private const val MIN_STEPS_FOR_SAVE = 20
         private const val DEFAULT_STEP_LENGTH_METERS = 0.75
         private const val MIN_STEP_LENGTH_METERS = 0.45
@@ -100,10 +87,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         initializeSensors()
 
     }
-
-
-
-
 
     fun initializeAsync(autoStartTracking: Boolean = true, onComplete: (() -> Unit)? = null) {
         Thread {
@@ -116,7 +99,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
                     onComplete?.invoke()
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error during async initialization", e)
             }
         }.start()
     }
@@ -126,7 +108,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
         if (stepCounterSensor == null && stepDetectorSensor == null) {
-            Log.w(TAG, "No step sensors available on this device")
         }
     }
 
@@ -141,7 +122,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             ?.mapNotNull { it.toIntOrNull() }
             ?.toMutableSet()
             ?: mutableSetOf()
-
 
         if (lastStepCount < 0) lastStepCount = 0
         if (todayStepCount < 0) todayStepCount = 0
@@ -174,9 +154,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         return dateFormatter.format(Date())
     }
 
-
-
-
     fun getStrideLengthMeters(): Double {
         val stored = prefs.getFloat(PREF_STRIDE_LENGTH_METERS, -1f)
         if (stored > 0) {
@@ -191,9 +168,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         return DEFAULT_STEP_LENGTH_METERS
     }
 
-
-
-
     fun setStrideLengthMeters(meters: Double) {
         val normalized = normalizeStrideLengthMeters(meters)
         prefs.edit { putFloat(PREF_STRIDE_LENGTH_METERS, normalized.toFloat()) }
@@ -206,9 +180,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         }
     }
 
-
-
-
     fun setUserHeightCm(heightCm: Int) {
         prefs.edit { putInt(PREF_USER_HEIGHT_CM, heightCm.coerceIn(120, 230)) }
 
@@ -216,15 +187,9 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         setStrideLengthMeters(calculatedStride)
     }
 
-
-
-
     fun getUserHeightCm(): Int {
         return prefs.getInt(PREF_USER_HEIGHT_CM, -1)
     }
-
-
-
 
     fun resetStrideLengthToDefault() {
         prefs.edit {
@@ -261,7 +226,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         activeMinuteBucketsToday.clear()
         currentHour = -1
 
-
         prefs.edit {
             putString(PREF_LAST_RESET_DATE, today)
             putInt(PREF_TODAY_STEP_COUNT, 0)
@@ -269,7 +233,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             putInt(PREF_LAST_STEP_COUNT, 0)
             remove(PREF_ACTIVE_MINUTE_BUCKETS)
         }
-
 
         historicalDataCache = null
         hourlyDataCache = null
@@ -279,7 +242,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
         val historicalData = historicalDataCache ?: getHistoricalData()
 
-
         historicalData[date] = ActivityData(
             steps,
             distanceKmFromSteps(steps),
@@ -287,7 +249,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             walkingMinutes.takeIf { it > 0 } ?: estimateWalkingMinutesFromSteps(steps)
         )
         historicalDataCache = historicalData
-
 
         val jsonString = prefs.getString(PREF_HISTORICAL_DATA, null)
         val json = if (jsonString != null) {
@@ -300,11 +261,9 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             org.json.JSONObject()
         }
 
-
         val resolvedWalkingMinutes = walkingMinutes.takeIf { it > 0 } ?: estimateWalkingMinutesFromSteps(steps)
         val resolvedDistanceKm = distanceKmFromSteps(steps)
         json.put(date, "$steps|$resolvedDistanceKm|$resolvedWalkingMinutes")
-
 
         prefs.edit { putString(PREF_HISTORICAL_DATA, json.toString()) }
     }
@@ -355,14 +314,12 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         ensureDataLoaded()
 
         if (!hasActivityRecognitionPermission()) {
-            Log.w(TAG, "Activity recognition permission not granted")
             return
         }
 
         if (isListening) {
             return
         }
-
 
         val today = getCurrentDate()
         if (lastResetDate != today) {
@@ -375,7 +332,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             }
         }
 
-
         var registered = false
         stepCounterSensor?.let { sensor ->
             registered = sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL) || registered
@@ -387,7 +343,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         if (registered) {
             isListening = true
         } else {
-            Log.w(TAG, "No step sensors available")
         }
     }
 
@@ -430,9 +385,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
                 val currentTotalSteps = event.values[0].toInt()
 
-
                 if (currentTotalSteps < 0) {
-                    Log.w(TAG, "Invalid step count from sensor: $currentTotalSteps")
                     return
                 }
 
@@ -454,7 +407,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
                 }
 
                 if (currentTotalSteps < lastStepCount) {
-                    Log.w(TAG, "Step counter reset detected: current=$currentTotalSteps, last=$lastStepCount, preserving today=$todayStepCount")
                     totalStepsBase = currentTotalSteps - todayStepCount
                 }
 
@@ -466,7 +418,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
                     val distanceKm = (deltaSteps * strideLength) / 1000.0
                     updateHourlySteps(deltaSteps, distanceKm)
                 } else if (deltaSteps < 0) {
-                    Log.w(TAG, "Correcting negative daily delta: $deltaSteps (current=$currentTotalSteps, base=$totalStepsBase, today=$todayStepCount)")
                 }
 
                 todayStepCount = exactTodaySteps
@@ -517,21 +468,16 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
     private fun saveCurrentData(date: String = getCurrentDate()) = synchronized(dataLock) {
         if (todayStepCount < 0) {
-            Log.w(TAG, "Invalid step count for saving: $todayStepCount")
             return
         }
         if (todayDistanceKm < 0.0) {
-            Log.w(TAG, "Invalid distance for saving: $todayDistanceKm")
             todayDistanceKm = 0.0
         }
 
-
         if (todayStepCount > 100000) {
-            Log.w(TAG, "Unrealistic step count detected: $todayStepCount, not saving")
             return
         }
         if (todayDistanceKm > 100.0) {
-            Log.w(TAG, "Unrealistic distance detected: $todayDistanceKm km, not saving")
             return
         }
         prefs.edit {
@@ -556,9 +502,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
     ) {
         val dateKey = "hourly_$date"
 
-
         val allHourlyData = hourlyDataCache ?: getHourlyDataMap()
-
 
         val json = org.json.JSONObject()
         hourlyData.forEach { (hour, steps) ->
@@ -567,16 +511,13 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             json.put(hour.toString(), "$steps|$distanceKm|$walkingMinutes")
         }
 
-
         allHourlyData[dateKey] = json.toString()
         hourlyDataCache = allHourlyData
-
 
         val mainJson = org.json.JSONObject()
         allHourlyData.forEach { (key, data) ->
             mainJson.put(key, data)
         }
-
 
         prefs.edit { putString(PREF_HOURLY_DATA, mainJson.toString()) }
     }
@@ -687,9 +628,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         }
     }
 
-
-
-
     fun getActivityForDate(date: String): ActivityData {
         val historicalData = getHistoricalData(forceRefresh = true)
         val historical = historicalData[date]
@@ -701,9 +639,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         }
     }
 
-
-
-
     fun getTodayActivity(): ActivityData = synchronized(dataLock) {
         ensureDataLoaded()
 
@@ -711,9 +646,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             return getTodayActivityFromPrefs()
         }
 
-
         if (todayStepCount > 100000 || todayDistanceKm > 100.0) {
-            Log.w(TAG, "Corrupted data detected: steps=$todayStepCount, distance=$todayDistanceKm km")
 
             todayStepCount = 0
             todayDistanceKm = 0.0
@@ -722,12 +655,10 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
         }
 
-
         val validSteps = todayStepCount.coerceAtLeast(0)
         val validDistance = todayDistanceKm.coerceAtLeast(0.0)
 
         if (validSteps != todayStepCount || validDistance != todayDistanceKm) {
-            Log.w(TAG, "Data validation corrected: steps $todayStepCount->$validSteps, distance $todayDistanceKm->$validDistance")
 
             if (todayStepCount < 0) todayStepCount = 0
             if (todayDistanceKm < 0.0) todayDistanceKm = 0.0
@@ -739,9 +670,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             ?: estimateWalkingMinutesFromSteps(validSteps)
         return ActivityData(validSteps, validDistance, getCurrentDate(), walkingMinutes)
     }
-
-
-
 
     fun getMonthlyActivity(year: Int, month: Int): Map<String, ActivityData> {
         val historicalData = getHistoricalData(forceRefresh = true)
@@ -765,9 +693,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         return monthlyData
     }
 
-
-
-
     fun getAllHistoricalDates(): Set<String> {
         return getHistoricalData().keys
     }
@@ -776,12 +701,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
 
     fun getTodayDistanceKm(): Double = getTodayActivity().distanceKm
 
-
-
-
     fun resetAllData() {
-        Log.w(TAG, "Resetting all activity data due to corruption")
-
 
         todayStepCount = 0
         todayDistanceKm = 0.0
@@ -795,7 +715,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         activeMinuteBucketsToday.clear()
         currentHour = -1
 
-
         prefs.edit {
             remove(PREF_LAST_STEP_COUNT)
             remove(PREF_TODAY_STEP_COUNT)
@@ -808,7 +727,6 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
             remove(PREF_STRIDE_LENGTH_METERS)
             remove(PREF_USER_HEIGHT_CM)
         }
-
 
         historicalDataCache = null
         hourlyDataCache = null

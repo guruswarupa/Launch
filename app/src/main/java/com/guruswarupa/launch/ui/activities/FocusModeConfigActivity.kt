@@ -47,7 +47,6 @@ class FocusModeConfigActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
@@ -58,7 +57,6 @@ class FocusModeConfigActivity : AppCompatActivity() {
 
         focusModeManager = FocusModeManager(this, getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE))
         webAppManager = WebAppManager(prefs)
-
 
         recyclerView = findViewById(R.id.focus_mode_app_list)
         wallpaperBackground = findViewById(R.id.wallpaper_background)
@@ -76,9 +74,6 @@ class FocusModeConfigActivity : AppCompatActivity() {
 
         applyThemeAndWallpaper()
 
-        // Querying every launchable activity and resolving all their labels is real work - do
-        // it off the main thread, adapter construction included (it only touches data, no
-        // views), so the screen appears instantly instead of blocking onCreate.
         backgroundExecutor.execute {
             val apps = queryLaunchableApps()
             val newAdapter = FocusModeAppAdapter(
@@ -111,7 +106,6 @@ class FocusModeConfigActivity : AppCompatActivity() {
             }
 
             Toast.makeText(this, this.getString(R.string.toast_focus_mode_configuration_saved), Toast.LENGTH_SHORT).show()
-
 
             val intent = Intent("com.guruswarupa.launch.SETTINGS_UPDATED")
             intent.setPackage(packageName)
@@ -163,7 +157,6 @@ class FocusModeConfigActivity : AppCompatActivity() {
         cancelButton.setBackgroundResource(R.drawable.settings_card_background)
     }
 
-    /** Runs on [backgroundExecutor] - must not touch any view. */
     private fun queryLaunchableApps(): List<ResolveInfo> {
         val intent = Intent(Intent.ACTION_MAIN, null).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)

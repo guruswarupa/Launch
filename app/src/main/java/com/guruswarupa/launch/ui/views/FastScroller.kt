@@ -28,18 +28,14 @@ class FastScroller @JvmOverloads constructor(
     private var alphabet = ('A'..'Z').map { it.toString() } + "#"
     private var recyclerView: RecyclerView? = null
 
-
     var onScrollToTop: (() -> Unit)? = null
     private var hasNotifiedScrollToTop = false
-
 
     var onScrollToBottom: (() -> Unit)? = null
     private var hasNotifiedScrollToBottom = false
 
-
     private var lastScrollDy = 0
     private var scrollDirectionStable = 0
-
 
     private var isAtBottom = false
     private var bottomTriggerScheduled = false
@@ -56,7 +52,6 @@ class FastScroller @JvmOverloads constructor(
     private var currentAlpha = 1f
     private var waveProgress = 0f
     private var waveAnimator: ValueAnimator? = null
-
 
     private var touchX = 0f
 
@@ -159,12 +154,9 @@ class FastScroller @JvmOverloads constructor(
                     val lastVisiblePos = layoutManager.findLastVisibleItemPosition()
                     val totalItemCount = adapter.itemCount
 
-
                     lastScrollDy = dy
 
-
                     if (firstVisiblePos == 0) {
-
 
                         if (!hasNotifiedScrollToTop && dy <= 0) {
                             hasNotifiedScrollToTop = true
@@ -177,11 +169,9 @@ class FastScroller @JvmOverloads constructor(
                         hasNotifiedScrollToTop = false
                     }
 
-
                     val isAtListBottom = lastVisiblePos >= totalItemCount - 1 && totalItemCount > 0
                     if (isAtListBottom) {
                         isAtBottom = true
-
 
                         if (dy > 0 && !hasNotifiedScrollToBottom) {
                             hasNotifiedScrollToBottom = true
@@ -226,13 +216,8 @@ class FastScroller @JvmOverloads constructor(
             }
         })
 
-
         rv.post { updateScrollIndex() }
     }
-
-
-
-
 
     private fun forceRefreshVisibleIcons() {
         val rv = recyclerView ?: return
@@ -245,13 +230,10 @@ class FastScroller @JvmOverloads constructor(
 
         val adapter = rv.adapter as? AppAdapter ?: return
 
-
-
         rv.postDelayed({
             for (pos in firstVisiblePos..lastVisiblePos) {
                 if (pos < adapter.itemCount) {
                     rv.findViewHolderForAdapterPosition(pos)?.let { viewHolder ->
-
 
                         if (viewHolder is AppAdapter.ViewHolder) {
                             adapter.forceRebindViewHolder(viewHolder, pos)
@@ -274,7 +256,6 @@ class FastScroller @JvmOverloads constructor(
 
         var newIndex = -1
 
-
         for (i in firstVisiblePos downTo 0) {
             val currentApp = adapter.getItemAtPosition(i) ?: continue
             if (currentApp.activityInfo.packageName == AppAdapter.SEPARATOR_PACKAGE) {
@@ -286,7 +267,6 @@ class FastScroller @JvmOverloads constructor(
                 }
             }
         }
-
 
         if (newIndex == -1) {
             val label = adapter.getAppLabel(firstVisiblePos)
@@ -323,8 +303,7 @@ class FastScroller @JvmOverloads constructor(
         val fontStyle = preferences.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
         val intensity = preferences.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular") ?: "regular"
         applyTypeface(fontStyle, intensity)
-        
-        // Get font color, defaulting to white if null (default color)
+
         val fontColor = TypographyManager.getConfiguredFontColor(context) ?: ThemeManager.color(context, R.attr.appTextPrimary)
         setTextColor(fontColor)
         invalidate()
@@ -419,7 +398,6 @@ class FastScroller @JvmOverloads constructor(
 
         val fadeAlpha = (currentAlpha * 255).toInt().coerceIn(0, 255)
 
-
         canvas.drawLine(trackX, trackTop, trackX, trackBottom, trackPaint)
 
         val baseOffset = (letterPaint.descent() + letterPaint.ascent()) / 2
@@ -432,7 +410,6 @@ class FastScroller @JvmOverloads constructor(
 
             val paintToUse = if (isSelected || i == scrollIndex) selectedLetterPaint else letterPaint
 
-
             val alpha = if (isSelected || i == scrollIndex) 255 else (fadeAlpha * 0.5f).toInt()
             paintToUse.alpha = alpha
 
@@ -442,7 +419,6 @@ class FastScroller @JvmOverloads constructor(
 
                 haloPaint.alpha = (fadeAlpha * 0.4f).toInt()
                 canvas.drawCircle(textX, y, 18f * density * waveProgress, haloPaint)
-
 
                 glowPaint.alpha = (fadeAlpha * 0.3f).toInt()
                 canvas.drawCircle(textX, y, 22f * density * waveProgress, glowPaint)
@@ -483,13 +459,11 @@ class FastScroller @JvmOverloads constructor(
         val bubbleOffset = 140f * density + (120f * density * (1f - waveProgress))
         val bubbleX = if (isRtl) trackX + bubbleOffset else trackX - bubbleOffset
 
-
         val shadowPaint = Paint(previewPaint).apply {
             maskFilter = BlurMaskFilter(20f * density, BlurMaskFilter.Blur.NORMAL)
             alpha = (fadeAlpha * 0.3f).toInt()
         }
         canvas.drawCircle(bubbleX, centerY, radius + 6f * density, shadowPaint)
-
 
         val haloPaintLocal = Paint(previewPaint).apply {
             maskFilter = BlurMaskFilter(8f * density, BlurMaskFilter.Blur.NORMAL)
@@ -566,7 +540,6 @@ class FastScroller @JvmOverloads constructor(
         val adapter = recyclerView?.adapter as? AppAdapter ?: return
         val appListSize = adapter.getCurrentListSize()
         var targetPosition = -1
-
 
         for (i in 0 until appListSize) {
             val app = adapter.getItemAtPosition(i) ?: continue

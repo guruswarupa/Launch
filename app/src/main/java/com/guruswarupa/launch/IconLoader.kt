@@ -97,14 +97,13 @@ class IconLoader(
 
     var currentIconSize: Int = sharedPreferences.getInt(Constants.Prefs.ICON_SIZE, 40)
         private set
-    
+
     private var currentIconPackPackage: String? = null
 
     init {
-        // Initialize current icon pack package
+
         currentIconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
-        
-        // Set icon cache version if not already set
+
         if (!cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
             cacheManager.setIconCacheVersion(cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
         }
@@ -113,19 +112,19 @@ class IconLoader(
     private fun loadIconFromPack(packageName: String, activityName: String? = null): Drawable? {
         val iconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
         val isIconPackEnabled = IconPackManager.isIconPackEnabled(sharedPreferences)
-        
+
         if (!isIconPackEnabled || iconPackPackage == null) return null
-        
+
         return try {
             val pm = context.packageManager
             val iconPackResources = pm.getResourcesForApplication(iconPackPackage)
-            
+
             val drawableName = IconPackManager.getDrawableName(context, packageName, activityName, sharedPreferences)
             var resourceId = 0
             if (drawableName != null) {
                 resourceId = iconPackResources.getIdentifier(drawableName, "drawable", iconPackPackage)
             }
-            
+
             if (resourceId == 0) {
                 resourceId = iconPackResources.getIdentifier(
                     packageName.replace(".", "_").lowercase(),
@@ -133,23 +132,19 @@ class IconLoader(
                     iconPackPackage
                 )
             }
-            
+
             if (resourceId != 0) {
                 ResourcesCompat.getDrawable(iconPackResources, resourceId, context.theme)
             } else {
                 null
             }
         } catch (e: Exception) {
-            android.util.Log.w("IconLoader", "Failed to load icon from pack for $packageName", e)
             null
         }
     }
 
     private fun recycleDrawableBitmap() {
-        // Don't manually recycle bitmaps from cache eviction.
-        // The drawable might still be in use by an ImageView.
-        // Let the system's garbage collector handle bitmap memory.
-        // Manual recycling here causes "Canvas: trying to use a recycled bitmap" crashes.
+
     }
 
     private class PriorityRunnable(val priority: Int, val action: Runnable) : Runnable, Comparable<PriorityRunnable> {
@@ -188,30 +183,26 @@ class IconLoader(
     fun updateIconStyle(style: String) {
         val oldStyle = currentIconStyle
         currentIconStyle = style
-        
-        // Only clear disk cache if style actually changed
+
         if (oldStyle != style) {
             clearIconCaches(clearDiskCache = true)
         } else {
             clearIconCaches(clearDiskCache = false)
         }
-        
-        // Update disk cache version
+
         cacheManager.setIconCacheVersion(cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
     }
 
     fun updateIconSize(size: Int) {
         val oldSize = currentIconSize
         currentIconSize = size
-        
-        // Only clear disk cache if size actually changed
+
         if (oldSize != size) {
             clearIconCaches(clearDiskCache = true)
         } else {
             clearIconCaches(clearDiskCache = false)
         }
-        
-        // Update disk cache version
+
         cacheManager.setIconCacheVersion(cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
     }
 
@@ -222,13 +213,12 @@ class IconLoader(
             cacheManager.clearIconCache()
         }
     }
-    
+
     fun onIconPackChanged() {
         val iconPackPackage = IconPackManager.getSelectedIconPack(sharedPreferences)
         val isIconPackEnabled = IconPackManager.isIconPackEnabled(sharedPreferences)
-        
-        // Clear disk cache if icon pack changed or icon pack enabled/disabled
-        if (currentIconPackPackage != iconPackPackage || 
+
+        if (currentIconPackPackage != iconPackPackage ||
             (currentIconPackPackage == null && isIconPackEnabled) ||
             (currentIconPackPackage != null && !isIconPackEnabled)) {
             clearIconCaches(clearDiskCache = true)
@@ -240,8 +230,6 @@ class IconLoader(
         contactPhotoCache.evictAll()
     }
 
-    // In-memory keys are "${packageName}|${preferredOrder}"; drop this package's entries
-    // (its icon may have changed on install/update) instead of evicting every cached icon.
     fun invalidatePackage(packageName: String) {
         val prefix = "$packageName|"
         val staleKeys = iconCache.snapshot().keys.filter { it.startsWith(prefix) }
@@ -252,26 +240,22 @@ class IconLoader(
     }
 
     fun cleanup() {
-        // Cancel all pending tasks
+
         pendingIconTasks.values.forEach { it.cancel(mayInterruptIfRunning = true) }
         pendingIconTasks.clear()
-        
-        // Shutdown executors
+
         iconLoadExecutor.shutdown()
         iconPreloadExecutor.shutdown()
-        
-        // Cancel coroutine scope
+
         iconLoadScope.cancel()
-        
-        // Clear caches
+
         iconCache.evictAll()
         specialAppIconCache.evictAll()
         contactPhotoCache.evictAll()
     }
 
     fun getCachedIcon(cacheKey: String): Drawable? {
-        // In-memory only: disk lookups are decoded off the UI thread in submitIconLoadTask
-        // to avoid blocking RecyclerView binds/scrolling on synchronous file I/O.
+
         return iconCache[cacheKey]
     }
 
@@ -362,7 +346,7 @@ class IconLoader(
         onIconReady: ((String, AppAdapter.ViewHolder) -> Unit)? = null
     ) {
         if (iconPreloadExecutor.isShutdown || iconPreloadExecutor.isTerminated) return
-        
+
         val packageName = app.activityInfo.packageName
         if (packageName == separatorPackage) return
 
@@ -379,17 +363,16 @@ class IconLoader(
         val priorityRunnable = PriorityRunnable(priority) {
             try {
                 if (iconCache[cacheKey] == null) {
-                    // Check disk cache first (cheap decode) before regenerating from scratch
+
                     var shapedIcon: Drawable? = null
                     if (cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
                         shapedIcon = cacheManager.getCachedIcon(cacheKey, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                     }
 
                     if (shapedIcon == null) {
-                        // Try to load from icon pack first
+
                         var icon = loadIconFromPack(packageName, app.activityInfo.name)
 
-                        // Fallback to default icon if pack doesn't have it
                         if (icon == null) {
                             icon = app.loadIcon(activity.packageManager)
                         }
@@ -402,7 +385,6 @@ class IconLoader(
                         }
                         shapedIcon = shapeIconDrawable(icon)
 
-                        // Save to disk cache for persistence
                         cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                     }
 
@@ -414,7 +396,6 @@ class IconLoader(
                     updateHolderIcon(holder, cacheKey, readyIcon, onIconReady)
                 }
             } catch (e: Exception) {
-                android.util.Log.w("IconLoader", "Error loading icon for $packageName", e)
             }
         }
 
@@ -423,9 +404,8 @@ class IconLoader(
             iconPreloadExecutor.execute(trackedTask)
             pendingIconTasks[cacheKey] = trackedTask
         } catch (e: java.util.concurrent.RejectedExecutionException) {
-            android.util.Log.e("IconLoader", "Failed to submit icon task", e)
         }
-        
+
         if (pendingIconTasks.size > Constants.Dimensions.PENDING_TASKS_CLEANUP_THRESHOLD) {
             pendingIconTasks.entries.removeIf { it.value.isDone }
         }
@@ -440,7 +420,7 @@ class IconLoader(
         onLoaded: (() -> Unit)? = null
     ) {
         if (iconLoadExecutor.isShutdown || iconLoadExecutor.isTerminated) return
-        
+
         val cachedIcon = specialAppIconCache[cacheId]
         if (cachedIcon != null) {
 
@@ -469,12 +449,10 @@ class IconLoader(
                         }
                         return@execute
                     } catch (e: Exception) {
-                        android.util.Log.w("IconLoader", "Error loading special app icon for $candidatePackage", e)
                     }
                 }
             }
         } catch (e: java.util.concurrent.RejectedExecutionException) {
-            android.util.Log.e("IconLoader", "Failed to submit special icon task", e)
         }
     }
 
@@ -516,17 +494,12 @@ class IconLoader(
                         }
                     }
                 } catch (e: Exception) {
-                    android.util.Log.w("IconLoader", "Error loading contact photo for $contactName", e)
                 }
             }
         } catch (e: java.util.concurrent.RejectedExecutionException) {
-            android.util.Log.e("IconLoader", "Failed to submit contact photo task", e)
         }
     }
 
-    // Contact photos come from the content provider at whatever resolution was stored
-    // (often several MB decoded); downsample to roughly icon size before caching so a
-    // handful of contacts don't blow up the heap the way a full-res decode would.
     private fun decodeSampledContactPhoto(uriString: String, targetSizePx: Int): Drawable? {
         val uri = uriString.toUri()
         val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }

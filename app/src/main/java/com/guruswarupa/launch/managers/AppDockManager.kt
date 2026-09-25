@@ -129,7 +129,6 @@ class AppDockManager(
 
         ensureWorkspaceToggle()
 
-
         if (isFocusMode) {
             val endTime = sharedPreferences.getLong(focusModeEndTimeKey, 0)
             if (endTime > System.currentTimeMillis()) {
@@ -196,7 +195,7 @@ class AppDockManager(
             cornerRadius = 1000f
 
             setColor(ThemeManager.color(context, R.attr.appSurface))
-            // TODO(surface-treatment): swap for a themed border token once GlassSurface lands.
+
             setStroke(1, Color.parseColor("#40FFFFFF"))
         }
     }
@@ -255,7 +254,6 @@ class AppDockManager(
                     false
                 }
             }
-
 
             var insertIndex = 1
             for (i in 0 until appDock.childCount) {
@@ -574,8 +572,6 @@ class AppDockManager(
         return workspaceManager.isAppInActiveWorkspace(packageName)
     }
 
-
-
     private fun saveFocusMode() {
         sharedPreferences.edit { putBoolean(focusModeKey, isFocusMode) }
     }
@@ -585,14 +581,12 @@ class AppDockManager(
             val modeType = sharedPreferences.getString(Constants.Prefs.FOCUS_MODE_TYPE,
                 Constants.Prefs.FOCUS_MODE_TYPE_STRICT)
 
-
             if (modeType == Constants.Prefs.FOCUS_MODE_TYPE_STRICT) {
                 val endTime = sharedPreferences.getLong(focusModeEndTimeKey, 0)
                 val remainingMinutes = (endTime - System.currentTimeMillis()) / (1000 * 60)
                 Toast.makeText(context, context.getString(R.string.toast_strict_mode_active_minutes_remaining, remainingMinutes), Toast.LENGTH_LONG).show()
                 return
             }
-
 
             val endTime = sharedPreferences.getLong(focusModeEndTimeKey, 0)
             val currentTime = System.currentTimeMillis()
@@ -744,9 +738,7 @@ class AppDockManager(
     }
 
     private fun startFocusModeTimer(endTime: Long) {
-        // Cancel any previous loop first - without this, rapidly re-enabling focus mode (or
-        // extending its duration) stacked up multiple concurrent postDelayed loops, each
-        // holding a reference to this AppDockManager until it self-terminated up to 30s later.
+
         stopFocusModeTimer()
         val handler = android.os.Handler(android.os.Looper.getMainLooper())
         focusModeCheckHandler = handler
@@ -824,11 +816,6 @@ class AppDockManager(
         val isWorkMode = workProfileManager.isWorkProfileEnabled()
         val isFocusActive = isFocusMode || pomodoroManager.isPomodoroActive()
 
-        // Stock's home page is meant to stay minimal, like a real launcher's - none of the
-        // workspace/focus-mode/work-profile pills belong there regardless of the user's own
-        // per-pill settings (workspaces are also a different app-organization concept from
-        // Stock's favorites+drawer model, and would silently filter the "show everything" drawer
-        // if left active).
         val isStock = com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)
         val hideWorkProfile = isStock || sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_WORK_PROFILE, false)
         val hideFocusMode = isStock || sharedPreferences.getBoolean(Constants.Prefs.DOCK_HIDE_FOCUS_MODE, false)
@@ -845,7 +832,7 @@ class AppDockManager(
                 "work_profile_container" -> !hideWorkProfile
                 else -> !isFocusActive
             }
-            
+
             val finalVisibility = if (allThreeHiddenInSettings || !shouldBeVisible) View.GONE else View.VISIBLE
             child.visibility = finalVisibility
             if (finalVisibility == View.VISIBLE) {

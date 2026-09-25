@@ -53,11 +53,11 @@ class UsageGraphView @JvmOverloads constructor(
         fillPath.reset()
 
         val startX = if (dataPoints.size < maxPoints) (maxPoints - dataPoints.size) * stepX else 0f
-        
+
         for (i in dataPoints.indices) {
             val x = startX + i * stepX
             val y = height - (dataPoints[i] / 100f * height)
-            
+
             if (i == 0) {
                 path.moveTo(x, y)
                 fillPath.moveTo(x, height)

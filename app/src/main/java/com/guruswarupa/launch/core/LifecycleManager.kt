@@ -22,10 +22,6 @@ import com.guruswarupa.launch.widgets.WidgetThemeManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
-
-
-
 class LifecycleManager(
     private val activity: FragmentActivity,
     private val handler: Handler,
@@ -33,7 +29,7 @@ class LifecycleManager(
     dependencies: Dependencies = Dependencies()
 ) {
     companion object {
-        // Constants moved to Constants.Timeouts for centralized management
+
     }
 
     data class Dependencies(
@@ -88,28 +84,20 @@ class LifecycleManager(
         val deps = dependencies
         val now = SystemClock.elapsedRealtime()
 
-        // Every page uses the fully-transparent system-bar style (see MainActivity's
-        // page-changed handler): reassert that on resume, not the "not fully transparent"
-        // scrim — otherwise returning to the app (e.g. from another app) shows a darker
-        // status bar until the next page change corrects it.
         deps.systemBarManager?.makeSystemBarsTransparent(isFullyTransparent = true)
-
 
         deps.appLockManager?.clearAuthTimeout()
 
         deps.wallpaperManagerHelper?.setWallpaperBackground()
 
-
         if (!isBlockingBackGesture) {
             deps.gestureHandler?.updateGestureExclusion()
         }
-
 
         deps.appDockManager?.let {
             onFocusModeApply?.invoke(it.getCurrentMode())
             it.refreshWorkspaceToggle()
         }
-
 
         deps.widgetThemeManager?.let { themeManager ->
             themeManager.checkAndUpdateThemeIfNeeded(
@@ -122,16 +110,13 @@ class LifecycleManager(
             )
         }
 
-
         deps.views?.let {
             if (it.isSearchBoxInitialized()) {
                 it.searchBox.clearFocus()
             }
         }
 
-
         deps.widgetLifecycleCoordinator?.onResume()
-
 
         val shouldForceWorkProfileRefresh = deps.appDockManager?.isWorkProfileModeEnabled() == true
         val shouldRefreshAppList =
@@ -150,24 +135,19 @@ class LifecycleManager(
             }, 250)
         }
 
-
         deps.widgetManager?.onStart()
         deps.widgetManager?.reloadWidgetsIfPending()
         deps.deviceInfoWidget?.onResume()
         deps.networkStatsWidget?.onResume()
 
-
         deps.usageStatsDisplayManager?.refreshPermissionButton()
-
 
         val isPowerSaverMode = sharedPreferences.getBoolean(Constants.Prefs.POWER_SAVER_MODE, false)
         deps.timeDateManager?.startUpdates(isPowerSaverMode)
 
-
         val shouldRefreshUsage = now - lastUsageRefreshAt >= Constants.Timeouts.USAGE_REFRESH_INTERVAL_MS
         if (shouldRefreshUsage) {
             deps.usageStatsManager?.invalidateCache()
-
 
             activity.lifecycleScope.launch {
                 delay(50)
@@ -197,14 +177,11 @@ class LifecycleManager(
 
         deps.timeDateManager?.stopUpdates()
 
-
         deps.todoManager?.saveTodoItems()
-
 
         deps.widgetManager?.onStop()
         deps.deviceInfoWidget?.onPause()
         deps.networkStatsWidget?.onPause()
-
 
         deps.widgetLifecycleCoordinator?.onPause()
 
@@ -228,9 +205,6 @@ class LifecycleManager(
 
         cleanup()
     }
-
-
-
 
     fun cleanup() {
         handler.removeCallbacksAndMessages(null)

@@ -25,9 +25,6 @@ import java.util.Calendar
 import java.util.Locale
 import com.guruswarupa.launch.ui.theme.ThemeManager
 
-
-
-
 class TodoManager(
     private val activity: MainActivity,
     private val sharedPreferences: SharedPreferences,
@@ -60,9 +57,6 @@ class TodoManager(
         rescheduleTodoAlarms()
     }
 
-
-
-
     fun onThemeChanged() {
         if (::todoAdapter.isInitialized) {
             todoAdapter.notifyItemRangeChanged(0, todoItems.size)
@@ -72,7 +66,6 @@ class TodoManager(
     fun showAddTodoDialog() {
         val dialogBuilder = android.app.AlertDialog.Builder(activity, R.style.CustomDialogTheme)
         dialogBuilder.setTitle(activity.getString(R.string.dlg_add_todo_item))
-
 
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_add_todo, null)
         val taskInput = dialogView.findViewById<EditText>(R.id.task_input)
@@ -89,7 +82,6 @@ class TodoManager(
         val intervalSpinner = dialogView.findViewById<Spinner>(R.id.interval_spinner)
         val intervalStartTimePicker = dialogView.findViewById<android.widget.TimePicker>(R.id.interval_start_time_picker)
 
-
         val dayCheckboxes = listOf<CheckBox>(
             dialogView.findViewById(R.id.checkbox_sunday),
             dialogView.findViewById(R.id.checkbox_monday),
@@ -100,15 +92,12 @@ class TodoManager(
             dialogView.findViewById(R.id.checkbox_saturday)
         )
 
-
         val categories = arrayOf("General", "Work", "Personal", "Health", "Shopping", "Study")
         categorySpinner.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, categories)
-
 
         val priorities = TodoItem.Priority.entries.map { it.displayName }.toTypedArray()
         prioritySpinner.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, priorities)
         prioritySpinner.setSelection(1)
-
 
         val intervals = arrayOf(
             "30 minutes",
@@ -123,11 +112,9 @@ class TodoManager(
         val intervalValues = arrayOf(30, 60, 120, 180, 240, 360, 480, 720)
         intervalSpinner.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, intervals)
 
-
         enableTimeCheckbox.setOnCheckedChangeListener { _, isChecked ->
             timePicker.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
-
 
         recurringCheckbox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -145,7 +132,6 @@ class TodoManager(
                 intervalContainer.visibility = View.GONE
             }
         }
-
 
         recurrenceTypeGroup.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.recurrence_days) {
@@ -206,7 +192,6 @@ class TodoManager(
         val dialog = dialogBuilder.create()
         dialog.show()
 
-
         fixDialogTextColors(dialog)
     }
 
@@ -244,7 +229,6 @@ class TodoManager(
         todoAdapter.notifyItemInserted(index)
         saveTodoItems()
 
-
         if (dueTime != null || (newTodo.isIntervalBased() && newTodo.intervalStartTime != null)) {
             val requestCode = todoAlarmManager.getRequestCode(newTodo, index)
             todoAlarmManager.scheduleAlarm(newTodo, requestCode)
@@ -267,14 +251,14 @@ class TodoManager(
 
     fun loadTodoItems() {
         val jsonString = sharedPreferences.getString("todo_items_json", null)
-        
+
         if (jsonString != null) {
             try {
                 val moshi = Moshi.Builder().build()
                 val type = Types.newParameterizedType(List::class.java, TodoItem::class.java)
                 val jsonAdapter = moshi.adapter<List<TodoItem>>(type)
                 val loadedItems = jsonAdapter.fromJson(jsonString)
-                
+
                 if (loadedItems != null) {
                     todoItems.clear()
                     todoItems.addAll(loadedItems)
@@ -284,21 +268,20 @@ class TodoManager(
                     return
                 }
             } catch (e: Exception) {
-                // Fallback to old format for backward compatibility
+
             }
         }
-        
-        // Try loading from old format
+
         loadTodoItemsFromLegacyFormat()
     }
 
     private fun loadTodoItemsFromLegacyFormat() {
         val todoString = sharedPreferences.getString("todo_items", "") ?: ""
         if (todoString.isEmpty()) return
-        
+
         val todoArray = todoString.split("|")
         val legacyItems = mutableListOf<TodoItem>()
-        
+
         for (itemString in todoArray) {
             if (itemString.isNotEmpty()) {
                 val parts = itemString.split(":")
@@ -323,7 +306,7 @@ class TodoManager(
                     val intervalStartTime = if (parts.size > 9 && parts[9].isNotEmpty()) {
                         parts[9]
                     } else null
-                    
+
                     legacyItems.add(
                         TodoItem(
                             text = text,
@@ -351,14 +334,14 @@ class TodoManager(
                 }
             }
         }
-        
+
         if (legacyItems.isNotEmpty()) {
             todoItems.clear()
             todoItems.addAll(legacyItems)
             todoAdapter.notifyItemRangeInserted(0, todoItems.size)
             checkRecurringTasks()
             rescheduleTodoAlarms()
-            // Migrate to new format
+
             saveTodoItems()
         }
     }
@@ -371,7 +354,7 @@ class TodoManager(
             val jsonString = jsonAdapter.toJson(todoItems)
             sharedPreferences.edit { putString("todo_items_json", jsonString) }
         } catch (e: Exception) {
-            // Fallback to old format if JSON serialization fails
+
             val todoString = todoItems.joinToString("|") {
                 val selectedDaysString = it.selectedDays.joinToString(",")
                 "${it.text}:${it.isChecked}:${it.isRecurring}:${it.lastCompletedDate ?: ""}:${selectedDaysString}:${it.priority.name}:${it.category}:${it.dueTime ?: ""}:${it.recurrenceInterval ?: ""}:${it.intervalStartTime ?: ""}"
@@ -437,7 +420,6 @@ class TodoManager(
                         val dueMinute = dueTimeParts[1].toInt()
                         val dueTimeInMinutes = dueHour * 60 + dueMinute
 
-
                         if (currentTimeInMinutes > dueTimeInMinutes) {
                             itemsToRemove.add(todoItem)
                         }
@@ -447,7 +429,6 @@ class TodoManager(
                 }
             }
         }
-
 
         for (item in itemsToRemove) {
             val index = todoItems.indexOf(item)

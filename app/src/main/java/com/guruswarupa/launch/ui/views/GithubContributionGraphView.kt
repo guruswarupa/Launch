@@ -22,7 +22,6 @@ class GithubContributionGraphView @JvmOverloads constructor(
     private var cellSpacing = 0f
     private var cornerRadius = 0f
 
-
     private val colorLevels = listOf(
         android.graphics.Color.parseColor("#EBEDF0"),
         android.graphics.Color.parseColor("#9BE9A8"),
@@ -54,21 +53,16 @@ class GithubContributionGraphView @JvmOverloads constructor(
             return
         }
 
-
         val maxWeeks = calculateMaxWeeks()
         val cellWidth = (width - paddingRight - paddingLeft - (maxWeeks - 1) * cellSpacing) / maxWeeks
         val cellHeight = (height - paddingTop - paddingBottom - 6 * cellSpacing) / 7
 
-
         val adjustedCellSize = minOf(cellWidth, cellHeight)
-
 
         var currentX = paddingLeft.toFloat()
         var currentY = paddingTop.toFloat()
 
-
         val maxCount = if (contributions.values.maxOrNull() ?: 0 > 0) contributions.values.maxOrNull() ?: 0 else 1
-
 
         val sortedDates = contributions.keys.sorted()
         var dateIndex = 0
@@ -80,7 +74,6 @@ class GithubContributionGraphView @JvmOverloads constructor(
                 if (dateIndex < sortedDates.size) {
                     val date = sortedDates[dateIndex]
                     val count = contributions[date] ?: 0
-
 
                     val colorLevel = when {
                         count == 0 -> 0
@@ -102,7 +95,6 @@ class GithubContributionGraphView @JvmOverloads constructor(
                     }
 
                     cellPaint.color = colorLevels[colorLevel]
-
 
                     val rect = RectF(
                         currentX,

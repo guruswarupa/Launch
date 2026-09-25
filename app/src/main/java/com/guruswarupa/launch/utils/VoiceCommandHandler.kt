@@ -13,9 +13,6 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import com.guruswarupa.launch.models.Constants
 
-
-
-
 class VoiceCommandHandler(
     private val activity: androidx.fragment.app.FragmentActivity,
     private val packageManager: android.content.pm.PackageManager,
@@ -23,10 +20,6 @@ class VoiceCommandHandler(
     private val searchBox: AutoCompleteTextView,
     private val appList: List<ResolveInfo>
 ) {
-
-
-
-
 
     fun handleCommand(command: String): Boolean {
         return when {

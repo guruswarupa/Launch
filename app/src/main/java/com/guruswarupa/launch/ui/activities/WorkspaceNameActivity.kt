@@ -20,7 +20,6 @@ import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 
-/** Full-screen replacement for the old "enter workspace name" [android.app.AlertDialog], used for both creating a new workspace and renaming an existing one. */
 class WorkspaceNameActivity : AppCompatActivity() {
 
     private lateinit var workspaceManager: WorkspaceManager

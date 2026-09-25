@@ -34,7 +34,6 @@ class PrivacyDashboardActivity : AppCompatActivity() {
     private lateinit var adapter: PrivacyDashboardAdapter
     private lateinit var searchBox: EditText
 
-
     private lateinit var statTotalValue: TextView
     private lateinit var statCriticalValue: TextView
     private lateinit var statSideloadedValue: TextView
@@ -63,7 +62,6 @@ class PrivacyDashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
@@ -79,7 +77,6 @@ class PrivacyDashboardActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = PrivacyDashboardAdapter(emptyList())
         recyclerView.adapter = adapter
-
 
         recyclerView.setHasFixedSize(true)
         recyclerView.itemAnimator?.apply {
@@ -179,7 +176,6 @@ class PrivacyDashboardActivity : AppCompatActivity() {
                         granted.isNotEmpty() -> 1
                         else -> 0
                     }
-
 
                     @Suppress("DEPRECATION")
                     val installer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

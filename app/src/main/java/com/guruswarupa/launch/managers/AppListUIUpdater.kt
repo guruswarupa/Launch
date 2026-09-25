@@ -2,7 +2,6 @@ package com.guruswarupa.launch.managers
 
 import com.guruswarupa.launch.R
 import android.content.pm.ResolveInfo
-import android.util.Log
 import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
@@ -45,7 +44,6 @@ class AppListUIUpdater(
 
                     activity.updateFastScrollerVisibility()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error in onAppListUpdated callback", e)
                 }
             }
             appListLoader.onAdapterNeedsUpdate = { isGrid ->
@@ -66,7 +64,6 @@ class AppListUIUpdater(
                                         1
                                     }
                                 } catch (e: Exception) {
-                                    Log.w(TAG, "Error getting span size: ${e.message}")
                                     return 1
                                 }
                             }
@@ -88,11 +85,9 @@ class AppListUIUpdater(
                     }
                     activity.updateFastScrollerVisibility()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error in onAdapterNeedsUpdate callback", e)
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error setting up callbacks", e)
         }
     }
 
@@ -138,11 +133,10 @@ class AppListUIUpdater(
             if (activity.pendingScrollToTop) {
                 activity.pendingScrollToTop = false
                 recyclerView.post {
-                    // Position 3 skips the top spacers if they exist (added when favorites are present)
-                    // If no spacers, 0 is the top. scrollToPositionWithOffset ensures it's at the top.
-                    val hasSpacers = newAppList.any { 
-                        it.activityInfo.packageName == AppAdapter.SEPARATOR_PACKAGE && 
-                        it.activityInfo.name?.startsWith("all_apps_top_spacer_") == true 
+
+                    val hasSpacers = newAppList.any {
+                        it.activityInfo.packageName == AppAdapter.SEPARATOR_PACKAGE &&
+                        it.activityInfo.name?.startsWith("all_apps_top_spacer_") == true
                     }
                     val targetPos = if (hasSpacers) 3 else 0
                     (recyclerView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(targetPos, 0)
@@ -153,10 +147,7 @@ class AppListUIUpdater(
             val isEmpty = newAppList.isEmpty()
             recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
             if (isEmpty) {
-                // Stock's home page is left blank (no message) when there are no favorites yet -
-                // the view stays visible and empty rather than GONE, since it's also the
-                // swipe-up-to-open-drawer touch target set up in StockDrawerManager
-                // (attachOpenGestureToView) for this exact state.
+
                 val isStockHome = com.guruswarupa.launch.utils.LayoutMode.isStock(activity.sharedPreferences) &&
                     activity.showOnlyFavoritesInitially
                 if (isStockHome) {
@@ -170,13 +161,10 @@ class AppListUIUpdater(
 
             activity.updateAppSearchManager(newFullAppList, newAppList)
         } catch (e: NullPointerException) {
-            Log.e(TAG, "Null reference in updateAppListUI - possible null activity or adapter", e)
-            // Don't show toast to avoid spam during activity transitions
+
         } catch (e: ConcurrentModificationException) {
-            Log.e(TAG, "Concurrent modification in updateAppListUI", e)
-            // Don't show toast, let the system recover naturally
+
         } catch (e: Exception) {
-            Log.e(TAG, "Unexpected error in updateAppListUI", e)
         }
     }
 
@@ -197,7 +185,6 @@ class AppListUIUpdater(
                         !packageName.startsWith("launcher_") &&
                         appListManager.isWorkProfileApp(app)
                 } catch (e: Exception) {
-                    Log.w(TAG, "Error checking work profile app: ${e.message}")
                     false
                 }
             }
@@ -207,21 +194,18 @@ class AppListUIUpdater(
                 try {
                     appListManager.isWorkProfileApp(app)
                 } catch (e: Exception) {
-                    Log.w(TAG, "Error checking incoming work profile app: ${e.message}")
                     false
                 }
             }
 
             return !incomingHasWorkApps
         } catch (e: Exception) {
-            Log.e(TAG, "Error in shouldKeepCurrentWorkProfileList", e)
             return false
         }
     }
 
     fun filterAppsWithoutReload() {
         if (fullAppList.isEmpty()) {
-            Log.w(TAG, "Full app list is empty, triggering full reload")
             appListLoader.loadApps(forceRefresh = false, fullAppList, appList, adapter)
             return
         }
@@ -242,26 +226,22 @@ class AppListUIUpdater(
                         updateAppListUI(listWithSeparators, currentFullList, isFinal = true)
                     }
                 } catch (e: IllegalStateException) {
-                    Log.e(TAG, "Illegal state during filtering - activity may be finishing", e)
                     activity.runOnUiThread {
                         Toast.makeText(activity, activity.getString(R.string.toast_unable_to_filter_apps_ui_state_changed), Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: NullPointerException) {
-                    Log.e(TAG, "Null reference during filtering - possible data corruption", e)
                     activity.runOnUiThread {
                         Toast.makeText(activity, activity.getString(R.string.toast_filtering_error_data_inconsistency_detected), Toast.LENGTH_SHORT).show()
-                        // Trigger full reload to recover from data corruption
+
                         appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
                     }
                 } catch (e: IndexOutOfBoundsException) {
-                    Log.e(TAG, "Index out of bounds during filtering - list corruption detected", e)
                     activity.runOnUiThread {
                         Toast.makeText(activity, activity.getString(R.string.toast_filtering_error_list_corruption_detected), Toast.LENGTH_SHORT).show()
-                        // Trigger full reload to recover from list corruption
+
                         appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Unexpected error during app filtering: ${e.javaClass.simpleName}", e)
                     activity.runOnUiThread {
                         val errorType = when (e) {
                             is IndexOutOfBoundsException -> "Index error"
@@ -274,10 +254,8 @@ class AppListUIUpdater(
                 }
             }
         } catch (e: RejectedExecutionException) {
-            Log.w(TAG, "Filtering task rejected by executor: ${e.message}")
             Toast.makeText(activity, activity.getString(R.string.toast_unable_to_filter_apps_task_queue_full), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Log.e(TAG, "Unexpected error executing filtering task", e)
             Toast.makeText(activity, activity.getString(R.string.toast_unable_to_filter_apps_internal_error), Toast.LENGTH_SHORT).show()
         }
     }

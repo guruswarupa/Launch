@@ -44,7 +44,6 @@ class EdgePanelConfigActivity : AppCompatActivity() {
     private lateinit var heightSeekbar: SeekBar
     private lateinit var widthSeekbar: SeekBar
 
-
     private lateinit var tabApps: Button
     private lateinit var tabHandle: Button
 
@@ -84,10 +83,8 @@ class EdgePanelConfigActivity : AppCompatActivity() {
         setupHandleControls()
         setupRecyclerView()
 
-
         tabApps.setOnClickListener { switchTab(0) }
         tabHandle.setOnClickListener { switchTab(1) }
-
 
         switchTab(0)
 

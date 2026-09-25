@@ -293,9 +293,7 @@ class AppContextMenuHandler(
             Toast.makeText(activity, activity.getString(R.string.removed_from_favorites, appName), Toast.LENGTH_SHORT).show()
 
             val remainingFavorites = activity.favoriteAppManager.getFavoriteApps()
-            // In Stock mode "favorites" means "apps on the home screen" - an empty home page
-            // should stay an empty favorites grid, not silently fall back to showing every app
-            // inline (that's what the drawer is for).
+
             if (remainingFavorites.isEmpty() && activity.showOnlyFavoritesInitially &&
                 !com.guruswarupa.launch.utils.LayoutMode.isStock(activity.sharedPreferences)) {
                 activity.showOnlyFavoritesInitially = false

@@ -9,10 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
-
-
-
-
 class WrapContentRecyclerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -33,7 +29,6 @@ class WrapContentRecyclerView @JvmOverloads constructor(
             val itemCount = adapter.itemCount
             var totalHeight = paddingTop + paddingBottom
 
-
             var measuredItems = 0
             for (i in 0 until itemCount) {
                 val view = layoutManager.findViewByPosition(i)
@@ -46,17 +41,14 @@ class WrapContentRecyclerView @JvmOverloads constructor(
                 }
             }
 
-
             if (measuredItems in 1 until itemCount) {
                 val averageItemHeight = (totalHeight - paddingTop - paddingBottom) / measuredItems
                 totalHeight = paddingTop + paddingBottom + (averageItemHeight * itemCount)
             } else if (measuredItems == 0 && itemCount > 0) {
 
-
                 val estimatedItemHeight = 80
                 totalHeight = paddingTop + paddingBottom + (estimatedItemHeight * itemCount)
             }
-
 
             if (totalHeight > 0) {
                 val heightMode = MeasureSpec.getMode(heightSpec)
@@ -79,7 +71,6 @@ class WrapContentRecyclerView @JvmOverloads constructor(
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
 
-
         post {
             recalculateHeight()
         }
@@ -97,16 +88,13 @@ class WrapContentRecyclerView @JvmOverloads constructor(
             val itemCount = adapter.itemCount
             val currentHeight = layoutParams.height
 
-
             val measuredCount = (0 until itemCount).count {
                 layoutManager.findViewByPosition(it) != null
             }
 
-
             if (measuredCount >= itemCount * 0.8) {
                 isRecalculating = true
                 var totalHeight = paddingTop + paddingBottom
-
 
                 for (i in 0 until itemCount) {
                     val view = layoutManager.findViewByPosition(i)
@@ -118,11 +106,9 @@ class WrapContentRecyclerView @JvmOverloads constructor(
                     }
                 }
 
-
                 val extraPaddingDp = 32f
                 val extraPadding = (extraPaddingDp * resources.displayMetrics.density).toInt()
                 totalHeight += extraPadding
-
 
                 if (totalHeight > 0 && abs(totalHeight - currentHeight) > 10) {
                     layoutParams.height = totalHeight
@@ -132,7 +118,6 @@ class WrapContentRecyclerView @JvmOverloads constructor(
                 isRecalculating = false
                 return
             }
-
 
             if (currentHeight < 10000) {
                 isRecalculating = true
@@ -158,17 +143,14 @@ class WrapContentRecyclerView @JvmOverloads constructor(
 
                     totalHeight += totalMeasuredHeight
 
-
                     if (finalMeasuredCount in 1 until itemCount) {
                         val averageHeight = totalMeasuredHeight / finalMeasuredCount
                         totalHeight += averageHeight * (itemCount - finalMeasuredCount)
                     }
 
-
                     val extraPaddingDp = 32f
                     val extraPadding = (extraPaddingDp * resources.displayMetrics.density).toInt()
                     totalHeight += extraPadding
-
 
                     if (totalHeight > 0) {
                         layoutParams.height = totalHeight
@@ -188,7 +170,6 @@ class WrapContentRecyclerView @JvmOverloads constructor(
             recalculateHeight()
         }
     }
-
 
     override fun addChildrenForAccessibility(outChildren: ArrayList<View>) {
         try {

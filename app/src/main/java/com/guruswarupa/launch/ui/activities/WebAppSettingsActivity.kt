@@ -100,7 +100,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
         val webApps = webAppManager.getWebApps()
         listContainer.removeAllViews()
 
-
         if (webApps.isEmpty()) {
             emptyView.visibility = View.VISIBLE
             emptyView.alpha = 0f
@@ -118,7 +117,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
             val iconView = itemView.findViewById<android.widget.ImageView>(R.id.web_app_item_icon)
             itemView.findViewById<TextView>(R.id.web_app_item_name).text = entry.name
             itemView.findViewById<TextView>(R.id.web_app_item_url).text = entry.url
-
 
             WebAppIconFetcher.loadIcon(this, entry.url) { drawable ->
                 if (drawable != null) {
@@ -157,7 +155,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
             }
 
             listContainer.addView(itemView)
-
 
             if (!isAnimating) {
                 itemView.alpha = 0f
@@ -245,12 +242,9 @@ class WebAppSettingsActivity : AppCompatActivity() {
         urlInput.setText(existing?.url.orEmpty())
         urlInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
 
-        // Set checkbox based on existing URL
         allowHttpCheckbox.isChecked = existing?.url?.startsWith("http://", ignoreCase = true) == true
 
-
         blockRedirectsSwitch.isChecked = existing?.blockRedirects ?: true
-
 
         val enabledColor = Color.rgb(72, 191, 145)
         val disabledColor = ThemeManager.color(this, R.attr.appTextPrimary)
@@ -264,12 +258,10 @@ class WebAppSettingsActivity : AppCompatActivity() {
         }
         applySwitchColors(blockRedirectsSwitch.isChecked)
 
-
         if (existing == null) {
             suggestionsContainer.visibility = View.VISIBLE
             setupPopularSuggestions(suggestionsList, nameInput, urlInput)
         }
-
 
         searchButton.setOnClickListener {
             showSearchDialog(nameInput, urlInput, searchProgress)
@@ -344,7 +336,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
                 }
 
                 else -> {
-                    // Show warning for HTTP URLs
+
                     val normalizedUrl = webAppManager.normalizeUrl(url)
                     if (normalizedUrl.startsWith("http://", ignoreCase = true) &&
                         !isLocalhostOrPrivateIp(normalizedUrl)) {
@@ -417,7 +409,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
             .setPositiveButton(R.string.cancel_button, null)
             .show()
 
-
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
                 performSearch(searchInput.text.toString(), searchResultsList, searchProgressLocal, searchEmptyText, nameInput, urlInput, searchDialog)
@@ -440,9 +431,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
         if (query.isBlank()) return
 
         searchJob?.cancel()
-        // lifecycleScope (not a standalone CoroutineScope) so this is cancelled automatically
-        // if the activity is destroyed mid-search, instead of resuming on the main thread and
-        // touching views that may already be detached.
+
         searchJob = lifecycleScope.launch {
             searchProgress.visibility = View.VISIBLE
             searchEmptyText.visibility = View.GONE
@@ -509,7 +498,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
                 notifySettingsChanged()
                 renderWebApps()
 
-
                 Toast.makeText(
                     this,
                     getString(R.string.web_app_removed, entry.name),
@@ -527,18 +515,15 @@ class WebAppSettingsActivity : AppCompatActivity() {
             return false
         }
 
-        // Always allow HTTPS
         if (normalized.startsWith("https://", ignoreCase = true)) {
             return true
         }
 
-        // Allow HTTP if explicitly allowed or if it's localhost/intranet
         if (normalized.startsWith("http://", ignoreCase = true)) {
             if (allowHttp) {
                 return true
             }
 
-            // Automatically allow for localhost and private IPs
             val host = try {
                 android.net.Uri.parse(normalized).host
             } catch (e: Exception) {
@@ -546,7 +531,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
             }
 
             if (host != null) {
-                // Allow localhost variants
+
                 if (host.equals("localhost", ignoreCase = true) ||
                     host.equals("127.0.0.1") ||
                     host.equals("::1") ||
@@ -555,7 +540,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
                     return true
                 }
 
-                // Allow private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
                 if (host.matches(Regex("^10\\..+")) ||
                     host.matches(Regex("^172\\.(1[6-9]|2[0-9]|3[0-1])\\..+")) ||
                     host.matches(Regex("^192\\.168\\..+"))) {
@@ -576,7 +560,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
 
         if (host == null) return false
 
-        // Check for localhost variants
         if (host.equals("localhost", ignoreCase = true) ||
             host.equals("127.0.0.1") ||
             host.equals("::1") ||
@@ -585,7 +568,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
             return true
         }
 
-        // Check for private IP ranges
         if (host.matches(Regex("^10\\..+")) ||
             host.matches(Regex("^172\\.(1[6-9]|2[0-9]|3[0-1])\\..+")) ||
             host.matches(Regex("^192\\.168\\..+"))) {

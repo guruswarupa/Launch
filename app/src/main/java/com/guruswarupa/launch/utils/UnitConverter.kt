@@ -5,7 +5,6 @@ import java.math.RoundingMode
 
 object UnitConverter {
 
-
     fun convertLength(value: BigDecimal, from: String, to: String): BigDecimal {
         val toMeters = when (from.lowercase()) {
             "mm" -> value.divide(BigDecimal(1000), 20, RoundingMode.HALF_UP)
@@ -31,7 +30,6 @@ object UnitConverter {
             else -> toMeters
         }
     }
-
 
     fun convertArea(value: BigDecimal, from: String, to: String): BigDecimal {
         val toSqMeters = when (from.lowercase()) {
@@ -61,7 +59,6 @@ object UnitConverter {
         }
     }
 
-
     fun convertTemperature(value: BigDecimal, from: String, to: String): BigDecimal {
         val toCelsius = when (from.uppercase()) {
             "C" -> value
@@ -77,7 +74,6 @@ object UnitConverter {
             else -> toCelsius
         }
     }
-
 
     fun convertVolume(value: BigDecimal, from: String, to: String): BigDecimal {
         val toLiters = when (from.lowercase()) {
@@ -105,7 +101,6 @@ object UnitConverter {
         }
     }
 
-
     fun convertMass(value: BigDecimal, from: String, to: String): BigDecimal {
         val toKg = when (from.lowercase()) {
             "mg" -> value.divide(BigDecimal(1000000), 20, RoundingMode.HALF_UP)
@@ -128,7 +123,6 @@ object UnitConverter {
         }
     }
 
-
     fun convertData(value: BigDecimal, from: String, to: String): BigDecimal {
         val toBytes = when (from.uppercase()) {
             "B" -> value
@@ -149,7 +143,6 @@ object UnitConverter {
         }
     }
 
-
     fun convertSpeed(value: BigDecimal, from: String, to: String): BigDecimal {
         val toMps = when (from.lowercase()) {
             "m/s" -> value
@@ -169,7 +162,6 @@ object UnitConverter {
             else -> toMps
         }
     }
-
 
     fun convertTime(value: BigDecimal, from: String, to: String): BigDecimal {
         val toSeconds = when (from.lowercase()) {

@@ -12,7 +12,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import com.guruswarupa.launch.managers.ServiceNotificationManager
 
@@ -57,7 +56,6 @@ class FlipToDndService : Service(), SensorEventListener {
 
             registerSensors()
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onCreate", e)
         }
     }
 
@@ -87,11 +85,9 @@ class FlipToDndService : Service(), SensorEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-
         try {
             startForegroundServiceStatus()
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start foreground service", e)
             stopSelf()
             return START_NOT_STICKY
         }
@@ -121,7 +117,6 @@ class FlipToDndService : Service(), SensorEventListener {
     private fun updateDndState() {
         if (!notificationManager.isNotificationPolicyAccessGranted) return
 
-
         val isFocusModeActive = sharedPreferences.getBoolean("focus_mode_enabled", false)
         if (isFocusModeActive) return
 
@@ -143,14 +138,12 @@ class FlipToDndService : Service(), SensorEventListener {
         try {
             sensorManager.unregisterListener(this)
 
-
             val isFocusModeActive = sharedPreferences.getBoolean("focus_mode_enabled", false)
             if (!isFocusModeActive && notificationManager.isNotificationPolicyAccessGranted) {
                 notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
             }
             ServiceNotificationManager.updateServiceStatus(this, SERVICE_NAME, false)
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onDestroy", e)
         }
     }
 }

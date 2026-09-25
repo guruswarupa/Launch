@@ -22,9 +22,8 @@ class PdfPageAdapterLazy(
     private val totalPages: Int
 ) : RecyclerView.Adapter<PdfPageAdapterLazy.PageViewHolder>() {
 
-    // Use LruCache with memory-size based eviction instead of unbounded ConcurrentHashMap
     private val maxMemory = Runtime.getRuntime().maxMemory() / 1024
-    private val cacheSize = (maxMemory / 8).toInt() // Use 1/8th of available memory
+    private val cacheSize = (maxMemory / 8).toInt()
     private val bitmapCache = object : LruCache<Int, Bitmap>(cacheSize) {
         override fun sizeOf(key: Int, bitmap: Bitmap): Int {
             return bitmap.byteCount / 1024
@@ -36,7 +35,7 @@ class PdfPageAdapterLazy(
             }
         }
     }
-    
+
     private val renderExecutor: ExecutorService = Executors.newFixedThreadPool(2)
     private val pendingTasks = ConcurrentHashMap<Int, Future<*>>()
 
@@ -55,16 +54,13 @@ class PdfPageAdapterLazy(
 
         holder.pageNumber.text = "Page ${position + 1}"
 
-
         val cachedBitmap = bitmapCache.get(position)
         if (cachedBitmap != null && !cachedBitmap.isRecycled) {
             holder.imageView.setImageBitmap(cachedBitmap)
             return
         }
 
-
         pendingTasks[position]?.cancel(true)
-
 
         val future = renderExecutor.submit {
             try {

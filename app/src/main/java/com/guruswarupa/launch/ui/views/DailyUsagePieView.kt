@@ -42,7 +42,6 @@ class DailyUsagePieView @JvmOverloads constructor(
         typeface = Typeface.DEFAULT_BOLD
     }
 
-
     private val appColors = listOf(
         "#E53935".toColorInt(),
         "#8E24AA".toColorInt(),
@@ -134,18 +133,14 @@ class DailyUsagePieView @JvmOverloads constructor(
             return
         }
 
-
         val sortedApps = appUsages.toList().sortedByDescending { it.second }
-
 
         var startAngle = -90f
         sortedApps.forEachIndexed { sliceIndex, (_, usage) ->
             val sweepAngle = (usage.toFloat() / totalUsage) * 360f
 
-
             val colorIndex = sliceIndex % appColors.size
             piePaint.color = appColors[colorIndex]
-
 
             val drawRadius = if (selectedSliceIndex == sliceIndex) radius * 1.1f else radius
 
@@ -159,7 +154,6 @@ class DailyUsagePieView @JvmOverloads constructor(
                 true,
                 piePaint
             )
-
 
             canvas.drawArc(
                 centerX - radius,

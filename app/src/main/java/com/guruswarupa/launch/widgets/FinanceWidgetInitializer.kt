@@ -9,9 +9,6 @@ import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.FinanceManager
 import com.guruswarupa.launch.utils.FinanceWidgetManager
 
-
-
-
 class FinanceWidgetInitializer(
     private val context: Context,
     private val secureStorageManager: com.guruswarupa.launch.core.SecureStorageManager,
@@ -19,17 +16,10 @@ class FinanceWidgetInitializer(
 ) {
     private var onInitializedListener: ((FinanceWidgetManager) -> Unit)? = null
 
-
-
-
     fun onInitialized(listener: (FinanceWidgetManager) -> Unit): FinanceWidgetInitializer {
         this.onInitializedListener = listener
         return this
     }
-
-
-
-
 
     fun initialize(handler: Handler) {
         handler.postDelayed({

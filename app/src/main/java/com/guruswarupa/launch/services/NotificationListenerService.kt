@@ -3,7 +3,6 @@ package com.guruswarupa.launch.services
 import android.service.notification.NotificationListenerService
 import java.lang.ref.WeakReference
 import android.service.notification.StatusBarNotification
-import android.util.Log
 
 class LaunchNotificationListenerService : NotificationListenerService() {
 
@@ -46,7 +45,6 @@ class LaunchNotificationListenerService : NotificationListenerService() {
             super.onListenerDisconnected()
         } catch (e: Exception) {
 
-            Log.w(TAG, "Error during listener disconnection", e)
         }
     }
 
@@ -76,13 +74,11 @@ class LaunchNotificationListenerService : NotificationListenerService() {
                 emptyArray()
             }
         } catch (e: SecurityException) {
-            Log.w(TAG, "SecurityException getting active notifications", e)
             emptyArray()
         } catch (_: Exception) {
             emptyArray()
         }
     }
-
 
     @Suppress("unused", "DEPRECATION")
     fun dismissNotification(pkg: String, tag: String?, id: Int) {
@@ -92,11 +88,9 @@ class LaunchNotificationListenerService : NotificationListenerService() {
                 cancelNotification(pkg, tag, id)
             }
         } catch (e: SecurityException) {
-            Log.w(TAG, "SecurityException dismissing notification", e)
         } catch (_: Exception) {
         }
     }
-
 
     fun dismissNotificationByKey(key: String) {
         try {
@@ -104,7 +98,6 @@ class LaunchNotificationListenerService : NotificationListenerService() {
                 cancelNotification(key)
             }
         } catch (e: SecurityException) {
-            Log.w(TAG, "SecurityException dismissing notification by key", e)
         } catch (_: Exception) {
         }
     }

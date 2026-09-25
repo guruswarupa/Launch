@@ -21,13 +21,6 @@ data class DownloadProgress(val bytesDownloaded: Long, val totalBytes: Long) {
     val fraction: Float get() = if (totalBytes > 0) (bytesDownloaded.toFloat() / totalBytes).coerceIn(0f, 1f) else 0f
 }
 
-/**
- * Downloads any [AssistantModelInfo] from [AssistantModel.ALL] over Wi-Fi/unmetered only,
- * verifies it byte-for-byte and by SHA-256 before marking it ready, and never touches the
- * network again after that — the assistant runs fully offline from then on. No account, no
- * key, nothing to configure. Every model in the catalog tracks its own download state
- * independently, so switching the selected model doesn't lose progress on another one.
- */
 @Singleton
 class ModelDownloadManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -44,7 +37,6 @@ class ModelDownloadManager @Inject constructor(
 
     fun modelFile(model: AssistantModelInfo): File = File(modelsDir, model.fileName)
 
-    /** Cheap, prefs-only read — safe to call often (e.g. to decide whether to show the assistant UI). */
     fun currentState(model: AssistantModelInfo): ModelState {
         val raw = rawState(model)
         return if (raw == ModelState.READY && !modelFile(model).exists()) ModelState.NOT_DOWNLOADED else raw
@@ -69,7 +61,6 @@ class ModelDownloadManager @Inject constructor(
         return true
     }
 
-    /** Progress for [model]'s currently tracked download, or null if none is in flight. */
     fun progress(model: AssistantModelInfo): DownloadProgress? {
         val id = downloadId(model) ?: return null
         downloadManager.query(DownloadManager.Query().setFilterById(id)).use { cursor ->
@@ -80,11 +71,6 @@ class ModelDownloadManager @Inject constructor(
         }
     }
 
-    /**
-     * Call periodically (e.g. every second) while [model]'s download is in flight, and once
-     * on app/screen start to reconcile a download that finished or failed while the process
-     * wasn't running. Kicks off checksum verification in the background on success.
-     */
     fun pollAndReconcile(model: AssistantModelInfo): ModelState {
         if (rawState(model) != ModelState.DOWNLOADING) return currentState(model)
         val id = downloadId(model) ?: return markFailed(model)

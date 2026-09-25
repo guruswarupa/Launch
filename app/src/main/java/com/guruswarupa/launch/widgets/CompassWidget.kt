@@ -47,11 +47,9 @@ class CompassWidget(
     override fun initialize() {
         if (isInitialized) return
 
-
         val inflater = LayoutInflater.from(context)
         widgetView = inflater.inflate(R.layout.widget_compass, container, false)
         container.addView(widgetView)
-
 
         directionText = widgetView.findViewById(R.id.direction_text)
         azimuthText = widgetView.findViewById(R.id.azimuth_text)
@@ -60,9 +58,7 @@ class CompassWidget(
         toggleButton = widgetView.findViewById(R.id.toggle_compass_button)
         compassContainer = widgetView.findViewById(R.id.compass_container)
 
-
         compassManager = CompassManager(context)
-
 
         compassManager.setOnDirectionChangedListener { azimuth ->
             val directionName = compassManager.getDirectionName(azimuth)
@@ -72,7 +68,6 @@ class CompassWidget(
             }
         }
 
-
         compassManager.setOnAccuracyChangedListener { accuracy ->
             val azimuth = compassManager.getCurrentDirection()
             val directionName = compassManager.getDirectionName(azimuth)
@@ -81,11 +76,9 @@ class CompassWidget(
             }
         }
 
-
         toggleButton.setOnClickListener {
             toggleCompass()
         }
-
 
         val isEnabled = sharedPreferences.getBoolean(PREF_COMPASS_ENABLED, false)
         updateUI(isEnabled)
@@ -106,7 +99,6 @@ class CompassWidget(
             compassContainer.visibility = View.VISIBLE
             toggleButton.text = context.getString(R.string.compass_disable)
 
-
             if (compassManager.hasRequiredSensors()) {
                 setupWithSensors()
             } else {
@@ -116,7 +108,6 @@ class CompassWidget(
 
             compassContainer.visibility = View.GONE
             toggleButton.text = context.getString(R.string.compass_enable)
-
 
             handler.removeCallbacks(updateRunnable)
             compassManager.stopTracking()
@@ -129,12 +120,9 @@ class CompassWidget(
         directionText.visibility = View.VISIBLE
         azimuthText.visibility = View.VISIBLE
 
-
         compassManager.startTracking()
 
-
         handler.post(updateRunnable)
-
 
         updateDisplay()
     }

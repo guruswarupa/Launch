@@ -11,9 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.ui.views.FastScroller
 import com.guruswarupa.launch.ui.views.WeeklyUsageGraphView
 
-
-
-
 class MainActivityViews {
     lateinit var recyclerView: RecyclerView
     lateinit var appListEmptyState: TextView

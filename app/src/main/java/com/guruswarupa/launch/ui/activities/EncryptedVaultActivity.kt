@@ -195,7 +195,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             .setNeutralButton(getString(R.string.dlg_import_existng)) { _, _ -> importVaultLauncher.launch(arrayOf("application/zip", "application/octet-stream", "*/*")) }
             .setCancelable(false)
             .create()
-            
+
         DialogStyler.styleDialog(dialog)
         dialog.show()
     }
@@ -228,7 +228,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             .setNegativeButton(getString(R.string.back_button)) { _, _ -> showSetupDialog() }
             .setCancelable(false)
             .create()
-            
+
         DialogStyler.styleDialog(dialog)
         dialog.show()
     }
@@ -256,7 +256,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             .setNegativeButton(getString(R.string.cancel_button)) { _, _ -> finish() }
             .setCancelable(false)
             .create()
-            
+
         DialogStyler.styleDialog(dialog)
         dialog.show()
     }
@@ -303,7 +303,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         adapter.updateFiles(files)
         updateEmptyState(files.isEmpty())
     }
-    
+
     private fun updateEmptyState(isEmpty: Boolean) {
         emptyStateText.visibility = if (isEmpty) View.VISIBLE else View.GONE
         recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
@@ -350,14 +350,14 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         try {
             val extension = file.extension.lowercase()
             val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: ""
-            
+
             if (mimeType.startsWith("text/") || file.name.endsWith(".txt")) {
                 val intent = Intent(this, NoteEditorActivity::class.java).apply {
                     putExtra("FILE_NAME", file.name)
                 }
                 createNoteLauncher.launch(intent)
             } else if (DocumentViewerActivity.isSupported(file.name)) {
-                // Open in built-in document viewer
+
                 val intent = DocumentViewerActivity.createVaultIntent(this, file.name)
                 startActivity(intent)
             } else {
@@ -426,7 +426,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         DialogStyler.styleDialog(dialog)
         dialog.show()
     }
-    
+
     private fun showAddFileOptions() {
         val options = arrayOf("Add File", "Create Note")
         val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
@@ -520,7 +520,6 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             val file = files[position]
             holder.name.text = file.name
             holder.info.text = formatFileSize(file.length())
-
 
             holder.thumbnail.setImageDrawable(null)
 
