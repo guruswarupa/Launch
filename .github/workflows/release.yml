@@ -99,7 +99,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "v${VERSION_NAME}" \
-            --title "v${VERSION_NAME}" \
+            --title "Launch-v${VERSION_NAME}" \
             --generate-notes \
             --target "${{ github.sha }}" \
             app/build/outputs/bundle/release/app-release.aab \
