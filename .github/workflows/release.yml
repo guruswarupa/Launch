@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - app/build.gradle.kts
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -27,13 +28,20 @@ jobs:
         run: |
           current_code=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' app/build.gradle.kts)
           current_name=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
+          echo "version_code=$current_code" >> "$GITHUB_OUTPUT"
+          echo "version_name=$current_name" >> "$GITHUB_OUTPUT"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+            echo "Manually triggered: releasing v$current_name ($current_code)"
+            exit 0
+          fi
+
           if git cat-file -e HEAD^:app/build.gradle.kts 2>/dev/null; then
             previous_code=$(git show HEAD^:app/build.gradle.kts | grep -oP 'versionCode\s*=\s*\K[0-9]+' || echo 0)
           else
             previous_code=0
           fi
-          echo "version_code=$current_code" >> "$GITHUB_OUTPUT"
-          echo "version_name=$current_name" >> "$GITHUB_OUTPUT"
           if [ "$current_code" -gt "$previous_code" ]; then
             echo "should_release=true" >> "$GITHUB_OUTPUT"
             echo "versionCode $previous_code -> $current_code: releasing v$current_name"
