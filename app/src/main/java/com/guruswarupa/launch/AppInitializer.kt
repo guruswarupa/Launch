@@ -222,7 +222,7 @@ class AppInitializer(private val activity: MainActivity) {
 
     private fun MainActivity.setupWidgets() {
         val drawerContentLayout = findViewById<LinearLayout>(R.id.drawer_content_layout)
-        widgetManager = WidgetManager(activity, drawerContentLayout)
+        widgetManager = WidgetManager(activity, drawerContentLayout, listenOnlyWhileStarted = true)
         widgetManager.onWidgetsRefreshed = {
             // Guard against running before the in-app widgets have been set up for the first
             // time: update() detaches disabled in-app widget containers from the view tree, and

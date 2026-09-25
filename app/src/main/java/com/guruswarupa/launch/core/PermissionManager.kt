@@ -43,11 +43,15 @@ class PermissionManager(
         const val NOTIFICATION_PERMISSION_REQUEST = 900
         const val DEVICE_ADMIN_REQUEST = 1000
         const val NOTIFICATION_POLICY_REQUEST = 1100
-        const val DEFAULT_LAUNCHER_REQUEST = 1200
     }
 
 
-    private var isRequestingPermissions = false
+    // Separate per-request-type flags: these used to share one `isRequestingPermissions` flag,
+    // so an unrelated permission request made while another was already in flight (e.g. usage
+    // stats requested while the contacts dialog is still pending) would return early and its
+    // callback would never run - silently skipping parts of first-run onboarding.
+    private var isRequestingContactsPermission = false
+    private var isRequestingUsageStatsPermission = false
     private var pendingContactsGranted: (() -> Unit)? = null
 
 
@@ -55,14 +59,14 @@ class PermissionManager(
 
     fun requestContactsPermission(onGranted: () -> Unit = {}) {
 
-        if (isRequestingPermissions) return
+        if (isRequestingContactsPermission) return
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS)
             != PackageManager.PERMISSION_GRANTED
         ) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CONTACTS) ||
                 !sharedPreferences.getBoolean(Constants.Prefs.CONTACTS_PERMISSION_DENIED, false)) {
-                isRequestingPermissions = true
+                isRequestingContactsPermission = true
                 pendingContactsGranted = onGranted
                 ActivityCompat.requestPermissions(
                     activity,
@@ -114,28 +118,28 @@ class PermissionManager(
 
     fun requestUsageStatsPermission(usageStatsManager: AppUsageStatsManager, onComplete: () -> Unit = {}) {
 
-        if (isRequestingPermissions) return
+        if (isRequestingUsageStatsPermission) return
 
         if (!usageStatsManager.hasUsageStatsPermission()) {
             if (!sharedPreferences.getBoolean(Constants.Prefs.USAGE_STATS_PERMISSION_DENIED, false)) {
-                isRequestingPermissions = true
+                isRequestingUsageStatsPermission = true
                 val dialog = AlertDialog.Builder(activity, R.style.CustomDialogTheme)
                     .setTitle(R.string.usage_stats_permission_title)
                     .setMessage(R.string.usage_stats_permission_message)
                     .setPositiveButton(R.string.usage_stats_permission_grant) { _, _ ->
 
                         sharedPreferences.edit { putBoolean(Constants.Prefs.WAITING_FOR_USAGE_STATS_RETURN, true) }
-                        isRequestingPermissions = false
+                        isRequestingUsageStatsPermission = false
                         val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                         activity.startActivity(intent)
                     }
                     .setNegativeButton(R.string.usage_stats_permission_skip) { _, _ ->
                         sharedPreferences.edit { putBoolean(Constants.Prefs.USAGE_STATS_PERMISSION_DENIED, true) }
-                        isRequestingPermissions = false
+                        isRequestingUsageStatsPermission = false
                         onComplete()
                     }
                     .setOnCancelListener {
-                        isRequestingPermissions = false
+                        isRequestingUsageStatsPermission = false
                         onComplete()
                     }
                     .show()
@@ -177,10 +181,12 @@ class PermissionManager(
             val roleManager = activity.getSystemService(Context.ROLE_SERVICE) as RoleManager
             if (roleManager.isRoleAvailable(RoleManager.ROLE_HOME) &&
                 !roleManager.isRoleHeld(RoleManager.ROLE_HOME)) {
+                // Fire-and-forget: nothing reads the role request's result back in
+                // onActivityResult, so onComplete() below reflects "the prompt was shown", not
+                // "the user actually set this as their default launcher" - startActivity (not
+                // ...ForResult) makes that explicit instead of implying a result is handled.
                 val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME)
-                @Suppress("DEPRECATION")
-                activity.startActivityForResult(intent, DEFAULT_LAUNCHER_REQUEST)
-
+                activity.startActivity(intent)
 
                 onComplete()
             } else {
@@ -438,7 +444,7 @@ class PermissionManager(
         onActivityRecognitionGranted: () -> Unit = {}
     ) {
 
-        isRequestingPermissions = false
+        isRequestingContactsPermission = false
 
         when (requestCode) {
             CONTACTS_PERMISSION_REQUEST -> {

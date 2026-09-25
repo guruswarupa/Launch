@@ -843,7 +843,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun clearAppCacheAndReload() {
-        appListLoader.loadApps(forceRefresh = true)
+        // loadApps(forceRefresh = true) only bypasses the in-memory cache; this entry point's
+        // name promises a full wipe, so clear the disk cache explicitly before reloading.
+        backgroundExecutor.execute {
+            cacheManager.clearCache()
+            appListLoader.loadApps(forceRefresh = true)
+        }
     }
 
     fun filterAppsWithoutReload() {
@@ -902,8 +907,17 @@ class MainActivity : AppCompatActivity() {
         backgroundExecutor.execute {
             cacheManager.removeMetadata(packageName)
 
-            if (isRemoved) {
-                cacheManager.clearCache()
+            // Only this package's icon may have changed (install/update) or needs dropping
+            // (uninstall) - invalidate just its cache entries instead of wiping every app's
+            // cached icon and forcing a full re-decode on the next draw.
+            if (::adapter.isInitialized) {
+                handler.post {
+                    if (!isFinishing && !isDestroyed) {
+                        adapter.invalidateIconForPackage(packageName)
+                    }
+                }
+            } else {
+                cacheManager.removeIconsForPackage(packageName)
             }
 
             appListLoader.clearCache()
@@ -1042,7 +1056,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (level >= TRIM_MEMORY_UI_HIDDEN) {
-            cacheManager.clearCache()
+            // Evict in-memory icon caches (the actual bitmap memory) rather than wiping the
+            // disk cache: this fires every time the launcher is backgrounded, and clearing the
+            // disk cache here forced a full re-decode of every icon on the next foreground for
+            // no memory benefit (the disk cache isn't held in RAM).
+            if (::adapter.isInitialized) {
+                adapter.trimMemoryCaches()
+            }
             appListLoader.clearCache()
             wallpaperManagerHelper.clearCache()
             onDeviceAssistant.release()
@@ -1051,7 +1071,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onLowMemory() {
         super.onLowMemory()
-        cacheManager.clearCache()
+        if (::adapter.isInitialized) {
+            adapter.trimMemoryCaches()
+        }
         appListLoader.clearCache()
         wallpaperManagerHelper.clearCache()
         onDeviceAssistant.release()

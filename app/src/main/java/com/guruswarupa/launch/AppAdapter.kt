@@ -180,7 +180,10 @@ class AppAdapter(
     /** Supplies the (up to 9) member apps of a folder, for the mini icon-grid preview. */
     var folderAppsResolver: ((String) -> List<ResolveInfo>)? = null
 
-    private val folderPreviewCache = ConcurrentHashMap<String, Drawable>()
+    // Bounded: previewKey changes whenever a folder's membership/order changes, so an unbounded
+    // map here would accumulate a composited bitmap per historical folder state for the whole
+    // session as folders get reorganized.
+    private val folderPreviewCache = android.util.LruCache<String, Drawable>(30)
 
     private fun bindFolder(holder: ViewHolder, appInfo: ResolveInfo) {
         TypographyManager.applyToViewTree(holder.itemView, currentFontScale, currentFontStyle, currentFontIntensity, currentFontColor)
@@ -235,7 +238,7 @@ class AppAdapter(
                 }
             }
             if (composite != null) {
-                folderPreviewCache[previewKey] = composite
+                folderPreviewCache.put(previewKey, composite)
                 if (holder.itemView.tag == "folder:$previewKey") {
                     holder.appIcon?.setImageDrawable(composite)
                 }
@@ -330,6 +333,14 @@ class AppAdapter(
         notifyItemRangeChanged(0, currentList.size, PAYLOAD_TYPOGRAPHY)
     }
 
+    // For memory-pressure callbacks (onTrimMemory/onLowMemory): evicts only the in-memory
+    // icon caches, not the disk cache, so icons don't have to be fully re-decoded the next
+    // time the launcher is foregrounded - just re-read from disk.
+    fun trimMemoryCaches() {
+        iconLoader.clearIconCaches(clearDiskCache = false)
+        iconLoader.clearContactPhotoCache()
+    }
+
     fun cleanup() {
         adapterScope.cancel()
         iconLoader.cleanup()
@@ -363,6 +374,17 @@ class AppAdapter(
             iconLoader.preloadIcons(currentList.filter { it.activityInfo.packageName != SEPARATOR_PACKAGE })
             withContext(Dispatchers.Main) {
                 notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_STYLE)
+            }
+        }
+    }
+
+    // Drops this package's cached icon (memory + disk) and rebinds only its row(s), so an
+    // app install/update doesn't force a re-decode of every other app's icon.
+    fun invalidateIconForPackage(packageName: String) {
+        iconLoader.invalidatePackage(packageName)
+        currentList.forEachIndexed { index, appInfo ->
+            if (appInfo.activityInfo.packageName == packageName) {
+                notifyItemChanged(index, PAYLOAD_ICON_STYLE)
             }
         }
     }

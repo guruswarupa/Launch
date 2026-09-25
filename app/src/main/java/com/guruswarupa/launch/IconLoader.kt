@@ -240,6 +240,17 @@ class IconLoader(
         contactPhotoCache.evictAll()
     }
 
+    // In-memory keys are "${packageName}|${preferredOrder}"; drop this package's entries
+    // (its icon may have changed on install/update) instead of evicting every cached icon.
+    fun invalidatePackage(packageName: String) {
+        val prefix = "$packageName|"
+        val staleKeys = iconCache.snapshot().keys.filter { it.startsWith(prefix) }
+        staleKeys.forEach { iconCache.remove(it) }
+        val staleSpecialKeys = specialAppIconCache.snapshot().keys.filter { it.startsWith(prefix) }
+        staleSpecialKeys.forEach { specialAppIconCache.remove(it) }
+        cacheManager.removeIconsForPackage(packageName)
+    }
+
     fun cleanup() {
         // Cancel all pending tasks
         pendingIconTasks.values.forEach { it.cancel(mayInterruptIfRunning = true) }
@@ -492,9 +503,8 @@ class IconLoader(
             iconLoadExecutor.execute {
                 try {
                     val photoUri = getPhotoUriForContact(contactName) ?: return@execute
-                    val drawable = activity.contentResolver.openInputStream(photoUri.toUri())?.use { inputStream ->
-                        Drawable.createFromStream(inputStream, photoUri)
-                    } ?: return@execute
+                    val targetSizePx = (currentIconSize * context.resources.displayMetrics.density).toInt().coerceAtLeast(1)
+                    val drawable = decodeSampledContactPhoto(photoUri, targetSizePx) ?: return@execute
                     contactPhotoCache.put(contactName, drawable)
                     safeRunOnUiThread {
                         if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder.itemView.tag == cacheKey) {
@@ -512,6 +522,32 @@ class IconLoader(
         } catch (e: java.util.concurrent.RejectedExecutionException) {
             android.util.Log.e("IconLoader", "Failed to submit contact photo task", e)
         }
+    }
+
+    // Contact photos come from the content provider at whatever resolution was stored
+    // (often several MB decoded); downsample to roughly icon size before caching so a
+    // handful of contacts don't blow up the heap the way a full-res decode would.
+    private fun decodeSampledContactPhoto(uriString: String, targetSizePx: Int): Drawable? {
+        val uri = uriString.toUri()
+        val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        activity.contentResolver.openInputStream(uri)?.use { stream ->
+            android.graphics.BitmapFactory.decodeStream(stream, null, bounds)
+        } ?: return null
+
+        var sampleSize = 1
+        if (bounds.outWidth > targetSizePx || bounds.outHeight > targetSizePx) {
+            val halfWidth = bounds.outWidth / 2
+            val halfHeight = bounds.outHeight / 2
+            while ((halfWidth / sampleSize) >= targetSizePx && (halfHeight / sampleSize) >= targetSizePx) {
+                sampleSize *= 2
+            }
+        }
+
+        val decodeOptions = android.graphics.BitmapFactory.Options().apply { inSampleSize = sampleSize }
+        val bitmap = activity.contentResolver.openInputStream(uri)?.use { stream ->
+            android.graphics.BitmapFactory.decodeStream(stream, null, decodeOptions)
+        } ?: return null
+        return BitmapDrawable(context.resources, bitmap)
     }
 
     private fun updateHolderIcon(

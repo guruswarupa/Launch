@@ -1,4 +1,4 @@
-package com.guruwarupa.launch.ui.activities
+package com.guruswarupa.launch.ui.activities
 
 import com.guruswarupa.launch.R
 import android.content.Context

@@ -354,6 +354,20 @@ class CacheManager @Inject constructor(
             }
         }
     }
+
+    // Icon disk filenames are "${version}_${packageName}|${preferredOrder}.png" (see cacheIcon),
+    // so a package's own icon(s) can be evicted without wiping every other app's cached icon.
+    fun removeIconsForPackage(packageName: String) {
+        backgroundExecutor.execute {
+            try {
+                val marker = "_$packageName|"
+                iconCacheDir.listFiles()?.forEach { file ->
+                    if (file.name.contains(marker)) file.delete()
+                }
+            } catch (_: Exception) {
+            }
+        }
+    }
     
     fun isIconCacheValid(currentIconStyle: String, currentIconSize: Int): Boolean {
         val currentVersion = getIconCacheKey(currentIconStyle, currentIconSize)

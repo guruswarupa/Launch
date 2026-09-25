@@ -85,7 +85,12 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
         private const val PREF_USER_HEIGHT_CM = "user_height_cm"
 
         private const val SAVE_INTERVAL_MS = 30 * 1000L
-        private const val MIN_STEPS_FOR_SAVE = 1
+        // saveCurrentData() re-serializes the ENTIRE historical/hourly step-data map (every day
+        // ever recorded) on each call. With a threshold of 1, saveCurrentData ran on almost every
+        // sensor event during a walk. A higher threshold lets steady walking use the SAVE_INTERVAL_MS
+        // debounce below, only forcing an immediate save for a larger jump (e.g. a batched sensor
+        // report). Data still isn't lost on stopTracking()/pause, which flush unconditionally.
+        private const val MIN_STEPS_FOR_SAVE = 20
         private const val DEFAULT_STEP_LENGTH_METERS = 0.75
         private const val MIN_STEP_LENGTH_METERS = 0.45
         private const val MAX_STEP_LENGTH_METERS = 0.90

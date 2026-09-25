@@ -78,7 +78,6 @@ import com.guruswarupa.launch.ui.views.SafeHorizontalScrollView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.IconPackManager
 import com.guruswarupa.launch.utils.AppLanguage
-import com.guruwarupa.launch.ui.activities.SettingsBackupHelper
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File

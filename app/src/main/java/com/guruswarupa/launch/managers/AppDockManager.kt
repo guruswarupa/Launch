@@ -50,6 +50,8 @@ class AppDockManager(
     private val res = context.resources
     private var timerHandler: android.os.Handler? = null
     private var timerRunnable: Runnable? = null
+    private var focusModeCheckHandler: android.os.Handler? = null
+    private var focusModeCheckRunnable: Runnable? = null
     private val workspaceManager: WorkspaceManager
     private val workProfileManager: WorkProfileManager
     private val workspaceProfileDialogs: WorkspaceProfileDialogs
@@ -105,6 +107,7 @@ class AppDockManager(
             isFocusMode = false
             updateFocusModeIcon()
             stopTimerDisplay()
+            stopFocusModeTimer()
             updateDockVisibility()
             lockDrawerForFocusMode(false)
             refreshAppsForFocusMode()
@@ -735,12 +738,18 @@ class AppDockManager(
         lockDrawerForFocusMode(false)
         refreshAppsForFocusMode()
         stopTimerDisplay()
+        stopFocusModeTimer()
 
         if (dndWasEnabled) updateDndState(false)
     }
 
     private fun startFocusModeTimer(endTime: Long) {
+        // Cancel any previous loop first - without this, rapidly re-enabling focus mode (or
+        // extending its duration) stacked up multiple concurrent postDelayed loops, each
+        // holding a reference to this AppDockManager until it self-terminated up to 30s later.
+        stopFocusModeTimer()
         val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        focusModeCheckHandler = handler
         val checkTimer = object : Runnable {
             override fun run() {
                 if (isFocusMode && System.currentTimeMillis() >= endTime) {
@@ -755,7 +764,14 @@ class AppDockManager(
                 }
             }
         }
+        focusModeCheckRunnable = checkTimer
         handler.postDelayed(checkTimer, 30000)
+    }
+
+    private fun stopFocusModeTimer() {
+        focusModeCheckHandler?.removeCallbacks(focusModeCheckRunnable ?: return)
+        focusModeCheckHandler = null
+        focusModeCheckRunnable = null
     }
 
     private fun updateFocusModeIcon() {

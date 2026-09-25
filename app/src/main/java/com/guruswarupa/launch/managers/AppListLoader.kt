@@ -92,8 +92,12 @@ class AppListLoader(
 
         safeExecute loadTask@{
         if (forceRefresh) {
+            // Only bypass the in-memory/time-based cache to force a fresh PackageManager
+            // query below (which overwrites the stale disk app-list cache on its own via
+            // saveAppListToCache). Do NOT wipe the metadata/icon disk caches here - this path
+            // runs on every routine refresh (resume, work-profile toggle, single app install),
+            // and clearing them would force every icon to be re-decoded from scratch each time.
             cachedUnsortedList = null
-            cacheManager?.clearCache()
         } else if (cacheManager != null && cacheManager.isCacheValid()) {
             val cachedAppsRaw = cacheManager.loadAppListFromCache()
             if (cachedAppsRaw.isNotEmpty()) {
@@ -501,9 +505,10 @@ class AppListLoader(
         // Clear callbacks to prevent memory leaks
         onAppListUpdated = null
         onAdapterNeedsUpdate = null
-        
-        // Clear cached data
+
+        // Drop the in-memory list only; the disk cache is intentionally kept so the
+        // next cold start (or recreate() from a theme switch) can load from it instead
+        // of forcing a full PackageManager re-scan and icon re-decode.
         cachedUnsortedList = null
-        cacheManager?.clearCache()
     }
 }

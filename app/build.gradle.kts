@@ -10,7 +10,7 @@ android {
     namespace = "com.guruswarupa.launch"
     compileSdk = 35
     defaultConfig {
-        applicationId = "com.guruswarupa.launchh"
+        applicationId = "com.guruswarupa.launch"
         minSdk = 26
         targetSdk = 36
         versionCode = 68

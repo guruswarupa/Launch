@@ -29,7 +29,12 @@ import org.json.JSONObject
 class WidgetManager(
     private val context: Context,
     private val widgetContainer: LinearLayout,
-    private val shouldLoadWidgets: Boolean = true
+    private val shouldLoadWidgets: Boolean = true,
+    // MainActivity's home-screen instance wants the host listening only while the launcher is
+    // actually started/visible (onStart/onStop), so it releases its registration while another
+    // app is in the foreground. WidgetConfigurationActivity's instance has no onStart()/onStop()
+    // callers and instead wants the simpler "listening for as long as I exist" behavior.
+    private val listenOnlyWhileStarted: Boolean = false
 ) {
 
     private val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(context)
@@ -105,8 +110,14 @@ class WidgetManager(
         }
     }
 
+    @Volatile
+    private var isListeningOwned = false
+
     init {
-        retainListening(appWidgetHost)
+        if (!listenOnlyWhileStarted) {
+            retainListening(appWidgetHost)
+            isListeningOwned = true
+        }
         loadWidgetsMetadata()
         if (shouldLoadWidgets) {
             refreshSystemWidgetViews()
@@ -570,16 +581,24 @@ class WidgetManager(
     }
 
     fun onStop() {
+        if (!listenOnlyWhileStarted) return
         try {
-            releaseListening(appWidgetHost)
+            if (isListeningOwned) {
+                releaseListening(appWidgetHost)
+                isListeningOwned = false
+            }
         } catch (e: Exception) {
             Log.w(TAG, "Error stopping widget host listening", e)
         }
     }
 
     fun onStart() {
+        if (!listenOnlyWhileStarted) return
         try {
-            retainListening(appWidgetHost)
+            if (!isListeningOwned) {
+                retainListening(appWidgetHost)
+                isListeningOwned = true
+            }
             refreshSystemWidgetViews()
         } catch (e: Exception) {
             Log.w(TAG, "Error starting widget host listening", e)
@@ -612,7 +631,10 @@ class WidgetManager(
 
     fun onDestroy() {
         try {
-            releaseListening(appWidgetHost)
+            if (isListeningOwned) {
+                releaseListening(appWidgetHost)
+                isListeningOwned = false
+            }
         } catch (e: Exception) {
             Log.w(TAG, "Error stopping widget host listening in destroy", e)
         }
