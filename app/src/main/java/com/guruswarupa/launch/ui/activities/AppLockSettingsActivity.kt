@@ -34,7 +34,6 @@ class AppLockSettingsActivity : AppCompatActivity() {
     private lateinit var fingerprintLayout: View
     private lateinit var changePinButton: Button
     private lateinit var resetAppLockButton: Button
-    private var isPinVerifiedForThisSession = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -150,10 +149,12 @@ class AppLockSettingsActivity : AppCompatActivity() {
         appsRecyclerView.adapter = AppLockAdapter(
             getInstalledApps(), appLockManager,
             requestPinAuth = { onSuccess ->
-                if (isPinVerifiedForThisSession) onSuccess()
-                else appLockManager.verifyPin { success: Boolean ->
-                    if (success) { isPinVerifiedForThisSession = true; onSuccess() }
-                    else recreateAppsList()
+                // AppLockManager.verifyPin already short-circuits to an immediate success within
+                // its own re-auth window (PREF_LAST_AUTH_TIME/AUTH_TIMEOUT) - no need to cache
+                // "verified" locally, which never expired here and let PIN entry auth an
+                // unbounded number of later toggles for the lifetime of this Activity instance.
+                appLockManager.verifyPin { success: Boolean ->
+                    if (success) onSuccess() else recreateAppsList()
                 }
             }
         )

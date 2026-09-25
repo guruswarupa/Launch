@@ -86,12 +86,23 @@ class SystemMonitorActivity : AppCompatActivity() {
         setupHardwareInfo()
         setupNetworkInfo()
         setupSensorsAndCameraInfo()
-
-        startRealtimeUpdates()
+        // Not started here: onResume() always runs right after onCreate() too, and starting
+        // the loop in both would leave two independent postDelayed chains running (onPause only
+        // cancels whichever Runnable updateRunnable currently points to, leaking the other).
     }
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateRunnable?.let { handler.removeCallbacks(it) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startRealtimeUpdates()
     }
 
     private fun setupWallpaper() {

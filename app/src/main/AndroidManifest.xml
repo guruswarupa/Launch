@@ -410,6 +410,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Unexported alias for viewing vault files: DocumentViewerActivity itself must stay
+             exported to handle VIEW intents for PDFs/text from other apps, but that means any
+             app could otherwise launch it directly with EXTRA_VAULT_FILE_NAME and read decrypted
+             vault contents whenever the in-process vault happened to be unlocked. Routing vault
+             launches through this non-exported alias (same Activity class, same intent extras)
+             means only this app itself can trigger that code path. -->
+        <activity-alias
+            android:name=".ui.activities.VaultDocumentViewerActivity"
+            android:targetActivity=".ui.activities.DocumentViewerActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

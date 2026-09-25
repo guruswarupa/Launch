@@ -386,14 +386,18 @@ class RssFeedManager(
                 setRequestProperty("User-Agent", "${context.packageName}/rss")
                 instanceFollowRedirects = true
             }
-            connection.connect()
-            val category = resolveCategory(feedUrl)
-            BufferedInputStream(connection.inputStream).use { inputStream ->
-                val parser = Xml.newPullParser()
-                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-                parser.setInput(inputStream, null)
-                parseFeed(parser, feedUrl, category)
-            }.also {
+            try {
+                connection.connect()
+                val category = resolveCategory(feedUrl)
+                BufferedInputStream(connection.inputStream).use { inputStream ->
+                    val parser = Xml.newPullParser()
+                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+                    parser.setInput(inputStream, null)
+                    parseFeed(parser, feedUrl, category)
+                }
+            } finally {
+                // Was only reached via .also{} after a successful parse - a malformed-XML
+                // exception from parseFeed skipped it entirely, leaking the connection/socket.
                 connection.disconnect()
             }
         } catch (_: Exception) {

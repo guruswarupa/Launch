@@ -7,6 +7,7 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.guruswarupa.launch.models.Constants
+import com.guruswarupa.launch.models.TodoItem
 import com.guruswarupa.launch.services.BackTapService
 import com.guruswarupa.launch.services.FlipToDndService
 import com.guruswarupa.launch.services.NightModeService
@@ -14,6 +15,9 @@ import com.guruswarupa.launch.services.PhysicalActivityTrackingService
 import com.guruswarupa.launch.services.ScreenDimmerService
 import com.guruswarupa.launch.services.ShakeDetectionService
 import com.guruswarupa.launch.services.WalkDetectionService
+import com.guruswarupa.launch.utils.TodoAlarmManager
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 
 class BootReceiver : BroadcastReceiver() {
     companion object {
@@ -78,6 +82,22 @@ class BootReceiver : BroadcastReceiver() {
                 val physicalActivityIntent = Intent(context, PhysicalActivityTrackingService::class.java)
                 ContextCompat.startForegroundService(context, physicalActivityIntent)
             }
+
+            rescheduleTodoAlarms(context, prefs)
+        }
+    }
+
+    // AlarmManager drops all setExactAndAllowWhileIdle alarms on reboot. Todo reminders were
+    // otherwise only re-armed once MainActivity/TodoManager.initialize() happened to run, which
+    // isn't guaranteed to be the first thing that starts after boot.
+    private fun rescheduleTodoAlarms(context: Context, prefs: android.content.SharedPreferences) {
+        val jsonString = prefs.getString("todo_items_json", null) ?: return
+        try {
+            val moshi = Moshi.Builder().build()
+            val type = Types.newParameterizedType(List::class.java, TodoItem::class.java)
+            val items = moshi.adapter<List<TodoItem>>(type).fromJson(jsonString) ?: return
+            TodoAlarmManager(context).rescheduleAllAlarms(items)
+        } catch (_: Exception) {
         }
     }
 }

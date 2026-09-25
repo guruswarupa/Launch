@@ -58,9 +58,21 @@ class AppLockManager(private val context: Context) {
         return if (existingSalt != null) {
             hashPinWithSalt(pin, existingSalt)
         } else {
+            // Legacy fallback for PINs set before salting was introduced. Verification against
+            // this weaker, unsalted hash should only ever happen once per such user - see
+            // migrateUnsaltedPinIfNeeded, called right after a successful verify.
             val digest = MessageDigest.getInstance("SHA-256")
             val hashBytes = digest.digest(pin.toByteArray())
             hashBytes.joinToString("") { "%02x".format(it) }
+        }
+    }
+
+    // Upgrades a legacy unsalted PIN hash to a salted one after it's been verified correct, so
+    // the weaker comparison in hashPin() is only ever reachable once per legacy user instead of
+    // indefinitely (e.g. if PREF_PIN_SALT were ever cleared independently of PREF_PIN_HASH).
+    private fun migrateUnsaltedPinIfNeeded(verifiedPin: String) {
+        if (sharedPreferences.getString(PREF_PIN_SALT, null) == null) {
+            saveNewPin(verifiedPin)
         }
     }
 
@@ -214,7 +226,7 @@ class AppLockManager(private val context: Context) {
                 val storedPinHash = sharedPreferences.getString(PREF_PIN_HASH, "")
 
                 if (hashPin(enteredPin) == storedPinHash) {
-
+                    migrateUnsaltedPinIfNeeded(enteredPin)
                     sharedPreferences.edit {
                         putLong(PREF_LAST_AUTH_TIME, System.currentTimeMillis())
                     }

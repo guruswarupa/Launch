@@ -486,8 +486,10 @@ class WebAppActivity : AppCompatActivity() {
 
 
 
+        // Only the subdomain direction is safe: a page pinned to mail.example.com must not be
+        // able to navigate to example.com (or any other ancestor) and treat it as in-sandbox -
+        // that would silently defeat the per-webapp domain restriction this check exists for.
         if (domainWithoutWww.endsWith(".$allowedWithoutWww")) return true
-        if (allowedWithoutWww.endsWith(".$domainWithoutWww")) return true
 
         return false
     }

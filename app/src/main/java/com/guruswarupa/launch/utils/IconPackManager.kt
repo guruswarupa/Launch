@@ -95,15 +95,15 @@ object IconPackManager {
             if (cachedIconPackPackage != iconPackPackage) {
                 loadAppFilter(context, iconPackPackage)
             }
+
+            if (activityName != null) {
+                val fullKey = "$packageName/$activityName"
+                val drawable = iconPackCache[fullKey]
+                if (drawable != null) return drawable
+            }
+
+            return iconPackCache[packageName]
         }
-        
-        if (activityName != null) {
-            val fullKey = "$packageName/$activityName"
-            val drawable = iconPackCache[fullKey]
-            if (drawable != null) return drawable
-        }
-        
-        return iconPackCache[packageName]
     }
 
     private const val ICON_PACK_INTENT_ACTION = "com.gorgon.zicons.constellation.ICON_PACK"

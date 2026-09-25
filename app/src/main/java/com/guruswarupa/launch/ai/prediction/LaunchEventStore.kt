@@ -103,14 +103,18 @@ class LaunchEventStore @Inject constructor(
     }
 
     private fun persist() {
-        try {
-            val snapshotToSave = synchronized(statsLock) {
-                stats.mapValues { (_, s) -> LaunchEventStat(s.launchCount, s.lastLaunchMillis, s.contextCounts.toList()) }
+        // backgroundExecutor is a shared 4-thread pool, so recordEvent() can dispatch persist()
+        // from multiple threads in quick succession. Holding statsLock for the whole
+        // snapshot+write (not just the snapshot) prevents two threads from interleaving writes
+        // to the same FileOutputStream, which previously could truncate/corrupt the store.
+        synchronized(statsLock) {
+            try {
+                val snapshotToSave = stats.mapValues { (_, s) -> LaunchEventStat(s.launchCount, s.lastLaunchMillis, s.contextCounts.toList()) }
+                val adapter = moshi.adapter<Map<String, LaunchEventStat>>(mapType)
+                val json = adapter.toJson(snapshotToSave)
+                FileOutputStream(storeFile).use { it.bufferedWriter().write(json) }
+            } catch (_: Exception) {
             }
-            val adapter = moshi.adapter<Map<String, LaunchEventStat>>(mapType)
-            val json = adapter.toJson(snapshotToSave)
-            FileOutputStream(storeFile).use { it.bufferedWriter().write(json) }
-        } catch (_: Exception) {
         }
     }
 }

@@ -255,7 +255,7 @@ class TodoManager(
         val index = todoItems.indexOf(todoItem)
         if (index != -1) {
 
-            if (todoItem.dueTime != null) {
+            if (todoItem.dueTime != null || (todoItem.isIntervalBased() && todoItem.intervalStartTime != null)) {
                 val requestCode = todoAlarmManager.getRequestCode(todoItem, index)
                 todoAlarmManager.cancelAlarm(todoItem, requestCode)
             }

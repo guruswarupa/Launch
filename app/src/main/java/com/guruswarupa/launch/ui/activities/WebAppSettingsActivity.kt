@@ -37,7 +37,7 @@ import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.WebAppSearchHelper
 import com.guruswarupa.launch.utils.SearchSuggestion
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -440,7 +440,10 @@ class WebAppSettingsActivity : AppCompatActivity() {
         if (query.isBlank()) return
 
         searchJob?.cancel()
-        searchJob = CoroutineScope(Dispatchers.Main).launch {
+        // lifecycleScope (not a standalone CoroutineScope) so this is cancelled automatically
+        // if the activity is destroyed mid-search, instead of resuming on the main thread and
+        // touching views that may already be detached.
+        searchJob = lifecycleScope.launch {
             searchProgress.visibility = View.VISIBLE
             searchEmptyText.visibility = View.GONE
             searchResultsList.removeAllViews()

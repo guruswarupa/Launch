@@ -56,6 +56,8 @@ class WidgetConfigurationActivity : AppCompatActivity() {
     private lateinit var widgetSectionDecoration: WidgetSectionDecoration
     private lateinit var widgetsHeader: android.widget.TextView
     private lateinit var emptyStateText: android.widget.TextView
+    private val reloadHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private var reloadRunnable: Runnable? = null
 
     private var allWidgets = mutableListOf<WidgetConfigurationManager.WidgetInfo>()
     private var filteredWidgets = mutableListOf<WidgetConfigurationManager.WidgetInfo>()
@@ -273,6 +275,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        reloadRunnable?.let { reloadHandler.removeCallbacks(it) }
         if (::widgetManager.isInitialized) {
             widgetManager.onDestroy()
         }
@@ -502,9 +505,10 @@ class WidgetConfigurationActivity : AppCompatActivity() {
     }
 
     private fun scheduleWidgetReload() {
-        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-            loadWidgets()
-        }, 350)
+        reloadRunnable?.let { reloadHandler.removeCallbacks(it) }
+        val runnable = Runnable { loadWidgets() }
+        reloadRunnable = runnable
+        reloadHandler.postDelayed(runnable, 350)
     }
 
     private fun getWidgetDescription(widget: WidgetConfigurationManager.WidgetInfo): String {

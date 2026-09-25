@@ -732,7 +732,11 @@ class DocumentViewerActivity : VaultBaseActivity() {
         }
 
         fun createVaultIntent(context: Context, fileName: String): Intent {
-            return Intent(context, DocumentViewerActivity::class.java).apply {
+            // Targets the non-exported VaultDocumentViewerActivity alias (see manifest), not
+            // this class directly - DocumentViewerActivity itself is exported (for external
+            // VIEW intents) and would let any app read vault files via this same extra.
+            return Intent().apply {
+                setClassName(context, "com.guruswarupa.launch.ui.activities.VaultDocumentViewerActivity")
                 putExtra(EXTRA_VAULT_FILE_NAME, fileName)
                 addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK or

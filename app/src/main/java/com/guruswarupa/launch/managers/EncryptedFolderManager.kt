@@ -234,24 +234,24 @@ class EncryptedFolderManager(private val context: Context) {
     }
 
     fun deleteFile(fileName: String): Boolean {
-        File(thumbnailFolder, "$fileName.thumb").delete()
-        return File(encryptedFolder, fileName).delete()
+        thumbFileFor(fileName).delete()
+        return resolveVaultFile(fileName).delete()
     }
 
     fun renameFile(oldName: String, newName: String): Boolean {
-        val oldEncrypted = File(encryptedFolder, oldName)
+        val oldEncrypted = resolveVaultFile(oldName)
         if (!oldEncrypted.exists()) return false
-        val newEncrypted = File(encryptedFolder, newName)
+        val newEncrypted = resolveVaultFile(newName)
         if (oldName == newName) return true
         if (newEncrypted.exists()) {
             newEncrypted.delete()
-            File(thumbnailFolder, "$newName.thumb").delete()
+            thumbFileFor(newName).delete()
         }
         val renamed = oldEncrypted.renameTo(newEncrypted)
         if (renamed) {
-            val oldThumb = File(thumbnailFolder, "$oldName.thumb")
+            val oldThumb = thumbFileFor(oldName)
             if (oldThumb.exists()) {
-                oldThumb.renameTo(File(thumbnailFolder, "$newName.thumb"))
+                oldThumb.renameTo(thumbFileFor(newName))
             }
         }
         return renamed
@@ -264,11 +264,11 @@ class EncryptedFolderManager(private val context: Context) {
     }
 
     fun decryptToCache(fileName: String): File {
-        val sourceFile = File(encryptedFolder, fileName)
+        val sourceFile = resolveVaultFile(fileName)
         val cacheDir = File(context.cacheDir, TEMP_DIR)
         if (!cacheDir.exists()) cacheDir.mkdirs()
 
-        val tempFile = File(cacheDir, fileName)
+        val tempFile = File(cacheDir, sourceFile.name)
         if (tempFile.exists() && tempFile.length() > 0L && tempFile.lastModified() >= sourceFile.lastModified()) {
             return tempFile
         }

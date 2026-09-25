@@ -434,7 +434,11 @@ class CalculatorWidget(private val rootView: View) {
                 "ln" -> if (value > 0) ln(value) else Double.NaN
                 "sqrt" -> if (value >= 0) sqrt(value) else Double.NaN
                 "factorial" -> {
-                    if (value < 0 || value != value.toInt().toDouble()) {
+                    // 170! is the largest factorial representable as a Double (171! overflows to
+                    // Infinity); without this bound, entering a large number (e.g. 1e7) ran a
+                    // tight multiply loop of that many iterations synchronously on the UI thread
+                    // before the overflow check below ever got a chance to catch it.
+                    if (value < 0 || value != value.toInt().toDouble() || value > 170) {
                         Double.NaN
                     } else {
                         var fact = 1.0
