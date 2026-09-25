@@ -2,7 +2,7 @@ name: PR Check
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
 
 concurrency:
   group: pr-check-${{ github.event.pull_request.number }}
