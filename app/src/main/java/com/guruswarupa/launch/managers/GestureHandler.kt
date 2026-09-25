@@ -176,7 +176,13 @@ class GestureHandler(
                             isSwipeUpCandidate = false
                             onSwipeUpFromHome?.invoke()
                             true
-                        } else if (abs(deltaX) > abs(deltaY) * 1.2f) {
+                        } else if (abs(deltaX) > minSwipeUpDistancePx && abs(deltaX) > abs(deltaY) * 1.2f) {
+                            // Requiring the same minimum distance here (not just the ratio) as the
+                            // swipe-up branch above stops a few pixels of natural jitter right at
+                            // the start of a swipe from permanently declaring "this is horizontal"
+                            // and handing the rest of the gesture to the page pager underneath -
+                            // that's what was making a genuine swipe-up-to-open-drawer gesture
+                            // occasionally page-swipe the home screen instead of opening the drawer.
                             isSwipeUpCandidate = false
                             false
                         } else {

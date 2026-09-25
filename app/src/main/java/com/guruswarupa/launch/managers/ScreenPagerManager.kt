@@ -46,7 +46,16 @@ class ScreenPagerManager(
     private var velocityTracker: VelocityTracker? = null
     private val viewConfiguration = ViewConfiguration.get(activity)
     private val minimumFlingVelocity = viewConfiguration.scaledMinimumFlingVelocity
-    private val touchSlop = viewConfiguration.scaledTouchSlop
+    // Matches GestureHandler.minSwipeUpDistancePx/its 1.2x ratio (see onInterceptTouchEvent
+    // below): pagerScrollView is an ancestor of the view GestureHandler's swipe-up-to-open-drawer
+    // listener is attached to (mainContent is re-parented into this pager's CENTER page), so its
+    // own onInterceptTouchEvent gets first refusal on every MOVE event before that listener ever
+    // sees it. With a much smaller/looser threshold than GestureHandler's, this pager could - and
+    // did - win the race and start a horizontal page-swipe out from under a gesture the user
+    // intended as a vertical swipe-up, just because of a few pixels of early diagonal jitter.
+    // Matching both thresholds makes the two conditions mutually exclusive at every instant, so
+    // whichever axis actually dominates by the required margin correctly wins instead.
+    private val horizontalInterceptThresholdPx = (24 * activity.resources.displayMetrics.density).toInt()
     private val pageViews = linkedMapOf<Page, View>()
     private var activePages = listOf(Page.WALLPAPER, Page.CENTER, Page.WIDGETS)
     private var suppressNextLayoutSnap = false
@@ -116,8 +125,8 @@ class ScreenPagerManager(
                         val deltaX = event.x - touchStartX
                         val deltaY = event.y - touchStartY
                         val isHorizontalSwipe =
-                            kotlin.math.abs(deltaX) > touchSlop &&
-                                kotlin.math.abs(deltaX) > kotlin.math.abs(deltaY)
+                            kotlin.math.abs(deltaX) > horizontalInterceptThresholdPx &&
+                                kotlin.math.abs(deltaX) > kotlin.math.abs(deltaY) * 1.2f
 
                         if (!isHorizontalSwipe) {
                             return false

@@ -1233,6 +1233,10 @@ class StockDrawerManager(
         applyCurrentFilter()
         refreshModeToggles()
         retargetSearchToDrawer()
+        // Reset scroll position on every open instead of leaving whatever position was left
+        // over from the last time the drawer was scrolled - matches stock Android launcher
+        // behavior of always showing the top of the list.
+        recyclerView.scrollToPosition(0)
 
         isOpen = true
         screenPagerManager.setPagingEnabled(false)
