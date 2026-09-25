@@ -14,13 +14,26 @@
     android:layout_marginStart="8dp"
     android:layout_marginEnd="48dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/app_icon"
+    <FrameLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:scaleType="centerCrop"
         android:layout_marginEnd="16dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/app_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:id="@+id/notification_badge"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/notification_badge_background"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="0dp"

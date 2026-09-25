@@ -187,6 +187,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         if (billingClient?.isReady == true) {
             queryExistingSupportPurchases()
         }
+        findViewById<SwitchCompat>(R.id.notification_badges_switch)?.isChecked =
+            com.guruswarupa.launch.core.PermissionManager(this, prefs).isNotificationListenerServiceEnabled()
     }
 
     override fun onDestroy() {
@@ -393,6 +395,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val showAppNameSwitch = findViewById<SwitchCompat>(R.id.show_app_name_in_grid_switch)
         val hideAppIconInListSection = findViewById<LinearLayout>(R.id.hide_app_icon_in_list_section)
         val hideAppIconInListSwitch = findViewById<SwitchCompat>(R.id.hide_app_icon_in_list_switch)
+        val notificationBadgesSwitch = findViewById<SwitchCompat>(R.id.notification_badges_switch)
         val stockDrawerEnabledSection = findViewById<LinearLayout>(R.id.stock_drawer_enabled_section)
         val stockDrawerEnabledSwitch = findViewById<SwitchCompat>(R.id.stock_drawer_enabled_switch)
         val stockHotseatSection = findViewById<LinearLayout>(R.id.stock_hotseat_section)
@@ -451,6 +454,13 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         hideAppIconInListSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit { putBoolean(Constants.Prefs.HIDE_APP_ICON_IN_LIST, isChecked) }
             notifySettingsChanged()
+        }
+
+        val notificationPermissionManager = com.guruswarupa.launch.core.PermissionManager(this, prefs)
+        notificationBadgesSwitch.isChecked = notificationPermissionManager.isNotificationListenerServiceEnabled()
+        notificationBadgesSwitch.setOnClickListener {
+            notificationBadgesSwitch.isChecked = notificationPermissionManager.isNotificationListenerServiceEnabled()
+            notificationPermissionManager.requestNotificationListenerPermission()
         }
 
         gridBtn.setOnClickListener {

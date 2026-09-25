@@ -921,6 +921,7 @@ class MainActivity : AppCompatActivity() {
         if (::mediaSessionMonitor.isInitialized) {
             mediaSessionMonitor.cleanup()
         }
+        com.guruswarupa.launch.services.LaunchNotificationListenerService.onBadgeCountsChanged = null
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

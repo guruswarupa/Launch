@@ -1,8 +1,10 @@
 package com.guruswarupa.launch.services
 
+import android.app.Notification
 import android.service.notification.NotificationListenerService
 import java.lang.ref.WeakReference
 import android.service.notification.StatusBarNotification
+import java.util.concurrent.ConcurrentHashMap
 
 class LaunchNotificationListenerService : NotificationListenerService() {
 
@@ -14,6 +16,12 @@ class LaunchNotificationListenerService : NotificationListenerService() {
             private set(value) {
                 _instance = value?.let { WeakReference(it) }
             }
+
+        private val badgeCounts = ConcurrentHashMap<String, Int>()
+
+        var onBadgeCountsChanged: (() -> Unit)? = null
+
+        fun getBadgeCount(packageName: String): Int = badgeCounts[packageName] ?: 0
     }
 
     private var isListenerConnected = false
@@ -37,10 +45,13 @@ class LaunchNotificationListenerService : NotificationListenerService() {
     override fun onListenerConnected() {
         super.onListenerConnected()
         isListenerConnected = true
+        recomputeBadgeCounts()
     }
 
     override fun onListenerDisconnected() {
         isListenerConnected = false
+        badgeCounts.clear()
+        onBadgeCountsChanged?.invoke()
         try {
             super.onListenerDisconnected()
         } catch (e: Exception) {
@@ -52,6 +63,7 @@ class LaunchNotificationListenerService : NotificationListenerService() {
         try {
             if (isListenerConnected) {
                 super.onNotificationPosted(sbn)
+                recomputeBadgeCounts()
             }
         } catch (_: Exception) {
         }
@@ -61,7 +73,23 @@ class LaunchNotificationListenerService : NotificationListenerService() {
         try {
             if (isListenerConnected) {
                 super.onNotificationRemoved(sbn)
+                recomputeBadgeCounts()
             }
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun recomputeBadgeCounts() {
+        try {
+            val counts = mutableMapOf<String, Int>()
+            for (sbn in getActiveNotifications()) {
+                val notification = sbn.notification ?: continue
+                if (notification.flags and Notification.FLAG_GROUP_SUMMARY != 0) continue
+                counts[sbn.packageName] = (counts[sbn.packageName] ?: 0) + 1
+            }
+            badgeCounts.clear()
+            badgeCounts.putAll(counts)
+            onBadgeCountsChanged?.invoke()
         } catch (_: Exception) {
         }
     }

@@ -133,6 +133,15 @@ class AppInitializer(private val activity: MainActivity) {
         views.recyclerView.visibility = View.VISIBLE
         updateFastScrollerVisibility()
 
+        com.guruswarupa.launch.services.LaunchNotificationListenerService.onBadgeCountsChanged = {
+            activity.runOnUiThread {
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    adapter.refreshNotificationBadges()
+                }
+            }
+        }
+        adapter.refreshNotificationBadges()
+
         views.fastScroller.onScrollToBottom = { showAllAppsFromFavorites() }
         views.fastScroller.onScrollToTop = { showFavoritesFromAllApps() }
 

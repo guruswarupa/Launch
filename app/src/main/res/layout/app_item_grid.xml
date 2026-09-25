@@ -9,12 +9,25 @@
     android:paddingEnd="8dp">
 
     
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/app_icon"
+    <FrameLayout
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="6dp" />
+        android:layout_marginBottom="6dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/app_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:id="@+id/notification_badge"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/notification_badge_background"
+            android:visibility="gone" />
+    </FrameLayout>
 
     
     <LinearLayout

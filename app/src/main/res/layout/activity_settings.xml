@@ -261,6 +261,31 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/notification_badges_section"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="20dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/notification_badges"
+                                android:textSize="14sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:fontFamily="sans-serif-medium"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/notification_badges_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent"/>
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/stock_drawer_enabled_section"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

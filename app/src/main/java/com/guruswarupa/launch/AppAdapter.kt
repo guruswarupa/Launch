@@ -68,6 +68,7 @@ class AppAdapter(
         const val PAYLOAD_ICON_VISUAL_STATE = 4
         const val PAYLOAD_USAGE = 5
         const val PAYLOAD_TYPOGRAPHY = 6
+        const val PAYLOAD_NOTIFICATION_BADGE = 7
 
         private val SPECIAL_PACKAGE_NAMES = setOf(
             "com.android.settings",
@@ -79,6 +80,7 @@ class AppAdapter(
         val appIcon: com.google.android.material.imageview.ShapeableImageView? = view.findViewById(R.id.app_icon)
         val appName: TextView? = view.findViewById(R.id.app_name)
         val appUsageTime: TextView? = view.findViewById(R.id.app_usage_time)
+        val notificationBadge: View? = view.findViewById(R.id.notification_badge)
         val container: View? = view.findViewById(R.id.app_item_container)
         var lastClickTime = 0L
     }
@@ -310,6 +312,10 @@ class AppAdapter(
         notifyItemRangeChanged(0, currentList.size, PAYLOAD_ICON_VISUAL_STATE)
     }
 
+    fun refreshNotificationBadges() {
+        notifyItemRangeChanged(0, currentList.size, PAYLOAD_NOTIFICATION_BADGE)
+    }
+
     fun refreshTypography() {
         currentFontScale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100) / 100f
         currentFontStyle = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
@@ -405,6 +411,12 @@ class AppAdapter(
             imageView.clearColorFilter()
             imageView.alpha = 1f
         }
+    }
+
+    fun applyNotificationBadge(packageName: String, badgeView: View?) {
+        if (badgeView == null) return
+        val hasNotification = com.guruswarupa.launch.services.LaunchNotificationListenerService.getBadgeCount(packageName) > 0
+        badgeView.visibility = if (hasNotification) View.VISIBLE else View.GONE
     }
 
     fun getAppLabel(position: Int): String {
@@ -529,6 +541,7 @@ class AppAdapter(
                         bindCachedOrAsyncIcon(holder, appInfo, packageName)
                     }
                     PAYLOAD_ICON_VISUAL_STATE -> applyIconVisualState(packageName, holder.appIcon)
+                    PAYLOAD_NOTIFICATION_BADGE -> applyNotificationBadge(packageName, holder.notificationBadge)
                     PAYLOAD_VIEW_MODE -> {
                         configureLabelVisibility(holder)
                         configureIconVisibility(holder)
@@ -577,6 +590,7 @@ class AppAdapter(
         configureLabelVisibility(holder)
         configureIconVisibility(holder)
         applyIconVisualState(packageName, holder.appIcon)
+        applyNotificationBadge(packageName, holder.notificationBadge)
 
         holder.itemView.setOnClickListener {
             appClickHandler.handleAppClick(holder, appInfo, packageName, appInfo.preferredOrder)
