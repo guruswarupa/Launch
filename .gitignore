@@ -20,7 +20,10 @@ wrapper/
 .tmp/
 kotlin-profile/
 jdks/
-app/release/app-release
+app/release/app-release*
 .kotlin/
 .claude/
 .specify/
+keystore.properties
+*.jks
+*.keystore

@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - app/build.gradle.kts
+
+permissions:
+  contents: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.diff.outputs.should_release }}
+      version_name: ${{ steps.diff.outputs.version_name }}
+      version_code: ${{ steps.diff.outputs.version_code }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Compare versionCode against previous commit
+        id: diff
+        run: |
+          current_code=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' app/build.gradle.kts)
+          current_name=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
+          if git cat-file -e HEAD^:app/build.gradle.kts 2>/dev/null; then
+            previous_code=$(git show HEAD^:app/build.gradle.kts | grep -oP 'versionCode\s*=\s*\K[0-9]+' || echo 0)
+          else
+            previous_code=0
+          fi
+          echo "version_code=$current_code" >> "$GITHUB_OUTPUT"
+          echo "version_name=$current_name" >> "$GITHUB_OUTPUT"
+          if [ "$current_code" -gt "$previous_code" ]; then
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+            echo "versionCode $previous_code -> $current_code: releasing v$current_name"
+          else
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "versionCode unchanged ($previous_code -> $current_code): skipping release"
+          fi
+
+  build-and-release:
+    needs: check-version
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION_NAME: ${{ needs.check-version.outputs.version_name }}
+      VERSION_CODE: ${{ needs.check-version.outputs.version_code }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Decode signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+
+      - name: Build signed release AAB and APK
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew bundleRelease assembleRelease --console=plain
+
+      - name: Remove decoded keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${VERSION_NAME}" \
+            --title "v${VERSION_NAME}" \
+            --generate-notes \
+            --target "${{ github.sha }}" \
+            app/build/outputs/bundle/release/app-release.aab \
+            app/build/outputs/apk/release/app-release.apk

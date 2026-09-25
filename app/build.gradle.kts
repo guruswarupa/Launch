@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +8,21 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.ksp)
 }
+
+// Local dev: create keystore.properties (gitignored, never committed) with storeFile/
+// storePassword/keyAlias/keyPassword. CI: the same four values come from KEYSTORE_PATH/
+// KEYSTORE_PASSWORD/KEY_ALIAS/KEY_PASSWORD env vars instead (see .github/workflows/release.yml).
+// Neither present (e.g. a contributor without the release key) just leaves the release build
+// type unsigned rather than failing the build.
+val keystoreProperties = Properties().apply {
+    val propsFile = rootProject.file("keystore.properties")
+    if (propsFile.exists()) {
+        FileInputStream(propsFile).use { load(it) }
+    }
+}
+
+fun signingProp(envVar: String, propertyKey: String): String? =
+    System.getenv(envVar) ?: keystoreProperties.getProperty(propertyKey)
 
 android {
     namespace = "com.guruswarupa.launch"
@@ -19,8 +37,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            val storeFilePath = signingProp("KEYSTORE_PATH", "storeFile")
+            if (storeFilePath != null) {
+                storeFile = file(storeFilePath)
+                storePassword = signingProp("KEYSTORE_PASSWORD", "storePassword")
+                keyAlias = signingProp("KEY_ALIAS", "keyAlias")
+                keyPassword = signingProp("KEY_PASSWORD", "keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
