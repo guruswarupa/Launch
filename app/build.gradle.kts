@@ -24,6 +24,14 @@ val keystoreProperties = Properties().apply {
 fun signingProp(envVar: String, propertyKey: String): String? =
     System.getenv(envVar) ?: keystoreProperties.getProperty(propertyKey)
 
+val gitCommitCount: Int = System.getenv("VERSION_CODE_OVERRIDE")?.toIntOrNull()
+    ?: try {
+        providers.exec { commandLine("git", "rev-list", "--count", "HEAD") }
+            .standardOutput.asText.get().trim().toInt()
+    } catch (e: Exception) {
+        70
+    }
+
 android {
     namespace = "com.guruswarupa.launch"
     compileSdk = 35
@@ -31,7 +39,7 @@ android {
         applicationId = "com.guruswarupa.launch"
         minSdk = 26
         targetSdk = 36
-        versionCode = 69
+        versionCode = gitCommitCount
         versionName = "7.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
