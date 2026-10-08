@@ -293,6 +293,21 @@
 
         <include layout="@layout/view_stock_app_drawer" />
 
+        <ImageView
+            android:id="@+id/kids_mode_exit_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top|start"
+            android:layout_margin="16dp"
+            android:padding="8dp"
+            android:background="@drawable/translucent_black_pill"
+            android:src="@drawable/ic_lock"
+            app:tint="#FFFFFFFF"
+            android:visibility="gone"
+            android:elevation="24dp"
+            android:translationZ="24dp"
+            android:contentDescription="@string/kids_mode_exit_button_description" />
+
     </FrameLayout>
 
     

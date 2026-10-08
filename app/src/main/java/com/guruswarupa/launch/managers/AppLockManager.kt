@@ -13,10 +13,14 @@ import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.core.SecureStorageManager
+import com.guruswarupa.launch.models.AppLockSchedule
 import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.setDialogInputView
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.Calendar
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
@@ -33,10 +37,14 @@ class AppLockManager(private val context: Context) {
         private const val PREF_IS_APP_LOCK_ENABLED = "is_app_lock_enabled"
         private const val PREF_LAST_AUTH_TIME = "last_auth_time"
         private const val PREF_FINGERPRINT_ENABLED = "fingerprint_enabled"
+        private const val PREF_APP_LOCK_SCHEDULES = "app_lock_schedules"
         private const val AUTH_TIMEOUT = 1 * 60 * 1000L
         private const val SALT_LENGTH_BYTES = 16
         private const val PIN_HASH_ITERATIONS = 310000
         private const val PIN_HASH_KEY_LENGTH = 256
+
+        private val moshi = Moshi.Builder().build()
+        private val scheduleMapType = Types.newParameterizedType(Map::class.java, String::class.java, AppLockSchedule::class.java)
     }
 
     private fun generateSalt(): String {
@@ -270,6 +278,7 @@ class AppLockManager(private val context: Context) {
         val lockedApps = getLockedApps().toMutableSet()
         lockedApps.remove(packageName)
         sharedPreferences.edit { putStringSet(PREF_LOCKED_APPS, lockedApps) }
+        setAppLockSchedule(packageName, null)
     }
 
     fun getLockedApps(): Set<String> {
@@ -277,7 +286,35 @@ class AppLockManager(private val context: Context) {
     }
 
     fun isAppLocked(packageName: String): Boolean {
-        return isAppLockEnabled() && getLockedApps().contains(packageName)
+        if (!isAppLockEnabled() || !getLockedApps().contains(packageName)) return false
+        val schedule = getAppLockSchedule(packageName) ?: return true
+        val nowMinutes = run {
+            val now = Calendar.getInstance()
+            now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+        }
+        return schedule.appliesToday() && schedule.isWithinTimeRange(nowMinutes)
+    }
+
+    private fun getAllSchedules(): MutableMap<String, AppLockSchedule> {
+        val json = sharedPreferences.getString(PREF_APP_LOCK_SCHEDULES, null) ?: return mutableMapOf()
+        return try {
+            moshi.adapter<Map<String, AppLockSchedule>>(scheduleMapType).fromJson(json)?.toMutableMap() ?: mutableMapOf()
+        } catch (_: Exception) {
+            mutableMapOf()
+        }
+    }
+
+    fun getAppLockSchedule(packageName: String): AppLockSchedule? = getAllSchedules()[packageName]
+
+    fun setAppLockSchedule(packageName: String, schedule: AppLockSchedule?) {
+        val schedules = getAllSchedules()
+        if (schedule == null) {
+            schedules.remove(packageName)
+        } else {
+            schedules[packageName] = schedule
+        }
+        val json = moshi.adapter<Map<String, AppLockSchedule>>(scheduleMapType).toJson(schedules)
+        sharedPreferences.edit { putString(PREF_APP_LOCK_SCHEDULES, json) }
     }
 
     fun changePin(callback: (Boolean) -> Unit) {
@@ -355,6 +392,7 @@ class AppLockManager(private val context: Context) {
             remove(PREF_IS_APP_LOCK_ENABLED)
             remove(PREF_LAST_AUTH_TIME)
             remove(PREF_FINGERPRINT_ENABLED)
+            remove(PREF_APP_LOCK_SCHEDULES)
         }
     }
 

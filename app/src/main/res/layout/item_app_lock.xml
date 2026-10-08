@@ -27,6 +27,18 @@
         android:maxLines="1"
         android:ellipsize="end"/>
 
+    <ImageView
+        android:id="@+id/lock_schedule_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_timer"
+        app:tint="?attr/appIconTint"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:visibility="gone"
+        android:contentDescription="@string/app_lock_schedule_button_description"/>
+
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/lock_switch"
         android:layout_width="wrap_content"

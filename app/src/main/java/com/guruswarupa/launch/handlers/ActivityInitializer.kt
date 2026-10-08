@@ -104,6 +104,7 @@ class ActivityInitializer(
             setupHeaderVisibilityOnScroll(recyclerView)
             setupTimeDateListeners(timeTextView, dateTextView)
             applyTopWidgetStyle()
+            refreshKidsModeExitButton()
 
             val topWidgetEnabled = sharedPreferences.getBoolean(
                 com.guruswarupa.launch.models.Constants.Prefs.TOP_WIDGET_ENABLED,
@@ -141,6 +142,92 @@ class ActivityInitializer(
         scrollerParams.gravity = Gravity.BOTTOM or Gravity.END
         views.fastScroller.layoutParams = scrollerParams
         views.fastScroller.requestLayout()
+    }
+
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    fun refreshKidsModeExitButton() {
+        val mainActivity = activity as? MainActivity ?: return
+        val button = mainActivity.findViewById<ImageView>(R.id.kids_mode_exit_button) ?: return
+        val isActive = mainActivity.kidsModeManager.isActive()
+        button.visibility = if (isActive) View.VISIBLE else View.GONE
+        if (!isActive) {
+            button.setOnTouchListener(null)
+            return
+        }
+
+        val prefKeyX = "kids_mode_exit_x"
+        val prefKeyY = "kids_mode_exit_y"
+        val touchSlop = android.view.ViewConfiguration.get(activity).scaledTouchSlop
+
+        fun clampToParent(x: Float, y: Float): Pair<Float, Float> {
+            val parent = button.parent as? View ?: return x to y
+            val minX = -button.left.toFloat()
+            val maxX = (parent.width - button.width - button.left).toFloat()
+            val minY = -button.top.toFloat()
+            val maxY = (parent.height - button.height - button.top).toFloat()
+            return x.coerceIn(minX, maxOf(minX, maxX)) to y.coerceIn(minY, maxOf(minY, maxY))
+        }
+
+        button.post {
+            val (x, y) = clampToParent(
+                sharedPreferences.getFloat(prefKeyX, 0f),
+                sharedPreferences.getFloat(prefKeyY, 0f)
+            )
+            button.translationX = x
+            button.translationY = y
+        }
+
+        var downRawX = 0f
+        var downRawY = 0f
+        var startTx = 0f
+        var startTy = 0f
+        var dragging = false
+
+        button.setOnTouchListener { v, event ->
+            when (event.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    downRawX = event.rawX
+                    downRawY = event.rawY
+                    startTx = v.translationX
+                    startTy = v.translationY
+                    dragging = false
+                    v.parent?.requestDisallowInterceptTouchEvent(true)
+                    true
+                }
+                android.view.MotionEvent.ACTION_MOVE -> {
+                    val dx = event.rawX - downRawX
+                    val dy = event.rawY - downRawY
+                    if (!dragging && (kotlin.math.abs(dx) > touchSlop || kotlin.math.abs(dy) > touchSlop)) {
+                        dragging = true
+                    }
+                    if (dragging) {
+                        val (x, y) = clampToParent(startTx + dx, startTy + dy)
+                        v.translationX = x
+                        v.translationY = y
+                    }
+                    true
+                }
+                android.view.MotionEvent.ACTION_UP -> {
+                    if (dragging) {
+                        sharedPreferences.edit()
+                            .putFloat(prefKeyX, v.translationX)
+                            .putFloat(prefKeyY, v.translationY)
+                            .apply()
+                    } else {
+                        mainActivity.appLockManager.verifyPin { granted ->
+                            if (granted) {
+                                mainActivity.kidsModeManager.setActive(false)
+                                refreshKidsModeExitButton()
+                                mainActivity.appListLoader.loadApps(forceRefresh = false)
+                            }
+                        }
+                    }
+                    true
+                }
+                android.view.MotionEvent.ACTION_CANCEL -> true
+                else -> false
+            }
+        }
     }
 
     fun applyTopWidgetStyle() {

@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.ui.activities
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.NotificationManager
 import android.app.WallpaperManager
@@ -76,6 +77,7 @@ import com.guruswarupa.launch.services.ScreenLockAccessibilityService
 import com.guruswarupa.launch.services.WalkDetectionService
 import com.guruswarupa.launch.ui.views.SafeHorizontalScrollView
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
+import com.guruswarupa.launch.utils.DialogStyler
 import com.guruswarupa.launch.utils.IconPackManager
 import com.guruswarupa.launch.utils.AppLanguage
 import org.json.JSONArray
@@ -141,12 +143,29 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         if (result.resultCode == RESULT_OK) result.data?.data?.let { importSettingsFromFile(it) }
     }
 
+    private val importThemeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val uri = result.data?.data
+            if (uri != null && ThemeShareHelper.importThemeFromUri(this, prefs, uri)) {
+                Toast.makeText(this, getString(R.string.toast_theme_imported), Toast.LENGTH_SHORT).show()
+                restartLauncher()
+            } else if (uri != null) {
+                Toast.makeText(this, getString(R.string.toast_theme_import_failed), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private val wallpaperLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         setupWallpaper(null)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (com.guruswarupa.launch.managers.KidsModeManager(this).isActive()) {
+            Toast.makeText(this, getString(R.string.kids_mode_settings_blocked), Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
         applyOrientationPreference()
 
         enableEdgeToEdge(
@@ -189,6 +208,38 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
         findViewById<SwitchCompat>(R.id.notification_badges_switch)?.isChecked =
             com.guruswarupa.launch.core.PermissionManager(this, prefs).isNotificationListenerServiceEnabled()
+        findViewById<SwitchCompat>(R.id.kids_mode_switch)?.isChecked =
+            com.guruswarupa.launch.managers.KidsModeManager(this).isActive()
+    }
+
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun showKidsModeAppPicker(
+        kidsModeManager: com.guruswarupa.launch.managers.KidsModeManager,
+        onResult: ((saved: Boolean) -> Unit)? = null
+    ) {
+        val pm = packageManager
+        val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        val resolved = pm.queryIntentActivities(launcherIntent, 0)
+            .distinctBy { it.activityInfo.packageName }
+            .filter { it.activityInfo.packageName != packageName }
+            .sortedBy { it.loadLabel(pm).toString().lowercase() }
+
+        val labels = resolved.map { it.loadLabel(pm).toString() }.toTypedArray()
+        val packageNames = resolved.map { it.activityInfo.packageName }
+        val currentlyAllowed = kidsModeManager.getAllowedApps()
+        val checked = BooleanArray(packageNames.size) { packageNames[it] in currentlyAllowed }
+        var saved = false
+
+        AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(R.string.kids_mode_choose_apps)
+            .setMultiChoiceItems(labels, checked) { _, which, isChecked -> checked[which] = isChecked }
+            .setPositiveButton(R.string.save_button) { _, _ ->
+                kidsModeManager.setAllowedApps(packageNames.filterIndexed { index, _ -> checked[index] }.toSet())
+                saved = true
+            }
+            .setNegativeButton(R.string.cancel_button, null)
+            .setOnDismissListener { onResult?.invoke(saved) }
+            .show()
     }
 
     override fun onDestroy() {
@@ -396,8 +447,16 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val hideAppIconInListSection = findViewById<LinearLayout>(R.id.hide_app_icon_in_list_section)
         val hideAppIconInListSwitch = findViewById<SwitchCompat>(R.id.hide_app_icon_in_list_switch)
         val notificationBadgesSwitch = findViewById<SwitchCompat>(R.id.notification_badges_switch)
+        val kidsModeSwitch = findViewById<SwitchCompat>(R.id.kids_mode_switch)
+        val kidsModeChooseAppsButton = findViewById<TextView>(R.id.kids_mode_choose_apps_button)
         val stockDrawerEnabledSection = findViewById<LinearLayout>(R.id.stock_drawer_enabled_section)
         val stockDrawerEnabledSwitch = findViewById<SwitchCompat>(R.id.stock_drawer_enabled_switch)
+        val autoOrganizeFoldersButton = findViewById<TextView>(R.id.auto_organize_folders_button)
+        autoOrganizeFoldersButton.setOnClickListener {
+            prefs.edit { putBoolean(Constants.Prefs.AUTO_ORGANIZE_FOLDERS_PENDING, true) }
+            notifySettingsChanged()
+            Toast.makeText(this, getString(R.string.auto_organize_folders_done), Toast.LENGTH_SHORT).show()
+        }
         val stockHotseatSection = findViewById<LinearLayout>(R.id.stock_hotseat_section)
         val stockHotseatValue = findViewById<TextView>(R.id.stock_hotseat_value)
         val stockHotseatSeek = findViewById<SeekBar>(R.id.stock_hotseat_seekbar)
@@ -412,6 +471,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             hideAppIconInListSection.isVisible = style == Constants.Prefs.VIEW_PREFERENCE_LIST
             stockDrawerEnabledSection.isVisible = isStock
             stockHotseatSection.isVisible = isStock
+            autoOrganizeFoldersButton.isVisible = isStock
         }
 
         applyDisplayStyle(selectedStyle)
@@ -461,6 +521,37 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         notificationBadgesSwitch.setOnClickListener {
             notificationBadgesSwitch.isChecked = notificationPermissionManager.isNotificationListenerServiceEnabled()
             notificationPermissionManager.requestNotificationListenerPermission()
+        }
+
+        val kidsModeManager = com.guruswarupa.launch.managers.KidsModeManager(this)
+        val kidsModeAppLockManager = com.guruswarupa.launch.managers.AppLockManager(this)
+        kidsModeSwitch.isChecked = kidsModeManager.isActive()
+        kidsModeChooseAppsButton.setOnClickListener { showKidsModeAppPicker(kidsModeManager) }
+        kidsModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) {
+                kidsModeManager.setActive(false)
+                return@setOnCheckedChangeListener
+            }
+            if (!kidsModeAppLockManager.isPinSet()) {
+                Toast.makeText(this, getString(R.string.kids_mode_pin_required), Toast.LENGTH_LONG).show()
+                kidsModeSwitch.isChecked = false
+                return@setOnCheckedChangeListener
+            }
+            val activate = {
+                kidsModeManager.setActive(true)
+                finish()
+            }
+            if (kidsModeManager.getAllowedApps().isEmpty()) {
+                showKidsModeAppPicker(kidsModeManager) { saved ->
+                    if (saved && kidsModeManager.getAllowedApps().isNotEmpty()) {
+                        activate()
+                    } else {
+                        kidsModeSwitch.isChecked = false
+                    }
+                }
+            } else {
+                activate()
+            }
         }
 
         gridBtn.setOnClickListener {
@@ -1003,6 +1094,9 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         button.setOnClickListener {
             startActivity(Intent(this, SystemMonitorActivity::class.java))
         }
+        findViewById<Button>(R.id.usage_recap_button).setOnClickListener {
+            startActivity(Intent(this, UsageRecapActivity::class.java))
+        }
     }
 
     private fun setupWebAppsSection() {
@@ -1021,6 +1115,19 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
         findViewById<View>(R.id.export_settings_button).setOnClickListener { exportSettings() }
         findViewById<View>(R.id.import_settings_button).setOnClickListener { importSettings() }
+        findViewById<View>(R.id.share_theme_button).setOnClickListener {
+            val shareIntent = ThemeShareHelper.createShareIntent(this, prefs)
+            if (shareIntent != null) {
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_theme)))
+            }
+        }
+        findViewById<View>(R.id.import_theme_button).setOnClickListener {
+            importThemeLauncher.launch(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/json"
+            })
+        }
+
 
         val lHeader = findViewById<LinearLayout>(R.id.launcher_header)
         val lContent = findViewById<LinearLayout>(R.id.launcher_content)
@@ -2423,11 +2530,108 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     private fun importSettings() { importLauncher.launch(Intent(Intent.ACTION_OPEN_DOCUMENT).apply { addCategory(Intent.CATEGORY_OPENABLE); type = "application/zip" }) }
 
     private fun exportSettingsToFile(uri: Uri) {
-        SettingsBackupHelper.exportToUri(this, prefs, uri)
+        val density = resources.displayMetrics.density
+        val pad = (20 * density).toInt()
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(pad, (8 * density).toInt(), pad, 0)
+        }
+        val passInput = EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = getString(R.string.backup_passphrase_optional)
+            DialogStyler.styleInput(this@SettingsActivity, this)
+        }
+        val confirmInput = EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = getString(R.string.backup_passphrase_confirm)
+            DialogStyler.styleInput(this@SettingsActivity, this)
+        }
+        val vaultAvailable = com.guruswarupa.launch.managers.EncryptedFolderManager(this).isVaultSetup()
+        val vaultCheck = CheckBox(this).apply {
+            text = getString(R.string.backup_include_vault)
+            isChecked = vaultAvailable
+            visibility = if (vaultAvailable) View.VISIBLE else View.GONE
+            setTextColor(com.guruswarupa.launch.ui.theme.ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary))
+        }
+        container.addView(passInput)
+        container.addView(confirmInput)
+        container.addView(vaultCheck)
+
+        val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(R.string.backup_options_title)
+            .setMessage(R.string.backup_options_message)
+            .setView(container)
+            .setPositiveButton(R.string.save_button, null)
+            .setNegativeButton(R.string.cancel_button, null)
+            .create()
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val pass = passInput.text.toString()
+            if (pass != confirmInput.text.toString()) {
+                Toast.makeText(this, getString(R.string.backup_passphrase_mismatch), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (pass.isNotEmpty() && pass.length < 6) {
+                Toast.makeText(this, getString(R.string.backup_passphrase_too_short), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            dialog.dismiss()
+            Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
+            val includeVault = vaultAvailable && vaultCheck.isChecked
+            Thread {
+                val ok = SettingsBackupHelper.exportToUri(this, prefs, uri, pass.ifEmpty { null }, includeVault)
+                runOnUiThread {
+                    Toast.makeText(this, getString(if (ok) R.string.toast_saved else R.string.toast_failed), Toast.LENGTH_SHORT).show()
+                }
+            }.start()
+        }
     }
 
     private fun importSettingsFromFile(uri: Uri) {
-        SettingsBackupHelper.importFromUri(this, prefs, uri) { restartLauncher() }
+        Thread {
+            val encrypted = com.guruswarupa.launch.core.BackupCrypto.isEncrypted(this, uri)
+            runOnUiThread {
+                if (encrypted) promptPassphraseAndImport(uri) else runImport(uri, null)
+            }
+        }.start()
+    }
+
+    private fun promptPassphraseAndImport(uri: Uri) {
+        val density = resources.displayMetrics.density
+        val input = EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = getString(R.string.backup_passphrase_enter)
+            DialogStyler.styleInput(this@SettingsActivity, this)
+        }
+        val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(R.string.backup_encrypted_title)
+            .setView(android.widget.FrameLayout(this).apply {
+                val pad = (20 * density).toInt()
+                setPadding(pad, (8 * density).toInt(), pad, 0)
+                addView(input)
+            })
+            .setPositiveButton(R.string.import_all_data) { _, _ -> runImport(uri, input.text.toString()) }
+            .setNegativeButton(R.string.cancel_button, null)
+            .create()
+        dialog.show()
+    }
+
+    private fun runImport(uri: Uri, passphrase: String?) {
+        Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
+        Thread {
+            val result = SettingsBackupHelper.importFromUri(this, prefs, uri, passphrase)
+            runOnUiThread {
+                when (result) {
+                    SettingsBackupHelper.ImportResult.SUCCESS -> restartLauncher()
+                    SettingsBackupHelper.ImportResult.WRONG_PASSPHRASE -> {
+                        Toast.makeText(this, getString(R.string.backup_wrong_passphrase), Toast.LENGTH_LONG).show()
+                        if (passphrase != null) promptPassphraseAndImport(uri)
+                    }
+                    SettingsBackupHelper.ImportResult.FAILED ->
+                        Toast.makeText(this, getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.start()
     }
 
     private fun showUnsavedChangesDialog(onConfirm: () -> Unit) {

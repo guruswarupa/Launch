@@ -89,7 +89,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
                 try {
-                    contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    contentResolver.openOutputStream(uri, "wt")?.use { outputStream ->
                         if (vaultManager.exportVault(outputStream)) {
                             Toast.makeText(this, this.getString(R.string.toast_vault_exported_successfully), Toast.LENGTH_SHORT).show()
                         } else {
@@ -105,17 +105,35 @@ class EncryptedVaultActivity : VaultBaseActivity() {
 
     private val importVaultLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let {
-            try {
-                contentResolver.openInputStream(it)?.use { inputStream ->
-                    if (vaultManager.importVault(inputStream)) {
+            val importAction = {
+                try {
+                    val imported = contentResolver.openInputStream(it)?.use { inputStream ->
+                        vaultManager.importVault(inputStream)
+                    } ?: false
+                    if (imported) {
                         Toast.makeText(this, this.getString(R.string.toast_vault_imported_successfully_please_unlock_to_see), Toast.LENGTH_SHORT).show()
-                        loadFiles()
+                        adapter.updateFiles(emptyList())
+                        checkVaultState()
                     } else {
                         Toast.makeText(this, this.getString(R.string.toast_import_failed), Toast.LENGTH_SHORT).show()
+                        checkVaultState()
                     }
+                } catch (e: Exception) {
+                    Toast.makeText(this, this.getString(R.string.toast_import_failed_2, e.message), Toast.LENGTH_SHORT).show()
+                    checkVaultState()
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this, this.getString(R.string.toast_import_failed_2, e.message), Toast.LENGTH_SHORT).show()
+            }
+            if (vaultManager.isVaultSetup()) {
+                val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
+                    .setTitle(getString(R.string.vault_import_replace_title))
+                    .setMessage(getString(R.string.vault_import_replace_message))
+                    .setPositiveButton(getString(R.string.dlg_import_existng)) { _, _ -> importAction() }
+                    .setNegativeButton(getString(R.string.cancel_button)) { _, _ -> checkVaultState() }
+                    .create()
+                DialogStyler.styleDialog(dialog)
+                dialog.show()
+            } else {
+                importAction()
             }
         }
     }
@@ -161,7 +179,11 @@ class EncryptedVaultActivity : VaultBaseActivity() {
         checkVaultState()
     }
 
+    private var vaultStateDialog: AlertDialog? = null
+
     private fun checkVaultState() {
+        vaultStateDialog?.dismiss()
+        vaultStateDialog = null
         if (!vaultManager.isVaultSetup()) {
             showSetupDialog()
         } else if (!vaultManager.isUnlocked()) {
@@ -196,8 +218,60 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             .setCancelable(false)
             .create()
 
+        vaultStateDialog = dialog
         DialogStyler.styleDialog(dialog)
         dialog.show()
+    }
+
+    private fun showChangePasswordDialog() {
+        fun passwordField(hintText: String) = EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = hintText
+            DialogStyler.styleInput(this@EncryptedVaultActivity, this)
+        }
+        val oldInput = passwordField(getString(R.string.vault_current_password))
+        val newInput = passwordField(getString(R.string.vault_new_password))
+        val confirmInput = passwordField(getString(R.string.vault_confirm_new_password))
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), 0)
+            addView(oldInput)
+            addView(newInput)
+            addView(confirmInput)
+        }
+        val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(R.string.vault_change_password_title)
+            .setView(container)
+            .setPositiveButton(R.string.save_button, null)
+            .setNegativeButton(R.string.cancel_button, null)
+            .create()
+        DialogStyler.styleDialog(dialog)
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val newPassword = newInput.text.toString()
+            when {
+                newPassword.length < 4 ->
+                    Toast.makeText(this, getString(R.string.toast_password_must_be_at_least_4_characters), Toast.LENGTH_SHORT).show()
+                newPassword != confirmInput.text.toString() ->
+                    Toast.makeText(this, getString(R.string.toast_passwords_do_not_match_start_over), Toast.LENGTH_SHORT).show()
+                else -> {
+                    val oldPassword = oldInput.text.toString()
+                    dialog.dismiss()
+                    Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
+                    Thread {
+                        val ok = vaultManager.changePassword(oldPassword, newPassword)
+                        runOnUiThread {
+                            Toast.makeText(
+                                this,
+                                getString(if (ok) R.string.vault_password_changed else R.string.vault_password_change_failed),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            if (ok) loadFiles()
+                        }
+                    }.start()
+                }
+            }
+        }
     }
 
     private fun showConfirmPasswordDialog(password: String) {
@@ -257,6 +331,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
             .setCancelable(false)
             .create()
 
+        vaultStateDialog = dialog
         DialogStyler.styleDialog(dialog)
         dialog.show()
     }
@@ -459,7 +534,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                         exportVaultLauncher.launch(intent)
                     }
                     1 -> importVaultLauncher.launch(arrayOf("application/zip", "*/*"))
-                    2 -> showSetupDialog()
+                    2 -> showChangePasswordDialog()
                     3 -> showAutoLockDialog()
                 }
             }.create()

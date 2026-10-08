@@ -281,8 +281,43 @@
                                 android:id="@+id/notification_badges_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:thumbTint="?attr/appAccent"
-                                app:trackTint="?attr/appAccent"/>
+                                app:thumbTint="@color/switch_thumb_gray_off"
+                                app:trackTint="@color/switch_track_gray_off"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/kids_mode_section"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="20dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/kids_mode"
+                                android:textSize="14sp"
+                                android:textColor="?attr/appTextPrimary"
+                                android:fontFamily="sans-serif-medium"/>
+
+                            <TextView
+                                android:id="@+id/kids_mode_choose_apps_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="12dp"
+                                android:text="@string/kids_mode_choose_apps"
+                                android:textSize="12sp"
+                                android:textColor="?attr/appAccent"
+                                android:padding="6dp"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/kids_mode_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="@color/switch_thumb_gray_off"
+                                app:trackTint="@color/switch_track_gray_off"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -310,6 +345,20 @@
                                 app:thumbTint="?attr/appAccent"
                                 app:trackTint="?attr/appAccent"/>
                         </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/auto_organize_folders_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:paddingVertical="10dp"
+                            android:gravity="center"
+                            android:text="@string/auto_organize_folders"
+                            android:textSize="14sp"
+                            android:textColor="?attr/appAccent"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackground"
+                            android:visibility="gone"/>
 
                         <LinearLayout
                             android:id="@+id/stock_hotseat_section"
@@ -2803,6 +2852,16 @@
                             android:textAllCaps="false"
                             android:background="@drawable/settings_card_background"
                             android:textColor="?attr/appTextPrimary"/>
+
+                        <Button
+                            android:id="@+id/usage_recap_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/usage_recap_open"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -2905,6 +2964,35 @@
                                 android:layout_weight="1"
                                 android:layout_marginStart="6dp"
                                 android:text="@string/import_all_data"
+                                android:textAllCaps="false"
+                                android:background="@drawable/settings_card_background"
+                                android:textColor="?attr/appTextPrimary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/share_theme_button"
+                                android:layout_width="0dp"
+                                android:layout_height="52dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="6dp"
+                                android:text="@string/share_theme"
+                                android:textAllCaps="false"
+                                android:background="@drawable/settings_card_background"
+                                android:textColor="?attr/appTextPrimary"/>
+
+                            <Button
+                                android:id="@+id/import_theme_button"
+                                android:layout_width="0dp"
+                                android:layout_height="52dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="6dp"
+                                android:text="@string/import_theme"
                                 android:textAllCaps="false"
                                 android:background="@drawable/settings_card_background"
                                 android:textColor="?attr/appTextPrimary"/>

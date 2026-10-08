@@ -21,6 +21,7 @@ object Constants {
         const val STOCK_HOME_APP_ORDER = "stock_home_app_order"
         const val STOCK_DRAWER_FOLDERS = "stock_drawer_folders"
         const val STOCK_HOME_FOLDERS = "stock_home_folders"
+        const val AUTO_ORGANIZE_FOLDERS_PENDING = "auto_organize_folders_pending"
 
         const val STOCK_DRAWER_ENABLED = "stock_drawer_enabled"
 

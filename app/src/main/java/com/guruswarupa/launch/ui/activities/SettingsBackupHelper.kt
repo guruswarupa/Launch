@@ -1,11 +1,11 @@
 package com.guruswarupa.launch.ui.activities
 
-import com.guruswarupa.launch.R
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
-import android.widget.Toast
 import androidx.core.content.edit
+import com.guruswarupa.launch.core.BackupCrypto
+import com.guruswarupa.launch.managers.EncryptedFolderManager
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.zip.ZipEntry
@@ -16,59 +16,106 @@ object SettingsBackupHelper {
 
     private const val PHYSICAL_ACTIVITY_PREFS_NAME = "physical_activity_prefs"
 
-    fun exportToUri(context: Context, prefs: SharedPreferences, uri: Uri) {
-        try {
-            context.contentResolver.openOutputStream(uri)?.use { os ->
-                ZipOutputStream(os).use { zos ->
-                    val j = JSONObject()
-                    j.put("main_preferences", sharedPreferencesToJson(prefs))
-                    zos.putNextEntry(ZipEntry("settings.json"))
-                    zos.write(j.toString(2).toByteArray())
-                    zos.closeEntry()
-                    val webAppsJson = prefs.getString("web_apps", "[]") ?: "[]"
-                    zos.putNextEntry(ZipEntry("webapps.json"))
-                    zos.write(webAppsJson.toByteArray())
-                    zos.closeEntry()
-                    val weatherData = JSONObject().apply {
-                        put("location", prefs.getString("weather_stored_location", "") ?: "")
-                        put("city_name", prefs.getString("weather_stored_city_name", "") ?: "")
-                        put("temperature_unit", prefs.getString("weather_temperature_unit", "celsius") ?: "celsius")
-                    }
-                    zos.putNextEntry(ZipEntry("weather.json"))
-                    zos.write(weatherData.toString(2).toByteArray())
-                    zos.closeEntry()
+    /** Blocking; run off the main thread. Returns true on success. */
+    fun exportToUri(
+        context: Context,
+        prefs: SharedPreferences,
+        uri: Uri,
+        passphrase: String? = null,
+        includeVault: Boolean = false
+    ): Boolean {
+        return try {
+            val raw = context.contentResolver.openOutputStream(uri, "wt") ?: return false
+            val target = if (!passphrase.isNullOrEmpty()) BackupCrypto.encryptingStream(raw, passphrase.toCharArray()) else raw
+            ZipOutputStream(target).use { zos ->
+                val j = JSONObject()
+                j.put("main_preferences", sharedPreferencesToJson(prefs))
+                zos.putNextEntry(ZipEntry("settings.json"))
+                zos.write(j.toString(2).toByteArray())
+                zos.closeEntry()
+                val webAppsJson = prefs.getString("web_apps", "[]") ?: "[]"
+                zos.putNextEntry(ZipEntry("webapps.json"))
+                zos.write(webAppsJson.toByteArray())
+                zos.closeEntry()
+                val weatherData = JSONObject().apply {
+                    put("location", prefs.getString("weather_stored_location", "") ?: "")
+                    put("city_name", prefs.getString("weather_stored_city_name", "") ?: "")
+                    put("temperature_unit", prefs.getString("weather_temperature_unit", "celsius") ?: "celsius")
+                }
+                zos.putNextEntry(ZipEntry("weather.json"))
+                zos.write(weatherData.toString(2).toByteArray())
+                zos.closeEntry()
 
-                    val physicalActivityPrefs = context.getSharedPreferences(PHYSICAL_ACTIVITY_PREFS_NAME, Context.MODE_PRIVATE)
-                    val physicalActivityJson = JSONObject().apply {
-                        put("physical_activity_preferences", sharedPreferencesToJson(physicalActivityPrefs))
-                    }
-                    zos.putNextEntry(ZipEntry("physical_activity.json"))
-                    zos.write(physicalActivityJson.toString(2).toByteArray())
-                    zos.closeEntry()
+                val physicalActivityPrefs = context.getSharedPreferences(PHYSICAL_ACTIVITY_PREFS_NAME, Context.MODE_PRIVATE)
+                val physicalActivityJson = JSONObject().apply {
+                    put("physical_activity_preferences", sharedPreferencesToJson(physicalActivityPrefs))
+                }
+                zos.putNextEntry(ZipEntry("physical_activity.json"))
+                zos.write(physicalActivityJson.toString(2).toByteArray())
+                zos.closeEntry()
 
-                    try {
-                        val notesJson = prefs.getString("note_widget_items", "[]") ?: "[]"
-                        zos.putNextEntry(ZipEntry("notes.json"))
-                        zos.write(notesJson.toByteArray())
-                        zos.closeEntry()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                val notesJson = prefs.getString("note_widget_items", "[]") ?: "[]"
+                zos.putNextEntry(ZipEntry("notes.json"))
+                zos.write(notesJson.toByteArray())
+                zos.closeEntry()
+
+                if (includeVault) {
+                    val vault = EncryptedFolderManager(context)
+                    if (vault.isVaultSetup()) {
+                        vault.writeVaultToZip(zos, "vault/")
                     }
                 }
             }
-            Toast.makeText(context, context.getString(R.string.toast_saved), Toast.LENGTH_SHORT).show()
+            true
         } catch (e: Exception) {
-            Toast.makeText(context, context.getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
+            false
         }
     }
 
-    fun importFromUri(context: Context, prefs: SharedPreferences, uri: Uri, onImported: () -> Unit) {
+    enum class ImportResult { SUCCESS, WRONG_PASSPHRASE, FAILED }
+
+    /** Blocking; run off the main thread. */
+    fun importFromUri(context: Context, prefs: SharedPreferences, uri: Uri, passphrase: String? = null): ImportResult {
+        var vaultStaging: java.io.File? = null
+        var vaultManager: EncryptedFolderManager? = null
         try {
-            context.contentResolver.openInputStream(uri)?.use { ins ->
+            val raw = context.contentResolver.openInputStream(uri) ?: return ImportResult.FAILED
+            val source = if (BackupCrypto.isEncrypted(context, uri)) {
+                if (passphrase.isNullOrEmpty()) { raw.close(); return ImportResult.WRONG_PASSPHRASE }
+                BackupCrypto.decryptingStream(raw, passphrase.toCharArray())
+            } else raw
+            source.use { ins ->
                 ZipInputStream(ins).use { zis ->
                     var entry = zis.nextEntry
                     while (entry != null) {
-                        when (entry.name) {
+                        when {
+                            entry.name.startsWith("vault/") -> {
+                                val manager = vaultManager ?: EncryptedFolderManager(context).also { vaultManager = it }
+                                val staging = vaultStaging ?: manager.newRestoreStagingDir().also { vaultStaging = it }
+                                if (!entry.isDirectory) manager.stageEntry(staging, entry.name.removePrefix("vault/"), zis)
+                            }
+                            else -> restoreEntry(context, prefs, entry.name, zis)
+                        }
+                        zis.closeEntry()
+                        entry = zis.nextEntry
+                    }
+                }
+            }
+            vaultStaging?.let { staging ->
+                if (vaultManager?.commitRestore(staging) != true) return ImportResult.FAILED
+            }
+            return ImportResult.SUCCESS
+        } catch (e: BackupCrypto.WrongPassphraseException) {
+            vaultStaging?.deleteRecursively()
+            return ImportResult.WRONG_PASSPHRASE
+        } catch (e: Exception) {
+            vaultStaging?.deleteRecursively()
+            return ImportResult.FAILED
+        }
+    }
+
+    private fun restoreEntry(context: Context, prefs: SharedPreferences, name: String, zis: ZipInputStream) {
+        when (name) {
                             "settings.json" -> {
                                 val p = JSONObject(zis.bufferedReader().readText()).optJSONObject("main_preferences")
                                 if (p != null) {
@@ -149,15 +196,6 @@ object SettingsBackupHelper {
                                     e.printStackTrace()
                                 }
                             }
-                        }
-                        zis.closeEntry()
-                        entry = zis.nextEntry
-                    }
-                }
-            }
-            onImported()
-        } catch (e: Exception) {
-            Toast.makeText(context, context.getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
         }
     }
 

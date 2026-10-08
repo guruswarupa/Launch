@@ -1,6 +1,7 @@
 package com.guruswarupa.launch.ui.activities
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -193,6 +194,7 @@ class AppLockSettingsActivity : AppCompatActivity() {
             val icon: ImageView = v.findViewById(R.id.app_icon)
             val name: TextView = v.findViewById(R.id.app_name)
             val sw: SwitchCompat = v.findViewById(R.id.lock_switch)
+            val scheduleButton: ImageView = v.findViewById(R.id.lock_schedule_button)
         }
         override fun onCreateViewHolder(p: ViewGroup, t: Int) = ViewHolder(LayoutInflater.from(p.context).inflate(R.layout.item_app_lock, p, false))
         override fun getItemCount() = apps.size
@@ -200,14 +202,69 @@ class AppLockSettingsActivity : AppCompatActivity() {
             val app = apps[p]
             h.icon.setImageDrawable(app.icon)
             h.name.text = app.appName
+            val isLocked = manager.getLockedApps().contains(app.packageName)
             h.sw.setOnCheckedChangeListener(null)
-            h.sw.isChecked = manager.isAppLocked(app.packageName)
+            h.sw.isChecked = isLocked
+            h.scheduleButton.visibility = if (isLocked) View.VISIBLE else View.GONE
+            h.scheduleButton.setOnClickListener {
+                requestPinAuth {
+                    showScheduleDialog(h.scheduleButton.context, app.packageName)
+                }
+            }
             h.sw.setOnCheckedChangeListener { _, isChecked ->
                 requestPinAuth {
                     if (isChecked) manager.lockApp(app.packageName) else manager.unlockApp(app.packageName)
+                    h.scheduleButton.visibility = if (isChecked) View.VISIBLE else View.GONE
                 }
                 if (!manager.isPinSet()) h.sw.isChecked = false
             }
+        }
+
+        private fun showScheduleDialog(context: android.content.Context, packageName: String) {
+            val existing = manager.getAppLockSchedule(packageName)
+            val dayLabels = arrayOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+            val dayValues = intArrayOf(
+                java.util.Calendar.SUNDAY, java.util.Calendar.MONDAY, java.util.Calendar.TUESDAY,
+                java.util.Calendar.WEDNESDAY, java.util.Calendar.THURSDAY, java.util.Calendar.FRIDAY,
+                java.util.Calendar.SATURDAY
+            )
+            val checkedDays = BooleanArray(7) { existing?.selectedDays?.contains(dayValues[it]) == true }
+
+            AlertDialog.Builder(context, R.style.CustomDialogTheme)
+                .setTitle(R.string.app_lock_schedule_title)
+                .setMultiChoiceItems(dayLabels, checkedDays) { _, which, isChecked ->
+                    checkedDays[which] = isChecked
+                }
+                .setPositiveButton(R.string.app_lock_schedule_pick_times) { _, _ ->
+                    val selectedDays = dayValues.filterIndexed { index, _ -> checkedDays[index] }.toSet()
+                    pickStartTime(context, packageName, selectedDays, existing)
+                }
+                .setNeutralButton(R.string.app_lock_schedule_remove) { _, _ ->
+                    manager.setAppLockSchedule(packageName, null)
+                }
+                .setNegativeButton(R.string.cancel_button, null)
+                .show()
+        }
+
+        private fun pickStartTime(context: android.content.Context, packageName: String, selectedDays: Set<Int>, existing: com.guruswarupa.launch.models.AppLockSchedule?) {
+            val existingStart = existing?.startTime?.split(":")
+            val startHour = existingStart?.getOrNull(0)?.toIntOrNull() ?: 9
+            val startMinute = existingStart?.getOrNull(1)?.toIntOrNull() ?: 0
+
+            TimePickerDialog(context, { _, h1, m1 ->
+                val startTime = String.format(java.util.Locale.US, "%02d:%02d", h1, m1)
+                val existingEnd = existing?.endTime?.split(":")
+                val endHour = existingEnd?.getOrNull(0)?.toIntOrNull() ?: 17
+                val endMinute = existingEnd?.getOrNull(1)?.toIntOrNull() ?: 0
+
+                TimePickerDialog(context, { _, h2, m2 ->
+                    val endTime = String.format(java.util.Locale.US, "%02d:%02d", h2, m2)
+                    manager.setAppLockSchedule(
+                        packageName,
+                        com.guruswarupa.launch.models.AppLockSchedule(selectedDays, startTime, endTime)
+                    )
+                }, endHour, endMinute, true).show()
+            }, startHour, startMinute, true).show()
         }
     }
 }

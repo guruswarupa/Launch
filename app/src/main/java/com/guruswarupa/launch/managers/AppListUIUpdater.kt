@@ -39,8 +39,35 @@ class AppListUIUpdater(
         try {
             appListLoader.onAppListUpdated = { sortedList, filteredList, isFinal ->
                 try {
-                    val listWithSeparators = appListManager.addSeparators(sortedList, activity.showOnlyFavoritesInitially)
-                    updateAppListUI(listWithSeparators, filteredList, isFinal)
+                    val kidsModeManager = activity.kidsModeManager
+                    val kidsActive = kidsModeManager.isActive()
+                    val effectiveFilteredList = if (kidsActive) {
+                        filteredList.filter { kidsModeManager.isAppAllowed(it.activityInfo.packageName) }
+                    } else {
+                        filteredList
+                    }
+                    val effectiveSortedList = if (kidsActive) {
+                        val appOrderManager = activity.appOrderManager
+                        val byKey = filteredList.associateBy { appOrderManager.keyOf(it) }
+                        val expanded = mutableListOf<android.content.pm.ResolveInfo>()
+                        sortedList.forEach { entry ->
+                            if (appOrderManager.isFolderEntry(entry)) {
+                                val folder = activity.folderManager.findFolder(
+                                    com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_FOLDERS,
+                                    appOrderManager.folderIdOf(entry)
+                                )
+                                folder?.appKeys?.forEach { key -> byKey[key]?.let { expanded.add(it) } }
+                            } else {
+                                expanded.add(entry)
+                            }
+                        }
+                        expanded.filter { kidsModeManager.isAppAllowed(it.activityInfo.packageName) }
+                            .distinctBy { appOrderManager.keyOf(it) }
+                    } else {
+                        sortedList
+                    }
+                    val listWithSeparators = appListManager.addSeparators(effectiveSortedList, activity.showOnlyFavoritesInitially)
+                    updateAppListUI(listWithSeparators, effectiveFilteredList, isFinal)
 
                     activity.updateFastScrollerVisibility()
                 } catch (e: Exception) {

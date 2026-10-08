@@ -12,6 +12,7 @@ import com.guruswarupa.launch.handlers.MainActivityResultRegistry
 import com.guruswarupa.launch.managers.AppLockManager
 import com.guruswarupa.launch.managers.AppTimerManager
 import com.guruswarupa.launch.managers.AppUsageStatsManager
+import com.guruswarupa.launch.managers.KidsModeManager
 import com.guruswarupa.launch.widgets.WidgetLifecycleCoordinator
 import dagger.Module
 import dagger.Provides
@@ -43,6 +44,10 @@ object ActivityManagersModule {
     @Provides
     @ActivityScoped
     fun provideAppLockManager(activity: FragmentActivity): AppLockManager = AppLockManager(activity)
+
+    @Provides
+    @ActivityScoped
+    fun provideKidsModeManager(activity: FragmentActivity): KidsModeManager = KidsModeManager(activity)
 
     @Provides
     @ActivityScoped

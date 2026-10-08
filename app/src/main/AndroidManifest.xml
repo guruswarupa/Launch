@@ -384,6 +384,12 @@
             android:theme="@style/Theme.Launch.Settings" />
 
         <activity
+            android:name=".ui.activities.UsageRecapActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Settings"
+            android:label="@string/usage_recap_title" />
+
+        <activity
             android:name=".ui.activities.SystemMonitorActivity"
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings"

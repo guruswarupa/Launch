@@ -1,6 +1,7 @@
 package com.guruswarupa.launch.handlers
 
 import android.graphics.Color
+import androidx.core.content.edit
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.guruswarupa.launch.MainActivity
@@ -99,6 +100,10 @@ class SettingsChangeCoordinator(
         }
         if (activity.isStockDrawerManagerInitialized()) {
             activity.stockDrawerManager.refreshAppearance(iconPackChanged)
+            if (sharedPreferences.getBoolean(Constants.Prefs.AUTO_ORGANIZE_FOLDERS_PENDING, false)) {
+                sharedPreferences.edit { putBoolean(Constants.Prefs.AUTO_ORGANIZE_FOLDERS_PENDING, false) }
+                activity.stockDrawerManager.autoCategorizeHomeApps()
+            }
         }
 
         applyThemeBasedWidgetBackgrounds()

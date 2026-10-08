@@ -54,6 +54,7 @@ class StockDrawerManager(
     private var currentColumns = 0
     private var hotseatAdapter: AppAdapter? = null
     private var hotseatView: RecyclerView? = null
+    private var homeGridAdapter: AppAdapter? = null
     private var hotseatLayoutManager: GridLayoutManager? = null
 
     fun setup() {
@@ -135,8 +136,15 @@ class StockDrawerManager(
         drawerRoot.setOnClickListener { }
     }
 
-    fun onFullAppListUpdated(fullList: List<ResolveInfo>) {
+    private fun applyKidsModeFilter(list: List<ResolveInfo>): List<ResolveInfo> {
+        val kidsModeManager = activity.kidsModeManager
+        if (!kidsModeManager.isActive()) return list
+        return list.filter { kidsModeManager.isAppAllowed(it.activityInfo.packageName) }
+    }
+
+    fun onFullAppListUpdated(fullListUnfiltered: List<ResolveInfo>) {
         if (!LayoutMode.isStock(sharedPreferences)) return
+        val fullList = applyKidsModeFilter(fullListUnfiltered)
         recomputeOrderedApps(fullList)
         applyCurrentFilter()
         recomputeHotseat(fullList)
@@ -158,19 +166,28 @@ class StockDrawerManager(
         hotseatView?.isVisible = dockApps.isNotEmpty()
     }
 
-    private fun recomputeOrderedApps(fullList: List<ResolveInfo>) {
+    private fun recomputeOrderedApps(fullListUnfiltered: List<ResolveInfo>) {
         val focusMode = appDockManager.getCurrentMode()
+        val fullList = applyKidsModeFilter(fullListUnfiltered)
 
         val filtered = appListManager.filterAndPrepareApps(fullList, focusMode, workspaceMode = false)
-        val folders = folderManager.getFolders(com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_FOLDERS)
+        val folders = if (activity.kidsModeManager.isActive()) {
+            emptyList()
+        } else {
+            folderManager.getFolders(com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_FOLDERS)
+        }
         val ordered = appOrderManager.applyOrder(
             filtered, appListManager, com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_APP_ORDER, folders
         )
 
-        allOrderedApps = ordered +
-            appListManager.createSeparatorInfo("SMALL") +
-            appListManager.createLauncherShortcut("launcher_settings_shortcut") +
-            appListManager.createLauncherShortcut("launcher_vault_shortcut")
+        allOrderedApps = if (activity.kidsModeManager.isActive()) {
+            ordered
+        } else {
+            ordered +
+                appListManager.createSeparatorInfo("SMALL") +
+                appListManager.createLauncherShortcut("launcher_settings_shortcut") +
+                appListManager.createLauncherShortcut("launcher_vault_shortcut")
+        }
     }
 
     private fun applyCurrentFilter() {
@@ -989,7 +1006,101 @@ class StockDrawerManager(
         }
     }
 
+    fun autoCategorizeHomeApps() {
+        val homeAdapter = homeGridAdapter
+        if (homeAdapter != null) {
+            val list = homeAdapter.currentList.toMutableList()
+            val changed = categorizeIntoFolders(list, com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_FOLDERS)
+            if (changed) {
+                homeAdapter.updateAppList(list)
+                appOrderManager.saveOrder(list, com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_APP_ORDER)
+            }
+        }
+
+        val drawerKey = com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_FOLDERS
+        val drawerList = allOrderedApps.filter {
+            val pkg = it.activityInfo.packageName
+            pkg != AppAdapter.SEPARATOR_PACKAGE && !pkg.startsWith("launcher_")
+        }.toMutableList()
+        if (categorizeIntoFolders(drawerList, drawerKey)) {
+            appOrderManager.saveOrder(drawerList, com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_APP_ORDER)
+            recomputeOrderedApps(activity.fullAppList)
+            applyCurrentFilter()
+        }
+    }
+
+    private fun categorizeIntoFolders(list: MutableList<ResolveInfo>, foldersKey: String): Boolean {
+        val pm = activity.packageManager
+        val existingFolderNames = folderManager.getFolders(foldersKey).map { it.name }.toSet()
+
+        val groupable = list.filter { app ->
+            !appOrderManager.isFolderEntry(app) &&
+                app.activityInfo.packageName != AppAdapter.SEPARATOR_PACKAGE &&
+                !app.activityInfo.packageName.startsWith("launcher_") &&
+                !com.guruswarupa.launch.managers.WebAppManager.isWebAppPackage(app.activityInfo.packageName)
+        }
+
+        val byCategory = groupable.groupBy { app ->
+            categoryLabel(pm, app.activityInfo.packageName)
+        }.filterKeys { it != null }
+
+        var changed = false
+        byCategory.forEach { (categoryName, apps) ->
+            if (categoryName == null || apps.size < 2) return@forEach
+            if (existingFolderNames.contains(categoryName)) return@forEach
+
+            val appKeys = apps.map { appOrderManager.keyOf(it) }
+            val folder = folderManager.createFolder(foldersKey, categoryName, appKeys)
+            val folderInfo = appOrderManager.createFolderInfo(folder)
+
+            val firstIndex = list.indexOfFirst { it === apps.first() }
+            apps.forEach { app -> list.remove(app) }
+            list.add(firstIndex.coerceIn(0, list.size), folderInfo)
+            changed = true
+        }
+        return changed
+    }
+
+    private fun categoryFromPackageName(packageName: String): String? {
+        val name = packageName.lowercase()
+        return when {
+            listOf("game", "supercell", "king.", "gameloft", "pubg", "roblox", "minecraft", "ludo").any { name.contains(it) } ->
+                activity.getString(R.string.category_games)
+            listOf("whatsapp", "instagram", "facebook", "twitter", "telegram", "snapchat", "linkedin", "reddit", "discord", "threads", "signal", "messenger", "pinterest").any { name.contains(it) } ->
+                activity.getString(R.string.category_social)
+            listOf("music", "spotify", "youtube", "netflix", "video", "player", "gallery", "photos", "camera", "podcast", "jio", "hotstar", "prime").any { name.contains(it) } ->
+                activity.getString(R.string.category_media)
+            listOf("maps", "navigation", "uber", "ola", "rapido", "transit").any { name.contains(it) } ->
+                activity.getString(R.string.category_maps)
+            listOf("news", "times", "hindu", "inshorts").any { name.contains(it) } ->
+                activity.getString(R.string.category_news)
+            listOf("docs", "sheets", "slides", "office", "notes", "keep", "calendar", "drive", "mail", "gmail", "outlook", "notion", "todo", "pdf", "calculator", "clock").any { name.contains(it) } ->
+                activity.getString(R.string.category_productivity)
+            else -> null
+        }
+    }
+
+    private fun categoryLabel(pm: android.content.pm.PackageManager, packageName: String): String? {
+        return try {
+            val appInfo = pm.getApplicationInfo(packageName, 0)
+            when (appInfo.category) {
+                android.content.pm.ApplicationInfo.CATEGORY_GAME -> activity.getString(R.string.category_games)
+                android.content.pm.ApplicationInfo.CATEGORY_SOCIAL -> activity.getString(R.string.category_social)
+                android.content.pm.ApplicationInfo.CATEGORY_PRODUCTIVITY -> activity.getString(R.string.category_productivity)
+                android.content.pm.ApplicationInfo.CATEGORY_NEWS -> activity.getString(R.string.category_news)
+                android.content.pm.ApplicationInfo.CATEGORY_MAPS -> activity.getString(R.string.category_maps)
+                android.content.pm.ApplicationInfo.CATEGORY_AUDIO -> activity.getString(R.string.category_media)
+                android.content.pm.ApplicationInfo.CATEGORY_VIDEO -> activity.getString(R.string.category_media)
+                android.content.pm.ApplicationInfo.CATEGORY_IMAGE -> activity.getString(R.string.category_media)
+                else -> categoryFromPackageName(packageName)
+            }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     fun attachHomeReorder(homeRecyclerView: RecyclerView, homeAdapter: AppAdapter, hotseatRecyclerView: RecyclerView, removeZone: View) {
+        homeGridAdapter = homeAdapter
         val orderKey = com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_APP_ORDER
         val foldersKey = com.guruswarupa.launch.models.Constants.Prefs.STOCK_HOME_FOLDERS
 

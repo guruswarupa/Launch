@@ -100,6 +100,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var appLockManager: AppLockManager
 
     @Inject
+    lateinit var kidsModeManager: com.guruswarupa.launch.managers.KidsModeManager
+
+    private var lastKidsModeActive: Boolean? = null
+
+    @Inject
     lateinit var appTimerManager: AppTimerManager
 
     @Inject
@@ -957,6 +962,13 @@ class MainActivity : AppCompatActivity() {
 
         if (::activityInitializer.isInitialized) {
             activityInitializer.applyTopWidgetStyle()
+            activityInitializer.refreshKidsModeExitButton()
+            val kidsActiveNow = kidsModeManager.isActive()
+            val previousKidsActive = lastKidsModeActive
+            lastKidsModeActive = kidsActiveNow
+            if (previousKidsActive != null && previousKidsActive != kidsActiveNow) {
+                appListLoader.loadApps(forceRefresh = false)
+            }
         }
 
         if (widgetsChanged) {

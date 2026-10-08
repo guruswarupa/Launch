@@ -25,10 +25,7 @@ import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.WallpaperManagerHelper
 import com.guruswarupa.launch.models.Constants
-import org.json.JSONArray
-import org.json.JSONObject
 import java.util.concurrent.Executors
-import java.util.zip.ZipInputStream
 
 class AppDataDisclosureActivity : AppCompatActivity() {
     private val backgroundExecutor = Executors.newSingleThreadExecutor()
@@ -100,73 +97,55 @@ class AppDataDisclosureActivity : AppCompatActivity() {
     }
 
     private fun importSettingsFromFile(uri: Uri) {
-        try {
-            val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
-            contentResolver.openInputStream(uri)?.use { ins ->
-                ZipInputStream(ins).use { zis ->
-                    var entry = zis.nextEntry
-                    while (entry != null) {
-                        if (entry.name == "settings.json") {
-                            val p = JSONObject(zis.bufferedReader().readText()).optJSONObject("main_preferences")
-                            if (p != null) {
-                                prefs.edit {
-                                    val stringSetKeys = setOf("favorite_apps", "hidden_apps", "focus_mode_allowed_apps", "locked_apps")
-                                    p.keys().forEach { k ->
-                                        val v = p.get(k)
+        backgroundExecutor.execute {
+            val encrypted = com.guruswarupa.launch.core.BackupCrypto.isEncrypted(this, uri)
+            handler.post { if (encrypted) promptPassphrase(uri) else runImport(uri, null) }
+        }
+    }
 
-                                        if (k in stringSetKeys) {
-                                            val set = when (v) {
-                                                is JSONArray -> {
-                                                    val s = mutableSetOf<String>()
-                                                    for (i in 0 until v.length()) s.add(v.getString(i))
-                                                    s
-                                                }
-                                                is String -> {
-                                                    if (v.startsWith("[") && v.endsWith("]")) {
-                                                        v.substring(1, v.length - 1)
-                                                            .split(",")
-                                                            .map { it.trim() }
-                                                            .filter { it.isNotEmpty() }
-                                                            .toSet()
-                                                    } else {
-                                                        setOf(v)
-                                                    }
-                                                }
-                                                else -> emptySet<String>()
-                                            }
-                                            putStringSet(k, set)
-                                        } else {
-                                            when (v) {
-                                                is String -> putString(k, v)
-                                                is Boolean -> putBoolean(k, v)
-                                                is Int -> putInt(k, v)
-                                                is Long -> putLong(k, v)
-                                                is Double -> putFloat(k, v.toFloat())
-                                                is JSONArray -> putString(k, v.toString())
-                                            }
-                                        }
-                                    }
+    private fun promptPassphrase(uri: Uri) {
+        val density = resources.displayMetrics.density
+        val input = android.widget.EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = getString(R.string.backup_passphrase_enter)
+        }
+        android.app.AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(R.string.backup_encrypted_title)
+            .setView(android.widget.FrameLayout(this).apply {
+                val pad = (20 * density).toInt()
+                setPadding(pad, (8 * density).toInt(), pad, 0)
+                addView(input)
+            })
+            .setPositiveButton(R.string.import_all_data) { _, _ -> runImport(uri, input.text.toString()) }
+            .setNegativeButton(R.string.cancel_button, null)
+            .show()
+    }
 
-                                    putBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, true)
-
-                                    putBoolean(Constants.Prefs.CONTACTS_PERMISSION_DENIED, false)
-                                    putBoolean(Constants.Prefs.USAGE_STATS_PERMISSION_DENIED, false)
-
-                                    putBoolean(Constants.Prefs.INITIAL_PERMISSIONS_ASKED, false)
-
-                                    putBoolean(Constants.Prefs.WAITING_FOR_USAGE_STATS_RETURN, false)
-                                }
-                            }
+    private fun runImport(uri: Uri, passphrase: String?) {
+        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
+        backgroundExecutor.execute {
+            val result = SettingsBackupHelper.importFromUri(this, prefs, uri, passphrase)
+            handler.post {
+                when (result) {
+                    SettingsBackupHelper.ImportResult.SUCCESS -> {
+                        prefs.edit {
+                            putBoolean(Constants.Prefs.APP_DATA_CONSENT_GIVEN, true)
+                            putBoolean(Constants.Prefs.CONTACTS_PERMISSION_DENIED, false)
+                            putBoolean(Constants.Prefs.USAGE_STATS_PERMISSION_DENIED, false)
+                            putBoolean(Constants.Prefs.INITIAL_PERMISSIONS_ASKED, false)
+                            putBoolean(Constants.Prefs.WAITING_FOR_USAGE_STATS_RETURN, false)
                         }
-                        zis.closeEntry()
-                        entry = zis.nextEntry
+                        Toast.makeText(this, getString(R.string.toast_settings_imported_successfully), Toast.LENGTH_SHORT).show()
+                        startMainActivity(requestPermissions = true)
                     }
+                    SettingsBackupHelper.ImportResult.WRONG_PASSPHRASE -> {
+                        Toast.makeText(this, getString(R.string.backup_wrong_passphrase), Toast.LENGTH_LONG).show()
+                        promptPassphrase(uri)
+                    }
+                    SettingsBackupHelper.ImportResult.FAILED ->
+                        Toast.makeText(this, getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
                 }
             }
-            Toast.makeText(this, this.getString(R.string.toast_settings_imported_successfully), Toast.LENGTH_SHORT).show()
-            startMainActivity(requestPermissions = true)
-        } catch (e: Exception) {
-            Toast.makeText(this, this.getString(R.string.toast_failed_to_import_settings, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 

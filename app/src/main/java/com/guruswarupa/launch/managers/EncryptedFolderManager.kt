@@ -100,6 +100,89 @@ class EncryptedFolderManager(private val context: Context) {
         return false
     }
 
+    private fun verifyPassword(password: String): SecretKey? {
+        if (!configFile.exists()) return null
+        return try {
+            FileInputStream(configFile).use { fis ->
+                val salt = ByteArray(SALT_SIZE)
+                val iv = ByteArray(IV_SIZE)
+                if (!readFully(fis, salt) || !readFully(fis, iv)) return null
+                val key = deriveKey(password, salt)
+                val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+                cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
+                if (String(cipher.doFinal(fis.readBytes())) == "VAULT_OPEN") key else null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun reencrypt(source: File, target: File, oldKey: SecretKey, newKey: SecretKey) {
+        FileInputStream(source).use { fis ->
+            val oldIv = ByteArray(IV_SIZE)
+            if (!readFully(fis, oldIv)) throw IOException("Invalid file format")
+            val decipher = Cipher.getInstance("AES/GCM/NoPadding")
+            decipher.init(Cipher.DECRYPT_MODE, oldKey, GCMParameterSpec(128, oldIv))
+            val newIv = ByteArray(IV_SIZE).apply { SecureRandom().nextBytes(this) }
+            val encipher = Cipher.getInstance("AES/GCM/NoPadding")
+            encipher.init(Cipher.ENCRYPT_MODE, newKey, GCMParameterSpec(128, newIv))
+            FileOutputStream(target).use { fos ->
+                fos.write(newIv)
+                javax.crypto.CipherOutputStream(fos, encipher).use { cos ->
+                    javax.crypto.CipherInputStream(fis, decipher).copyTo(cos)
+                }
+            }
+        }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String): Boolean {
+        val oldKey = verifyPassword(oldPassword) ?: return false
+        val staging = File(context.filesDir, "vault_rekey_${System.currentTimeMillis()}")
+        return try {
+            val stagedData = File(staging, "data").apply { mkdirs() }
+            val stagedThumbs = File(staging, "thumbs").apply { mkdirs() }
+
+            val salt = ByteArray(SALT_SIZE).apply { SecureRandom().nextBytes(this) }
+            val newKey = deriveKey(newPassword, salt)
+
+            val dataFiles = getEncryptedFiles().filter { it.isFile }
+            dataFiles.forEach { reencrypt(it, File(stagedData, it.name), oldKey, newKey) }
+
+            val thumbFiles = thumbnailFolder.listFiles()?.filter { it.isFile } ?: emptyList()
+            thumbFiles.forEach {
+                try {
+                    reencrypt(it, File(stagedThumbs, it.name), oldKey, newKey)
+                } catch (e: Exception) {
+                    File(stagedThumbs, it.name).delete()
+                }
+            }
+
+            val iv = ByteArray(IV_SIZE).apply { SecureRandom().nextBytes(this) }
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.ENCRYPT_MODE, newKey, GCMParameterSpec(128, iv))
+            val stagedConfig = File(staging, CONFIG_FILE)
+            FileOutputStream(stagedConfig).use { fos ->
+                fos.write(salt)
+                fos.write(iv)
+                fos.write(cipher.doFinal("VAULT_OPEN".toByteArray()))
+            }
+
+            thumbFiles.forEach { it.delete() }
+            stagedThumbs.listFiles()?.forEach { it.copyTo(File(thumbnailFolder, it.name), overwrite = true) }
+            stagedData.listFiles()?.forEach { it.copyTo(File(encryptedFolder, it.name), overwrite = true) }
+            stagedConfig.copyTo(configFile, overwrite = true)
+
+            masterKey = newKey
+            clearCache()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        } finally {
+            staging.deleteRecursively()
+        }
+    }
+
     fun lock() {
         masterKey = null
     }
@@ -432,22 +515,25 @@ class EncryptedFolderManager(private val context: Context) {
         return inSampleSize
     }
 
+    fun writeVaultToZip(zipOut: java.util.zip.ZipOutputStream, prefix: String = "") {
+        encryptedFolder.listFiles()?.filter { it.isFile }?.forEach { file ->
+            zipOut.putNextEntry(java.util.zip.ZipEntry("${prefix}data/${file.name}"))
+            file.inputStream().use { it.copyTo(zipOut) }
+            zipOut.closeEntry()
+        }
+        thumbnailFolder.listFiles()?.filter { it.isFile }?.forEach { file ->
+            zipOut.putNextEntry(java.util.zip.ZipEntry("${prefix}thumbs/${file.name}"))
+            file.inputStream().use { it.copyTo(zipOut) }
+            zipOut.closeEntry()
+        }
+    }
+
     fun exportVault(outputStream: OutputStream): Boolean {
+        if (!isVaultSetup()) return false
         return try {
             java.util.zip.ZipOutputStream(outputStream).use { zipOut ->
-                encryptedFolder.listFiles()?.forEach { file ->
-                    val entry = java.util.zip.ZipEntry("data/${file.name}")
-                    zipOut.putNextEntry(entry)
-                    file.inputStream().use { it.copyTo(zipOut) }
-                    zipOut.closeEntry()
-                }
-
-                thumbnailFolder.listFiles()?.forEach { file ->
-                    val entry = java.util.zip.ZipEntry("thumbs/${file.name}")
-                    zipOut.putNextEntry(entry)
-                    file.inputStream().use { it.copyTo(zipOut) }
-                    zipOut.closeEntry()
-                }
+                zipOut.setLevel(java.util.zip.Deflater.NO_COMPRESSION)
+                writeVaultToZip(zipOut)
             }
             true
         } catch (e: Exception) {
@@ -456,48 +542,75 @@ class EncryptedFolderManager(private val context: Context) {
         }
     }
 
+    fun newRestoreStagingDir(): File {
+        val dir = File(context.cacheDir, "vault_restore_${System.currentTimeMillis()}")
+        dir.deleteRecursively()
+        File(dir, "data").mkdirs()
+        File(dir, "thumbs").mkdirs()
+        return dir
+    }
+
+    /** Copies one backup entry (relative name like "data/x" or "thumbs/x") into the staging dir. Returns true if it was a vault entry. */
+    fun stageEntry(stagingDir: File, relativeName: String, input: InputStream): Boolean {
+        val group = when {
+            relativeName.startsWith("data/") -> "data"
+            relativeName.startsWith("thumbs/") -> "thumbs"
+            else -> return false
+        }
+        val name = relativeName.substringAfter('/')
+        if (name.isEmpty() || name.contains('/') || name.contains('\\') || name.contains("..")) return true
+        val groupDir = File(stagingDir, group)
+        val dest = File(groupDir, name)
+        if (dest.canonicalFile.parentFile != groupDir.canonicalFile) return true
+        FileOutputStream(dest).use { input.copyTo(it) }
+        return true
+    }
+
+    /** Replaces the current vault with the staged one. The staged data must contain a valid vault config. */
+    fun commitRestore(stagingDir: File): Boolean {
+        return try {
+            val stagedConfig = File(stagingDir, "data/$CONFIG_FILE")
+            if (!stagedConfig.exists() || stagedConfig.length() < SALT_SIZE + IV_SIZE + 16) return false
+
+            lock()
+            clearCache()
+            encryptedFolder.listFiles()?.forEach { it.deleteRecursively() }
+            thumbnailFolder.listFiles()?.forEach { it.deleteRecursively() }
+            encryptedFolder.mkdirs()
+            thumbnailFolder.mkdirs()
+
+            File(stagingDir, "data").listFiles()?.forEach { f ->
+                f.copyTo(File(encryptedFolder, f.name), overwrite = true)
+            }
+            File(stagingDir, "thumbs").listFiles()?.forEach { f ->
+                f.copyTo(File(thumbnailFolder, f.name), overwrite = true)
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        } finally {
+            stagingDir.deleteRecursively()
+        }
+    }
+
     fun importVault(inputStream: InputStream): Boolean {
-        val canonicalDataDir = encryptedFolder.canonicalPath
-        val canonicalThumbsDir = thumbnailFolder.canonicalPath
+        val staging = newRestoreStagingDir()
         return try {
             java.util.zip.ZipInputStream(inputStream).use { zipIn ->
                 var entry = zipIn.nextEntry
                 while (entry != null) {
-                    val entryName = entry.name
-                    if (entryName.contains("..") || File(entryName).isAbsolute) {
-                        zipIn.closeEntry()
-                        entry = zipIn.nextEntry
-                        continue
-                    }
-
-                    val destFile = if (entryName.startsWith("data/")) {
-                        File(encryptedFolder, entryName.substring(5))
-                    } else if (entryName.startsWith("thumbs/")) {
-                        File(thumbnailFolder, entryName.substring(7))
-                    } else {
-                        null
-                    }
-
-                    if (destFile != null) {
-                        val canonicalDest = destFile.canonicalPath
-                        val isInsideData = canonicalDest.startsWith("$canonicalDataDir${File.separator}") ||
-                                canonicalDest == canonicalDataDir
-                        val isInsideThumbs = canonicalDest.startsWith("$canonicalThumbsDir${File.separator}") ||
-                                canonicalDest == canonicalThumbsDir
-                        if (isInsideData || isInsideThumbs) {
-                            destFile.parentFile?.mkdirs()
-                            FileOutputStream(destFile).use { fos ->
-                                zipIn.copyTo(fos)
-                            }
-                        }
+                    if (!entry.isDirectory) {
+                        stageEntry(staging, entry.name, zipIn)
                     }
                     zipIn.closeEntry()
                     entry = zipIn.nextEntry
                 }
             }
-            true
+            commitRestore(staging)
         } catch (e: Exception) {
             e.printStackTrace()
+            staging.deleteRecursively()
             false
         }
     }

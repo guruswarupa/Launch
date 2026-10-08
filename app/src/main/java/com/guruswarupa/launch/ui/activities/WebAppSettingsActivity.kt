@@ -36,8 +36,11 @@ import com.guruswarupa.launch.models.WebAppEntry
 import com.guruswarupa.launch.ui.theme.ThemeManager
 import com.guruswarupa.launch.utils.WallpaperDisplayHelper
 import com.guruswarupa.launch.utils.WebAppSearchHelper
+import com.guruswarupa.launch.utils.WebAppQrHelper
 import com.guruswarupa.launch.utils.SearchSuggestion
 import androidx.lifecycle.lifecycleScope
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -46,6 +49,18 @@ import kotlinx.coroutines.withContext
 class WebAppSettingsActivity : AppCompatActivity() {
     private val prefs by lazy { getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE) }
     private val webAppManager by lazy { WebAppManager(prefs) }
+
+    private val scanQrLauncher = registerForActivityResult(ScanContract()) { result ->
+        val contents = result.contents ?: return@registerForActivityResult
+        val entry = WebAppQrHelper.decode(contents)
+        if (entry != null) {
+            webAppManager.addWebApp(entry.name, entry.url)
+            renderWebApps()
+            Toast.makeText(this, getString(R.string.toast_web_app_added_from_qr, entry.name), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, getString(R.string.toast_qr_not_a_web_app), Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private lateinit var listContainer: LinearLayout
     private lateinit var emptyView: TextView
@@ -87,6 +102,17 @@ class WebAppSettingsActivity : AppCompatActivity() {
         findViewById<Button>(R.id.add_web_app_button).setOnClickListener {
             animateButtonClick(it)
             showEditorDialog()
+        }
+
+        findViewById<Button>(R.id.scan_qr_web_app_button).setOnClickListener {
+            animateButtonClick(it)
+            scanQrLauncher.launch(
+                ScanOptions()
+                    .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                    .setPrompt(getString(R.string.scan_qr_to_add_web_app))
+                    .setBeepEnabled(false)
+                    .setOrientationLocked(false)
+            )
         }
 
         renderWebApps()
@@ -154,6 +180,11 @@ class WebAppSettingsActivity : AppCompatActivity() {
                 confirmDelete(entry)
             }
 
+            itemView.setOnLongClickListener {
+                showQrCodeDialog(entry)
+                true
+            }
+
             listContainer.addView(itemView)
 
             if (!isAnimating) {
@@ -173,6 +204,21 @@ class WebAppSettingsActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showQrCodeDialog(entry: WebAppEntry) {
+        val bitmap = WebAppQrHelper.toBitmap(WebAppQrHelper.encode(entry)) ?: return
+        val imageView = android.widget.ImageView(this).apply {
+            setImageBitmap(bitmap)
+            val padding = (24 * resources.displayMetrics.density).toInt()
+            setPadding(padding, padding, padding, padding)
+        }
+        AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(entry.name)
+            .setMessage(getString(R.string.scan_this_qr_to_add_web_app))
+            .setView(imageView)
+            .setPositiveButton(R.string.done, null)
+            .show()
     }
 
     private fun applyBackgroundTranslucency() {
