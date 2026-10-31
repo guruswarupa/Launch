@@ -493,6 +493,9 @@
     <string name="status_not_charging">Not charging</string>
 
     <string name="system_monitor_title">System Monitor</string>
+    <string name="file_transfer_title">File Transfer</string>
+    <string name="file_transfer_open">Send &amp; receive files</string>
+    <string name="file_transfer_description">Move files and folders between phones on the same Wi-Fi network. No account, no cloud.</string>
     <string name="view_system_diagnostics">View System Diagnostics</string>
     <string name="hardware_category">HARDWARE INFO</string>
     <string name="battery_category">BATTERY &amp; POWER</string>

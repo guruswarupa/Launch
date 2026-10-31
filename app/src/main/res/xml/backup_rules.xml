@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    
+    <!-- Device identity key and transfer history must never leave the device. -->
+    <exclude domain="file" path="transfer/" />
 </full-backup-content>

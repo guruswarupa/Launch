@@ -193,6 +193,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         setupSecuritySection()
         setupWebAppsSection()
         setupSystemMonitorSection()
+        setupFileTransferSection()
         setupMaintenanceSection()
         setupSupportSection()
         setupVersionInfo()
@@ -1078,6 +1079,17 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.app_lock_button).setOnClickListener { startActivity(Intent(this, AppLockSettingsActivity::class.java)) }
         findViewById<View>(R.id.hidden_apps_button).setOnClickListener { startActivity(Intent(this, HiddenAppsSettingsActivity::class.java)) }
         findViewById<View>(R.id.privacy_dashboard_button).setOnClickListener { startActivity(Intent(this, PrivacyDashboardActivity::class.java)) }
+    }
+
+    private fun setupFileTransferSection() {
+        setupSectionToggle(
+            findViewById<View>(R.id.file_transfer_header),
+            findViewById<View>(R.id.file_transfer_content),
+            findViewById<TextView>(R.id.file_transfer_arrow),
+        )
+        findViewById<View>(R.id.file_transfer_button).setOnClickListener {
+            startActivity(Intent(this, com.guruswarupa.launch.transfer.ui.TransferActivity::class.java))
+        }
     }
 
     private fun setupSystemMonitorSection() {

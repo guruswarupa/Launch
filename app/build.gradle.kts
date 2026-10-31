@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.ksp)
 }
@@ -89,6 +90,8 @@ android {
                 "META-INF/NOTICE",
                 "META-INF/NOTICE.txt",
                 "META-INF/*.kotlin_module",
+                "META-INF/versions/**",
+                "META-INF/*.version",
                 "META-INF/AL2.0",
                 "META-INF/LGPL2.1",
                 "debug/**",
@@ -158,6 +161,12 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.15.1")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
     implementation("org.jsoup:jsoup:1.17.2")
+    // Local file transfer (com.guruswarupa.launch.transfer)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.bouncycastle.bcpkix)
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }

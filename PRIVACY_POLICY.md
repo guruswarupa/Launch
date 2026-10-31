@@ -9,6 +9,8 @@ The **Launch** application is an open-source project that prioritizes user priva
 - **No Data Collection:** The app does not collect, store, or transmit any personal data, usage statistics, or telemetry information.
 - **Local Storage:** Any configurations or data you create within the app are stored locally on your device and are never uploaded to any external servers.
 
+- **File Transfer (optional):** If you use File Transfer, files you choose are sent directly to another device on your local Wi-Fi network, encrypted with TLS, only after the receiving user accepts. Nothing goes through a server. A list of past transfers (file names, sizes, device names) is kept only on your device, can be cleared in the app, and is excluded from backups, as is the device's transfer key.
+
 ## 2. Open Source
 
 This project is open-source. You can review the source code to verify our privacy claims.

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        
+        <!-- Device identity key and transfer history must never leave the device. -->
+        <exclude domain="file" path="transfer/" />
     </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="transfer/" />
+    </device-transfer>
     
 </data-extraction-rules>

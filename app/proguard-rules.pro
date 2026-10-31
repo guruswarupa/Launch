@@ -40,6 +40,11 @@
     native <methods>;
 }
 
+# Local file transfer: self-signed certificate generation uses BouncyCastle via JCA lookups.
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
+-dontwarn javax.naming.**
+
 # MediaPipe Tasks GenAI (on-device LLM assistant) — JNI + protobuf rely on reflection.
 -keep class com.google.mediapipe.** { *; }
 -dontwarn com.google.mediapipe.**
