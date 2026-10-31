@@ -6,6 +6,7 @@ import android.os.Looper
 import androidx.core.content.edit
 import org.json.JSONObject
 import java.math.BigDecimal
+import java.math.MathContext
 import java.math.RoundingMode
 import java.util.concurrent.Executors
 
@@ -13,6 +14,9 @@ object CurrencyConverter {
     private const val PREFS_NAME = "com.guruswarupa.launch.PREFS"
     private const val CACHE_KEY_PREFIX = "currency_rates_"
     private const val CACHE_TIME_PREFIX = "currency_rates_time_"
+    private const val RATES_URL = "https://open.er-api.com/v6/latest/"
+    private const val ECB_RATES_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+    private val ECB_CUBE = Regex("""currency=['"]([A-Z]{3})['"]\s+rate=['"]([0-9.]+)['"]""")
     private const val CACHE_MAX_AGE_MS = 6 * 60 * 60 * 1000L
 
     private val executor = Executors.newSingleThreadExecutor()
@@ -55,7 +59,19 @@ object CurrencyConverter {
     }
 
     private fun fetchRates(baseCurrency: String): Map<String, BigDecimal> {
-        val response = NetworkUtils.readTextFromUrl("https://open.er-api.com/v6/latest/$baseCurrency")
+        return try {
+            fetchPrimaryRates(baseCurrency)
+        } catch (primaryError: Exception) {
+            try {
+                fetchEcbRates(baseCurrency)
+            } catch (_: Exception) {
+                throw primaryError
+            }
+        }
+    }
+
+    private fun fetchPrimaryRates(baseCurrency: String): Map<String, BigDecimal> {
+        val response = NetworkUtils.readTextFromUrl("$RATES_URL$baseCurrency")
         val json = JSONObject(response)
         if (json.optString("result") != "success") {
             throw IllegalStateException("Currency rate fetch failed")
@@ -67,6 +83,18 @@ object CurrencyConverter {
             val key = keys.next()
             rates[key] = ratesJson.get(key).toString().toBigDecimal()
         }
+        return rates
+    }
+
+    private fun fetchEcbRates(baseCurrency: String): Map<String, BigDecimal> {
+        val response = NetworkUtils.readTextFromUrl(ECB_RATES_URL)
+        val perEuro = LinkedHashMap<String, BigDecimal>()
+        perEuro["EUR"] = BigDecimal.ONE
+        ECB_CUBE.findAll(response).forEach { perEuro[it.groupValues[1]] = it.groupValues[2].toBigDecimal() }
+        val baseRate = perEuro[baseCurrency] ?: throw IllegalStateException("Currency not covered")
+        if (perEuro.size < 2 || baseRate.signum() <= 0) throw IllegalStateException("Currency rate fetch failed")
+        val rates = LinkedHashMap<String, BigDecimal>()
+        perEuro.forEach { (currency, perEur) -> rates[currency] = perEur.divide(baseRate, MathContext.DECIMAL64) }
         return rates
     }
 
