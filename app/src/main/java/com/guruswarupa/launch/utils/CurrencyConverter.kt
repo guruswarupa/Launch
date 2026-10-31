@@ -14,6 +14,8 @@ object CurrencyConverter {
     private const val CACHE_KEY_PREFIX = "currency_rates_"
     private const val CACHE_TIME_PREFIX = "currency_rates_time_"
     private const val CACHE_MAX_AGE_MS = 6 * 60 * 60 * 1000L
+    private const val RATES_URL = "https://open.er-api.com/v6/latest/"
+    private const val FALLBACK_RATES_URL = "https://allratestoday.com/api/open/latest/"
 
     private val executor = Executors.newSingleThreadExecutor()
     private val handler = Handler(Looper.getMainLooper())
@@ -55,7 +57,19 @@ object CurrencyConverter {
     }
 
     private fun fetchRates(baseCurrency: String): Map<String, BigDecimal> {
-        val response = NetworkUtils.readTextFromUrl("https://open.er-api.com/v6/latest/$baseCurrency")
+        return try {
+            fetchRatesFrom("$RATES_URL$baseCurrency")
+        } catch (primaryError: Exception) {
+            try {
+                fetchRatesFrom("$FALLBACK_RATES_URL$baseCurrency")
+            } catch (_: Exception) {
+                throw primaryError
+            }
+        }
+    }
+
+    private fun fetchRatesFrom(url: String): Map<String, BigDecimal> {
+        val response = NetworkUtils.readTextFromUrl(url)
         val json = JSONObject(response)
         if (json.optString("result") != "success") {
             throw IllegalStateException("Currency rate fetch failed")
