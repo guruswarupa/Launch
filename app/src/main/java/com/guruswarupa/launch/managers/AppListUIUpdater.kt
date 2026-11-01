@@ -155,20 +155,53 @@ class AppListUIUpdater(
                 }
             }
 
-            adapter?.updateAppList(newAppList)
-
-            if (activity.pendingScrollToTop) {
-                activity.pendingScrollToTop = false
-                recyclerView.post {
-
-                    val hasSpacers = newAppList.any {
-                        it.activityInfo.packageName == AppAdapter.SEPARATOR_PACKAGE &&
-                        it.activityInfo.name?.startsWith("all_apps_top_spacer_") == true
+            val pendingScroll = activity.pendingScrollToTop
+            activity.pendingScrollToTop = false
+            val targetPos = if (pendingScroll) {
+                newAppList.indexOfFirst {
+                    !(it.activityInfo.packageName == AppAdapter.SEPARATOR_PACKAGE &&
+                        it.activityInfo.name?.startsWith("all_apps_top_spacer_") == true)
+                }.coerceAtLeast(0)
+            } else {
+                0
+            }
+            fun jumpToTarget() {
+                recyclerView.stopScroll()
+                (recyclerView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(targetPos, 0)
+                    ?: recyclerView.scrollToPosition(targetPos)
+            }
+            val currentAdapter = adapter
+            if (currentAdapter != null) {
+                val observer = object : androidx.recyclerview.widget.RecyclerView.AdapterDataObserver() {
+                    private fun fire() {
+                        currentAdapter.unregisterAdapterDataObserver(this)
+                        jumpToTarget()
+                        recyclerView.post { jumpToTarget() }
+                        recyclerView.postDelayed({ jumpToTarget() }, 120)
+                        recyclerView.postDelayed({ jumpToTarget() }, 400)
+                        if (pendingScroll) {
+                            recyclerView.postDelayed({ recyclerView.animate().alpha(1f).setDuration(80).start() }, 140)
+                        }
                     }
-                    val targetPos = if (hasSpacers) 3 else 0
-                    (recyclerView.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(targetPos, 0)
-                        ?: recyclerView.scrollToPosition(targetPos)
+                    override fun onChanged() = fire()
+                    override fun onItemRangeChanged(positionStart: Int, itemCount: Int) = fire()
+                    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) = fire()
+                    override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) = fire()
+                    override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) = fire()
                 }
+                if (pendingScroll) {
+                    recyclerView.animate().cancel()
+                    recyclerView.alpha = 0f
+                }
+                currentAdapter.registerAdapterDataObserver(observer)
+                recyclerView.postDelayed({
+                    try {
+                        currentAdapter.unregisterAdapterDataObserver(observer)
+                    } catch (_: IllegalStateException) {
+                    }
+                    if (recyclerView.alpha < 1f) recyclerView.animate().alpha(1f).setDuration(80).start()
+                }, 3000)
+                currentAdapter.updateAppList(newAppList)
             }
 
             val isEmpty = newAppList.isEmpty()

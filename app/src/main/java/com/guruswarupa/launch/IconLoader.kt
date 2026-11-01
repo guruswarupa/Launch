@@ -84,7 +84,7 @@ class IconLoader(
         LinkedBlockingQueue()
     )
     private val iconPreloadExecutor = ThreadPoolExecutor(
-        2, 4, 0L, TimeUnit.MILLISECONDS,
+        4, 4, 0L, TimeUnit.MILLISECONDS,
         LinkedBlockingQueue()
     )
     private val iconLoadScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -259,7 +259,12 @@ class IconLoader(
         return iconCache[cacheKey]
     }
 
+    private var cachedShapeModel: ShapeAppearanceModel? = null
+    private var cachedShapeStyle: String? = null
+
     fun getShapeAppearanceModel(): ShapeAppearanceModel {
+        val cached = cachedShapeModel
+        if (cached != null && cachedShapeStyle == currentIconStyle) return cached
         val density = context.resources.displayMetrics.density
         val builder = ShapeAppearanceModel.builder()
 
@@ -280,12 +285,19 @@ class IconLoader(
             "overlay" -> builder.setAllCornerSizes(RelativeCornerSize(0.18f))
             else -> builder.setAllCornerSizes(RelativeCornerSize(0.5f))
         }
-        return builder.build()
+        return builder.build().also {
+            cachedShapeModel = it
+            cachedShapeStyle = currentIconStyle
+        }
     }
 
     fun applyShapeAppearance(imageView: ShapeableImageView?) {
-        imageView?.shapeAppearanceModel = getShapeAppearanceModel()
-        imageView?.invalidate()
+        if (imageView == null) return
+        val model = getShapeAppearanceModel()
+        if (imageView.shapeAppearanceModel !== model) {
+            imageView.shapeAppearanceModel = model
+            imageView.invalidate()
+        }
     }
 
     fun updateIconSize(imageView: ImageView?) {
@@ -542,7 +554,23 @@ class IconLoader(
         }
     }
 
+    private val shapedIconCache = java.util.WeakHashMap<Drawable, HashMap<String, Drawable.ConstantState>>()
+
     private fun shapeIconDrawable(drawable: Drawable): Drawable {
+        val cacheKey = "$currentIconStyle|$currentIconSize"
+        synchronized(shapedIconCache) {
+            shapedIconCache[drawable]?.get(cacheKey)?.let { return it.newDrawable(context.resources) }
+        }
+        val shaped = renderShapedIcon(drawable)
+        shaped.constantState?.let { state ->
+            synchronized(shapedIconCache) {
+                shapedIconCache.getOrPut(drawable) { HashMap() }[cacheKey] = state
+            }
+        }
+        return shaped
+    }
+
+    private fun renderShapedIcon(drawable: Drawable): Drawable {
         val density = context.resources.displayMetrics.density
         val size = (currentIconSize * density).roundToInt().coerceAtLeast(1)
         val bitmap = createBitmap(size, size, Bitmap.Config.ARGB_8888)

@@ -209,14 +209,26 @@ class AppAdapter(
         }
     }
 
+    private fun cachedMemberIcon(app: ResolveInfo): Drawable? {
+        val cached = iconLoader.getCachedIcon("${app.activityInfo.packageName}|${app.preferredOrder}") ?: return null
+        return cached.constantState?.newDrawable(activity.resources) ?: cached
+    }
+
     private fun loadFolderPreview(holder: ViewHolder, previewKey: String, memberApps: List<ResolveInfo>) {
         if (memberApps.isEmpty()) return
+        val cachedIcons = memberApps.map { cachedMemberIcon(it) }
+        if (cachedIcons.all { it != null }) {
+            val composite = composeFolderPreview(cachedIcons.filterNotNull())
+            folderPreviewCache.put(previewKey, composite)
+            holder.appIcon?.setImageDrawable(composite)
+            return
+        }
         adapterScope.launch {
             val composite = withContext(Dispatchers.IO) {
                 try {
                     val icons = memberApps.mapNotNull { app ->
                         try {
-                            app.loadIcon(activity.packageManager)
+                            cachedMemberIcon(app) ?: app.loadIcon(activity.packageManager)
                         } catch (_: Exception) {
                             null
                         }
@@ -430,7 +442,7 @@ class AppAdapter(
         return labelCache[cacheKey] ?: appInfo.activityInfo.name ?: packageName
     }
 
-    fun updateAppList(newAppList: List<ResolveInfo>) {
+    fun updateAppList(newAppList: List<ResolveInfo>, onCommitted: (() -> Unit)? = null) {
         val newItems = ArrayList(newAppList)
         val isFirstLoad = itemsRendered == 0
 
@@ -452,6 +464,7 @@ class AppAdapter(
 
             withContext(Dispatchers.Main) {
                 submitList(newItems) {
+                    onCommitted?.invoke()
                     if (isFirstLoad && newItems.isNotEmpty()) {
                         itemsRendered = newItems.size
                         adapterScope.launch(Dispatchers.IO) {
@@ -637,11 +650,9 @@ class AppAdapter(
         if (cachedIcon != null) {
             iconLoader.setIconDrawable(holder.appIcon, cachedIcon)
         } else {
-            iconLoader.setIconResource(holder.appIcon, R.drawable.ic_launcher_foreground)
-            if (!isFastScrolling) {
-                iconLoader.submitIconLoadTask(appInfo, IconLoader.PRIORITY_MEDIUM, holder) { _, _ ->
-                    applyIconVisualState(packageName, holder.appIcon)
-                }
+            holder.appIcon?.setImageDrawable(null)
+            iconLoader.submitIconLoadTask(appInfo, IconLoader.PRIORITY_HIGH, holder) { _, _ ->
+                applyIconVisualState(packageName, holder.appIcon)
             }
         }
     }

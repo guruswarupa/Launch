@@ -156,9 +156,9 @@ object Constants {
     object Dimensions {
         const val DOCK_ICON_SIZE_DP = 20
         const val FOCUS_TIMER_TEXT_SIZE_SP = 13f
-        const val ICON_CACHE_MAX_SIZE = 100
-        const val ICON_PRELOAD_BATCH_SIZE = 20
-        const val ICON_IMMEDIATE_LOAD_COUNT = 30
+        const val ICON_CACHE_MAX_SIZE = 300
+        const val ICON_PRELOAD_BATCH_SIZE = 40
+        const val ICON_IMMEDIATE_LOAD_COUNT = 60
         const val PENDING_TASKS_CLEANUP_THRESHOLD = 100
         const val MARGIN_START_DP = 12
     }
@@ -170,7 +170,7 @@ object Constants {
         const val WORK_PROFILE_RETRY_RESET_TIMEOUT_MS = 30000L
         const val GENERAL_EMPTY_RETRY_DELAY_MS = 500L
         const val MAX_GENERAL_EMPTY_RETRIES = 3
-        const val ICON_PRELOAD_DELAY_MS = 50L
+        const val ICON_PRELOAD_DELAY_MS = 10L
         const val APP_LIST_REFRESH_INTERVAL_MS = 2 * 60 * 1000L
         const val USAGE_REFRESH_INTERVAL_MS = 20 * 1000L
     }

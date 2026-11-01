@@ -20,7 +20,27 @@ object TypographyManager {
 
     fun applyToActivity(activity: Activity) {
         val root = activity.window?.decorView ?: return
+        val prefs = activity.getSharedPreferences(Constants.Prefs.PREFS_NAME, Activity.MODE_PRIVATE)
+        val signature = listOf(
+            prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, DEFAULT_SCALE_PERCENT),
+            prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default"),
+            prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular"),
+            prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_COLOR, Constants.TYPOGRAPHY_FONT_COLOR_DEFAULT),
+            DownloadableFontManager.getTypeface(prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default") != null
+        ).hashCode()
+        val textViewCount = countTextViews(root)
+        val applied = root.getTag(R.id.tag_typography_applied) as? Pair<*, *>
+        if (applied != null && applied.first == signature && applied.second == textViewCount) return
         applyToView(root)
+        root.setTag(R.id.tag_typography_applied, signature to textViewCount)
+    }
+
+    private fun countTextViews(view: View): Int {
+        var count = if (view is TextView) 1 else 0
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) count += countTextViews(view.getChildAt(i))
+        }
+        return count
     }
 
     fun applyToView(view: View) {
@@ -54,7 +74,10 @@ object TypographyManager {
             val baseAlpha = (view.getTag(R.id.tag_typography_base_alpha) as? Float)
                 ?: view.alpha.also { view.setTag(R.id.tag_typography_base_alpha, it) }
 
-            view.setTextSize(TypedValue.COMPLEX_UNIT_PX, baseSizePx * fontScale)
+            val targetSizePx = baseSizePx * fontScale
+            if (kotlin.math.abs(view.textSize - targetSizePx) > 0.01f) {
+                view.setTextSize(TypedValue.COMPLEX_UNIT_PX, targetSizePx)
+            }
 
             val wantsBold = intensity == "bold" || intensity == "extra_bold"
             val style = when {
@@ -63,25 +86,36 @@ object TypographyManager {
                 baseItalic -> Typeface.ITALIC
                 else -> Typeface.NORMAL
             }
-            view.typeface = resolveTypeface(view.context, fontStyle, intensity, style)
-            view.paint.isFakeBoldText = if (intensity == "extra_bold") true else baseFakeBold
+            val targetTypeface = resolveTypeface(view.context, fontStyle, intensity, style)
+            if (view.typeface !== targetTypeface) {
+                view.typeface = targetTypeface
+            }
+            val targetFakeBold = if (intensity == "extra_bold") true else baseFakeBold
+            if (view.paint.isFakeBoldText != targetFakeBold) {
+                view.paint.isFakeBoldText = targetFakeBold
+            }
             val (scaleFactor, alphaFactor) = resolveIntensityVisuals(intensity)
-            view.textScaleX = baseScaleX * scaleFactor
-            view.alpha = baseAlpha * alphaFactor
+            val targetScaleX = baseScaleX * scaleFactor
+            if (view.textScaleX != targetScaleX) {
+                view.textScaleX = targetScaleX
+            }
+            val targetAlpha = baseAlpha * alphaFactor
+            if (view.alpha != targetAlpha) {
+                view.alpha = targetAlpha
+            }
 
             val baseTextColor = resolveBaseTextColor(view)
             val baseHintColor = resolveBaseHintColor(view)
 
             if (fontColor != null) {
-                view.setTextColor(fontColor)
-
                 val alpha = Color.alpha(fontColor)
                 val hintAlpha = (alpha * 0.6f).toInt()
                 val hintColor = Color.argb(hintAlpha, Color.red(fontColor), Color.green(fontColor), Color.blue(fontColor))
-                view.setHintTextColor(hintColor)
+                if (view.currentTextColor != fontColor) view.setTextColor(fontColor)
+                if (view.currentHintTextColor != hintColor) view.setHintTextColor(hintColor)
             } else {
-                view.setTextColor(baseTextColor)
-                view.setHintTextColor(baseHintColor)
+                if (view.currentTextColor != baseTextColor) view.setTextColor(baseTextColor)
+                if (view.currentHintTextColor != baseHintColor) view.setHintTextColor(baseHintColor)
             }
         }
 

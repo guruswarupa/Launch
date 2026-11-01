@@ -44,6 +44,8 @@ import com.guruswarupa.launch.managers.WebAppAdBlocker
 import com.guruswarupa.launch.models.Constants
 import kotlinx.coroutines.launch
 
+private const val WEB_PRELOAD_DELAY_MS = 4000L
+
 class AiChatPage(
     private val activity: MainActivity,
     private val rootView: View
@@ -58,7 +60,14 @@ class AiChatPage(
     private val settingsButton: ImageButton = rootView.findViewById(R.id.ai_chat_settings_button)
     private val contentContainer: View = rootView.findViewById(R.id.ai_chat_content_container)
 
-    private val webView: WebView = rootView.findViewById(R.id.ai_chat_webview)
+    private val webViewHost: FrameLayout = rootView.findViewById(R.id.ai_chat_webview_host)
+    private var webViewOrNull: WebView? = null
+    private val webView: WebView
+        get() = webViewOrNull ?: WebView(activity).also {
+            it.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+            webViewHost.addView(it)
+            webViewOrNull = it
+        }
     private val webViewFullscreenContainer: FrameLayout = rootView.findViewById(R.id.ai_chat_webview_fullscreen_container)
     private val webViewProgress: ProgressBar = rootView.findViewById(R.id.ai_chat_webview_progress)
     private val webViewErrorContainer: View = rootView.findViewById(R.id.ai_chat_webview_error_container)
@@ -126,12 +135,15 @@ class AiChatPage(
         }
 
         webViewRetryButton.setOnClickListener { retryFailedLoad() }
-        registerNetworkCallback()
 
         updateTypography()
         refreshAvailability()
-        if (activity.sharedPreferences.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)) {
-            refreshSource()
+        if (activity.sharedPreferences.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false) && isWebSourceSelected()) {
+            contentContainer.isVisible = false
+            webViewHost.isVisible = true
+            rootView.postDelayed({
+                if (!activity.isFinishing && !activity.isDestroyed && !webViewInitialized) refreshSource()
+            }, WEB_PRELOAD_DELAY_MS)
         }
     }
 
@@ -234,11 +246,11 @@ class AiChatPage(
                 loadedWebProviderId = provider.id
                 loadProviderUrl(provider.url)
             } else {
-                webView.isVisible = !webViewLoadFailed
+                webViewHost.isVisible = !webViewLoadFailed
                 webViewErrorContainer.isVisible = webViewLoadFailed
             }
         } else {
-            webView.isVisible = false
+            webViewHost.isVisible = false
             webViewProgress.isVisible = false
             webViewErrorContainer.isVisible = false
             contentContainer.isVisible = true
@@ -249,7 +261,7 @@ class AiChatPage(
     private fun loadProviderUrl(url: String) {
         webViewLoadFailed = false
         webViewErrorContainer.isVisible = false
-        webView.isVisible = true
+        webViewHost.isVisible = true
         webView.loadUrl(url)
     }
 
@@ -262,6 +274,7 @@ class AiChatPage(
     private fun ensureWebViewInitialized() {
         if (webViewInitialized) return
         webViewInitialized = true
+        registerNetworkCallback()
 
         webView.settings.apply {
             javaScriptEnabled = true
@@ -298,7 +311,7 @@ class AiChatPage(
                     view,
                     FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
                 )
-                webView.isVisible = false
+                webViewHost.isVisible = false
                 updateBackCallbackEnabled()
             }
 
@@ -357,7 +370,7 @@ class AiChatPage(
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 if (webViewLoadFailed) {
-                    webView.isVisible = false
+                    webViewHost.isVisible = false
                     webViewErrorContainer.isVisible = true
                 }
                 updateBackCallbackEnabled()
@@ -368,7 +381,7 @@ class AiChatPage(
     private fun showWebViewError() {
         webViewLoadFailed = true
         webViewProgress.isVisible = false
-        webView.isVisible = false
+        webViewHost.isVisible = false
         webViewErrorContainer.isVisible = true
     }
 
@@ -380,7 +393,7 @@ class AiChatPage(
         webCustomViewCallback?.onCustomViewHidden()
         webCustomViewCallback = null
         webViewFullscreenContainer.isVisible = false
-        webView.isVisible = true
+        webViewHost.isVisible = true
         updateBackCallbackEnabled()
     }
 

@@ -194,8 +194,8 @@
 
     </LinearLayout>
 
-    <WebView
-        android:id="@+id/ai_chat_webview"
+    <FrameLayout
+        android:id="@+id/ai_chat_webview_host"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

@@ -333,7 +333,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     internal fun refreshRightDrawerWallpaper() {
         if (!views.isRightDrawerWallpaperInitialized()) return
-        WallpaperDisplayHelper.applySystemWallpaper(views.rightDrawerWallpaper)
+        WallpaperDisplayHelper.applySystemWallpaperAsync(views.rightDrawerWallpaper, backgroundExecutor)
     }
 
     internal fun initializeViews() {
@@ -464,7 +464,9 @@ class MainActivity : AppCompatActivity() {
 
     private var deferredWidgetsReadyForThisInstance = false
 
-    internal fun initializeDeferredWidgets() {
+    private var pendingDeferredInitializer: DeferredWidgetInitializer? = null
+
+    internal fun initializeDeferredWidgets(staggered: Boolean = false) {
         if (!sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)) {
             return
         }
@@ -475,6 +477,11 @@ class MainActivity : AppCompatActivity() {
                 if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
                 if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
             )
+            return
+        }
+
+        pendingDeferredInitializer?.let {
+            it.finishNow()
             return
         }
 
@@ -496,13 +503,21 @@ class MainActivity : AppCompatActivity() {
                     if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
                     if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
                 )
+            },
+            onFinished = {
+                pendingDeferredInitializer = null
+                viewModel.markDeferredWidgetsInitialized()
+                deferredWidgetsReadyForThisInstance = true
+                updateRegistryDependencies()
             }
         )
 
-        initializer.initialize()
-        viewModel.markDeferredWidgetsInitialized()
-        deferredWidgetsReadyForThisInstance = true
-        updateRegistryDependencies()
+        if (staggered) {
+            pendingDeferredInitializer = initializer
+            initializer.startStaggered { !isFinishing && !isDestroyed }
+        } else {
+            initializer.finishNow()
+        }
     }
 
     private fun scheduleDeferredWidgetPrewarm() {
@@ -519,7 +534,7 @@ class MainActivity : AppCompatActivity() {
                 delay(1200L)
                 widgetPrewarmScheduled = false
                 if (!isFinishing && !isDestroyed && !deferredWidgetsReadyForThisInstance) {
-                    initializeDeferredWidgets()
+                    initializeDeferredWidgets(staggered = true)
                 }
             } finally {
                 widgetPrewarmScheduled = false

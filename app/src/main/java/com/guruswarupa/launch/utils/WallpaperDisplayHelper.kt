@@ -43,6 +43,37 @@ object WallpaperDisplayHelper {
         }
     }
 
+    fun applySystemWallpaperAsync(
+        target: ImageView,
+        executor: java.util.concurrent.ExecutorService,
+        fallbackRes: Int = R.drawable.wallpaper_background
+    ) {
+        val context = target.context
+        if (isMinimalMode(context) || executor.isShutdown) {
+            applySystemWallpaper(target, fallbackRes)
+            return
+        }
+        try {
+            executor.execute {
+                val drawable = try {
+                    WallpaperManager.getInstance(context).drawable
+                } catch (_: Exception) {
+                    null
+                }
+                target.post {
+                    if (isMinimalMode(context)) return@post
+                    if (drawable != null) {
+                        target.setImageDrawable(drawable)
+                    } else {
+                        target.setImageResource(fallbackRes)
+                    }
+                }
+            }
+        } catch (_: java.util.concurrent.RejectedExecutionException) {
+            applySystemWallpaper(target, fallbackRes)
+        }
+    }
+
     fun applyThemeWallpaper(target: ImageView, themeId: String, fallbackRes: Int = R.drawable.wallpaper_background) {
         val context = target.context
         if (isMinimalMode(context)) {
