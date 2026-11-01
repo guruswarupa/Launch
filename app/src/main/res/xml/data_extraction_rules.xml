@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        <!-- Device identity key and transfer history must never leave the device. -->
         <exclude domain="file" path="transfer/" />
+        <exclude domain="sharedpref" path="app_lock_prefs.xml" />
+        <exclude domain="sharedpref" path="secure_github_prefs.xml" />
+        <exclude domain="sharedpref" path="secure_finance_prefs.xml" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="file" path="transfer/" />
+        <exclude domain="sharedpref" path="app_lock_prefs.xml" />
+        <exclude domain="sharedpref" path="secure_github_prefs.xml" />
+        <exclude domain="sharedpref" path="secure_finance_prefs.xml" />
     </device-transfer>
-    
 </data-extraction-rules>

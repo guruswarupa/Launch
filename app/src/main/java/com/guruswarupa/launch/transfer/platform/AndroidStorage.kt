@@ -109,36 +109,3 @@ class AndroidReceiveStore(private val context: Context) : ReceiveStore {
         }
     }
 }
-
-/**
- * Puts files back where they came from on shared storage (e.g. DCIM/Camera). Needs All-files access.
- * Writes to a temp file and renames after verification; never overwrites an existing file.
- */
-class RestoreReceiveStore(private val context: Context) : ReceiveStore {
-    override fun freeBytes(): Long = try {
-        StatFs(Environment.getExternalStorageDirectory().path).availableBytes
-    } catch (e: Exception) { 0L }
-
-    override fun stage(dir: List<String>, displayName: String): StagedFile {
-        val folder = dir.fold(Environment.getExternalStorageDirectory()) { f, s -> File(f, s) }
-        if (!folder.isDirectory && !folder.mkdirs()) throw IOException("cannot create folder")
-        val temp = File(folder, ".launch-${randomHex(8)}.part")
-        val out = temp.outputStream().buffered(64 * 1024)
-        return object : StagedFile {
-            override val out: OutputStream = out
-
-            override fun commit(): Saved {
-                out.close()
-                val target = File(folder, uniqueName(displayName) { File(folder, it).exists() })
-                if (target.exists() || !temp.renameTo(target)) { temp.delete(); throw IOException("cannot save file") }
-                android.media.MediaScannerConnection.scanFile(context, arrayOf(target.path), null, null)
-                return Saved(target.path.removePrefix(Environment.getExternalStorageDirectory().path).trim('/'), target.path)
-            }
-
-            override fun abort() {
-                runCatching { out.close() }
-                temp.delete()
-            }
-        }
-    }
-}

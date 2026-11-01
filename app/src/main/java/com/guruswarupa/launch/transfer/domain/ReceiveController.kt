@@ -53,6 +53,7 @@ class ReceiveController(
     private var server: SSLServerSocket? = null
     private var acceptJob: Job? = null
     private val busy = AtomicBoolean(false)
+    private val rejecting = java.util.concurrent.atomic.AtomicInteger(0)
     @Volatile private var activeSocket: SSLSocket? = null
     @Volatile private var decision: CompletableFuture<Decision>? = null
     @Volatile private var secret: ByteArray = randomBytes(16)
@@ -119,7 +120,12 @@ class ReceiveController(
         while (!ss.isClosed) {
             val s = try { ss.accept() as SSLSocket } catch (e: IOException) { break }
             if (!busy.compareAndSet(false, true)) {
-                scope.launch(Dispatchers.IO) { rejectBusy(s) }
+                if (rejecting.incrementAndGet() > MAX_BUSY_REJECTIONS) {
+                    rejecting.decrementAndGet()
+                    runCatching { s.close() }
+                } else {
+                    scope.launch(Dispatchers.IO) { try { rejectBusy(s) } finally { rejecting.decrementAndGet() } }
+                }
                 continue
             }
             scope.launch(Dispatchers.IO) {
@@ -189,5 +195,9 @@ class ReceiveController(
         } finally {
             runCatching { s.close() }
         }
+    }
+
+    private companion object {
+        const val MAX_BUSY_REJECTIONS = 4
     }
 }

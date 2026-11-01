@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-enum class Screen { Home, Send, Browse, Receive, History, HistoryDetail }
+enum class Screen { Home, Send, Receive, History, HistoryDetail }
 
 class TransferActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,8 +101,7 @@ private fun App(vm: AppViewModel = viewModel()) {
     Column(Modifier.fillMaxSize().safeDrawingPadding()) {
         when (screen) {
             Screen.Home -> HomeScreen(vm, { screen = Screen.Send }, { screen = Screen.Receive }, { screen = Screen.History })
-            Screen.Send -> SendScreen(vm, { screen = Screen.Browse })
-            Screen.Browse -> BrowseScreen(vm) { screen = Screen.Send }
+            Screen.Send -> SendScreen(vm)
             Screen.Receive -> ReceiveScreen(vm)
             Screen.History -> HistoryScreen(vm) { detailId = it; screen = Screen.HistoryDetail }
             Screen.HistoryDetail -> HistoryDetailScreen(vm, detailId)

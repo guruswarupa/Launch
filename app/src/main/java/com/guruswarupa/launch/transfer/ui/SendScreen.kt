@@ -32,7 +32,7 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 
 @Composable
-fun SendScreen(vm: AppViewModel, onBrowse: () -> Unit) {
+fun SendScreen(vm: AppViewModel) {
     val state by vm.send.state.collectAsStateWithLifecycle()
     if (state !is SendState.Idle) {
         SendProgress(vm, state)
@@ -55,9 +55,6 @@ fun SendScreen(vm: AppViewModel, onBrowse: () -> Unit) {
 
     LazyColumn(Modifier.fillMaxSize().padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item { ScreenTitle("Send files") }
-        item {
-            LButton(onBrowse, Modifier.fillMaxWidth()) { Text("Browse phone (folders & select all)") }
-        }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 LOutlinedButton({ picker.launch(arrayOf("*/*")) }, Modifier.weight(1f)) { Text("Add files") }

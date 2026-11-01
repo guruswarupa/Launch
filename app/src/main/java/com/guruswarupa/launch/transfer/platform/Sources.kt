@@ -45,11 +45,6 @@ data class Stats(val files: Int = 0, val bytes: Long = 0, val loading: Boolean =
 
 fun interface Visitor { fun file(f: SourceFile) }
 
-/** Whether the app may read all of shared storage (needed for "select everything" / migration). */
-fun hasAllFilesAccess(context: Context): Boolean =
-    if (Build.VERSION.SDK_INT >= 30) Environment.isExternalStorageManager()
-    else context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
 fun storageRoot(): File = Environment.getExternalStorageDirectory()
 
 /** Visits every regular file under [item], with its folder path relative to the selection (root folder name included). */

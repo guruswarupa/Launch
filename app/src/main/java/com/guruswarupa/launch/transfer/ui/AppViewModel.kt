@@ -10,7 +10,6 @@ import com.guruswarupa.launch.transfer.data.discovery.Peer
 import com.guruswarupa.launch.transfer.data.protocol.ConnectionCode
 import com.guruswarupa.launch.transfer.domain.HistoryStore
 import com.guruswarupa.launch.transfer.domain.ReceiveController
-import com.guruswarupa.launch.transfer.platform.RestoreReceiveStore
 import com.guruswarupa.launch.transfer.domain.SendController
 import com.guruswarupa.launch.transfer.domain.SendState
 import com.guruswarupa.launch.transfer.platform.AndroidReceiveStore
@@ -21,10 +20,8 @@ import com.guruswarupa.launch.transfer.platform.DocItem
 import com.guruswarupa.launch.transfer.platform.Item
 import com.guruswarupa.launch.transfer.platform.Stats
 import com.guruswarupa.launch.transfer.platform.TreeItem
-import com.guruswarupa.launch.transfer.platform.hasAllFilesAccess
 import com.guruswarupa.launch.transfer.platform.isWithin
 import com.guruswarupa.launch.transfer.platform.statsOf
-import com.guruswarupa.launch.transfer.platform.storageRoot
 import com.guruswarupa.launch.transfer.platform.walk
 import android.provider.DocumentsContract
 import com.guruswarupa.launch.transfer.platform.describe
@@ -48,7 +45,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     val history = HistoryStore(File(app.filesDir, "transfer/history.json"))
     val send = SendController(viewModelScope, identity, { deviceName }, history)
     val receive = ReceiveController(
-        viewModelScope, identity, { deviceName }, AndroidReceiveStore(app), RestoreReceiveStore(app), history, ::localIpv4,
+        viewModelScope, identity, { deviceName }, AndroidReceiveStore(app), null, history, ::localIpv4,
     )
     val discovery = NsdDiscovery(app)
 
@@ -58,9 +55,6 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _stats = MutableStateFlow<Map<String, Stats>>(emptyMap())
     val stats: StateFlow<Map<String, Stats>> = _stats.asStateFlow()
-
-    private val _access = MutableStateFlow(hasAllFilesAccess(app))
-    val allFilesAccess: StateFlow<Boolean> = _access.asStateFlow()
 
     private val _notice = MutableStateFlow<String?>(null)
     val notice: StateFlow<String?> = _notice.asStateFlow()
@@ -86,8 +80,6 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun stopMonitoring() { monitor?.cancel() }
-
-    fun refreshAccess() { _access.value = hasAllFilesAccess(getApplication()) }
 
     fun addFiles(uris: List<Uri>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -136,35 +128,6 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun clearItems() { _items.value = emptyList(); _stats.value = emptyMap() }
-
-    /** Ticks/unticks a path in the browser. Unticking inside a ticked folder splits that folder into its other children. */
-    fun toggleDisk(file: File) {
-        val selected = _items.value.filterIsInstance<DiskItem>().map { it.file }
-        when {
-            file in selected -> removeItem(DiskItem(file))
-            else -> {
-                val ancestor = selected.firstOrNull { isWithin(it, file) }
-                if (ancestor == null) { add(listOf(DiskItem(file))); return }
-                removeItem(DiskItem(ancestor))
-                val chain = generateSequence(file.parentFile) { it.parentFile }.takeWhile { isWithin(ancestor, it) }.toList().reversed()
-                val keep = ArrayList<Item>()
-                for ((i, node) in chain.withIndex()) {
-                    val next = if (i + 1 < chain.size) chain[i + 1] else file
-                    node.listFiles()?.filter { it != next }?.forEach { keep += DiskItem(it) }
-                }
-                add(keep)
-            }
-        }
-    }
-
-    /** Ticks everything in [dir] (the "Select all" button). */
-    fun selectAllIn(dir: File) {
-        val atRoot = dir == storageRoot()
-        val children = dir.listFiles()?.filterNot { atRoot && it.name == "Android" } ?: return
-        add(children.map { DiskItem(it) })
-    }
-
-    fun isSelected(file: File): Boolean = _items.value.any { it is DiskItem && isWithin(it.file, file) }
 
     fun dismissNotice() { _notice.value = null }
 

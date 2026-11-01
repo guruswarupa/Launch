@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <!-- Device identity key and transfer history must never leave the device. -->
     <exclude domain="file" path="transfer/" />
+    <exclude domain="sharedpref" path="app_lock_prefs.xml" />
+    <exclude domain="sharedpref" path="secure_github_prefs.xml" />
+    <exclude domain="sharedpref" path="secure_finance_prefs.xml" />
 </full-backup-content>

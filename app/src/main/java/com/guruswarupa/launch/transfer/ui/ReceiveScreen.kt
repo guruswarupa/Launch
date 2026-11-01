@@ -88,27 +88,9 @@ private fun ListeningCard(uri: String?, address: String?) {
 
 @Composable
 private fun IncomingCard(vm: AppViewModel, s: ReceiveState.Incoming) {
-    val access by vm.allFilesAccess.collectAsStateWithLifecycle()
-    val requestAccess = rememberAllFilesRequest(vm)
-    LifecycleResumeEffect(Unit) { vm.refreshAccess(); onPauseOrDispose {} }
-    var restore by remember { mutableStateOf(true) }
     StatusCard("${s.peer} wants to send you files", "${s.count} file(s)" + (if (s.folders > 0) " in ${s.folders} folder(s)" else "") + ", ${size(s.total)} total.") {
         FileList(s.preview, s.count)
-        if (s.canRestore) {
-            if (access) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(restore, { restore = it })
-                    Text("Put files back in their original folders", Modifier.weight(1f))
-                }
-                Text(
-                    if (restore) "Existing files are never overwritten; duplicates get a number." else "Files will go to Downloads/Launch.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            } else {
-                Text("To put files back in their original folders, allow access to all files. Otherwise they go to Downloads/Launch.", style = MaterialTheme.typography.bodySmall)
-                LOutlinedButton(requestAccess, Modifier.fillMaxWidth()) { Text("Allow access to all files") }
-            }
-        }
-        ButtonRow("Accept", { vm.receive.accept(restore = s.canRestore && access && restore) }, "Reject", { vm.receive.decline() })
+        Text("Files will go to Downloads/Launch.", style = MaterialTheme.typography.bodySmall)
+        ButtonRow("Accept", { vm.receive.accept() }, "Reject", { vm.receive.decline() })
     }
 }

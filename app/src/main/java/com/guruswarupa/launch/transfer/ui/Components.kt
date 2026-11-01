@@ -26,25 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.guruswarupa.launch.transfer.data.protocol.FileMeta
 import com.guruswarupa.launch.transfer.data.transport.Progress
 
-/** Returns a function that asks the user for access to all files (Settings page on Android 11+, runtime prompt before). */
-@Composable
-fun rememberAllFilesRequest(vm: AppViewModel): () -> Unit {
-    val context = LocalContext.current
-    val legacy = androidx.activity.compose.rememberLauncherForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
-    ) { vm.refreshAccess() }
-    return {
-        if (android.os.Build.VERSION.SDK_INT >= 30) {
-            val i = android.content.Intent(
-                android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                android.net.Uri.parse("package:${context.packageName}"),
-            )
-            runCatching { context.startActivity(i) }
-                .onFailure { context.startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)) }
-        } else legacy.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
-}
-
 @Composable
 fun size(bytes: Long): String = Formatter.formatShortFileSize(LocalContext.current, bytes)
 
