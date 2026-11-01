@@ -433,6 +433,12 @@ class AppDockManager(
             return
         }
 
+        updateWorkProfileIcon()
+        updateDockVisibility()
+        activity.refreshAppsForWorkspace()
+    }
+
+    fun onWorkProfileAvailabilityChanged() {
         workProfileManager.syncWorkProfileEnabledState()
         updateWorkProfileIcon()
         updateDockVisibility()
@@ -525,7 +531,7 @@ class AppDockManager(
         val hasWorkProfile = workProfileManager.hasActualWorkProfile()
         val isWorkProfileEnabled = workProfileManager.isWorkProfileEnabled()
 
-        if ((!hasWorkProfile || !workProfileManager.isWorkProfileAvailableAndEnabled()) && isWorkProfileEnabled) {
+        if (!hasWorkProfile && isWorkProfileEnabled) {
             workProfileManager.setWorkProfileEnabled(false)
         }
 

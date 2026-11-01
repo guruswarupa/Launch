@@ -56,6 +56,19 @@ class BroadcastReceiverManager(
         }
     }
 
+    private val profileAvailabilityReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (activity.isFinishing || activity.isDestroyed) return
+            activity.runOnUiThread {
+                if (activity.isFinishing || activity.isDestroyed) return@runOnUiThread
+                try {
+                    (activity as? com.guruswarupa.launch.MainActivity)?.appDockManager?.onWorkProfileAvailabilityChanged()
+                } catch (_: UninitializedPropertyAccessException) {
+                }
+            }
+        }
+    }
+
     private val wallpaperChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             @Suppress("DEPRECATION")
@@ -148,6 +161,12 @@ class BroadcastReceiverManager(
 
         registerReceiverCompat(batteryChangeReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED), exported = true)
 
+        val profileFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE)
+            addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE)
+        }
+        registerReceiverCompat(profileAvailabilityReceiver, profileFilter, exported = true)
+
         val activityRecognitionFilter = IntentFilter("com.guruswarupa.launch.ACTIVITY_RECOGNITION_PERMISSION_GRANTED")
         registerReceiverCompat(activityRecognitionPermissionReceiver, activityRecognitionFilter, exported = false)
 
@@ -175,6 +194,7 @@ class BroadcastReceiverManager(
         val receivers = listOf(
             settingsUpdateReceiver,
             packageReceiver,
+            profileAvailabilityReceiver,
             wallpaperChangeReceiver,
             batteryChangeReceiver,
             activityRecognitionPermissionReceiver,

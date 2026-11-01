@@ -79,6 +79,13 @@ class AppListManager @Inject constructor(
             }
 
             true
+        }.distinctBy { app ->
+            val pkg = app.activityInfo.packageName
+            if (WebAppManager.isWebAppPackage(pkg) || isInternalApp(app)) {
+                "${pkg}|${app.activityInfo.name}"
+            } else {
+                "${pkg}|${app.preferredOrder}|${getDisplayLabel(app).trim().lowercase()}"
+            }
         }
     }
 
@@ -276,14 +283,6 @@ class AppListManager @Inject constructor(
         showOnlyFavorites: Boolean
     ): List<ResolveInfo> {
         val filtered = filterAndPrepareApps(apps, focusMode, workspaceMode)
-            .distinctBy { app ->
-                val pkg = app.activityInfo.packageName
-                if (WebAppManager.isWebAppPackage(pkg) || isInternalApp(app)) {
-                    "${pkg}|${app.activityInfo.name}"
-                } else {
-                    "${pkg}|${getDisplayLabel(app).trim().lowercase()}"
-                }
-            }
         return sortAppsAlphabetically(filtered, showOnlyFavorites)
     }
 
