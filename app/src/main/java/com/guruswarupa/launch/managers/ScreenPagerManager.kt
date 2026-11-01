@@ -56,6 +56,7 @@ class ScreenPagerManager(
     private var activePages = listOf(Page.WALLPAPER, Page.CENTER, Page.WIDGETS)
     private var suppressNextLayoutSnap = false
     private var pagingEnabled = true
+    var swipeRightAppHandler: (() -> Boolean)? = null
 
     companion object {
 
@@ -447,6 +448,15 @@ class ScreenPagerManager(
         val threshold = pageWidth * PAGE_SWITCH_THRESHOLD
         val settleThreshold = pageWidth * PAGE_SWITCH_SETTLE_THRESHOLD
         val startPage = touchStartPage
+
+        val wantsPrevious = flingVelocity > (minimumFlingVelocity * FLING_VELOCITY_MULTIPLIER) ||
+            dragDistance < -threshold
+        if (wantsPrevious && startPage == Page.CENTER && pageIndex(startPage) == 0 &&
+            swipeRightAppHandler?.invoke() == true
+        ) {
+            scrollToPage(startPage, animated = true)
+            return
+        }
 
         val target = when {
             flingVelocity < -(minimumFlingVelocity * FLING_VELOCITY_MULTIPLIER) -> nextPage(startPage)

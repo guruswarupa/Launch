@@ -197,6 +197,15 @@ class AppInitializer(private val activity: MainActivity) {
         stockDrawerManager.setup()
         stockDrawerManager.attachOpenGesture(views.recyclerView)
         stockDrawerManager.attachOpenGestureToView(views.appListEmptyState)
+        gestureHandler.stockHomeGestures = stockDrawerManager.homeGestures
+        gestureHandler.isStockMode = { com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences) }
+        screenPagerManager.swipeRightAppHandler = {
+            val packageName = sharedPreferences.getString(Constants.Prefs.STOCK_SWIPE_RIGHT_APP, null).orEmpty()
+            com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences) &&
+                com.guruswarupa.launch.managers.StockHomeGestures.launchConfiguredApp(activity, packageName) { pkg, name ->
+                    appLauncher.launchAppWithLockCheck(pkg, name)
+                }
+        }
         val homeRemoveZone = findViewById<View>(R.id.stock_home_remove_zone)
         val homeHotseat = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.stock_home_hotseat)
         stockDrawerManager.attachHomeReorder(views.recyclerView, adapter, homeHotseat, homeRemoveZone)

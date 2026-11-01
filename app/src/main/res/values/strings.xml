@@ -1437,4 +1437,8 @@
     <string name="vault_confirm_new_password">Confirm new password</string>
     <string name="vault_password_changed">Vault password changed</string>
     <string name="vault_password_change_failed">Wrong current password or re-encryption failed. Nothing was changed.</string>
+    <string name="toast_enable_accessibility_service_to_open_notifications">Enable the accessibility service to open notifications with a swipe</string>
+    <string name="stock_swipe_right_app_format">Swipe-right app: %1$s</string>
+    <string name="stock_swipe_right_app_none">None</string>
+    <string name="stock_swipe_right_app_choose">Choose swipe-right app</string>
 </resources>

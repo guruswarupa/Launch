@@ -360,6 +360,20 @@
                             android:background="?attr/selectableItemBackground"
                             android:visibility="gone"/>
 
+                        <TextView
+                            android:id="@+id/stock_swipe_right_app_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:paddingVertical="10dp"
+                            android:gravity="center"
+                            android:text="@string/stock_swipe_right_app_format"
+                            android:textSize="14sp"
+                            android:textColor="?attr/appAccent"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackground"
+                            android:visibility="gone"/>
+
                         <LinearLayout
                             android:id="@+id/stock_hotseat_section"
                             android:layout_width="match_parent"

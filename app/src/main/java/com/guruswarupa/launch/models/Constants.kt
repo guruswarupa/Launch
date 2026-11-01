@@ -51,6 +51,7 @@ object Constants {
         const val SEARCH_ENGINE = "search_engine"
         const val SMART_SUGGESTIONS_ENABLED = "smart_suggestions_enabled"
         const val AI_ASSISTANT_ENABLED = "ai_assistant_enabled"
+        const val STOCK_SWIPE_RIGHT_APP = "stock_swipe_right_app"
 
         const val AI_ASSISTANT_SOURCE_TYPE = "ai_assistant_source_type"
         const val AI_ASSISTANT_SELECTED_MODEL_ID = "ai_assistant_selected_model_id"

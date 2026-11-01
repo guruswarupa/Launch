@@ -214,6 +214,32 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     @SuppressLint("QueryPermissionsNeeded")
+    private fun showSwipeRightAppPicker(onChanged: () -> Unit) {
+        val pm = packageManager
+        val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        val resolved = pm.queryIntentActivities(launcherIntent, 0)
+            .distinctBy { it.activityInfo.packageName }
+            .filter { it.activityInfo.packageName != packageName }
+            .sortedBy { it.loadLabel(pm).toString().lowercase() }
+
+        val labels = (listOf(getString(R.string.stock_swipe_right_app_none)) + resolved.map { it.loadLabel(pm).toString() }).toTypedArray()
+        val packageNames = listOf("") + resolved.map { it.activityInfo.packageName }
+        val current = prefs.getString(Constants.Prefs.STOCK_SWIPE_RIGHT_APP, null).orEmpty()
+        val checkedIndex = packageNames.indexOf(current).coerceAtLeast(0)
+
+        AlertDialog.Builder(this, R.style.CustomDialogTheme)
+            .setTitle(R.string.stock_swipe_right_app_choose)
+            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
+                prefs.edit { putString(Constants.Prefs.STOCK_SWIPE_RIGHT_APP, packageNames[which]) }
+                notifySettingsChanged()
+                onChanged()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel_button, null)
+            .show()
+    }
+
+    @SuppressLint("QueryPermissionsNeeded")
     private fun showKidsModeAppPicker(
         kidsModeManager: com.guruswarupa.launch.managers.KidsModeManager,
         onResult: ((saved: Boolean) -> Unit)? = null
@@ -458,6 +484,24 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             notifySettingsChanged()
             Toast.makeText(this, getString(R.string.auto_organize_folders_done), Toast.LENGTH_SHORT).show()
         }
+        val swipeRightAppButton = findViewById<TextView>(R.id.stock_swipe_right_app_button)
+        fun refreshSwipeRightAppLabel() {
+            val pkg = prefs.getString(Constants.Prefs.STOCK_SWIPE_RIGHT_APP, null).orEmpty()
+            val label = if (pkg.isEmpty()) {
+                getString(R.string.stock_swipe_right_app_none)
+            } else {
+                try {
+                    packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString()
+                } catch (_: Exception) {
+                    getString(R.string.stock_swipe_right_app_none)
+                }
+            }
+            swipeRightAppButton.text = getString(R.string.stock_swipe_right_app_format, label)
+        }
+        refreshSwipeRightAppLabel()
+        swipeRightAppButton.setOnClickListener {
+            showSwipeRightAppPicker { refreshSwipeRightAppLabel() }
+        }
         val stockHotseatSection = findViewById<LinearLayout>(R.id.stock_hotseat_section)
         val stockHotseatValue = findViewById<TextView>(R.id.stock_hotseat_value)
         val stockHotseatSeek = findViewById<SeekBar>(R.id.stock_hotseat_seekbar)
@@ -473,6 +517,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             stockDrawerEnabledSection.isVisible = isStock
             stockHotseatSection.isVisible = isStock
             autoOrganizeFoldersButton.isVisible = isStock
+            swipeRightAppButton.isVisible = isStock
         }
 
         applyDisplayStyle(selectedStyle)

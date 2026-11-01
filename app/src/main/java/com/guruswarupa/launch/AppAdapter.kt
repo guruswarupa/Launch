@@ -174,6 +174,7 @@ class AppAdapter(
     var onFolderClick: ((String) -> Unit)? = null
 
     var folderAppsResolver: ((String) -> List<ResolveInfo>)? = null
+    var onAppClicked: (() -> Unit)? = null
 
     private val folderPreviewCache = android.util.LruCache<String, Drawable>(30)
 
@@ -607,6 +608,7 @@ class AppAdapter(
 
         holder.itemView.setOnClickListener {
             appClickHandler.handleAppClick(holder, appInfo, packageName, appInfo.preferredOrder)
+            onAppClicked?.invoke()
         }
 
         holder.itemView.setOnLongClickListener {

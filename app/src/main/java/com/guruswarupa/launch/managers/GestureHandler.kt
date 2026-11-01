@@ -31,6 +31,8 @@ class GestureHandler(
     private val minSwipeUpDistancePx: Int
 
     var onSwipeUpFromHome: (() -> Boolean)? = null
+    var stockHomeGestures: StockHomeGestures? = null
+    var isStockMode: () -> Boolean = { false }
 
     init {
         val density = activity.resources.displayMetrics.density
@@ -112,6 +114,11 @@ class GestureHandler(
     fun setupTouchListener() {
         mainContent.setOnTouchListener { v, event ->
             if (!isGesturesEnabled) return@setOnTouchListener false
+
+            val stockGestures = stockHomeGestures
+            if (stockGestures != null && isStockMode() && stockGestures.onEvent(event, true)) {
+                return@setOnTouchListener true
+            }
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {

@@ -54,6 +54,10 @@ class StockDrawerManager(
     private var currentColumns = 0
     private var hotseatAdapter: AppAdapter? = null
     private var hotseatView: RecyclerView? = null
+    val homeGestures: StockHomeGestures by lazy {
+        StockHomeGestures(activity, screenPagerManager.createDoubleTapToLockDetector())
+    }
+
     private var homeGridAdapter: AppAdapter? = null
     private var hotseatLayoutManager: GridLayoutManager? = null
 
@@ -734,6 +738,9 @@ class StockDrawerManager(
             dragHelper.startDrag(holder)
             true
         }
+        contentsAdapter.onAppClicked = {
+            if (dialog.isShowing) dialog.dismiss()
+        }
 
         deleteButton.setOnClickListener {
             AlertDialog.Builder(activity, R.style.CustomDialogTheme)
@@ -937,8 +944,15 @@ class StockDrawerManager(
         var tracking = false
 
         homeRecyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+            private var downOnEmpty = false
+
             override fun onInterceptTouchEvent(rv: RecyclerView, e: android.view.MotionEvent): Boolean {
-                if (!LayoutMode.isStock(sharedPreferences) || isOpen || !isDrawerEnabled()) return false
+                if (!LayoutMode.isStock(sharedPreferences) || isOpen) return false
+                if (e.actionMasked == android.view.MotionEvent.ACTION_DOWN) {
+                    downOnEmpty = rv.findChildViewUnder(e.x, e.y) == null
+                }
+                if (homeGestures.onEvent(e, downOnEmpty)) return true
+                if (!isDrawerEnabled()) return false
                 when (e.actionMasked) {
                     android.view.MotionEvent.ACTION_DOWN -> {
                         startX = e.x
@@ -974,11 +988,11 @@ class StockDrawerManager(
         var startX = 0f
         var startY = 0f
         var tracking = false
-        val doubleTapToLockDetector = screenPagerManager.createDoubleTapToLockDetector()
 
         view.setOnTouchListener { _, event ->
-            if (!LayoutMode.isStock(sharedPreferences) || isOpen || !isDrawerEnabled()) return@setOnTouchListener false
-            doubleTapToLockDetector.onTouchEvent(event)
+            if (!LayoutMode.isStock(sharedPreferences) || isOpen) return@setOnTouchListener false
+            if (homeGestures.onEvent(event, true)) return@setOnTouchListener true
+            if (!isDrawerEnabled()) return@setOnTouchListener false
             when (event.actionMasked) {
                 android.view.MotionEvent.ACTION_DOWN -> {
                     startX = event.x
