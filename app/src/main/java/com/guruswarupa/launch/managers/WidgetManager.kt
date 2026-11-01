@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.managers
 
+import com.guruswarupa.launch.initializeDeferredWidgets
 import android.app.Activity
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetHostView

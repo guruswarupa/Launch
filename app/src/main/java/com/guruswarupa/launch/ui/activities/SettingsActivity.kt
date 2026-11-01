@@ -107,43 +107,43 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     @javax.inject.Inject
     lateinit var modelDownloadManager: ModelDownloadManager
 
-    private val aiAssistantPollHandler = Handler(Looper.getMainLooper())
-    private var aiAssistantPolling = false
+    internal val aiAssistantPollHandler = Handler(Looper.getMainLooper())
+    internal var aiAssistantPolling = false
 
-    private val prefs by lazy { getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE) }
+    internal val prefs by lazy { getSharedPreferences("com.guruswarupa.launch.PREFS", MODE_PRIVATE) }
 
-    private class SettingsHandler(activity: SettingsActivity) : Handler(Looper.getMainLooper()) {
+    internal class SettingsHandler(activity: SettingsActivity) : Handler(Looper.getMainLooper()) {
         private val weakActivity = WeakReference(activity)
         override fun handleMessage(msg: Message) {
             val activity = weakActivity.get() ?: return
         }
     }
 
-    private val handler = SettingsHandler(this)
-    private var selectedThemeId: String = "stardust"
-    private var selectedThemeCategory: String? = null
-    private var hasUnsavedThemeChanges = false
-    private var widgetsSectionExpanded = false
-    private var newsSectionExpanded = false
-    private var systemMonitorSectionExpanded = false
-    private var billingClient: BillingClient? = null
-    private val supportProducts = linkedMapOf(
+    internal val handler = SettingsHandler(this)
+    internal var selectedThemeId: String = "stardust"
+    internal var selectedThemeCategory: String? = null
+    internal var hasUnsavedThemeChanges = false
+    internal var widgetsSectionExpanded = false
+    internal var newsSectionExpanded = false
+    internal var systemMonitorSectionExpanded = false
+    internal var billingClient: BillingClient? = null
+    internal val supportProducts = linkedMapOf(
         "support_49" to R.id.support_49,
         "support_99" to R.id.support_99,
         "support_199" to R.id.support_199,
         "support_299" to R.id.support_299
     )
-    private val supportProductDetails = LinkedHashMap<String, ProductDetails>()
+    internal val supportProductDetails = LinkedHashMap<String, ProductDetails>()
 
-    private val exportLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    internal val exportLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) result.data?.data?.let { exportSettingsToFile(it) }
     }
 
-    private val importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    internal val importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) result.data?.data?.let { importSettingsFromFile(it) }
     }
 
-    private val importThemeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    internal val importThemeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val uri = result.data?.data
             if (uri != null && ThemeShareHelper.importThemeFromUri(this, prefs, uri)) {
@@ -155,7 +155,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private val wallpaperLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    internal val wallpaperLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         setupWallpaper(null)
     }
 
@@ -214,7 +214,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     @SuppressLint("QueryPermissionsNeeded")
-    private fun showSwipeRightAppPicker(onChanged: () -> Unit) {
+    internal fun showSwipeRightAppPicker(onChanged: () -> Unit) {
         val pm = packageManager
         val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
         val resolved = pm.queryIntentActivities(launcherIntent, 0)
@@ -240,7 +240,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     @SuppressLint("QueryPermissionsNeeded")
-    private fun showKidsModeAppPicker(
+    internal fun showKidsModeAppPicker(
         kidsModeManager: com.guruswarupa.launch.managers.KidsModeManager,
         onResult: ((saved: Boolean) -> Unit)? = null
     ) {
@@ -283,7 +283,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         outState.putBoolean(STATE_SYSTEM_MONITOR_SECTION_EXPANDED, systemMonitorSectionExpanded)
     }
 
-    private fun triggerWallpaperPicker(themeId: String) {
+    internal fun triggerWallpaperPicker(themeId: String) {
         val theme = ThemeOption.PREDEFINED_THEMES.find { it.id == themeId } ?: return
 
         Toast.makeText(this, this.getString(R.string.toast_preparing_wallpaper_picker), Toast.LENGTH_SHORT).show()
@@ -329,7 +329,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             })
     }
 
-    private fun setupVersionInfo() {
+    internal fun setupVersionInfo() {
         try {
             val pInfo = packageManager.getPackageInfo(packageName, 0)
             val version = pInfo.versionName
@@ -339,7 +339,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupWallpaper(demoThemeId: String?) {
+    internal fun setupWallpaper(demoThemeId: String?) {
         val wallpaperImageView = findViewById<ImageView>(R.id.wallpaper_background)
         if (demoThemeId == null) {
             WallpaperDisplayHelper.applySystemWallpaper(wallpaperImageView)
@@ -348,13 +348,13 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupThemeSection() {
+    internal fun setupThemeSection() {
         setupThemePaletteRow()
         setupThemeAccentGrid()
         setupOpaqueSurfacesSwitch()
     }
 
-    private fun setupOpaqueSurfacesSwitch() {
+    internal fun setupOpaqueSurfacesSwitch() {
         val sw = findViewById<SwitchCompat>(R.id.opaque_surfaces_switch)
         sw.isChecked = prefs.getBoolean(Constants.Prefs.OPAQUE_SURFACES_ENABLED, false)
         sw.setOnCheckedChangeListener { _, isChecked ->
@@ -364,7 +364,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupThemePaletteRow() {
+    internal fun setupThemePaletteRow() {
         val row = findViewById<LinearLayout>(R.id.theme_palette_row)
         row.removeAllViews()
         val currentId = prefs.getString(Constants.Prefs.COLOR_THEME, null)
@@ -394,7 +394,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupThemeAccentGrid() {
+    internal fun setupThemeAccentGrid() {
         val grid = findViewById<LinearLayout>(R.id.theme_accent_grid)
         grid.removeAllViews()
         val currentId = prefs.getString(Constants.Prefs.COLOR_ACCENT, null) ?: AccentSwatch.PALETTE.id
@@ -430,7 +430,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupAppearanceSection() {
+    internal fun setupAppearanceSection() {
         val displayHeader = findViewById<LinearLayout>(R.id.display_style_header)
         val displayContent = findViewById<LinearLayout>(R.id.display_style_content)
         val displayArrow = findViewById<TextView>(R.id.display_style_arrow)
@@ -790,7 +790,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         })
     }
 
-    private fun setupLanguageSpinner() {
+    internal fun setupLanguageSpinner() {
         val languageSpinner = findViewById<Spinner>(R.id.language_spinner)
         val labels = AppLanguage.options.map { option ->
             if (option.tag.isEmpty()) getString(R.string.language_system_default) else option.autonym
@@ -810,7 +810,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupThemeSelection() {
+    internal fun setupThemeSelection() {
         val container = findViewById<LinearLayout>(R.id.theme_options_container)
         val applyBtn = findViewById<MaterialButton>(R.id.apply_theme_button)
         container.removeAllViews()
@@ -930,9 +930,9 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
+    internal fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
-    private fun setupActionsSection() {
+    internal fun setupActionsSection() {
         val wHeader = findViewById<LinearLayout>(R.id.widgets_settings_header)
         val wContent = findViewById<LinearLayout>(R.id.widgets_settings_content)
         val wArrow = findViewById<TextView>(R.id.widgets_settings_arrow)
@@ -1025,7 +1025,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupDockSettings() {
+    internal fun setupDockSettings() {
         val header = findViewById<LinearLayout>(R.id.dock_settings_header)
         val content = findViewById<LinearLayout>(R.id.dock_settings_content)
         val arrow = findViewById<TextView>(R.id.dock_settings_arrow)
@@ -1068,7 +1068,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupNewsFeedSection() {
+    internal fun setupNewsFeedSection() {
         val header = findViewById<LinearLayout>(R.id.news_feed_header)
         val content = findViewById<LinearLayout>(R.id.news_feed_content)
         val arrow = findViewById<TextView>(R.id.news_feed_arrow)
@@ -1104,7 +1104,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupAppTimerSection() {
+    internal fun setupAppTimerSection() {
         val tHeader = findViewById<LinearLayout>(R.id.app_timer_header)
         val tContent = findViewById<LinearLayout>(R.id.app_timer_content)
         val tArrow = findViewById<TextView>(R.id.app_timer_arrow)
@@ -1115,7 +1115,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupSecuritySection() {
+    internal fun setupSecuritySection() {
         val h = findViewById<LinearLayout>(R.id.app_lock_header)
         val c = findViewById<LinearLayout>(R.id.app_lock_content)
         val a = findViewById<TextView>(R.id.app_lock_arrow)
@@ -1126,7 +1126,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.privacy_dashboard_button).setOnClickListener { startActivity(Intent(this, PrivacyDashboardActivity::class.java)) }
     }
 
-    private fun setupFileTransferSection() {
+    internal fun setupFileTransferSection() {
         setupSectionToggle(
             findViewById<View>(R.id.file_transfer_header),
             findViewById<View>(R.id.file_transfer_content),
@@ -1137,7 +1137,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupSystemMonitorSection() {
+    internal fun setupSystemMonitorSection() {
         val header = findViewById<View>(R.id.system_monitor_header)
         val content = findViewById<View>(R.id.system_monitor_content)
         val arrow = findViewById<TextView>(R.id.system_monitor_arrow)
@@ -1156,7 +1156,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupWebAppsSection() {
+    internal fun setupWebAppsSection() {
         val h = findViewById<LinearLayout>(R.id.web_apps_header)
         val c = findViewById<LinearLayout>(R.id.web_apps_content)
         val a = findViewById<TextView>(R.id.web_apps_arrow)
@@ -1164,7 +1164,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.web_apps_button).setOnClickListener { startActivity(Intent(this, WebAppSettingsActivity::class.java)) }
     }
 
-    private fun setupMaintenanceSection() {
+    internal fun setupMaintenanceSection() {
         val bHeader = findViewById<LinearLayout>(R.id.backup_restore_header)
         val bContent = findViewById<LinearLayout>(R.id.backup_restore_content)
         val a = findViewById<TextView>(R.id.backup_restore_arrow)
@@ -1204,7 +1204,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.app_info_button).setOnClickListener { openAppInfo() }
     }
 
-    private fun openAppInfo() {
+    internal fun openAppInfo() {
         try {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.fromParts("package", packageName, null)
@@ -1215,28 +1215,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupSupportSection() {
-        val h = findViewById<LinearLayout>(R.id.support_header)
-        val c = findViewById<LinearLayout>(R.id.support_content)
-        val a = findViewById<TextView>(R.id.support_arrow)
-        setupSectionToggle(h, c, a)
-        findViewById<View>(R.id.feedback_button).setOnClickListener { sendFeedback() }
-        updateSupporterBadge()
-        supportProducts.forEach { (productId, buttonId) ->
-            findViewById<Button>(buttonId).apply {
-                text = getString(R.string.support_button_loading)
-                isEnabled = false
-                setOnClickListener { launchSupportPurchase(productId) }
-            }
-        }
-        findViewById<TextView>(R.id.github_links_text).apply {
-            movementMethod = LinkMovementMethod.getInstance()
-            text = Html.fromHtml(getString(R.string.github_project_links), Html.FROM_HTML_MODE_COMPACT)
-        }
-        initializeBilling()
-    }
-
-    private fun openSupportSectionIfRequested() {
+    internal fun openSupportSectionIfRequested() {
         if (!intent.getBooleanExtra(EXTRA_OPEN_SUPPORT_SECTION, false)) {
             return
         }
@@ -1256,7 +1235,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun openAiSectionIfRequested() {
+    internal fun openAiSectionIfRequested() {
         if (!intent.getBooleanExtra(EXTRA_OPEN_AI_SECTION, false)) {
             return
         }
@@ -1276,132 +1255,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun initializeBilling() {
-        if (billingClient?.isReady == true) {
-            querySupportProductDetails()
-            queryExistingSupportPurchases()
-            return
-        }
-        if (billingClient == null) {
-            billingClient = BillingClient.newBuilder(this)
-                .setListener(this)
-                .enablePendingPurchases(
-                    PendingPurchasesParams.newBuilder()
-                        .enableOneTimeProducts()
-                        .build()
-                )
-                .enableAutoServiceReconnection()
-                .build()
-        }
-        setSupportButtonsLoading()
-        billingClient?.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    querySupportProductDetails()
-                    queryExistingSupportPurchases()
-                } else {
-                    handleBillingError(billingResult, showToast = false)
-                }
-            }
-
-            override fun onBillingServiceDisconnected() {
-                setSupportButtonsUnavailable(getString(R.string.support_billing_unavailable))
-            }
-        })
-    }
-
-    private fun querySupportProductDetails() {
-        val billing = billingClient ?: return
-        val params = QueryProductDetailsParams.newBuilder()
-            .setProductList(
-                supportProducts.keys.map { productId ->
-                    QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(productId)
-                        .setProductType(BillingClient.ProductType.INAPP)
-                        .build()
-                }
-            )
-            .build()
-        billing.queryProductDetailsAsync(params) { billingResult, queryResult ->
-            if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                handleBillingError(billingResult, showToast = false)
-                return@queryProductDetailsAsync
-            }
-            runOnUiThread {
-                supportProductDetails.clear()
-                queryResult.productDetailsList.forEach { details ->
-                    supportProductDetails[details.productId] = details
-                }
-                updateSupportButtons()
-            }
-        }
-    }
-
-    private fun updateSupportButtons() {
-        supportProducts.forEach { (productId, buttonId) ->
-            val button = findViewById<Button>(buttonId)
-            val offer = supportProductDetails[productId]?.oneTimePurchaseOfferDetailsList?.firstOrNull()
-            if (offer != null) {
-                button.text = getString(R.string.support_button_buy, offer.formattedPrice)
-                button.isEnabled = true
-                button.alpha = 1f
-            } else {
-                button.text = getString(R.string.support_button_unavailable)
-                button.isEnabled = false
-                button.alpha = 0.6f
-            }
-        }
-    }
-
-    private fun setSupportButtonsLoading() {
-        supportProducts.values.forEach { buttonId ->
-            findViewById<Button>(buttonId).apply {
-                text = getString(R.string.support_button_loading)
-                isEnabled = false
-                alpha = 0.7f
-            }
-        }
-    }
-
-    private fun setSupportButtonsUnavailable(label: String) {
-        supportProducts.values.forEach { buttonId ->
-            findViewById<Button>(buttonId).apply {
-                text = label
-                isEnabled = false
-                alpha = 0.6f
-            }
-        }
-    }
-
-    private fun launchSupportPurchase(productId: String) {
-        val billing = billingClient
-        if (billing == null || !billing.isReady) {
-            initializeBilling()
-            Toast.makeText(this, getString(R.string.support_billing_unavailable), Toast.LENGTH_SHORT).show()
-            return
-        }
-        val details = supportProductDetails[productId]
-        val offer = details?.oneTimePurchaseOfferDetailsList?.firstOrNull()
-        val offerToken = offer?.offerToken
-        if (details == null || offer == null || offerToken.isNullOrBlank()) {
-            Toast.makeText(this, getString(R.string.support_option_not_ready), Toast.LENGTH_SHORT).show()
-            return
-        }
-        val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
-            .setProductDetails(details)
-            .setOfferToken(offerToken)
-            .build()
-        val billingResult = billing.launchBillingFlow(
-            this,
-            BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(listOf(productDetailsParams))
-                .build()
-        )
-        if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-            handleBillingError(billingResult)
-        }
-    }
-
     override fun onPurchasesUpdated(billingResult: BillingResult, purchases: MutableList<Purchase>?) {
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> purchases.orEmpty().forEach { handlePurchase(it, true) }
@@ -1412,99 +1265,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun queryExistingSupportPurchases() {
-        val billing = billingClient ?: return
-        billing.queryPurchasesAsync(
-            QueryPurchasesParams.newBuilder()
-                .setProductType(BillingClient.ProductType.INAPP)
-                .build()
-        ) { billingResult, purchases ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                purchases
-                    .filter { purchase -> purchase.products.any(supportProducts::containsKey) }
-                    .forEach { purchase -> handlePurchase(purchase, false) }
-            }
-        }
-    }
-
-    private fun handlePurchase(purchase: Purchase, notifyUser: Boolean) {
-        when (purchase.purchaseState) {
-            Purchase.PurchaseState.PURCHASED -> {
-                billingClient?.consumeAsync(
-                    ConsumeParams.newBuilder()
-                        .setPurchaseToken(purchase.purchaseToken)
-                        .build()
-                ) { result, _ ->
-                    if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                        prefs.edit {
-                            putBoolean(Constants.Prefs.SUPPORTER_BADGE_EARNED, true)
-                            putBoolean(Constants.Prefs.DONATION_PROMPT_SHOWN, true)
-                        }
-                        runOnUiThread {
-                            updateSupporterBadge()
-                            if (notifyUser) {
-                                showSupportThankYouDialog()
-                            }
-                        }
-                    } else if (result.responseCode != BillingClient.BillingResponseCode.OK) {
-                        handleBillingError(result, showToast = notifyUser)
-                    }
-                }
-            }
-            Purchase.PurchaseState.PENDING -> {
-                if (notifyUser) {
-                    Toast.makeText(this, getString(R.string.support_purchase_pending), Toast.LENGTH_SHORT).show()
-                }
-                updatePendingSupportButtons(purchase)
-            }
-            else -> Unit
-        }
-    }
-
-    private fun showSupportThankYouDialog() {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_support_thank_you, null)
-        AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setView(dialogView)
-            .setPositiveButton(getString(R.string.support_thank_you_close), null)
-            .show()
-    }
-
-    private fun updateSupporterBadge() {
-        findViewById<TextView>(R.id.support_badge)?.visibility =
-            if (prefs.getBoolean(Constants.Prefs.SUPPORTER_BADGE_EARNED, false)) View.VISIBLE else View.GONE
-    }
-
-    private fun updatePendingSupportButtons(purchase: Purchase) {
-        purchase.products.forEach { productId ->
-            val buttonId = supportProducts[productId] ?: return@forEach
-            findViewById<Button>(buttonId).apply {
-                text = getString(R.string.support_button_pending)
-                isEnabled = false
-                alpha = 0.7f
-            }
-        }
-    }
-
-    private fun handleBillingError(billingResult: BillingResult, showToast: Boolean = true) {
-        val messageRes = when (billingResult.responseCode) {
-            BillingClient.BillingResponseCode.BILLING_UNAVAILABLE -> R.string.support_billing_unavailable
-            BillingClient.BillingResponseCode.NETWORK_ERROR,
-            BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE,
-            BillingClient.BillingResponseCode.SERVICE_DISCONNECTED -> R.string.support_network_error
-            BillingClient.BillingResponseCode.USER_CANCELED -> R.string.support_purchase_canceled
-            else -> R.string.support_purchase_failed
-        }
-        runOnUiThread {
-            if (messageRes == R.string.support_billing_unavailable || messageRes == R.string.support_network_error) {
-                setSupportButtonsUnavailable(getString(R.string.support_button_unavailable))
-            }
-            if (showToast) {
-                Toast.makeText(this, getString(messageRes), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun setupSectionToggle(header: View, content: View, arrow: TextView, onToggle: ((Boolean) -> Unit)? = null) {
+    internal fun setupSectionToggle(header: View, content: View, arrow: TextView, onToggle: ((Boolean) -> Unit)? = null) {
         header.setOnClickListener {
             val visible = content.visibility == View.VISIBLE
             val expanded = !visible
@@ -1514,12 +1275,12 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun applySectionExpandedState(content: View, arrow: TextView, isExpanded: Boolean) {
+    internal fun applySectionExpandedState(content: View, arrow: TextView, isExpanded: Boolean) {
         content.visibility = if (isExpanded) View.VISIBLE else View.GONE
         arrow.rotation = if (isExpanded) 180f else 0f
     }
 
-    private fun updateDisplayStyleButtons(grid: Button, list: Button, stock: Button, style: String) {
+    internal fun updateDisplayStyleButtons(grid: Button, list: Button, stock: Button, style: String) {
         fun apply(button: Button, isSelected: Boolean) {
             button.alpha = if (isSelected) 1.0f else 0.4f
             button.setBackgroundResource(if (isSelected) R.drawable.settings_card_background else 0)
@@ -1529,424 +1290,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         apply(stock, style == Constants.Prefs.VIEW_PREFERENCE_STOCK)
     }
 
-    private fun setupAccessibilityShortcut() {
-        val sw = findViewById<SwitchCompat>(R.id.accessibility_shortcut_switch)
-        val configButton = findViewById<View>(R.id.config_control_center_button)
-
-        fun applyConfigButtonState(enabled: Boolean) {
-            configButton.visibility = if (enabled) View.VISIBLE else View.GONE
-        }
-
-        sw.isChecked = prefs.getBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_ENABLED, false)
-        applyConfigButtonState(sw.isChecked)
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && !hasAccessibilityServicePermission()) {
-                sw.isChecked = false
-                showPermissionDialog("Accessibility Required", "Enable Launch in Accessibility settings.") {
-                    startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                }
-            } else {
-                prefs.edit { putBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_ENABLED, isChecked) }
-                applyConfigButtonState(isChecked)
-                startService(Intent(this, ScreenLockAccessibilityService::class.java).apply {
-                    action = "TOGGLE_CONTROL_CENTER_TRIGGER"
-                    putExtra("enabled", isChecked)
-                })
-            }
-        }
-
-        configButton.setOnClickListener {
-            startActivity(Intent(this, ControlCenterConfigActivity::class.java))
-        }
-    }
-
-    private fun setupEdgePanel() {
-        val sw = findViewById<SwitchCompat>(R.id.edge_panel_switch)
-        val configButton = findViewById<View>(R.id.config_edge_panel_button)
-        val usageStatsManager = AppUsageStatsManager(this)
-
-        fun applyConfigButtonState(enabled: Boolean) {
-            configButton.visibility = if (enabled) View.VISIBLE else View.GONE
-        }
-
-        sw.isChecked = prefs.getBoolean(Constants.Prefs.EDGE_PANEL_ENABLED, false)
-        applyConfigButtonState(sw.isChecked)
-
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && !hasAccessibilityServicePermission()) {
-                sw.isChecked = false
-                showPermissionDialog("Accessibility Required", "Enable Launch in Accessibility settings.") {
-                    startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                }
-                return@setOnCheckedChangeListener
-            }
-
-            if (isChecked && !usageStatsManager.hasUsageStatsPermission()) {
-                sw.isChecked = false
-                showPermissionDialog(
-                    getString(R.string.edge_panel_permission_usage_title),
-                    getString(R.string.edge_panel_permission_usage_message)
-                ) {
-                    startActivity(usageStatsManager.requestUsageStatsPermission())
-                }
-                return@setOnCheckedChangeListener
-            }
-
-            prefs.edit { putBoolean(Constants.Prefs.EDGE_PANEL_ENABLED, isChecked) }
-            applyConfigButtonState(isChecked)
-            startService(Intent(this, ScreenLockAccessibilityService::class.java).apply {
-                action = "TOGGLE_EDGE_PANEL"
-                putExtra("enabled", isChecked)
-            })
-            notifySettingsChanged()
-        }
-    }
-
-    private fun setupBackTap() {
-        val sw = findViewById<SwitchCompat>(R.id.back_tap_switch)
-        val cont = findViewById<View>(R.id.back_tap_settings_container)
-        val spin = findViewById<Spinner>(R.id.back_tap_double_action_spinner)
-        val seek = findViewById<SeekBar>(R.id.back_tap_sensitivity_seekbar)
-        val valT = findViewById<TextView>(R.id.back_tap_sensitivity_value)
-
-        val en = prefs.getBoolean(Constants.Prefs.BACK_TAP_ENABLED, false)
-        sw.isChecked = en
-        cont.isVisible = en
-
-        val acts = arrayOf("None", "Torch", "Screenshot", "Notifications", "Screen Off", "Sound")
-        val vals = arrayOf(BackTapService.ACTION_NONE, BackTapService.ACTION_TORCH_TOGGLE, BackTapService.ACTION_SCREENSHOT, BackTapService.ACTION_NOTIFICATIONS, BackTapService.ACTION_SCREEN_OFF, BackTapService.ACTION_SOUND_TOGGLE)
-        spin.adapter =  ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, acts).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        spin.setSelection(vals.indexOf(prefs.getString(Constants.Prefs.BACK_TAP_DOUBLE_ACTION, BackTapService.ACTION_SOUND_TOGGLE)).coerceAtLeast(0))
-
-        val cur = prefs.getInt(Constants.Prefs.BACK_TAP_SENSITIVITY, 7).coerceIn(1, 10)
-        seek.max = 9
-        seek.progress = cur - 1
-        valT.text = cur.toString()
-
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit { putBoolean(Constants.Prefs.BACK_TAP_ENABLED, isChecked) }
-            cont.isVisible = isChecked
-            notifySettingsChanged()
-        }
-        spin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p: AdapterView<*>, v: View?, pos: Int, id: Long) {
-                prefs.edit { putString(Constants.Prefs.BACK_TAP_DOUBLE_ACTION, vals[pos]) }
-                notifySettingsChanged()
-            } override fun onNothingSelected(p: AdapterView<*>) {}
-        }
-        seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) {
-                valT.text = (p + 1).toString()
-                if (f) {
-                    prefs.edit { putInt(Constants.Prefs.BACK_TAP_SENSITIVITY, p + 1) }
-                    notifySettingsChanged()
-                }
-            } override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        })
-    }
-
-    private fun setupShakeTorch() {
-        val sw = findViewById<SwitchCompat>(R.id.shake_torch_switch)
-        val cont = findViewById<View>(R.id.shake_sensitivity_container)
-        val seek = findViewById<SeekBar>(R.id.shake_sensitivity_seekbar)
-        val valT = findViewById<TextView>(R.id.sensitivity_value_text)
-
-        val en = prefs.getBoolean(Constants.Prefs.SHAKE_TORCH_ENABLED, false)
-        sw.isChecked = en
-        cont.isVisible = en
-        val cur = prefs.getInt(Constants.Prefs.SHAKE_SENSITIVITY, 5).coerceIn(1, 10)
-        seek.max = 9
-        seek.progress = cur - 1
-        valT.text = cur.toString()
-
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit { putBoolean(Constants.Prefs.SHAKE_TORCH_ENABLED, isChecked) }
-            cont.isVisible = isChecked
-            notifySettingsChanged()
-        }
-        seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) {
-                valT.text = (p + 1).toString()
-                if (f) {
-                    prefs.edit { putInt(Constants.Prefs.SHAKE_SENSITIVITY, p + 1) }
-                    notifySettingsChanged()
-                }
-            } override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        })
-    }
-
-    private fun setupWalkDetection() {
-        val sw = findViewById<SwitchCompat>(R.id.walk_detect_switch)
-        val cont = findViewById<View>(R.id.walk_detect_settings_container)
-        val spin = findViewById<Spinner>(R.id.walk_detect_action_spinner)
-        val thresholdSeek = findViewById<SeekBar>(R.id.walk_detect_threshold_seekbar)
-        val thresholdVal = findViewById<TextView>(R.id.walk_detect_threshold_value)
-        val timeWindowSeek = findViewById<SeekBar>(R.id.walk_detect_time_window_seekbar)
-        val timeWindowVal = findViewById<TextView>(R.id.walk_detect_time_window_value)
-        val cooldownSeek = findViewById<SeekBar>(R.id.walk_detect_cooldown_seekbar)
-        val cooldownVal = findViewById<TextView>(R.id.walk_detect_cooldown_value)
-        val chooseAppButton = findViewById<View>(R.id.walk_detect_choose_app_button)
-        val selectedAppText = findViewById<TextView>(R.id.walk_detect_selected_app_text)
-
-        val en = prefs.getBoolean(Constants.Prefs.WALK_DETECT_ENABLED, false)
-        sw.isChecked = en
-        cont.isVisible = en
-
-        val acts = arrayOf("Music App", "Custom App", "Torch", "Sound Toggle", "None")
-        val vals = arrayOf(
-            WalkDetectionService.ACTION_LAUNCH_MUSIC,
-            WalkDetectionService.ACTION_LAUNCH_APP,
-            WalkDetectionService.ACTION_TORCH_TOGGLE,
-            WalkDetectionService.ACTION_SOUND_TOGGLE,
-            WalkDetectionService.ACTION_NONE
-        )
-        spin.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, acts).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-
-        val currentAction = prefs.getString(
-            Constants.Prefs.WALK_DETECT_ACTION,
-            WalkDetectionService.ACTION_LAUNCH_MUSIC
-        ) ?: WalkDetectionService.ACTION_LAUNCH_MUSIC
-        spin.setSelection(vals.indexOf(currentAction).coerceAtLeast(0))
-
-        fun updateSelectedAppText() {
-            val pkg = prefs.getString(Constants.Prefs.WALK_DETECT_CUSTOM_APP_PACKAGE, null)
-            selectedAppText.text = if (pkg != null) {
-                try {
-                    packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString()
-                } catch (_: Exception) {
-                    pkg
-                }
-            } else {
-                "No app selected"
-            }
-        }
-
-        fun updateAppChooserVisibility(action: String) {
-            val isCustomApp = action == WalkDetectionService.ACTION_LAUNCH_APP
-            chooseAppButton.isVisible = isCustomApp
-            selectedAppText.isVisible = isCustomApp
-            if (isCustomApp) updateSelectedAppText()
-        }
-        updateAppChooserVisibility(currentAction)
-
-        val curThreshold = prefs.getInt(Constants.Prefs.WALK_DETECT_STEP_THRESHOLD, 10).coerceIn(5, 30)
-        thresholdSeek.max = 25
-        thresholdSeek.progress = curThreshold - 5
-        thresholdVal.text = getString(R.string.steps_format, curThreshold)
-
-        val curTimeWindow = prefs.getInt(Constants.Prefs.WALK_DETECT_TIME_WINDOW_SECONDS, 15).coerceIn(5, 60)
-        timeWindowSeek.max = 55
-        timeWindowSeek.progress = curTimeWindow - 5
-        timeWindowVal.text = getString(R.string.lbl_sec, curTimeWindow)
-
-        val curCooldown = prefs.getInt(Constants.Prefs.WALK_DETECT_COOLDOWN_MINUTES, 5).coerceIn(1, 30)
-        cooldownSeek.max = 29
-        cooldownSeek.progress = curCooldown - 1
-        cooldownVal.text = getString(R.string.walking_time_minutes_format, curCooldown)
-
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    sw.isChecked = false
-                    requestPermissions(
-                        arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),
-                        Constants.RequestCodes.ACTIVITY_RECOGNITION_PERMISSION
-                    )
-                    return@setOnCheckedChangeListener
-                }
-            }
-
-            prefs.edit { putBoolean(Constants.Prefs.WALK_DETECT_ENABLED, isChecked) }
-            cont.isVisible = isChecked
-            notifySettingsChanged()
-        }
-
-        spin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                prefs.edit { putString(Constants.Prefs.WALK_DETECT_ACTION, vals[position]) }
-                updateAppChooserVisibility(vals[position])
-                notifySettingsChanged()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) = Unit
-        }
-
-        thresholdSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                thresholdVal.text = getString(R.string.steps_format, progress + 5)
-                if (fromUser) {
-                    prefs.edit { putInt(Constants.Prefs.WALK_DETECT_STEP_THRESHOLD, progress + 5) }
-                    notifySettingsChanged()
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-
-        timeWindowSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                timeWindowVal.text = getString(R.string.lbl_sec, progress + 5)
-                if (fromUser) {
-                    prefs.edit { putInt(Constants.Prefs.WALK_DETECT_TIME_WINDOW_SECONDS, progress + 5) }
-                    notifySettingsChanged()
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-
-        cooldownSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                cooldownVal.text = getString(R.string.walking_time_minutes_format, progress + 1)
-                if (fromUser) {
-                    prefs.edit { putInt(Constants.Prefs.WALK_DETECT_COOLDOWN_MINUTES, progress + 1) }
-                    notifySettingsChanged()
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-
-        chooseAppButton.setOnClickListener {
-            showWalkDetectionAppPicker {
-                updateSelectedAppText()
-                notifySettingsChanged()
-            }
-        }
-    }
-
-    private fun setupExtraDimmer() {
-        val sw = findViewById<SwitchCompat>(R.id.screen_dimmer_switch)
-        val seek = findViewById<SeekBar>(R.id.screen_dimmer_seekbar)
-        val valT = findViewById<TextView>(R.id.dimmer_value_text)
-        val cont = findViewById<View>(R.id.screen_dimmer_container)
-
-        val en = prefs.getBoolean(Constants.Prefs.SCREEN_DIMMER_ENABLED, false)
-        sw.isChecked = en
-        seek.progress = prefs.getInt(Constants.Prefs.SCREEN_DIMMER_LEVEL, 10)
-        valT.text = "${seek.progress}%"
-        cont.isVisible = en
-
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && !Settings.canDrawOverlays(this)) {
-                sw.isChecked = false
-                showPermissionDialog("Overlay Permission", "Enable Display over other apps.") { startActivity(Intent(this, PermissionsActivity::class.java)) }
-            } else {
-                prefs.edit { putBoolean(Constants.Prefs.SCREEN_DIMMER_ENABLED, isChecked) }
-                cont.isVisible = isChecked
-                if (isChecked) ScreenDimmerService.startService(this, seek.progress) else ScreenDimmerService.stopService(this)
-            }
-        }
-        seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) {
-                valT.text = "$p%"
-                if (f) {
-                    prefs.edit { putInt(Constants.Prefs.SCREEN_DIMMER_LEVEL, p) }
-                    if (sw.isChecked) ScreenDimmerService.updateDimLevel(this@SettingsActivity, p)
-                }
-            } override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        })
-    }
-
-    private fun setupNightMode() {
-        val sw = findViewById<SwitchCompat>(R.id.night_mode_switch)
-        val seek = findViewById<SeekBar>(R.id.night_mode_intensity_seekbar)
-        val valT = findViewById<TextView>(R.id.night_mode_value_text)
-        val cont = findViewById<View>(R.id.night_mode_container)
-
-        val en = prefs.getBoolean(Constants.Prefs.NIGHT_MODE_ENABLED, false)
-        sw.isChecked = en
-        seek.progress = prefs.getInt(Constants.Prefs.NIGHT_MODE_INTENSITY, 10)
-        valT.text = "${seek.progress}%"
-        cont.isVisible = en
-
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked && !Settings.canDrawOverlays(this)) {
-                sw.isChecked = false
-                showPermissionDialog("Overlay Permission", "Enable Display over other apps.") { startActivity(Intent(this, PermissionsActivity::class.java)) }
-            } else {
-                prefs.edit { putBoolean(Constants.Prefs.NIGHT_MODE_ENABLED, isChecked) }
-                cont.isVisible = isChecked
-                if (isChecked) NightModeService.startService(this, seek.progress) else NightModeService.stopService(this)
-            }
-        }
-        seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) {
-                valT.text = "$p%"
-                if (f) {
-                    prefs.edit { putInt(Constants.Prefs.NIGHT_MODE_INTENSITY, p) }
-                    if (sw.isChecked) NightModeService.updateIntensity(this@SettingsActivity, p)
-                }
-            } override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        })
-    }
-
-    private fun setupFlipToDnd() {
-        val sw = findViewById<SwitchCompat>(R.id.flip_dnd_switch)
-        sw.isChecked = prefs.getBoolean(Constants.Prefs.FLIP_DND_ENABLED, false)
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                if (!nm.isNotificationPolicyAccessGranted) {
-                    sw.isChecked = false
-                    showPermissionDialog("DND Permission", "Grant DND access to use this feature.") { startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)) }
-                } else {
-                    prefs.edit { putBoolean(Constants.Prefs.FLIP_DND_ENABLED, true) }
-                    notifySettingsChanged()
-                }
-            } else {
-                prefs.edit { putBoolean(Constants.Prefs.FLIP_DND_ENABLED, false) }
-                notifySettingsChanged()
-            }
-        }
-    }
-
-    private fun setupGrayscaleMode() {
-        val sw = findViewById<SwitchCompat>(R.id.grayscale_mode_switch)
-        sw.isChecked = prefs.getBoolean(Constants.Prefs.GRAYSCALE_MODE_ENABLED, false)
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            try {
-                Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer_enabled", if (isChecked) 1 else 0)
-                Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer", if (isChecked) 0 else -1)
-                prefs.edit { putBoolean(Constants.Prefs.GRAYSCALE_MODE_ENABLED, isChecked) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                sw.isChecked = !isChecked
-                showProtectedPermissionDialog()
-            }
-        }
-    }
-
-    private fun showProtectedPermissionDialog() {
-        AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(getString(R.string.dlg_permission_required))
-            .setMessage(getString(R.string.dlg_this_feature_requires_the_write_secure_settings) +
-                    "Please run this command via ADB:\n\n" +
-                    "adb shell pm grant $packageName android.permission.WRITE_SECURE_SETTINGS")
-            .setPositiveButton(getString(R.string.dlg_copy_command)) { _, _ ->
-                val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                val clip = android.content.ClipData.newPlainText("ADB Command", "adb shell pm grant $packageName android.permission.WRITE_SECURE_SETTINGS")
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, this.getString(R.string.toast_command_copied_to_clipboard), Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton(getString(R.string.support_thank_you_close), null)
-            .show()
-    }
-
-    private fun setupSearchEngine() {
+    internal fun setupSearchEngine() {
         val s = findViewById<Spinner>(R.id.search_engine_spinner)
         val engines = arrayOf("Google", "Bing", "DuckDuckGo", "Ecosia", "Brave", "Startpage", "Yahoo", "Qwant")
         s.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, engines).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
@@ -1959,7 +1303,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun setupSmartSuggestions() {
+    internal fun setupSmartSuggestions() {
         val sw = findViewById<SwitchCompat>(R.id.smart_suggestions_switch)
         sw.isChecked = prefs.getBoolean(Constants.Prefs.SMART_SUGGESTIONS_ENABLED, true)
         sw.setOnCheckedChangeListener { _, isChecked ->
@@ -1968,9 +1312,9 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun formatSize(bytes: Long): String = "${bytes / (1024 * 1024)} MB"
+    internal fun formatSize(bytes: Long): String = "${bytes / (1024 * 1024)} MB"
 
-    private class ModelRowViews(
+    internal class ModelRowViews(
         val root: View,
         val name: TextView,
         val badge: View,
@@ -1980,542 +1324,25 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         val actionButton: Button
     )
 
-    private val aiModelRows = LinkedHashMap<String, ModelRowViews>()
-    private val aiWebProviderRows = LinkedHashMap<String, ModelRowViews>()
+    internal val aiModelRows = LinkedHashMap<String, ModelRowViews>()
+    internal val aiWebProviderRows = LinkedHashMap<String, ModelRowViews>()
 
-    private fun selectedModelId(): String =
-        prefs.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_MODEL_ID, null) ?: AssistantModel.DEFAULT.id
-
-    private fun isWebSourceSelected(): Boolean =
-        prefs.getString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_ON_DEVICE) ==
-            Constants.Prefs.AI_ASSISTANT_SOURCE_WEB
-
-    private fun selectedWebProviderId(): String? =
-        prefs.getString(Constants.Prefs.AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID, null)
-
-    private fun setupAiAssistant() {
-        val sw = findViewById<SwitchCompat>(R.id.ai_assistant_switch)
-        val statusText = findViewById<TextView>(R.id.ai_assistant_status_text)
-        val licenseText = findViewById<TextView>(R.id.ai_assistant_license_text)
-
-        licenseText.text = getString(R.string.ai_assistant_license_notice)
-
-        sw.isChecked = prefs.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)
-        sw.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit { putBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, isChecked) }
-            notifySettingsChanged()
-        }
-
-        val modelListLabel = findViewById<View>(R.id.ai_assistant_choose_model_label)
-        val modelList = findViewById<LinearLayout>(R.id.ai_assistant_model_list)
-        val capability = deviceCapability.check()
-        if (capability is DeviceCapabilityResult.Unsupported) {
-            modelListLabel.isVisible = false
-            modelList.isVisible = false
-            statusText.isVisible = true
-            statusText.text = when (capability.reason) {
-                DeviceCapabilityResult.Reason.LOW_RAM -> getString(R.string.ai_assistant_unsupported_ram)
-                DeviceCapabilityResult.Reason.UNSUPPORTED_ABI -> getString(R.string.ai_assistant_unsupported_abi)
-                DeviceCapabilityResult.Reason.LOW_STORAGE -> getString(R.string.ai_assistant_unsupported_storage)
-            }
-        } else {
-            statusText.isVisible = false
-            setupOnDeviceModelList(modelList)
-        }
-
-        setupWebProviderList()
-    }
-
-    private fun setupOnDeviceModelList(modelList: LinearLayout) {
-        modelList.removeAllViews()
-        aiModelRows.clear()
-        AssistantModel.ALL.forEach { model ->
-            val rowView = layoutInflater.inflate(R.layout.item_ai_model_row, modelList, false)
-            val row = ModelRowViews(
-                root = rowView,
-                name = rowView.findViewById(R.id.model_row_name),
-                badge = rowView.findViewById(R.id.model_row_selected_badge),
-                description = rowView.findViewById(R.id.model_row_description),
-                status = rowView.findViewById(R.id.model_row_status),
-                progress = rowView.findViewById(R.id.model_row_progress),
-                actionButton = rowView.findViewById(R.id.model_row_action_button)
-            )
-            row.name.text = model.displayName
-            row.description.text = model.description
-            aiModelRows[model.id] = row
-            modelList.addView(rowView)
-
-            row.root.setOnClickListener {
-                if (modelDownloadManager.currentState(model) == ModelState.READY) {
-                    selectOnDeviceModel(model.id)
-                }
-            }
-            row.actionButton.setOnClickListener {
-                when (modelDownloadManager.currentState(model)) {
-                    ModelState.NOT_DOWNLOADED, ModelState.FAILED -> {
-                        if (isAnyAiModelDownloading()) return@setOnClickListener
-                        if (modelDownloadManager.startDownload(model)) {
-                            refreshAllAiModelRows()
-                            startAiAssistantPolling()
-                        }
-                    }
-                    ModelState.READY -> {
-                        if (!isWebSourceSelected() && model.id == selectedModelId()) {
-                            modelDownloadManager.deleteModel(model)
-                            refreshAllAiModelRows()
-                            notifySettingsChanged()
-                        } else {
-                            selectOnDeviceModel(model.id)
-                        }
-                    }
-                    ModelState.DOWNLOADING, ModelState.VERIFYING -> {}
-                }
-            }
-        }
-
-        refreshAllAiModelRows()
-        if (isAnyAiModelDownloading()) {
-            startAiAssistantPolling()
-        }
-    }
-
-    private fun selectOnDeviceModel(modelId: String) {
-        prefs.edit {
-            putString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_ON_DEVICE)
-            putString(Constants.Prefs.AI_ASSISTANT_SELECTED_MODEL_ID, modelId)
-        }
-        refreshAllAiModelRows()
-        refreshAllWebProviderRows()
-        notifySettingsChanged()
-    }
-
-    private fun selectWebProvider(providerId: String) {
-        prefs.edit {
-            putString(Constants.Prefs.AI_ASSISTANT_SOURCE_TYPE, Constants.Prefs.AI_ASSISTANT_SOURCE_WEB)
-            putString(Constants.Prefs.AI_ASSISTANT_SELECTED_WEB_PROVIDER_ID, providerId)
-        }
-        refreshAllAiModelRows()
-        refreshAllWebProviderRows()
-        notifySettingsChanged()
-    }
-
-    private fun setupWebProviderList() {
-        val providerList = findViewById<LinearLayout>(R.id.ai_assistant_web_provider_list)
-        providerList.removeAllViews()
-        aiWebProviderRows.clear()
-
-        WebAiProvider.ALL.forEach { provider ->
-            val rowView = layoutInflater.inflate(R.layout.item_ai_model_row, providerList, false)
-            val row = ModelRowViews(
-                root = rowView,
-                name = rowView.findViewById(R.id.model_row_name),
-                badge = rowView.findViewById(R.id.model_row_selected_badge),
-                description = rowView.findViewById(R.id.model_row_description),
-                status = rowView.findViewById(R.id.model_row_status),
-                progress = rowView.findViewById(R.id.model_row_progress),
-                actionButton = rowView.findViewById(R.id.model_row_action_button)
-            )
-            row.name.text = provider.displayName
-            row.description.text = getString(R.string.ai_assistant_web_provider_description, provider.displayName)
-            row.progress.isVisible = false
-            row.status.isVisible = false
-            row.actionButton.text = getString(R.string.ai_assistant_use_web_provider)
-            aiWebProviderRows[provider.id] = row
-            providerList.addView(rowView)
-
-            val select = { selectWebProvider(provider.id) }
-            row.root.setOnClickListener { select() }
-            row.actionButton.setOnClickListener { select() }
-        }
-
-        refreshAllWebProviderRows()
-    }
-
-    private fun refreshAllWebProviderRows() {
-        val isWeb = isWebSourceSelected()
-        val selectedId = selectedWebProviderId()
-        WebAiProvider.ALL.forEach { provider ->
-            val row = aiWebProviderRows[provider.id] ?: return@forEach
-            val isSelected = isWeb && provider.id == selectedId
-            row.badge.isVisible = isSelected
-            row.actionButton.isVisible = !isSelected
-        }
-    }
-
-    private fun isAnyAiModelDownloading(): Boolean =
-        AssistantModel.ALL.any { modelDownloadManager.currentState(it) == ModelState.DOWNLOADING }
-
-    private fun refreshAllAiModelRows() {
-        val selectedId = selectedModelId()
-        val anyDownloading = isAnyAiModelDownloading()
-        val onDeviceActive = !isWebSourceSelected()
-
-        AssistantModel.ALL.forEach { model ->
-            val row = aiModelRows[model.id] ?: return@forEach
-            val isSelected = onDeviceActive && model.id == selectedId
-
-            when (val state = modelDownloadManager.currentState(model)) {
-                ModelState.NOT_DOWNLOADED, ModelState.FAILED -> {
-                    row.badge.isVisible = false
-                    row.status.text = if (state == ModelState.FAILED) {
-                        getString(R.string.ai_assistant_failed)
-                    } else {
-                        getString(R.string.ai_assistant_wifi_notice, formatSize(model.expectedSizeBytes))
-                    }
-                    row.progress.isVisible = false
-                    row.actionButton.isVisible = true
-                    row.actionButton.isEnabled = !anyDownloading
-                    row.actionButton.text = getString(R.string.ai_assistant_download, formatSize(model.expectedSizeBytes))
-                }
-                ModelState.DOWNLOADING -> {
-                    row.badge.isVisible = false
-                    val percent = ((modelDownloadManager.progress(model)?.fraction ?: 0f) * 100).toInt()
-                    row.status.text = getString(R.string.ai_assistant_downloading, percent)
-                    row.progress.isVisible = true
-                    row.progress.progress = percent
-                    row.actionButton.isVisible = true
-                    row.actionButton.isEnabled = false
-                    row.actionButton.text = getString(R.string.ai_assistant_downloading, percent)
-                }
-                ModelState.VERIFYING -> {
-                    row.badge.isVisible = false
-                    row.status.text = getString(R.string.ai_assistant_verifying)
-                    row.progress.isVisible = true
-                    row.progress.progress = 100
-                    row.actionButton.isVisible = true
-                    row.actionButton.isEnabled = false
-                    row.actionButton.text = getString(R.string.ai_assistant_verifying)
-                }
-                ModelState.READY -> {
-                    row.badge.isVisible = isSelected
-                    row.status.text = getString(R.string.ai_assistant_ready)
-                    row.progress.isVisible = false
-                    row.actionButton.isVisible = true
-                    row.actionButton.isEnabled = true
-                    row.actionButton.text = if (isSelected) {
-                        getString(R.string.ai_assistant_delete_model)
-                    } else {
-                        getString(R.string.ai_assistant_use_model)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun startAiAssistantPolling() {
-        if (aiAssistantPolling) return
-        aiAssistantPolling = true
-        val poll = object : Runnable {
-            override fun run() {
-                val stillActive = AssistantModel.ALL
-                    .map { modelDownloadManager.pollAndReconcile(it) }
-                    .any { it == ModelState.DOWNLOADING || it == ModelState.VERIFYING }
-                refreshAllAiModelRows()
-                if (stillActive) {
-                    aiAssistantPollHandler.postDelayed(this, 1000)
-                } else {
-                    aiAssistantPolling = false
-                }
-            }
-        }
-        aiAssistantPollHandler.post(poll)
-    }
-
-    private fun setupTypographySettings() {
-        val seek = findViewById<SeekBar>(R.id.typography_size_seekbar)
-        val valT = findViewById<TextView>(R.id.typography_size_value_text)
-        val styS = findViewById<Spinner>(R.id.typography_style_spinner)
-        val intS = findViewById<Spinner>(R.id.typography_intensity_spinner)
-        val colS = findViewById<Spinner>(R.id.typography_color_spinner)
-
-        val scale = prefs.getInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, 100).coerceIn(80, 140)
-
-        val baseStyV = mutableListOf("default", "serif", "monospace", "condensed", "rounded", "casual", "cursive")
-        val baseStyL = mutableListOf("Modern Sans", "Classic Serif", "Dev Mono", "Clean Condensed", "Soft Rounded", "Casual Hand", "Creative Script")
-
-        DownloadableFontManager.getFontOptions().forEach { font ->
-            if (DownloadableFontManager.isDownloaded(this, font.styleKey)) {
-                baseStyV.add(font.styleKey)
-                baseStyL.add(font.displayName)
-            }
-        }
-
-        seek.max = 60
-        seek.progress = scale - 80
-        valT.text = "$scale%"
-        seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) {
-                valT.text = "${p + 80}%"
-                if (f) {
-                    prefs.edit { putInt(Constants.Prefs.TYPOGRAPHY_SCALE_PERCENT, p + 80) }
-                    TypographyManager.applyToActivity(this@SettingsActivity)
-                    notifySettingsChanged()
-                }
-            } override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        })
-
-        styS.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, baseStyL.toTypedArray()).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-
-        val currentStyle = prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") ?: "default"
-        val selectedIndex = baseStyV.indexOf(currentStyle)
-        if (selectedIndex >= 0) {
-            styS.setSelection(selectedIndex)
-        } else {
-
-            prefs.edit { putString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") }
-            styS.setSelection(0)
-            TypographyManager.applyToActivity(this)
-            notifySettingsChanged()
-        }
-
-        styS.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p: AdapterView<*>, v: View?, pos: Int, id: Long) {
-                prefs.edit { putString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, baseStyV[pos]) }
-                TypographyManager.applyToActivity(this@SettingsActivity)
-                notifySettingsChanged()
-            } override fun onNothingSelected(p: AdapterView<*>) {}
-        }
-
-        val intV = arrayOf("light", "regular", "bold", "extra_bold")
-        val intL = arrayOf("Light weight", "Regular weight", "Bold weight", "Heavy weight")
-        intS.adapter =  ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, intL).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        intS.setSelection(intV.indexOf(prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, "regular")).coerceAtLeast(0))
-        intS.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p: AdapterView<*>, v: View?, pos: Int, id: Long) {
-                prefs.edit { putString(Constants.Prefs.TYPOGRAPHY_FONT_INTENSITY, intV[pos]) }
-                TypographyManager.applyToActivity(this@SettingsActivity)
-                notifySettingsChanged()
-            } override fun onNothingSelected(p: AdapterView<*>) {}
-        }
-
-        val colL = arrayOf(
-            "Pure White",
-            "Electric Purple",
-            "Neon Pink",
-            "Solar Gold",
-            "Emerald Mist",
-            "Arctic Frost",
-            "Midnight Teal",
-            "Cyan Accent",
-            "Nord Mint",
-            "Lavender",
-            "Orange Glow",
-
-            "Sky Blue",
-            "Soft Coral",
-            "Lime Glow",
-            "Ice Blue",
-            "Rose Pink",
-            "Bright Amber",
-            "Mint Green",
-            "Violet Glow",
-            "Aqua Light",
-            "Peach Light"
-        )
-
-        val colV = arrayOf(
-            Constants.TYPOGRAPHY_FONT_COLOR_DEFAULT,
-            "#FF7C3AED",
-            "#FFEC4899",
-            "#FFF59E0B",
-            "#FF10B981",
-            "#FF93C5FD",
-            "#FF0F766E",
-            "#FF03DAC5",
-            "#FF8FBCBB",
-            "#FFB48EAD",
-            "#FFD08770",
-
-            "#FF60A5FA",
-            "#FFF87171",
-            "#FFA3E635",
-            "#FFBAE6FD",
-            "#FFF472B6",
-            "#FFFBBF24",
-            "#FF6EE7B7",
-            "#FFA78BFA",
-            "#FF67E8F9",
-            "#FFFDA4AF"
-        )
-        colS.adapter = ThemedArrayAdapter(this, android.R.layout.simple_spinner_item, colL, colV).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-        colS.setSelection(colV.indexOf(prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_COLOR, Constants.TYPOGRAPHY_FONT_COLOR_DEFAULT)).coerceAtLeast(0))
-        colS.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p: AdapterView<*>, v: View?, pos: Int, id: Long) {
-                prefs.edit { putString(Constants.Prefs.TYPOGRAPHY_FONT_COLOR, colV[pos]) }
-                TypographyManager.applyToActivity(this@SettingsActivity)
-                notifySettingsChanged()
-            } override fun onNothingSelected(p: AdapterView<*>) {}
-        }
-        setupDownloadableFontsSection()
-    }
-
-    private fun setupDownloadableFontsSection() {
-        val h = findViewById<View>(R.id.downloadable_fonts_header)
-        val a = findViewById<ImageView>(R.id.downloadable_fonts_arrow)
-        val c = findViewById<LinearLayout>(R.id.downloadable_fonts_container)
-        h.setOnClickListener {
-            val vis = c.isVisible
-            c.visibility = if (vis) View.GONE else View.VISIBLE
-            a.animate().rotation(if (vis) 0f else 90f).start()
-            if (!vis) updateDownloadableFontsList(c)
-        }
-    }
-
-    private fun updateDownloadableFontsList(cont: LinearLayout) {
-        cont.removeAllViews()
-        DownloadableFontManager.getFontOptions().forEach { opt ->
-            val view = layoutInflater.inflate(R.layout.item_downloadable_font_option, cont, false)
-            val lbl = view.findViewById<TextView>(R.id.downloadable_font_label)
-            val btn = view.findViewById<Button>(R.id.downloadable_font_button)
-            lbl.text = opt.displayName
-            val inst = DownloadableFontManager.isDownloaded(this, opt.styleKey)
-            btn.text = if (inst) "Remove" else "Install"
-            btn.setTextColor(if (inst) Color.RED else Color.GREEN)
-            btn.setOnClickListener {
-                btn.isEnabled = false
-                if (inst) {
-                    DownloadableFontManager.uninstallFont(this, opt.styleKey)
-                    if (prefs.getString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") == opt.styleKey) {
-                        prefs.edit { putString(Constants.Prefs.TYPOGRAPHY_FONT_STYLE, "default") }
-                    }
-
-                    setupTypographySettings()
-                    updateDownloadableFontsList(cont)
-                } else {
-                    btn.text = getString(R.string.lbl_fetching)
-                    DownloadableFontManager.requestFont(this, opt.styleKey) {
-                        handler.post {
-
-                            setupTypographySettings()
-                            updateDownloadableFontsList(cont)
-                        }
-                    }
-                }
-            }
-            cont.addView(view)
-        }
-    }
-
-    private fun setupIconPackSettings() {
-        val header = findViewById<LinearLayout>(R.id.icon_pack_header)
-        val content = findViewById<LinearLayout>(R.id.icon_pack_content)
-        val arrow = findViewById<TextView>(R.id.icon_pack_arrow)
-        val toggleSwitch = findViewById<SwitchCompat>(R.id.icon_pack_toggle_switch)
-        val listContainer = findViewById<LinearLayout>(R.id.icon_pack_list_container)
-        val emptyState = findViewById<TextView>(R.id.icon_pack_empty_state)
-        val browseButton = findViewById<Button>(R.id.browse_icon_packs_button)
-
-        setupSectionToggle(header, content, arrow)
-
-        val iconPacks = IconPackManager.getInstalledIconPacks(this)
-        val selectedPack = IconPackManager.getSelectedIconPack(prefs)
-        val isEnabled = IconPackManager.isIconPackEnabled(prefs)
-
-        toggleSwitch.isChecked = isEnabled
-
-        fun applySwitchColors(isEnabled: Boolean) {
-            val color = if (isEnabled) ThemeManager.color(this@SettingsActivity, R.attr.appAccent) else ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary)
-            toggleSwitch.thumbTintList = ColorStateList.valueOf(color)
-            toggleSwitch.trackTintList = ColorStateList.valueOf(color)
-        }
-
-        applySwitchColors(isEnabled)
-        listContainer.visibility = if (isEnabled && iconPacks.isNotEmpty()) View.VISIBLE else View.GONE
-        emptyState.visibility = if (isEnabled && iconPacks.isEmpty()) View.VISIBLE else View.GONE
-
-        toggleSwitch.setOnCheckedChangeListener { _, isChecked ->
-            applySwitchColors(isChecked)
-            if (isChecked) {
-                IconPackManager.setIconPack(prefs, iconPacks.firstOrNull()?.packageName)
-            } else {
-                IconPackManager.clearIconPack(prefs)
-            }
-            listContainer.visibility = if (isChecked && iconPacks.isNotEmpty()) View.VISIBLE else View.GONE
-            emptyState.visibility = if (isChecked && iconPacks.isEmpty()) View.VISIBLE else View.GONE
-            notifySettingsChanged()
-        }
-
-        if (iconPacks.isNotEmpty()) {
-            listContainer.removeAllViews()
-            iconPacks.forEach { pack ->
-                val view = layoutInflater.inflate(R.layout.item_icon_pack, listContainer, false)
-                val icon = view.findViewById<ImageView>(R.id.icon_pack_icon)
-                val name = view.findViewById<TextView>(R.id.icon_pack_name)
-                val status = view.findViewById<TextView>(R.id.icon_pack_status)
-                val radio = view.findViewById<RadioButton>(R.id.icon_pack_radio)
-
-                icon.setImageDrawable(pack.icon)
-                name.text = pack.name
-                status.text = pack.packageName
-                radio.isChecked = selectedPack == pack.packageName
-
-                view.setOnClickListener {
-                    IconPackManager.setIconPack(prefs, pack.packageName)
-                    toggleSwitch.isChecked = true
-                    listContainer.forEach { child ->
-                        child.findViewById<RadioButton>(R.id.icon_pack_radio)?.isChecked = false
-                    }
-                    radio.isChecked = true
-                    notifySettingsChanged()
-                    Toast.makeText(this, this.getString(R.string.toast_icon_pack_applied_icons_will_update_when_you_ret, pack.name), Toast.LENGTH_LONG).show()
-                }
-
-                listContainer.addView(view)
-            }
-        }
-
-        browseButton.setOnClickListener {
-            IconPackManager.browseIconPacks(this)
-        }
-    }
-
-    private fun notifySettingsChanged() {
+    internal fun notifySettingsChanged() {
         sendBroadcast(Intent("com.guruswarupa.launch.SETTINGS_UPDATED").apply { setPackage(packageName) })
     }
 
-    private fun hasAccessibilityServicePermission(): Boolean {
+    internal fun hasAccessibilityServicePermission(): Boolean {
         val s = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
         return s.contains(ComponentName(this, ScreenLockAccessibilityService::class.java).flattenToString())
     }
 
-    private fun showPermissionDialog(t: String, m: String, onP: () -> Unit) {
+    internal fun showPermissionDialog(t: String, m: String, onP: () -> Unit) {
         AlertDialog.Builder(this, R.style.CustomDialogTheme).setTitle(t).setMessage(m).setPositiveButton(getString(R.string.settings)) { _, _ -> onP() }.setNegativeButton(getString(R.string.cancel_button), null).show()
     }
 
-    private fun showWalkDetectionAppPicker(onAppSelected: () -> Unit) {
-        val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
-        val apps = packageManager.queryIntentActivities(launcherIntent, 0)
-            .mapNotNull { resolveInfo ->
-                val packageName = resolveInfo.activityInfo.packageName
-                if (packageManager.getLaunchIntentForPackage(packageName) == null) return@mapNotNull null
-                val label = resolveInfo.loadLabel(packageManager).toString().takeIf { it.isNotBlank() }
-                    ?: packageName
-                packageName to label
-            }
-            .distinctBy { it.first }
-            .sortedBy { it.second.lowercase() }
+    internal fun chooseWallpaper() { wallpaperLauncher.launch(Intent(Intent.ACTION_SET_WALLPAPER)) }
 
-        if (apps.isEmpty()) {
-            Toast.makeText(this, this.getString(R.string.toast_no_launchable_apps_found), Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(getString(R.string.choose_app))
-            .setItems(apps.map { it.second }.toTypedArray()) { _, which ->
-                prefs.edit { putString(Constants.Prefs.WALK_DETECT_CUSTOM_APP_PACKAGE, apps[which].first) }
-                onAppSelected()
-            }
-            .setNegativeButton(getString(R.string.cancel_button), null)
-            .show()
-    }
-
-    private fun chooseWallpaper() { wallpaperLauncher.launch(Intent(Intent.ACTION_SET_WALLPAPER)) }
-
-    private fun applyBackgroundTranslucency() {
+    internal fun applyBackgroundTranslucency() {
         val translucency = prefs.getInt(Constants.Prefs.BACKGROUND_TRANSLUCENCY, 40)
         val alpha = (translucency * 255 / 100).coerceIn(0, 255)
         val scrimBase = ThemeManager.color(this, R.attr.appScrim)
@@ -2523,7 +1350,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         findViewById<View>(R.id.settings_overlay)?.setBackgroundColor(color)
     }
 
-    private fun applyContentInsets() {
+    internal fun applyContentInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             findViewById<ScrollView>(R.id.settings_scroll_view).setPadding(0, bars.top, 0, bars.bottom)
@@ -2531,7 +1358,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun applyOrientationPreference() {
+    internal fun applyOrientationPreference() {
         requestedOrientation = if (prefs.getBoolean(Constants.Prefs.LANDSCAPE_ORIENTATION_ENABLED, false)) {
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         } else {
@@ -2539,7 +1366,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
-    private fun restartLauncher() {
+    internal fun restartLauncher() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
             .setTitle(getString(R.string.restart_launcher))
             .setMessage(getString(R.string.dlg_are_you_sure_you_want_to_restart_the_launcher))
@@ -2555,7 +1382,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             .show()
     }
 
-    private fun clearCache() {
+    internal fun clearCache() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
             .setTitle(getString(R.string.clear_temporary_cache))
             .setMessage(getString(R.string.dlg_this_will_remove_temporary_app_data_and_cached_i))
@@ -2568,7 +1395,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             .show()
     }
 
-    private fun clearData() {
+    internal fun clearData() {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
             .setTitle(getString(R.string.factory_reset_launcher))
             .setMessage(getString(R.string.dlg_warning_this_will_permanently_delete_all_your_se))
@@ -2579,119 +1406,11 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
             .show()
     }
 
-    private fun sendFeedback() {
+    internal fun sendFeedback() {
         try { startActivity(Intent.createChooser(Intent(Intent.ACTION_SENDTO).apply { data = "mailto:".toUri(); putExtra(Intent.EXTRA_EMAIL, arrayOf("msgswarupa@gmail.com")); putExtra(Intent.EXTRA_SUBJECT, "Launch Feedback") }, "Feedback")) } catch (_: Exception) {}
     }
 
-    private fun exportSettings() { exportLauncher.launch(Intent(Intent.ACTION_CREATE_DOCUMENT).apply { addCategory(Intent.CATEGORY_OPENABLE); type = "application/zip"; putExtra(Intent.EXTRA_TITLE, "launch_backup.zip") }) }
-    private fun importSettings() { importLauncher.launch(Intent(Intent.ACTION_OPEN_DOCUMENT).apply { addCategory(Intent.CATEGORY_OPENABLE); type = "application/zip" }) }
-
-    private fun exportSettingsToFile(uri: Uri) {
-        val density = resources.displayMetrics.density
-        val pad = (20 * density).toInt()
-        val container = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(pad, (8 * density).toInt(), pad, 0)
-        }
-        val passInput = EditText(this).apply {
-            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-            hint = getString(R.string.backup_passphrase_optional)
-            DialogStyler.styleInput(this@SettingsActivity, this)
-        }
-        val confirmInput = EditText(this).apply {
-            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-            hint = getString(R.string.backup_passphrase_confirm)
-            DialogStyler.styleInput(this@SettingsActivity, this)
-        }
-        val vaultAvailable = com.guruswarupa.launch.managers.EncryptedFolderManager(this).isVaultSetup()
-        val vaultCheck = CheckBox(this).apply {
-            text = getString(R.string.backup_include_vault)
-            isChecked = vaultAvailable
-            visibility = if (vaultAvailable) View.VISIBLE else View.GONE
-            setTextColor(com.guruswarupa.launch.ui.theme.ThemeManager.color(this@SettingsActivity, R.attr.appTextPrimary))
-        }
-        container.addView(passInput)
-        container.addView(confirmInput)
-        container.addView(vaultCheck)
-
-        val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(R.string.backup_options_title)
-            .setMessage(R.string.backup_options_message)
-            .setView(container)
-            .setPositiveButton(R.string.save_button, null)
-            .setNegativeButton(R.string.cancel_button, null)
-            .create()
-        dialog.show()
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            val pass = passInput.text.toString()
-            if (pass != confirmInput.text.toString()) {
-                Toast.makeText(this, getString(R.string.backup_passphrase_mismatch), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (pass.isNotEmpty() && pass.length < 6) {
-                Toast.makeText(this, getString(R.string.backup_passphrase_too_short), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            dialog.dismiss()
-            Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
-            val includeVault = vaultAvailable && vaultCheck.isChecked
-            Thread {
-                val ok = SettingsBackupHelper.exportToUri(this, prefs, uri, pass.ifEmpty { null }, includeVault)
-                runOnUiThread {
-                    Toast.makeText(this, getString(if (ok) R.string.toast_saved else R.string.toast_failed), Toast.LENGTH_SHORT).show()
-                }
-            }.start()
-        }
-    }
-
-    private fun importSettingsFromFile(uri: Uri) {
-        Thread {
-            val encrypted = com.guruswarupa.launch.core.BackupCrypto.isEncrypted(this, uri)
-            runOnUiThread {
-                if (encrypted) promptPassphraseAndImport(uri) else runImport(uri, null)
-            }
-        }.start()
-    }
-
-    private fun promptPassphraseAndImport(uri: Uri) {
-        val density = resources.displayMetrics.density
-        val input = EditText(this).apply {
-            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-            hint = getString(R.string.backup_passphrase_enter)
-            DialogStyler.styleInput(this@SettingsActivity, this)
-        }
-        val dialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(R.string.backup_encrypted_title)
-            .setView(android.widget.FrameLayout(this).apply {
-                val pad = (20 * density).toInt()
-                setPadding(pad, (8 * density).toInt(), pad, 0)
-                addView(input)
-            })
-            .setPositiveButton(R.string.import_all_data) { _, _ -> runImport(uri, input.text.toString()) }
-            .setNegativeButton(R.string.cancel_button, null)
-            .create()
-        dialog.show()
-    }
-
-    private fun runImport(uri: Uri, passphrase: String?) {
-        Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
-        Thread {
-            val result = SettingsBackupHelper.importFromUri(this, prefs, uri, passphrase)
-            runOnUiThread {
-                when (result) {
-                    SettingsBackupHelper.ImportResult.SUCCESS -> restartLauncher()
-                    SettingsBackupHelper.ImportResult.WRONG_PASSPHRASE -> {
-                        Toast.makeText(this, getString(R.string.backup_wrong_passphrase), Toast.LENGTH_LONG).show()
-                        if (passphrase != null) promptPassphraseAndImport(uri)
-                    }
-                    SettingsBackupHelper.ImportResult.FAILED ->
-                        Toast.makeText(this, getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }.start()
-    }
-
-    private fun showUnsavedChangesDialog(onConfirm: () -> Unit) {
+    internal fun showUnsavedChangesDialog(onConfirm: () -> Unit) {
         AlertDialog.Builder(this, R.style.CustomDialogTheme)
             .setTitle(getString(R.string.dlg_unsaved_changes))
             .setMessage(getString(R.string.dlg_you_have_selected_a_new_theme_but_haven_t_applie))
@@ -2717,7 +1436,7 @@ class ThemedArrayAdapter(
     context: Context,
     resource: Int,
     objects: Array<String>,
-    private val itemColors: Array<String>? = null
+    internal val itemColors: Array<String>? = null
 ) : ArrayAdapter<String>(context, resource, objects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -2732,7 +1451,7 @@ class ThemedArrayAdapter(
         return view
     }
 
-    private fun applyThemeColor(view: View, position: Int) {
+    internal fun applyThemeColor(view: View, position: Int) {
         if (view is TextView) {
             val color = if (itemColors != null && position < itemColors.size) {
                 val colorStr = itemColors[position]

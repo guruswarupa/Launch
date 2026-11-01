@@ -66,41 +66,41 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         const val DEFAULT_SHORTCUTS = "wifi,bluetooth,airplane,torch,data,rotation,sound,dnd,location,qr_scan,camera,screenshot,record,lock,power,hotspot,screen_timeout"
     }
 
-    private var windowManager: WindowManager? = null
-    private var floatingView: View? = null
-    private var edgeHandleView: View? = null
-    private var controlCenterTriggerView: View? = null
-    private var edgePanelView: View? = null
-    private var shortcutMenu: View? = null
-    private var isMenuVisible = false
-    private var isEdgePanelVisible = false
-    private var isScreenOn = true
-    private var keyguardManager: KeyguardManager? = null
+    internal var windowManager: WindowManager? = null
+    internal var floatingView: View? = null
+    internal var edgeHandleView: View? = null
+    internal var controlCenterTriggerView: View? = null
+    internal var edgePanelView: View? = null
+    internal var shortcutMenu: View? = null
+    internal var isMenuVisible = false
+    internal var isEdgePanelVisible = false
+    internal var isScreenOn = true
+    internal var keyguardManager: KeyguardManager? = null
 
-    private val wifiManager by lazy { getSystemService(Context.WIFI_SERVICE) as WifiManager }
-    private val bluetoothAdapter by lazy { (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter }
-    private val audioManager by lazy { getSystemService(Context.AUDIO_SERVICE) as AudioManager }
-    private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    private val cameraManager by lazy { getSystemService(Context.CAMERA_SERVICE) as CameraManager }
-    private val usageStatsManager by lazy { getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager }
-    private val appUsageStatsManager by lazy { AppUsageStatsManager(this) }
+    internal val wifiManager by lazy { getSystemService(Context.WIFI_SERVICE) as WifiManager }
+    internal val bluetoothAdapter by lazy { (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter }
+    internal val audioManager by lazy { getSystemService(Context.AUDIO_SERVICE) as AudioManager }
+    internal val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    internal val cameraManager by lazy { getSystemService(Context.CAMERA_SERVICE) as CameraManager }
+    internal val usageStatsManager by lazy { getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager }
+    internal val appUsageStatsManager by lazy { AppUsageStatsManager(this) }
 
-    private var isTorchOn = false
-    private lateinit var focusModeManager: FocusModeManager
-    private lateinit var sharedPreferences: SharedPreferences
+    internal var isTorchOn = false
+    internal lateinit var focusModeManager: FocusModeManager
+    internal lateinit var sharedPreferences: SharedPreferences
 
-    private var isFocusModeReceiverRegistered = false
-    private var isSettingsReceiverRegistered = false
-    private var isScreenReceiverRegistered = false
+    internal var isFocusModeReceiverRegistered = false
+    internal var isSettingsReceiverRegistered = false
+    internal var isScreenReceiverRegistered = false
 
-    private val focusModeReceiver = object : BroadcastReceiver() {
+    internal val focusModeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "com.guruswarupa.launch.FOCUS_MODE_CHANGED") {
 
             }
         }
     }
-    private val torchCallback = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    internal val torchCallback = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         object : CameraManager.TorchCallback() {
             override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
                 super.onTorchModeChanged(cameraId, enabled)
@@ -108,7 +108,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             }
         }
     } else null
-    private val settingsReceiver = object : BroadcastReceiver() {
+    internal val settingsReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "com.guruswarupa.launch.SETTINGS_UPDATED") {
                 refreshOverlayState()
@@ -119,9 +119,9 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         }
     }
 
-    private var screenReceiver: BroadcastReceiver? = null
+    internal var screenReceiver: BroadcastReceiver? = null
 
-    private fun registerScreenReceiver() {
+    internal fun registerScreenReceiver() {
         screenReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
@@ -157,10 +157,10 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         isScreenReceiverRegistered = true
     }
 
-    private var unlockMonitorHandler: android.os.Handler? = null
-    private var unlockMonitorRunnable: Runnable? = null
+    internal var unlockMonitorHandler: android.os.Handler? = null
+    internal var unlockMonitorRunnable: Runnable? = null
 
-    private fun startUnlockMonitor() {
+    internal fun startUnlockMonitor() {
         stopUnlockMonitor()
 
         val handler = android.os.Handler(android.os.Looper.getMainLooper())
@@ -181,13 +181,13 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         handler.post(runnable)
     }
 
-    private fun stopUnlockMonitor() {
+    internal fun stopUnlockMonitor() {
         unlockMonitorHandler?.removeCallbacksAndMessages(null)
         unlockMonitorHandler = null
         unlockMonitorRunnable = null
     }
 
-    private fun showEdgeHandleAfterUnlock() {
+    internal fun showEdgeHandleAfterUnlock() {
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
             val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
             val isEnabled = prefs.getBoolean(Constants.Prefs.EDGE_PANEL_ENABLED, false)
@@ -197,7 +197,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         }, 500)
     }
 
-    private fun showControlCenterTriggerAfterUnlock() {
+    internal fun showControlCenterTriggerAfterUnlock() {
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
             val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
             val isEnabled = prefs.getBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_ENABLED, false)
@@ -207,7 +207,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         }, 500)
     }
 
-    private data class EdgePanelAppEntry(
+    internal data class EdgePanelAppEntry(
         val packageName: String,
         val label: String,
         val icon: Drawable
@@ -276,7 +276,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun refreshOverlayState() {
+    internal fun refreshOverlayState() {
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
         if (prefs.getBoolean(Constants.Prefs.ACCESSIBILITY_SHORTCUT_ENABLED, false)) {
             showFloatingButton()
@@ -300,7 +300,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun showFloatingButton() {
+    internal fun showFloatingButton() {
         if (floatingView != null) return
 
         val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
@@ -378,7 +378,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun snapToEdge(params: WindowManager.LayoutParams) {
+    internal fun snapToEdge(params: WindowManager.LayoutParams) {
         val displayMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = windowManager?.currentWindowMetrics
@@ -407,7 +407,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         } catch (_: Exception) {}
     }
 
-    private fun removeFloatingButton() {
+    internal fun removeFloatingButton() {
         floatingView?.let {
             try {
                 windowManager?.removeView(it)
@@ -417,488 +417,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         hideMenu()
     }
 
-    private fun showEdgeHandle() {
-
-        if (!isScreenOn || keyguardManager?.isKeyguardLocked == true) {
-            return
-        }
-
-        if (edgeHandleView != null) {
-            edgeHandleView?.let { view ->
-                (view.layoutParams as? WindowManager.LayoutParams)?.let { params ->
-                    applySavedEdgeHandlePosition(params)
-                    updateEdgeHandlePosition(params)
-                    applyHandleAppearance()
-                }
-            }
-            return
-        }
-
-        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
-        edgeHandleView = LayoutInflater.from(themedContext).inflate(R.layout.layout_edge_panel_handle, null)
-
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-            PixelFormat.TRANSLUCENT
-        )
-        applySavedEdgeHandlePosition(params)
-
-        edgeHandleView?.setOnTouchListener(object : View.OnTouchListener {
-            private var initialTouchX = 0f
-            private var initialTouchY = 0f
-            private var initialY = 0
-            private var moved = false
-            private var openedBySwipe = false
-            private val touchSlop = ViewConfiguration.get(this@ScreenLockAccessibilityService).scaledTouchSlop
-
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        initialTouchX = event.rawX
-                        initialTouchY = event.rawY
-                        initialY = params.y
-                        moved = false
-                        openedBySwipe = false
-                        return true
-                    }
-
-                    MotionEvent.ACTION_CANCEL -> {
-                        persistEdgeHandlePosition(params)
-                        return true
-                    }
-
-                    MotionEvent.ACTION_MOVE -> {
-                        val isLocked = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-                            .getBoolean(Constants.Prefs.EDGE_PANEL_HANDLE_LOCKED, false)
-                        val dx = event.rawX - initialTouchX
-                        val dy = (event.rawY - initialTouchY).toInt()
-
-                        if (abs(dx) > touchSlop / 4 || abs(dy) > touchSlop / 4) {
-                            moved = true
-                        }
-
-                        if (!isLocked && moved && abs(dy) > abs(dx) * 3.0) {
-                            params.y = clampEdgeHandleY(initialY + dy, v)
-                            updateEdgeHandlePosition(params)
-                            if (isEdgePanelVisible) {
-                                positionEdgePanelSheet()
-                            }
-                            return true
-                        }
-
-                        if (!openedBySwipe && isSwipeToOpen(dx)) {
-                            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                            if (!isLocked) {
-                                params.gravity = if (dx > 0) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
-                                updateEdgeHandlePosition(params)
-                            }
-                            persistEdgeHandlePosition(params)
-                            showEdgePanel()
-                            openedBySwipe = true
-                        }
-                        return true
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        params.y = clampEdgeHandleY(params.y, v)
-                        val dx = event.rawX - initialTouchX
-                        val isLocked = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-                            .getBoolean(Constants.Prefs.EDGE_PANEL_HANDLE_LOCKED, false)
-                        if (!isLocked && moved && abs(dx) > 30.dpToPx()) {
-                            params.gravity = if (dx > 0) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
-                        }
-                        updateEdgeHandlePosition(params)
-                        persistEdgeHandlePosition(params)
-                        if (!openedBySwipe && !moved) {
-                            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                            toggleEdgePanel()
-                        }
-                        return true
-                    }
-                }
-                return false
-            }
-        })
-
-        edgeHandleView?.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updateSystemGestureExclusion()
-        }
-
-        try {
-            windowManager?.addView(edgeHandleView, params)
-            applyHandleAppearance()
-        } catch (_: Exception) {}
-    }
-
-    private fun updateSystemGestureExclusion() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            edgeHandleView?.let { view ->
-                val rects = listOf(Rect(0, 0, view.width, view.height))
-                view.systemGestureExclusionRects = rects
-            }
-        }
-    }
-
-    private fun toggleEdgePanel() {
-        if (isEdgePanelVisible) {
-            hideEdgePanel()
-        } else {
-            showEdgePanel()
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility", "WrongConstant")
-    private fun showEdgePanel() {
-        if (edgePanelView != null) {
-            return
-        }
-
-        try {
-            val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
-            val overlay = LayoutInflater.from(themedContext).inflate(R.layout.layout_edge_panel_overlay, null, false)
-            edgePanelView = overlay
-
-            val scrim = overlay.findViewById<View>(R.id.edge_panel_scrim)
-            scrim?.setOnClickListener {
-                hideEdgePanel()
-            }
-
-            scrim?.alpha = 0f
-
-            val customizeButton = overlay.findViewById<ImageView>(R.id.edge_panel_customize_button)
-            customizeButton?.setOnClickListener {
-                try {
-                    startActivity(Intent(this, EdgePanelConfigActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    })
-                    hideEdgePanel()
-                } catch (e: Exception) {
-                }
-            }
-
-            val params = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
-                else
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-                PixelFormat.TRANSLUCENT
-            )
-
-            windowManager?.addView(overlay, params)
-            isEdgePanelVisible = true
-
-            populateEdgePanel()
-            positionEdgePanelSheet()
-
-        } catch (e: Exception) {
-            edgePanelView = null
-            isEdgePanelVisible = false
-        }
-    }
-
-    private fun hideEdgePanel() {
-        val overlay = edgePanelView ?: return
-
-        try {
-
-            val sheet = overlay.findViewById<View>(R.id.edge_panel_sheet)
-
-            if (sheet != null) {
-                val slideOut = if (isEdgeHandleOnLeft())
-                    -sheet.width.toFloat() - 16.dpToPx()
-                else
-                    sheet.width.toFloat() + 16.dpToPx()
-
-                sheet.animate()
-                    .translationX(slideOut)
-                    .alpha(0f)
-                    .setDuration(100)
-                    .withEndAction {
-                        cleanupEdgePanel(overlay)
-                    }
-                    .start()
-            } else {
-                cleanupEdgePanel(overlay)
-            }
-        } catch (e: Exception) {
-            cleanupEdgePanel(overlay)
-        }
-    }
-
-    private fun cleanupEdgePanel(overlay: View) {
-        try {
-            windowManager?.removeView(overlay)
-        } catch (e: Exception) {
-        } finally {
-            if (edgePanelView === overlay) {
-                edgePanelView = null
-                isEdgePanelVisible = false
-            }
-        }
-    }
-
-    private fun removeEdgePanel() {
-        edgeHandleView?.let {
-            try {
-                windowManager?.removeView(it)
-            } catch (_: Exception) {}
-            edgeHandleView = null
-        }
-
-        edgePanelView?.let {
-            try {
-                windowManager?.removeView(it)
-            } catch (_: Exception) {}
-            edgePanelView = null
-        }
-        isEdgePanelVisible = false
-    }
-
-    private fun showControlCenterTrigger() {
-
-        if (!isScreenOn || keyguardManager?.isKeyguardLocked == true) {
-            return
-        }
-
-        if (controlCenterTriggerView != null) {
-            controlCenterTriggerView?.let { view ->
-                (view.layoutParams as? WindowManager.LayoutParams)?.let { params ->
-                    applySavedControlCenterTriggerPosition(params)
-                    updateControlCenterTriggerPosition(params)
-                    applyControlCenterTriggerAppearance()
-                }
-            }
-            return
-        }
-
-        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
-        controlCenterTriggerView = LayoutInflater.from(themedContext).inflate(R.layout.layout_control_center_trigger, null)
-
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-            PixelFormat.TRANSLUCENT
-        )
-        applySavedControlCenterTriggerPosition(params)
-
-        controlCenterTriggerView?.setOnTouchListener(object : View.OnTouchListener {
-            private var initialTouchX = 0f
-            private var initialTouchY = 0f
-            private var initialY = 0
-            private var moved = false
-            private val touchSlop = ViewConfiguration.get(this@ScreenLockAccessibilityService).scaledTouchSlop
-
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        initialTouchX = event.rawX
-                        initialTouchY = event.rawY
-                        initialY = params.y
-                        moved = false
-                        return true
-                    }
-
-                    MotionEvent.ACTION_CANCEL -> {
-                        persistControlCenterTriggerPosition(params)
-                        return true
-                    }
-
-                    MotionEvent.ACTION_MOVE -> {
-                        val isLocked = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-                            .getBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_LOCKED, false)
-                        val dx = event.rawX - initialTouchX
-                        val dy = (event.rawY - initialTouchY).toInt()
-
-                        if (abs(dx) > touchSlop / 4 || abs(dy) > touchSlop / 4) {
-                            moved = true
-                        }
-
-                        if (!isLocked && moved && abs(dy) > abs(dx) * 3.0) {
-                            params.y = clampControlCenterTriggerY(initialY + dy, v)
-                            updateControlCenterTriggerPosition(params)
-                            return true
-                        }
-
-                        if (moved && abs(dx) > 30.dpToPx()) {
-                            params.gravity = if (dx > 0) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
-                            updateControlCenterTriggerPosition(params)
-                        }
-                        return true
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        params.y = clampControlCenterTriggerY(params.y, v)
-                        val dx = event.rawX - initialTouchX
-                        val isLocked = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-                            .getBoolean(Constants.Prefs.CONTROL_CENTER_TRIGGER_LOCKED, false)
-                        if (!isLocked && moved && abs(dx) > 30.dpToPx()) {
-                            params.gravity = if (dx > 0) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
-                        }
-                        updateControlCenterTriggerPosition(params)
-                        persistControlCenterTriggerPosition(params)
-
-                        if (moved && isSwipeToOpenControlCenter(dx)) {
-                            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                            toggleControlCenter()
-                        } else if (!moved) {
-
-                            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                            toggleControlCenter()
-                        }
-                        return true
-                    }
-                }
-                return false
-            }
-        })
-
-        controlCenterTriggerView?.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            updateControlCenterTriggerSystemGestureExclusion()
-        }
-
-        try {
-            windowManager?.addView(controlCenterTriggerView, params)
-            applyControlCenterTriggerAppearance()
-        } catch (_: Exception) {}
-    }
-
-    private fun removeControlCenterTrigger() {
-        controlCenterTriggerView?.let {
-            try {
-                windowManager?.removeView(it)
-            } catch (_: Exception) {}
-            controlCenterTriggerView = null
-        }
-    }
-
-    private fun populateEdgePanel() {
-        val overlay = edgePanelView ?: run {
-            return
-        }
-
-        try {
-            val recentContainer = overlay.findViewById<LinearLayout>(R.id.edge_panel_recent_container)
-            val pinnedContainer = overlay.findViewById<LinearLayout>(R.id.edge_panel_pinned_container)
-            val recentLabel = overlay.findViewById<TextView>(R.id.edge_panel_recent_label)
-            val pinnedLabel = overlay.findViewById<TextView>(R.id.edge_panel_pinned_label)
-            val recentEmpty = overlay.findViewById<TextView>(R.id.edge_panel_recent_empty)
-            val usagePermissionButton = overlay.findViewById<ImageView>(R.id.edge_panel_usage_permission_button)
-
-            if (recentContainer == null || pinnedContainer == null) {
-                return
-            }
-
-            recentContainer.removeAllViews()
-            pinnedContainer.removeAllViews()
-
-            val showRecent = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-                .getBoolean(Constants.Prefs.EDGE_PANEL_SHOW_RECENT, true)
-
-            val pinnedPackages = getPinnedAppPackages()
-
-            val recentPackages = if (showRecent) {
-                getRecentAppPackages(limit = 9)
-            } else {
-                emptyList()
-            }
-
-            val recentApps = mutableListOf<EdgePanelAppEntry>()
-            recentPackages.forEach { packageName ->
-                if (!pinnedPackages.contains(packageName)) {
-                    resolveEdgePanelAppEntry(packageName)?.let { appInfo ->
-                        recentApps.add(appInfo)
-                    }
-                }
-            }
-
-            val pinnedApps = mutableListOf<EdgePanelAppEntry>()
-            pinnedPackages.forEach { packageName ->
-                resolveEdgePanelAppEntry(packageName)?.let { appInfo ->
-                    pinnedApps.add(appInfo)
-                }
-            }
-
-            recentApps.forEach { entry ->
-                val appView = createAppIconView(entry)
-                if (appView != null) {
-                    recentContainer.addView(appView)
-                }
-            }
-
-            pinnedApps.forEach { entry ->
-                val appView = createAppIconView(entry)
-                if (appView != null) {
-                    pinnedContainer.addView(appView)
-                }
-            }
-
-            recentLabel?.visibility = if (recentApps.isNotEmpty()) View.VISIBLE else View.GONE
-            recentContainer.visibility = if (recentApps.isNotEmpty()) View.VISIBLE else View.GONE
-            pinnedLabel?.visibility = if (pinnedApps.isNotEmpty()) View.VISIBLE else View.GONE
-            pinnedContainer.visibility = if (pinnedApps.isNotEmpty()) View.VISIBLE else View.GONE
-            recentEmpty?.visibility = if (recentApps.isEmpty() && pinnedApps.isEmpty()) View.VISIBLE else View.GONE
-
-            val hasUsageAccess = appUsageStatsManager.hasUsageStatsPermission()
-            usagePermissionButton?.visibility = if (hasUsageAccess) View.GONE else View.VISIBLE
-            usagePermissionButton?.setOnClickListener {
-                try {
-                    startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    })
-                    hideEdgePanel()
-                } catch (e: Exception) {
-                }
-            }
-
-        } catch (e: Exception) {
-        }
-    }
-
-    private fun resolveEdgePanelAppEntry(packageName: String): EdgePanelAppEntry? {
-        return try {
-            val resolveInfo = findLauncherResolveInfo(packageName)
-            val label = resolveInfo?.loadLabel(packageManager)?.toString()
-                ?: packageManager.getApplicationLabel(
-                    packageManager.getApplicationInfo(packageName, 0)
-                ).toString()
-            val icon = loadEdgePanelIcon(packageName, resolveInfo) ?: run {
-                return null
-            }
-
-            EdgePanelAppEntry(
-                packageName = packageName,
-                label = label,
-                icon = icon
-            )
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun loadEdgePanelIcon(packageName: String, resolveInfo: ResolveInfo?): Drawable? {
-        val rawIcon = try {
-            resolveInfo?.loadIcon(packageManager)
-                ?: packageManager.getApplicationIcon(packageName)
-        } catch (e: Exception) {
-            null
-        } ?: return null
-
-        return rawIcon.toBitmapDrawable()
-    }
-
-    private fun Drawable.toBitmapDrawable(): Drawable {
+    internal fun Drawable.toBitmapDrawable(): Drawable {
         if (this is BitmapDrawable && bitmap != null) {
             return this
         }
@@ -913,347 +432,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         return BitmapDrawable(resources, bitmap)
     }
 
-    private fun createAppIconView(entry: EdgePanelAppEntry): View? {
-        return try {
-            val view = LayoutInflater.from(this).inflate(R.layout.item_edge_panel_app, null, false)
-            val iconView = view.findViewById<ImageView>(R.id.edge_panel_app_icon)
-
-            iconView.setImageDrawable(entry.icon)
-            iconView.visibility = View.VISIBLE
-
-            view.setOnClickListener { clickView ->
-                try {
-                    clickView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                    launchEdgePanelApp(entry.packageName)
-                } catch (e: Exception) {
-                }
-            }
-
-            view.contentDescription = entry.label
-            view
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun launchEdgePanelApp(packageName: String) {
-        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
-        if (launchIntent == null) {
-            Toast.makeText(this, getString(R.string.cannot_launch_app), Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        try {
-            startActivity(launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            hideEdgePanel()
-        } catch (_: Exception) {
-            Toast.makeText(this, getString(R.string.cannot_launch_app), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun getPinnedAppPackages(): List<String> {
-        return getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(Constants.Prefs.EDGE_PANEL_PINNED_APPS, null)
-            ?.split(",")
-            ?.map { it.trim() }
-            ?.filter { it.isNotEmpty() }
-            .orEmpty()
-    }
-
-    private fun getRecentAppPackages(limit: Int): List<String> {
-        if (!appUsageStatsManager.hasUsageStatsPermission()) return emptyList()
-
-        val endTime = System.currentTimeMillis()
-        val startTime = endTime - (1000L * 60L * 60L * 24L)
-        val events = usageStatsManager.queryEvents(startTime, endTime)
-        val event = UsageEvents.Event()
-        val recentPackages = mutableListOf<String>()
-
-        while (events.hasNextEvent()) {
-            events.getNextEvent(event)
-            if (event.eventType != UsageEvents.Event.MOVE_TO_FOREGROUND) continue
-            val packageName = event.packageName ?: continue
-            if (!isEligibleEdgePanelPackage(packageName)) continue
-
-            recentPackages.remove(packageName)
-            recentPackages.add(0, packageName)
-        }
-
-        return recentPackages.take(limit)
-    }
-
-    private fun isEligibleEdgePanelPackage(packageName: String): Boolean {
-
-        if (packageName == this.packageName ||
-            packageName == "android" ||
-            packageName.startsWith("com.android.systemui") ||
-            packageName.startsWith("com.google.android.apps.nexuslauncher") ||
-            packageName.startsWith("com.android.launcher3")) {
-            return false
-        }
-
-        return try {
-            val appInfo = packageManager.getApplicationInfo(packageName, 0)
-
-            (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0
-        } catch (_: Exception) {
-            false
-        }
-    }
-
-    private fun findLauncherResolveInfo(packageName: String): android.content.pm.ResolveInfo? {
-        val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
-            addCategory(Intent.CATEGORY_LAUNCHER)
-            setPackage(packageName)
-        }
-        return try {
-            packageManager.queryIntentActivities(launcherIntent, 0).firstOrNull()
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    private fun positionEdgePanelSheet() {
-        val overlay = edgePanelView ?: return
-        val sheet = overlay.findViewById<View>(R.id.edge_panel_sheet) ?: return
-        val scrim = overlay.findViewById<View>(R.id.edge_panel_scrim)
-        val handleParams = edgeHandleView?.layoutParams as? WindowManager.LayoutParams ?: return
-        val handleHeight = edgeHandleView?.height?.takeIf { it > 0 } ?: 72.dpToPx()
-        val screenHeight = getScreenHeight()
-        val screenWidth = getScreenWidth()
-        val bottomInset = getBottomSystemInset()
-
-        val isLeft = isEdgeHandleOnLeft()
-
-        val topMargin = 12.dpToPx()
-        val bottomMargin = maxOf(40.dpToPx(), bottomInset + 24.dpToPx())
-        val sideMargin = 16.dpToPx()
-        val triggerSideSpacing = 80.dpToPx()
-
-        val availableHeight = (screenHeight - topMargin - bottomMargin).coerceAtLeast(220.dpToPx())
-
-        val layoutParams = (sheet.layoutParams as? FrameLayout.LayoutParams)
-            ?: FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-
-        layoutParams.topMargin = topMargin
-        layoutParams.bottomMargin = bottomMargin
-        layoutParams.height = availableHeight
-        layoutParams.marginStart = if (isLeft) sideMargin else 0
-        layoutParams.marginEnd = if (isLeft) 0 else sideMargin
-        layoutParams.gravity = if (isLeft) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
-        sheet.layoutParams = layoutParams
-
-        sheet.requestLayout()
-
-        val slideDistance = if (isLeft) {
-            (sideMargin + triggerSideSpacing).toFloat()
-        } else {
-            -(sideMargin + triggerSideSpacing).toFloat()
-        }
-
-        sheet.translationX = slideDistance
-        sheet.alpha = 0f
-        sheet.visibility = View.VISIBLE
-
-        sheet.animate()
-            .translationX(0f)
-            .alpha(1f)
-            .setDuration(120)
-            .setInterpolator(DecelerateInterpolator(3.0f))
-            .withStartAction {
-            }
-            .withEndAction {
-            }
-            .start()
-
-    }
-
-    private fun updateEdgeHandlePosition(params: WindowManager.LayoutParams) {
-        params.x = 0
-        edgeHandleView?.let { view ->
-            try {
-                windowManager?.updateViewLayout(view, params)
-            } catch (_: Exception) {}
-        }
-    }
-
-    private fun applySavedEdgeHandlePosition(params: WindowManager.LayoutParams) {
-        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-        val side = prefs.getString(Constants.Prefs.EDGE_PANEL_HANDLE_SIDE, "end") ?: "end"
-        params.gravity = Gravity.TOP or if (side == "start") Gravity.START else Gravity.END
-        params.x = 0
-        params.y = prefs.getInt(Constants.Prefs.EDGE_PANEL_HANDLE_Y, 180.dpToPx()).coerceIn(24.dpToPx(), (getScreenHeight() - 96.dpToPx()).coerceAtLeast(24.dpToPx()))
-    }
-
-    private fun persistEdgeHandlePosition(params: WindowManager.LayoutParams) {
-        getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE).edit().apply {
-            putString(Constants.Prefs.EDGE_PANEL_HANDLE_SIDE, if ((params.gravity and Gravity.START) == Gravity.START) "start" else "end")
-            putInt(Constants.Prefs.EDGE_PANEL_HANDLE_Y, params.y)
-            apply()
-        }
-    }
-
-    private fun updateOverlayViewSize(view: View, width: Int, height: Int) {
-        when (val layoutParams = view.layoutParams) {
-            is WindowManager.LayoutParams -> {
-                layoutParams.width = width
-                layoutParams.height = height
-                if (view.isAttachedToWindow) {
-                    try {
-                        windowManager?.updateViewLayout(view, layoutParams)
-                    } catch (_: Exception) {}
-                }
-            }
-            null -> {
-                view.layoutParams = FrameLayout.LayoutParams(width, height)
-            }
-            else -> {
-                layoutParams.width = width
-                layoutParams.height = height
-                view.layoutParams = layoutParams
-            }
-        }
-    }
-
-    private fun applyHandleAppearance() {
-        val handleView = edgeHandleView ?: return
-        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-        val touchWidth = prefs.getInt(Constants.Prefs.EDGE_PANEL_HANDLE_WIDTH_DP, 18).coerceIn(12, 36)
-        val handleHeight = prefs.getInt(Constants.Prefs.EDGE_PANEL_HANDLE_HEIGHT_DP, 72).coerceIn(40, 112)
-        val alphaPercent = prefs.getInt(Constants.Prefs.EDGE_PANEL_HANDLE_ALPHA, 80).coerceIn(20, 100)
-        val lineWidth = (touchWidth / 4).coerceIn(3, 8)
-        val extraTouchPadding = 32.dpToPx()
-
-        updateOverlayViewSize(
-            view = handleView,
-            width = touchWidth.dpToPx() + extraTouchPadding,
-            height = handleHeight.dpToPx()
-        )
-
-        val lineView = handleView.findViewById<View>(R.id.edge_handle_line)
-        val lineLayoutParams = (lineView.layoutParams as? FrameLayout.LayoutParams)
-            ?: FrameLayout.LayoutParams(
-                lineWidth.dpToPx(),
-                (handleHeight - 16).coerceAtLeast(28).dpToPx()
-            )
-        lineLayoutParams.width = lineWidth.dpToPx()
-        lineLayoutParams.height = (handleHeight - 16).coerceAtLeast(28).dpToPx()
-        lineLayoutParams.gravity = if (isEdgeHandleOnLeft()) {
-            Gravity.START or Gravity.CENTER_VERTICAL
-        } else {
-            Gravity.END or Gravity.CENTER_VERTICAL
-        }
-        lineView.layoutParams = lineLayoutParams
-        lineView.alpha = alphaPercent / 100f
-
-        val background = (lineView.background?.mutate() as? GradientDrawable)
-        background?.setColor(((alphaPercent * 255) / 100 shl 24) or 0x00FFFFFF)
-        lineView.background = background
-    }
-
-    private fun isEdgeHandleOnLeft(): Boolean {
-        val gravity = (edgeHandleView?.layoutParams as? WindowManager.LayoutParams)?.gravity ?: (Gravity.TOP or Gravity.END)
-        return (gravity and Gravity.START) == Gravity.START
-    }
-
-    private fun isSwipeToOpen(dx: Float): Boolean {
-        val threshold = 8.dpToPx().toFloat()
-        return if (isEdgeHandleOnLeft()) dx > threshold else dx < -threshold
-    }
-
-    private fun clampEdgeHandleY(candidate: Int, view: View): Int {
-        val inset = 24.dpToPx()
-        val viewHeight = view.height.takeIf { it > 0 } ?: 56.dpToPx()
-        return candidate.coerceIn(inset, (getScreenHeight() - viewHeight - inset).coerceAtLeast(inset))
-    }
-
-    private fun updateControlCenterTriggerPosition(params: WindowManager.LayoutParams) {
-        params.x = 0
-        controlCenterTriggerView?.let { view ->
-            try {
-                windowManager?.updateViewLayout(view, params)
-            } catch (_: Exception) {}
-        }
-    }
-
-    private fun applySavedControlCenterTriggerPosition(params: WindowManager.LayoutParams) {
-        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-        val side = prefs.getString(Constants.Prefs.CONTROL_CENTER_TRIGGER_SIDE, "end") ?: "end"
-        params.gravity = Gravity.TOP or if (side == "start") Gravity.START else Gravity.END
-        params.x = 0
-        params.y = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_Y, 180.dpToPx()).coerceIn(24.dpToPx(), (getScreenHeight() - 96.dpToPx()).coerceAtLeast(24.dpToPx()))
-    }
-
-    private fun persistControlCenterTriggerPosition(params: WindowManager.LayoutParams) {
-        getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE).edit().apply {
-            putString(Constants.Prefs.CONTROL_CENTER_TRIGGER_SIDE, if ((params.gravity and Gravity.START) == Gravity.START) "start" else "end")
-            putInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_Y, params.y)
-            apply()
-        }
-    }
-
-    private fun applyControlCenterTriggerAppearance() {
-        val triggerView = controlCenterTriggerView ?: return
-        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-        val touchWidth = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_WIDTH_DP, 18).coerceIn(12, 36)
-        val triggerHeight = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_HEIGHT_DP, 72).coerceIn(40, 112)
-        val alphaPercent = prefs.getInt(Constants.Prefs.CONTROL_CENTER_TRIGGER_ALPHA, 80).coerceIn(20, 100)
-        val lineWidth = (touchWidth / 4).coerceIn(3, 8)
-        val extraTouchPadding = 32.dpToPx()
-
-        updateOverlayViewSize(
-            view = triggerView,
-            width = touchWidth.dpToPx() + extraTouchPadding,
-            height = triggerHeight.dpToPx()
-        )
-
-        val lineView = triggerView.findViewById<View>(R.id.control_center_trigger_line)
-        val lineLayoutParams = (lineView.layoutParams as? FrameLayout.LayoutParams)
-            ?: FrameLayout.LayoutParams(
-                lineWidth.dpToPx(),
-                (triggerHeight - 16).coerceAtLeast(28).dpToPx()
-            )
-        lineLayoutParams.width = lineWidth.dpToPx()
-        lineLayoutParams.height = (triggerHeight - 16).coerceAtLeast(28).dpToPx()
-        lineLayoutParams.gravity = if (isControlCenterTriggerOnLeft()) {
-            Gravity.START or Gravity.CENTER_VERTICAL
-        } else {
-            Gravity.END or Gravity.CENTER_VERTICAL
-        }
-        lineView.layoutParams = lineLayoutParams
-        lineView.alpha = alphaPercent / 100f
-
-        val background = (lineView.background?.mutate() as? GradientDrawable)
-        background?.setColor(((alphaPercent * 255) / 100 shl 24) or 0x00FFFFFF)
-        lineView.background = background
-    }
-
-    private fun isControlCenterTriggerOnLeft(): Boolean {
-        val gravity = (controlCenterTriggerView?.layoutParams as? WindowManager.LayoutParams)?.gravity ?: (Gravity.TOP or Gravity.END)
-        return (gravity and Gravity.START) == Gravity.START
-    }
-
-    private fun isSwipeToOpenControlCenter(dx: Float): Boolean {
-        val threshold = 8.dpToPx().toFloat()
-        return if (isControlCenterTriggerOnLeft()) dx > threshold else dx < -threshold
-    }
-
-    private fun clampControlCenterTriggerY(candidate: Int, view: View): Int {
-        val inset = 24.dpToPx()
-        val viewHeight = view.height.takeIf { it > 0 } ?: 56.dpToPx()
-        return candidate.coerceIn(inset, (getScreenHeight() - viewHeight - inset).coerceAtLeast(inset))
-    }
-
-    private fun updateControlCenterTriggerSystemGestureExclusion() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            controlCenterTriggerView?.let { view ->
-                val rects = listOf(Rect(0, 0, view.width, view.height))
-                view.systemGestureExclusionRects = rects
-            }
-        }
-    }
-
-    private fun getScreenWidth(): Int {
+    internal fun getScreenWidth(): Int {
         val displayMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             windowManager?.currentWindowMetrics?.bounds?.let { displayMetrics.widthPixels = it.width() }
@@ -1264,7 +443,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         return displayMetrics.widthPixels
     }
 
-    private fun getScreenHeight(): Int {
+    internal fun getScreenHeight(): Int {
         val displayMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             windowManager?.currentWindowMetrics?.bounds?.let { displayMetrics.heightPixels = it.height() }
@@ -1275,7 +454,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
         return displayMetrics.heightPixels
     }
 
-    private fun getBottomSystemInset(): Int {
+    internal fun getBottomSystemInset(): Int {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return 0
         return windowManager?.currentWindowMetrics
             ?.windowInsets
@@ -1283,690 +462,7 @@ class ScreenLockAccessibilityService : AccessibilityService() {
             ?.bottom ?: 0
     }
 
-    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
-
-    private fun toggleMenu() {
-        if (isMenuVisible) {
-            hideMenu()
-        } else {
-            showMenu()
-        }
-    }
-
-    private fun toggleControlCenter() {
-
-        if (isMenuVisible) {
-            hideMenu()
-        } else {
-            showMenu()
-        }
-    }
-
-    private fun showMenu() {
-        if (shortcutMenu != null) return
-
-        val themedContext = ThemeManager.themedContext(this, R.style.Theme_Launch)
-        val menu = LayoutInflater.from(themedContext).inflate(R.layout.layout_accessibility_shortcut, null)
-        shortcutMenu = menu
-        setupMenuListeners(menu)
-
-        val params = WindowManager.LayoutParams(
-            getScreenWidth(),
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-            PixelFormat.TRANSLUCENT
-        )
-
-        params.gravity = Gravity.CENTER
-
-        val menuContainer = shortcutMenu?.findViewById<View>(R.id.menu_container)
-        val screenWidth = getScreenWidth()
-        val targetWidth = (screenWidth * 0.8).toInt()
-        menuContainer?.layoutParams = menuContainer?.layoutParams?.apply {
-            width = targetWidth
-        }
-
-        shortcutMenu?.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_OUTSIDE) {
-                hideMenu()
-                true
-            } else {
-                false
-            }
-        }
-
-        try {
-            windowManager?.addView(shortcutMenu, params)
-            isMenuVisible = true
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun hideMenu() {
-        shortcutMenu?.let {
-            try {
-                windowManager?.removeView(it)
-            } catch (_: Exception) {}
-            shortcutMenu = null
-        }
-        isMenuVisible = false
-    }
-
-    private fun setupMenuListeners(view: View) {
-        val menuContainer = view.findViewById<View>(R.id.menu_container)
-        menuContainer?.setOnClickListener {  }
-
-        val brightnessSeekBar = view.findViewById<SeekBar>(R.id.brightness_seekbar)
-        if (Settings.System.canWrite(this)) {
-            try {
-                val currentBrightness = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-                brightnessSeekBar?.progress = currentBrightness
-            } catch (_: Exception) {
-                brightnessSeekBar?.progress = 125
-            }
-
-            brightnessSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        try {
-                            Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, progress)
-                        } catch (_: Exception) {
-                            requestWriteSettingsPermission()
-                        }
-                    }
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-        } else {
-            brightnessSeekBar?.alpha = 0.5f
-            brightnessSeekBar?.setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_UP) {
-                    requestWriteSettingsPermission()
-                }
-                true
-            }
-        }
-
-        val volumeMediaSeekBar = view.findViewById<SeekBar>(R.id.volume_media_seekbar)
-        val imgVolumeMedia = view.findViewById<ImageView>(R.id.img_volume_media_icon)
-        try {
-            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-            val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-            volumeMediaSeekBar?.max = maxVolume
-            volumeMediaSeekBar?.progress = currentVolume
-
-            volumeMediaSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        safeSetVolume(AudioManager.STREAM_MUSIC, progress)
-                        if (progress == 0) {
-                            imgVolumeMedia?.setImageResource(R.drawable.ic_muted_stat)
-                        } else {
-                            imgVolumeMedia?.setImageResource(R.drawable.ic_volume_up_stat)
-                        }
-                    }
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-        } catch (_: Exception) {}
-
-        val volumeRingSeekBar = view.findViewById<SeekBar>(R.id.volume_ring_seekbar)
-        val imgVolumeRing = view.findViewById<ImageView>(R.id.img_volume_ring_icon)
-        try {
-            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
-            val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING)
-            volumeRingSeekBar?.max = maxVolume
-            volumeRingSeekBar?.progress = currentVolume
-
-            volumeRingSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        safeSetVolume(AudioManager.STREAM_RING, progress)
-                        if (progress == 0) {
-                            imgVolumeRing?.setImageResource(R.drawable.ic_muted_stat)
-                        } else {
-                            imgVolumeRing?.setImageResource(R.drawable.ic_vibrate_stat)
-                        }
-                    }
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-        } catch (_: Exception) {}
-
-        val volumeAlarmSeekBar = view.findViewById<SeekBar>(R.id.volume_alarm_seekbar)
-        val imgVolumeAlarm = view.findViewById<ImageView>(R.id.img_volume_alarm_icon)
-        try {
-            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-            val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            volumeAlarmSeekBar?.max = maxVolume
-            volumeAlarmSeekBar?.progress = currentVolume
-
-            volumeAlarmSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        safeSetVolume(AudioManager.STREAM_ALARM, progress)
-                        if (progress == 0) {
-                            imgVolumeAlarm?.setImageResource(R.drawable.ic_muted_stat)
-                        } else {
-                            imgVolumeAlarm?.setImageResource(android.R.drawable.ic_lock_silent_mode)
-                        }
-                    }
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-        } catch (_: Exception) {}
-
-        val linearLayout = view.findViewById<LinearLayout>(R.id.shortcuts_linear_layout)
-        val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
-        val shortcutList = prefs.getString(Constants.Prefs.CONTROL_CENTER_SHORTCUTS, DEFAULT_SHORTCUTS)
-            ?.split(",") ?: DEFAULT_SHORTCUTS.split(",")
-
-        linearLayout?.removeAllViews()
-
-        val itemWidth = 64.dpToPx()
-        val itemMargin = 8.dpToPx()
-
-        for (id in shortcutList) {
-
-            val shortcutContainer = LinearLayout(this).apply {
-                layoutParams = LinearLayout.LayoutParams(itemWidth, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                    marginStart = itemMargin
-                    marginEnd = itemMargin
-                }
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER
-                isClickable = true
-                isFocusable = true
-            }
-
-            val iconSlot = View(this).apply {
-                layoutParams = LinearLayout.LayoutParams(56.dpToPx(), 56.dpToPx()).apply {
-                    gravity = Gravity.CENTER
-                }
-                background = resources.getDrawable(R.drawable.bg_edge_panel_icon_slot, theme)
-            }
-
-            val icon = ImageView(this).apply {
-                layoutParams = FrameLayout.LayoutParams((56.dpToPx() * 0.6).toInt(), (56.dpToPx() * 0.6).toInt()).apply {
-                    gravity = Gravity.CENTER
-                }
-                setPadding(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
-            }
-
-            val slotContainer = FrameLayout(this).apply {
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                    gravity = Gravity.CENTER
-                }
-                addView(iconSlot)
-                addView(icon)
-            }
-            shortcutContainer.addView(slotContainer)
-
-            val label = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                    gravity = Gravity.CENTER
-                    topMargin = 4.dpToPx()
-                }
-                textSize = 10f
-                setTextColor(ThemeManager.colorOrNull(this@ScreenLockAccessibilityService, R.attr.appTextPrimary) ?: android.graphics.Color.WHITE)
-                maxLines = 2
-                ellipsize = TextUtils.TruncateAt.END
-                gravity = Gravity.CENTER
-            }
-            shortcutContainer.addView(label)
-
-            when (id) {
-                "wifi" -> {
-                    icon.setImageResource(R.drawable.ic_wifi_stat)
-                    icon.contentDescription = getString(R.string.lbl_wifi)
-                    label.text = getString(R.string.lbl_wifi)
-                    updateWifiIcon(icon)
-                    shortcutContainer.setOnClickListener { toggleWifi(); updateWifiIcon(icon); hideMenu() }
-                }
-                "bluetooth" -> {
-                    icon.setImageResource(android.R.drawable.stat_sys_data_bluetooth)
-                    icon.contentDescription = getString(R.string.lbl_bluetooth)
-                    label.text = getString(R.string.lbl_bluetooth)
-                    updateBluetoothIcon(icon)
-                    shortcutContainer.setOnClickListener { toggleBluetooth(); hideMenu() }
-                }
-                "airplane" -> {
-                    icon.setImageResource(R.drawable.ic_airplane_stat)
-                    icon.contentDescription = getString(R.string.lbl_airplane)
-                    label.text = getString(R.string.lbl_airplane)
-                    updateAirplaneIcon(icon)
-                    shortcutContainer.setOnClickListener { toggleAirplaneMode(); hideMenu() }
-                }
-                "torch" -> {
-                    icon.setImageResource(R.drawable.ic_torch_stat)
-                    icon.contentDescription = getString(R.string.lbl_torch)
-                    label.text = getString(R.string.lbl_torch)
-                    updateTorchIcon(icon)
-                    shortcutContainer.setOnClickListener { toggleTorch(); updateTorchIcon(icon) }
-                }
-                "data" -> {
-                    icon.setImageResource(R.drawable.ic_mobile_data_stat)
-                    icon.contentDescription = getString(R.string.lbl_data)
-                    label.text = getString(R.string.lbl_data)
-                    shortcutContainer.setOnClickListener { toggleMobileData() }
-                }
-                "rotation" -> {
-                    icon.setImageResource(R.drawable.ic_rotation_stat)
-                    icon.contentDescription = getString(R.string.a11y_auto_rotation)
-                    label.text = getString(R.string.lbl_rotation)
-                    updateRotationIcon(icon)
-                    shortcutContainer.setOnClickListener { toggleAutoRotation(); updateRotationIcon(icon) }
-                }
-                "sound" -> {
-                    icon.contentDescription = getString(R.string.a11y_sound_mode)
-                    label.text = getString(R.string.lbl_sound)
-                    updateSoundIconOnly(icon)
-                    shortcutContainer.setOnClickListener {
-                        try {
-                            val nextMode = when (audioManager.ringerMode) {
-                                AudioManager.RINGER_MODE_NORMAL -> AudioManager.RINGER_MODE_VIBRATE
-                                AudioManager.RINGER_MODE_VIBRATE -> AudioManager.RINGER_MODE_SILENT
-                                else -> AudioManager.RINGER_MODE_NORMAL
-                            }
-                            audioManager.ringerMode = nextMode
-                            updateSoundIconOnly(icon)
-                            volumeMediaSeekBar?.progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                            volumeRingSeekBar?.progress = audioManager.getStreamVolume(AudioManager.STREAM_RING)
-                            volumeAlarmSeekBar?.progress = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-                        } catch (e: SecurityException) {
-                            requestDndPermission()
-                        }
-                    }
-                }
-                "dnd" -> {
-                    icon.setImageResource(R.drawable.ic_focus_mode_icon)
-                    icon.contentDescription = getString(R.string.a11y_do_not_disturb)
-                    label.text = getString(R.string.lbl_dnd)
-                    updateDndIconOnly(icon)
-                    shortcutContainer.setOnClickListener { toggleDndOnly(icon) }
-                }
-                "location" -> {
-                    icon.setImageResource(android.R.drawable.ic_menu_mylocation)
-                    icon.contentDescription = getString(R.string.perm_location)
-                    label.text = getString(R.string.perm_location)
-                    shortcutContainer.setOnClickListener {
-                        try {
-                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                        } catch (e: Exception) {
-                        }
-                        hideMenu()
-                    }
-                }
-                "qr_scan" -> {
-                    icon.setImageResource(R.drawable.ic_qr_scan_stat)
-                    icon.contentDescription = getString(R.string.lbl_qr_scan)
-                    label.text = getString(R.string.lbl_qr_scan)
-                    shortcutContainer.setOnClickListener { launchQrScanner(); hideMenu() }
-                }
-                "camera" -> {
-                    icon.setImageResource(android.R.drawable.ic_menu_camera)
-                    icon.contentDescription = getString(R.string.perm_camera)
-                    label.text = getString(R.string.perm_camera)
-                    shortcutContainer.setOnClickListener {
-                        startActivity(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                        hideMenu()
-                    }
-                }
-                "screenshot" -> {
-                    icon.setImageResource(R.drawable.ic_screenshot_stat)
-                    icon.contentDescription = getString(R.string.lbl_screenshot)
-                    label.text = getString(R.string.lbl_screenshot)
-                    shortcutContainer.setOnClickListener { takeScreenshot(); hideMenu() }
-                }
-                "record" -> {
-                    icon.setImageResource(android.R.drawable.ic_menu_slideshow)
-                    icon.contentDescription = getString(R.string.a11y_screen_record)
-                    label.text = getString(R.string.lbl_record)
-                    if (ScreenRecordingService.isRunning) icon.setColorFilter(0xFFF7768E.toInt())
-                    shortcutContainer.setOnClickListener {
-                        if (ScreenRecordingService.isRunning) {
-                            ScreenRecordingService.stopService(this)
-                        } else {
-                            startActivity(Intent(this, ScreenRecordPermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                        }
-                        hideMenu()
-                    }
-                }
-                "lock" -> {
-                    icon.setImageResource(android.R.drawable.ic_lock_idle_lock)
-                    icon.contentDescription = getString(R.string.lbl_lock)
-                    label.text = getString(R.string.lbl_lock)
-                    shortcutContainer.setOnClickListener { lockScreen(); hideMenu() }
-                }
-                "power" -> {
-                    icon.setImageResource(android.R.drawable.ic_lock_power_off)
-                    icon.setColorFilter(0xFFF7768E.toInt())
-                    icon.contentDescription = getString(R.string.lbl_power)
-                    label.text = getString(R.string.lbl_power)
-                    shortcutContainer.setOnClickListener { performGlobalAction(GLOBAL_ACTION_POWER_DIALOG); hideMenu() }
-                }
-                "hotspot" -> {
-                    icon.setImageResource(R.drawable.ic_wifi_stat)
-                    icon.contentDescription = getString(R.string.lbl_hotspot)
-                    label.text = getString(R.string.lbl_hotspot)
-                    updateHotspotIcon(icon)
-                    shortcutContainer.setOnClickListener { toggleHotspot() }
-                }
-                "screen_timeout" -> {
-                    icon.setImageResource(R.drawable.ic_settings_icon)
-                    icon.contentDescription = getString(R.string.a11y_screen_timeout)
-                    label.text = getString(R.string.lbl_timeout)
-                    updateScreenTimeoutIconOnly(icon)
-                    shortcutContainer.setOnClickListener { cycleScreenTimeout(); updateScreenTimeoutIconOnly(icon); hideMenu() }
-                }
-                else -> continue
-            }
-            linearLayout?.addView(shortcutContainer)
-        }
-    }
-
-    private fun safeSetVolume(streamType: Int, progress: Int) {
-        try {
-            audioManager.setStreamVolume(streamType, progress, 0)
-        } catch (e: SecurityException) {
-            requestDndPermission()
-        }
-    }
-
-    private fun requestDndPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!notificationManager.isNotificationPolicyAccessGranted) {
-                Toast.makeText(this, this.getString(R.string.toast_dnd_access_required_to_change_volume), Toast.LENGTH_SHORT).show()
-                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-        }
-    }
-
-    private fun launchQrScanner() {
-        val qrIntents = mutableListOf<Intent>()
-
-        qrIntents.add(Intent("com.google.android.googlequicksearchbox.GOOGLE_LENS").apply {
-            setPackage("com.google.android.googlequicksearchbox")
-        })
-
-        val lensIntent = packageManager.getLaunchIntentForPackage("com.google.ar.lens")
-        if (lensIntent != null) qrIntents.add(lensIntent)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            qrIntents.add(Intent("android.settings.QR_CODE_SCANNER"))
-        }
-
-        qrIntents.add(Intent(Intent.ACTION_VIEW, Uri.parse("googlelens://v1/scan")))
-
-        qrIntents.add(Intent("com.google.zxing.client.android.SCAN"))
-
-        qrIntents.add(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).apply {
-            putExtra("android.intent.extra.USE_QR_CODE", true)
-        })
-
-        var started = false
-        for (intent in qrIntents) {
-            try {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                started = true
-                break
-            } catch (_: Exception) {}
-        }
-        if (!started) {
-            try {
-                startActivity(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            } catch (e: Exception) {
-                Toast.makeText(this, this.getString(R.string.toast_no_qr_scanner_or_camera_found), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun toggleWifi() {
-        try {
-            @Suppress("DEPRECATION")
-            wifiManager.isWifiEnabled = !wifiManager.isWifiEnabled
-        } catch (e: Exception) {
-            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        }
-    }
-
-    private fun updateWifiIcon(imageView: ImageView?) {
-        val enabled = wifiManager.isWifiEnabled
-        imageView?.alpha = if (enabled) 1.0f else 0.4f
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun toggleBluetooth() {
-        try {
-            if (bluetoothAdapter.isEnabled) bluetoothAdapter.disable() else bluetoothAdapter.enable()
-        } catch (e: Exception) {
-            startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun updateBluetoothIcon(imageView: ImageView?) {
-        try {
-            val enabled = bluetoothAdapter.isEnabled
-            imageView?.alpha = if (enabled) 1.0f else 0.4f
-        } catch (e: SecurityException) {
-
-            imageView?.alpha = 0.4f
-        } catch (e: Exception) {
-            imageView?.alpha = 0.4f
-        }
-    }
-
-    private fun toggleAirplaneMode() {
-        try {
-            startActivity(Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        } catch (e: Exception) {
-        }
-    }
-
-    private fun updateAirplaneIcon(imageView: ImageView?) {
-        val enabled = Settings.Global.getInt(contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) != 0
-        imageView?.alpha = if (enabled) 1.0f else 0.4f
-    }
-
-    private fun toggleTorch() {
-        try {
-            val cameraId = cameraManager.cameraIdList[0]
-            isTorchOn = !isTorchOn
-            cameraManager.setTorchMode(cameraId, isTorchOn)
-        } catch (e: Exception) {
-            Toast.makeText(this, this.getString(R.string.toast_torch_not_available), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateTorchIcon(imageView: ImageView?) {
-        imageView?.alpha = if (isTorchOn) 1.0f else 0.4f
-    }
-
-    private fun toggleAutoRotation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.System.canWrite(this)) {
-                requestWriteSettingsPermission()
-                return
-            }
-        }
-        try {
-            val isAutoRotate = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
-            val newValue = if (isAutoRotate) 0 else 1
-            val success = Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, newValue)
-            if (success && newValue == 0) {
-                Settings.System.putInt(contentResolver, Settings.System.USER_ROTATION, Surface.ROTATION_0)
-            }
-            Toast.makeText(this, if (newValue == 1) getString(R.string.toast_auto_rotate_on) else getString(R.string.toast_portrait_locked), Toast.LENGTH_SHORT).show()
-        } catch (_: Exception) {}
-    }
-
-    private fun updateRotationIcon(imageView: ImageView?) {
-        try {
-            val isAutoRotate = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
-            imageView?.alpha = if (isAutoRotate) 1.0f else 0.4f
-        } catch (_: Exception) {}
-    }
-
-    private fun updateSoundIconOnly(imageView: ImageView?) {
-        when (audioManager.ringerMode) {
-            AudioManager.RINGER_MODE_NORMAL -> {
-                imageView?.setImageResource(R.drawable.ic_volume_up_stat)
-                imageView?.alpha = 1.0f
-            }
-            AudioManager.RINGER_MODE_VIBRATE -> {
-                imageView?.setImageResource(R.drawable.ic_vibrate_stat)
-                imageView?.alpha = 1.0f
-            }
-            AudioManager.RINGER_MODE_SILENT -> {
-                imageView?.setImageResource(android.R.drawable.ic_lock_silent_mode)
-                imageView?.alpha = 0.5f
-            }
-        }
-    }
-
-    private fun toggleDndOnly(icon: ImageView?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (notificationManager.isNotificationPolicyAccessGranted) {
-                val currentFilter = notificationManager.currentInterruptionFilter
-                val isOff = currentFilter == NotificationManager.INTERRUPTION_FILTER_ALL ||
-                            currentFilter == NotificationManager.INTERRUPTION_FILTER_UNKNOWN
-
-                val newFilter = if (isOff) NotificationManager.INTERRUPTION_FILTER_PRIORITY
-                                else NotificationManager.INTERRUPTION_FILTER_ALL
-
-                notificationManager.setInterruptionFilter(newFilter)
-
-                updateDndIconOnly(icon)
-            } else {
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            }
-        }
-    }
-
-    private fun updateDndIconOnly(imageView: ImageView?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val filter = notificationManager.currentInterruptionFilter
-            val enabled = filter != NotificationManager.INTERRUPTION_FILTER_ALL &&
-                         filter != NotificationManager.INTERRUPTION_FILTER_UNKNOWN
-
-            imageView?.setImageResource(R.drawable.ic_focus_mode_icon)
-            imageView?.alpha = if (enabled) 1.0f else 0.4f
-        }
-    }
-
-    private fun toggleMobileData() {
-        val intent = Intent().apply {
-            action = "android.settings.NETWORK_OPERATOR_SETTINGS"
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        try {
-            startActivity(intent)
-            hideMenu()
-        } catch (e: Exception) {
-            try {
-                intent.action = Settings.ACTION_DATA_ROAMING_SETTINGS
-                startActivity(intent)
-                hideMenu()
-            } catch (e2: Exception) {
-                try {
-                    intent.action = "android.settings.DATA_USAGE_SETTINGS"
-                    startActivity(intent)
-                    hideMenu()
-                } catch (_: Exception) {
-                    Toast.makeText(this, this.getString(R.string.toast_mobile_data_settings_not_found), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-    private fun toggleHotspot() {
-        val intent = Intent().apply {
-            action = "android.settings.TETHER_SETTINGS"
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        try {
-            startActivity(intent)
-            hideMenu()
-        } catch (e: Exception) {
-            try {
-
-                intent.action = "android.settings.WIFI_TETHER_SETTINGS"
-                startActivity(intent)
-                hideMenu()
-            } catch (e2: Exception) {
-                try {
-                    intent.action = Settings.ACTION_WIRELESS_SETTINGS
-                    startActivity(intent)
-                    hideMenu()
-                } catch (_: Exception) {
-                    Toast.makeText(this, this.getString(R.string.toast_hotspot_settings_not_found), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-    private fun updateHotspotIcon(imageView: ImageView?) {
-
-        imageView?.alpha = 1.0f
-    }
-
-    private fun cycleScreenTimeout() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.System.canWrite(this)) {
-                requestWriteSettingsPermission()
-                return
-            }
-        }
-
-        try {
-            val currentTimeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
-            val timeouts = arrayOf(15000, 30000, 60000, 120000, 300000, 600000, 2147483647)
-            val timeoutLabels = arrayOf("15s", "30s", "1min", "2min", "5min", "10min", "Never")
-
-            var nextIndex = 0
-            for (i in timeouts.indices) {
-                if (currentTimeout == timeouts[i]) {
-                    nextIndex = (i + 1) % timeouts.size
-                    break
-                }
-            }
-
-            val newTimeout = timeouts[nextIndex]
-            val success = Settings.System.putInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT, newTimeout)
-            if (success) {
-                Toast.makeText(this, this.getString(R.string.toast_screen_timeout, timeoutLabels[nextIndex]), Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, this.getString(R.string.toast_failed_to_change_screen_timeout), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateScreenTimeoutIconOnly(imageView: ImageView?) {
-        try {
-            val currentTimeout = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT)
-            imageView?.alpha = if (currentTimeout > 0) 1.0f else 0.4f
-        } catch (_: Exception) {
-            imageView?.alpha = 0.4f
-        }
-    }
-
-    private fun requestWriteSettingsPermission() {
-        val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-            data = Uri.parse("package:$packageName")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(intent)
-    }
+    internal fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onDestroy() {
         instance = null

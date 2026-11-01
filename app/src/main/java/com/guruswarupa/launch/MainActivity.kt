@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var kidsModeManager: com.guruswarupa.launch.managers.KidsModeManager
 
-    private var lastKidsModeActive: Boolean? = null
+    internal var lastKidsModeActive: Boolean? = null
 
     @Inject
     lateinit var appTimerManager: AppTimerManager
@@ -187,6 +187,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var stockTopWidgetMediaController: com.guruswarupa.launch.ui.WallpaperMediaController
     fun isStockTopWidgetMediaControllerInitialized() = ::stockTopWidgetMediaController.isInitialized
 
+    fun isScreenPagerManagerInitialized() = ::screenPagerManager.isInitialized
+    fun isAiChatPageInitialized() = ::aiChatPage.isInitialized
+    fun isAdapterInitialized() = ::adapter.isInitialized
+
     lateinit var voiceSearchManager: VoiceSearchManager
 
     lateinit var usageStatsRefreshManager: UsageStatsRefreshManager
@@ -228,11 +232,11 @@ class MainActivity : AppCompatActivity() {
     var showOnlyFavoritesInitially = true
     var pendingScrollToTop = false
 
-    private var lastToggleTime = 0L
-    private val TOGGLE_DEBOUNCE_MS = 500L
+    internal var lastToggleTime = 0L
+    internal val TOGGLE_DEBOUNCE_MS = 500L
 
     val views: MainActivityViews get() = activityInitializer.views
-    private val viewModel: MainActivityViewModel by viewModels()
+    internal val viewModel: MainActivityViewModel by viewModels()
 
     internal val deferredWidgetsInitialized: Boolean
         get() = viewModel.uiState.value.deferredWidgetsInitialized
@@ -364,7 +368,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun ensureContactsLoadedForSearch() {
+    internal fun ensureContactsLoadedForSearch() {
         if (contactManager.hasLoadedContacts()) return
 
         contactManager.loadContacts { _ ->
@@ -462,93 +466,9 @@ class MainActivity : AppCompatActivity() {
         widgetSetupManager.setupWeather(views.weatherIcon, views.weatherText)
     }
 
-    private var deferredWidgetsReadyForThisInstance = false
+    internal var deferredWidgetsReadyForThisInstance = false
 
-    private var pendingDeferredInitializer: DeferredWidgetInitializer? = null
-
-    internal fun initializeDeferredWidgets(staggered: Boolean = false) {
-        if (!sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)) {
-            return
-        }
-
-        if (deferredWidgetsInitialized && deferredWidgetsReadyForThisInstance) {
-
-            widgetVisibilityManager.update(
-                if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
-                if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
-            )
-            return
-        }
-
-        pendingDeferredInitializer?.let {
-            it.finishNow()
-            return
-        }
-
-        val initializer = DeferredWidgetInitializer(
-            widgetSetupManager = widgetSetupManager,
-            sharedPreferences = sharedPreferences,
-            lifecycleManager = lifecycleManager,
-            widgetLifecycleCoordinator = widgetLifecycleCoordinator,
-            onComplete = {
-                initializeFinanceWidgetIfNeeded()
-                todoAlarmManager = TodoAlarmManager(this)
-                todoManager = TodoManager(this, sharedPreferences, views.todoRecyclerView, views.addTodoButton, todoAlarmManager)
-                todoManager.initialize()
-                updateLifecycleManagerWithDeferredWidgets()
-
-                TypographyManager.applyToActivity(this)
-
-                widgetVisibilityManager.update(
-                    if (widgetLifecycleCoordinator.isYearProgressWidgetInitialized()) widgetLifecycleCoordinator.yearProgressWidget else null,
-                    if (widgetLifecycleCoordinator.isGithubContributionWidgetInitialized()) widgetLifecycleCoordinator.githubContributionWidget else null
-                )
-            },
-            onFinished = {
-                pendingDeferredInitializer = null
-                viewModel.markDeferredWidgetsInitialized()
-                deferredWidgetsReadyForThisInstance = true
-                updateRegistryDependencies()
-            }
-        )
-
-        if (staggered) {
-            pendingDeferredInitializer = initializer
-            initializer.startStaggered { !isFinishing && !isDestroyed }
-        } else {
-            initializer.finishNow()
-        }
-    }
-
-    private fun scheduleDeferredWidgetPrewarm() {
-        if (widgetPrewarmScheduled ||
-            deferredWidgetsReadyForThisInstance ||
-            !sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true)
-        ) {
-            return
-        }
-
-        widgetPrewarmScheduled = true
-        lifecycleScope.launch {
-            try {
-                delay(1200L)
-                widgetPrewarmScheduled = false
-                if (!isFinishing && !isDestroyed && !deferredWidgetsReadyForThisInstance) {
-                    initializeDeferredWidgets(staggered = true)
-                }
-            } finally {
-                widgetPrewarmScheduled = false
-            }
-        }
-    }
-
-    private fun initializeFinanceWidgetIfNeeded() {
-        FinanceWidgetInitializer(this, secureStorageManager, 0)
-            .onInitialized { manager ->
-                financeWidgetManager = manager
-            }
-            .initialize(handler)
-    }
+    internal var pendingDeferredInitializer: DeferredWidgetInitializer? = null
 
     internal fun updateAppSearchManager(
         newFullList: List<ResolveInfo>? = null,
@@ -640,7 +560,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun scheduleDeferredContactsLoad() {
+    internal fun scheduleDeferredContactsLoad() {
         if (isFinishing || isDestroyed) return
 
         handler.postDelayed({
@@ -654,138 +574,6 @@ class MainActivity : AppCompatActivity() {
         activityInitializer.handleConfigurationChange()
         if (::screenPagerManager.isInitialized) {
             screenPagerManager.handleConfigurationChange()
-        }
-    }
-
-    private fun observeViewModelState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    if (views.isSearchBoxInitialized()) {
-                        val currentQuery = views.searchBox.text?.toString().orEmpty()
-                        if (currentQuery != state.searchQuery) {
-                            views.searchBox.setText(state.searchQuery)
-                            views.searchBox.setSelection(state.searchQuery.length)
-                        }
-                    }
-
-                    val targetPage = state.currentPage
-                    if (targetPage != null && ::screenPagerManager.isInitialized && screenPagerManager.getCurrentPage() != targetPage) {
-                        when (targetPage) {
-                            ScreenPagerManager.Page.RSS -> screenPagerManager.openRssPage(animated = false)
-                            ScreenPagerManager.Page.WIDGETS -> screenPagerManager.openWidgetsPage(animated = false)
-                            ScreenPagerManager.Page.CENTER -> screenPagerManager.openCenterPage(animated = false)
-                            ScreenPagerManager.Page.WALLPAPER -> screenPagerManager.openWallpaperPage(animated = false)
-                            ScreenPagerManager.Page.AI_CHAT -> screenPagerManager.openAiChatPage(animated = false)
-                        }
-                    }
-                }
-            }
-        }
-
-        if (::screenPagerManager.isInitialized) {
-            screenPagerManager.setOnPageChanged { page ->
-                viewModel.updateCurrentPage(page)
-                val isFullyTransparentPage = page == ScreenPagerManager.Page.WALLPAPER ||
-                        page == ScreenPagerManager.Page.WIDGETS ||
-                        page == ScreenPagerManager.Page.RSS ||
-                        page == ScreenPagerManager.Page.AI_CHAT ||
-                        page == ScreenPagerManager.Page.CENTER
-                systemBarManager.updateSystemBars(isFullyTransparentPage)
-                if (page == ScreenPagerManager.Page.WIDGETS) {
-                    initializeDeferredWidgets()
-                }
-                if (::aiChatPage.isInitialized) {
-                    if (page == ScreenPagerManager.Page.AI_CHAT) {
-                        aiChatPage.onPageShown()
-                    } else {
-                        aiChatPage.onPageHidden()
-                    }
-                }
-                if (::wallpaperMediaController.isInitialized) {
-                    if (page == ScreenPagerManager.Page.WALLPAPER) {
-                        wallpaperMediaController.onPageShown()
-                    } else {
-                        wallpaperMediaController.onPageHidden()
-                    }
-                }
-                if (::stockTopWidgetMediaController.isInitialized) {
-                    if (page == ScreenPagerManager.Page.CENTER && com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
-                        stockTopWidgetMediaController.onPageShown()
-                    } else {
-                        stockTopWidgetMediaController.onPageHidden()
-                    }
-                }
-            }
-            if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS) {
-                initializeDeferredWidgets()
-            }
-            if (::wallpaperMediaController.isInitialized) {
-                if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WALLPAPER) {
-                    wallpaperMediaController.onPageShown()
-                } else {
-                    wallpaperMediaController.onPageHidden()
-                }
-            }
-            if (::stockTopWidgetMediaController.isInitialized) {
-                if (screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.CENTER && com.guruswarupa.launch.utils.LayoutMode.isStock(sharedPreferences)) {
-                    stockTopWidgetMediaController.onPageShown()
-                } else {
-                    stockTopWidgetMediaController.onPageHidden()
-                }
-            }
-            val currentPage = screenPagerManager.getCurrentPage()
-            val isCurrentFullyTransparent = currentPage == ScreenPagerManager.Page.WALLPAPER ||
-                    currentPage == ScreenPagerManager.Page.WIDGETS ||
-                    currentPage == ScreenPagerManager.Page.RSS ||
-                    currentPage == ScreenPagerManager.Page.AI_CHAT ||
-                    currentPage == ScreenPagerManager.Page.CENTER
-            systemBarManager.updateSystemBars(isCurrentFullyTransparent)
-        }
-    }
-
-    internal fun initializeLifecycleManager() {
-        lifecycleManager = LifecycleManager(
-            activity = this,
-            handler = handler,
-            sharedPreferences = sharedPreferences,
-            dependencies = LifecycleManager.Dependencies(
-                systemBarManager = systemBarManager,
-                appLockManager = appLockManager,
-                wallpaperManagerHelper = wallpaperManagerHelper,
-                gestureHandler = gestureHandler,
-                appDockManager = appDockManager,
-                adapter = adapter,
-                appList = appList,
-                appListLoader = appListLoader,
-                widgetManager = widgetManager,
-                usageStatsManager = usageStatsManager,
-                timeDateManager = timeDateManager,
-                weeklyUsageGraph = views.weeklyUsageGraph,
-                usageStatsDisplayManager = usageStatsDisplayManager,
-                todoManager = null,
-                backgroundExecutor = backgroundExecutor,
-                widgetLifecycleCoordinator = widgetLifecycleCoordinator,
-                widgetThemeManager = widgetThemeManager,
-                views = views,
-                broadcastReceiverManager = null,
-                shareManager = shareManager,
-                serviceManager = serviceManager,
-                appTimerManager = appTimerManager,
-                hiddenAppManager = hiddenAppManager
-            )
-        )
-
-        lifecycleManager.onUsageUpdate = { usageStatsRefreshManager.updateUsageInBackground() }
-        lifecycleManager.onFocusModeApply = { isFocusMode -> applyFocusMode(isFocusMode) }
-        lifecycleManager.onLoadApps = { forceRefresh -> appListLoader.loadApps(forceRefresh) }
-    }
-
-    private fun updateLifecycleManagerWithDeferredWidgets() {
-        lifecycleManager.updateDependencies {
-            copy(
-                todoManager = todoManager
-            )
         }
     }
 
@@ -849,70 +637,18 @@ class MainActivity : AppCompatActivity() {
         appListUIUpdater.filterAppsWithoutReload()
     }
 
-    private fun handleSettingsUpdate() {
+    internal fun handleSettingsUpdate() {
         applyOrientationPreference()
         settingsChangeCoordinator.handleSettingsUpdate()
         syncOptionalPagesAfterSettingsUpdate()
     }
 
-    private fun applyOrientationPreference() {
+    internal fun applyOrientationPreference() {
         if (!::sharedPreferences.isInitialized) return
         requestedOrientation = if (sharedPreferences.getBoolean(Constants.Prefs.LANDSCAPE_ORIENTATION_ENABLED, false)) {
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-    }
-
-    private fun syncOptionalPagesAfterSettingsUpdate() {
-        if (!::screenPagerManager.isInitialized) return
-
-        if (sharedPreferences.getBoolean(Constants.Prefs.WIDGETS_PAGE_ENABLED, true) &&
-            screenPagerManager.getCurrentPage() == ScreenPagerManager.Page.WIDGETS
-        ) {
-            handler.post {
-                if (!isFinishing && !isDestroyed) {
-                    initializeDeferredWidgets()
-                }
-            }
-        }
-
-        if (sharedPreferences.getBoolean(Constants.Prefs.RSS_PAGE_ENABLED, true)) {
-            handler.post {
-                if (!isFinishing && !isDestroyed) {
-                    findViewById<View?>(R.id.rss_feed_page)?.let { rssPageView ->
-                        RssFeedPage(this, rssPageView).setup()
-                    }
-                }
-            }
-        }
-
-        if (::aiChatPage.isInitialized) {
-            handler.post {
-                if (!isFinishing && !isDestroyed) {
-                    aiChatPage.updateTypography()
-                }
-            }
-        }
-    }
-
-    private fun handlePackageChange(packageName: String?, isRemoved: Boolean) {
-        if (packageName == null) return
-        backgroundExecutor.execute {
-            cacheManager.removeMetadata(packageName)
-
-            if (::adapter.isInitialized) {
-                handler.post {
-                    if (!isFinishing && !isDestroyed) {
-                        adapter.invalidateIconForPackage(packageName)
-                    }
-                }
-            } else {
-                cacheManager.removeIconsForPackage(packageName)
-            }
-
-            appListLoader.clearCache()
-            appListLoader.loadApps(forceRefresh = true, fullAppList, appList, adapter)
         }
     }
 

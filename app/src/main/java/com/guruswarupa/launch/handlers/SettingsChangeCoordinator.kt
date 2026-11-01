@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.handlers
 
+import com.guruswarupa.launch.managers.autoCategorizeHomeApps
 import android.graphics.Color
 import androidx.core.content.edit
 import androidx.recyclerview.widget.GridLayoutManager
