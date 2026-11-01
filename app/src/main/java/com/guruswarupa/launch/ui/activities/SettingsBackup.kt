@@ -144,22 +144,22 @@ internal fun SettingsActivity.exportSettingsToFile(uri: Uri) {
         dialog.dismiss()
         Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
         val includeVault = vaultAvailable && vaultCheck.isChecked
-        Thread {
+        com.guruswarupa.launch.core.BackgroundWork.execute {
             val ok = SettingsBackupHelper.exportToUri(this, prefs, uri, pass.ifEmpty { null }, includeVault)
             runOnUiThread {
                 Toast.makeText(this, getString(if (ok) R.string.toast_saved else R.string.toast_failed), Toast.LENGTH_SHORT).show()
             }
-        }.start()
+        }
     }
 }
 
 internal fun SettingsActivity.importSettingsFromFile(uri: Uri) {
-    Thread {
+    com.guruswarupa.launch.core.BackgroundWork.execute {
         val encrypted = com.guruswarupa.launch.core.BackupCrypto.isEncrypted(this, uri)
         runOnUiThread {
             if (encrypted) promptPassphraseAndImport(uri) else runImport(uri, null)
         }
-    }.start()
+    }
 }
 
 internal fun SettingsActivity.promptPassphraseAndImport(uri: Uri) {
@@ -184,7 +184,7 @@ internal fun SettingsActivity.promptPassphraseAndImport(uri: Uri) {
 
 internal fun SettingsActivity.runImport(uri: Uri, passphrase: String?) {
     Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
-    Thread {
+    com.guruswarupa.launch.core.BackgroundWork.execute {
         val result = SettingsBackupHelper.importFromUri(this, prefs, uri, passphrase)
         runOnUiThread {
             when (result) {
@@ -197,5 +197,5 @@ internal fun SettingsActivity.runImport(uri: Uri, passphrase: String?) {
                     Toast.makeText(this, getString(R.string.toast_failed), Toast.LENGTH_SHORT).show()
             }
         }
-    }.start()
+    }
 }

@@ -244,5 +244,6 @@ class PrivacyDashboardActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         executor.shutdown()
+        if (::adapter.isInitialized) adapter.shutdown()
     }
 }

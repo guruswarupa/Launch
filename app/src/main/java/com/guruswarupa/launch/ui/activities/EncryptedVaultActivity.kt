@@ -258,7 +258,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                     val oldPassword = oldInput.text.toString()
                     dialog.dismiss()
                     Toast.makeText(this, getString(R.string.backup_working), Toast.LENGTH_SHORT).show()
-                    Thread {
+                    com.guruswarupa.launch.core.BackgroundWork.execute {
                         val ok = vaultManager.changePassword(oldPassword, newPassword)
                         runOnUiThread {
                             Toast.makeText(
@@ -268,7 +268,7 @@ class EncryptedVaultActivity : VaultBaseActivity() {
                             ).show()
                             if (ok) loadFiles()
                         }
-                    }.start()
+                    }
                 }
             }
         }

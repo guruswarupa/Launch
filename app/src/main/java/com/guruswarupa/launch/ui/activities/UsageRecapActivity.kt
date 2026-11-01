@@ -79,10 +79,10 @@ class UsageRecapActivity : AppCompatActivity() {
             })
             return
         }
-        Thread {
+        com.guruswarupa.launch.core.BackgroundWork.execute {
             val recap = buildRecap()
             runOnUiThread { if (!isFinishing) show(recap) }
-        }.start()
+        }
     }
 
     private fun buildRecap(): Recap {

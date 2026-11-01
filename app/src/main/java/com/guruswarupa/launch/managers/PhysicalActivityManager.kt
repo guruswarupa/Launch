@@ -89,7 +89,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
     }
 
     fun initializeAsync(autoStartTracking: Boolean = true, onComplete: (() -> Unit)? = null) {
-        Thread {
+        com.guruswarupa.launch.core.BackgroundWork.execute {
             try {
                 loadSavedData()
                 handler.post {
@@ -100,7 +100,7 @@ class PhysicalActivityManager(private val context: Context) : SensorEventListene
                 }
             } catch (e: Exception) {
             }
-        }.start()
+        }
     }
 
     private fun initializeSensors() {

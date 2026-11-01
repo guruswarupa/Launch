@@ -38,6 +38,10 @@ class PrivacyDashboardAdapter(
     private val previousApps = mutableMapOf<String, AppPrivacyInfo>()
     private val iconExecutor = Executors.newFixedThreadPool(2)
 
+    fun shutdown() {
+        iconExecutor.shutdownNow()
+    }
+
     init {
         setHasStableIds(true)
     }
