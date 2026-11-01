@@ -127,6 +127,7 @@ class WidgetConfigurationActivity : AppCompatActivity() {
 
         widgetsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
+        var orderChangedDuringDrag = false
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             0
@@ -142,25 +143,26 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                     return false
                 }
 
-                val movedItem = filteredWidgets.removeAt(fromPos)
-                filteredWidgets.add(toPos, movedItem)
-
-                if (currentQuery.isEmpty()) {
-                    allWidgets.removeAt(fromPos)
-                    allWidgets.add(toPos, movedItem)
-                } else {
-                    val disabled = allWidgets.filter { !it.enabled }
-                    val reorderedEnabled = filteredWidgets.toList()
-                    allWidgets.clear()
-                    allWidgets.addAll(reorderedEnabled)
-                    allWidgets.addAll(disabled)
+                if (fromPos !in filteredWidgets.indices || toPos !in filteredWidgets.indices) {
+                    return false
                 }
 
-                adapter?.updateWidgets(filteredWidgets)
-                persistWidgetConfiguration()
+                val moved = filteredWidgets[fromPos]
+                val destination = filteredWidgets[toPos]
+                if (moved.isProvider || destination.isProvider || moved.enabled != destination.enabled) {
+                    return false
+                }
+
+                filteredWidgets.add(toPos, filteredWidgets.removeAt(fromPos))
+
+                val movedIndex = allWidgets.indexOfFirst { it.id == moved.id }
+                val destinationIndex = allWidgets.indexOfFirst { it.id == destination.id }
+                if (movedIndex >= 0 && destinationIndex >= 0) {
+                    allWidgets.add(destinationIndex, allWidgets.removeAt(movedIndex))
+                }
+
+                orderChangedDuringDrag = true
                 adapter?.notifyItemMoved(fromPos, toPos)
-                refreshSectionHeaders()
-                updateListChrome()
                 return true
             }
 
@@ -182,6 +184,12 @@ class WidgetConfigurationActivity : AppCompatActivity() {
                 viewHolder.itemView.alpha = 1.0f
                 viewHolder.itemView.scaleX = 1.0f
                 viewHolder.itemView.scaleY = 1.0f
+                if (orderChangedDuringDrag) {
+                    orderChangedDuringDrag = false
+                    persistWidgetConfiguration()
+                    refreshSectionHeaders()
+                    updateListChrome()
+                }
             }
         })
         itemTouchHelper.attachToRecyclerView(widgetsRecyclerView)

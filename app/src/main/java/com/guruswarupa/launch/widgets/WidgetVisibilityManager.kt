@@ -20,6 +20,8 @@ class WidgetVisibilityManager(
         private const val TAG = "WidgetVisibilityManager"
     }
 
+    private val DRAG_EDGE_PX = 80 * activity.resources.displayMetrics.density
+    private val DRAG_SCROLL_STEP_PX = (14 * activity.resources.displayMetrics.density).toInt()
     private val widgetViewCache = mutableMapOf<String, View>()
     private var originalLayoutTransition: LayoutTransition? = null
 
@@ -200,11 +202,14 @@ class WidgetVisibilityManager(
             layout.setOnDragListener { _, event ->
                 when (event.action) {
                     DragEvent.ACTION_DRAG_STARTED -> {
+                        dragActive = true
                         val draggedId = event.localState as? String
                         val draggedView = viewMap[draggedId]
                         draggedView?.visibility = View.INVISIBLE
 
-                        originalLayoutTransition = layout.layoutTransition
+                        if (layout.layoutTransition != null) {
+                            originalLayoutTransition = layout.layoutTransition
+                        }
                         layout.layoutTransition = null
                         true
                     }
@@ -212,51 +217,30 @@ class WidgetVisibilityManager(
                         val draggedId = event.localState as? String
                         if (draggedId != null) {
                             val draggedView = viewMap[draggedId] ?: return@setOnDragListener true
-                            val currentIndex = layout.indexOfChild(draggedView)
-                            val targetIndex = findTargetIndex(layout, event.y, draggedView)
-
-                            if (targetIndex != -1) {
-
-                                val draggedHeight = draggedView.height.toFloat()
-
-                                for (i in 0 until layout.childCount) {
-                                    val child = layout.getChildAt(i)
-                                    if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) {
-                                        if (child.translationY != 0f) child.translationY = 0f
-                                        continue
-                                    }
-
-                                    val childIndex = i
-                                    val targetTranslation = when {
-
-                                        currentIndex < targetIndex && childIndex > currentIndex && childIndex < targetIndex -> -draggedHeight
-
-                                        currentIndex > targetIndex && childIndex >= targetIndex && childIndex < currentIndex -> draggedHeight
-                                        else -> 0f
-                                    }
-
-                                    if (child.translationY != targetTranslation) {
-                                        child.animate()
-                                            .translationY(targetTranslation)
-                                            .setDuration(150)
-                                            .setInterpolator(android.view.animation.DecelerateInterpolator())
-                                            .start()
-                                    }
-                                }
-                            }
-
                             val scrollView = layout.parent as? NestedScrollView
-                            scrollView?.let { scroll ->
-                                val scrollY = scroll.scrollY
-                                val viewportHeight = scroll.height
-                                val edgeThreshold = 180
-                                val scrollAmount = 30
-
-                                if (event.y < scrollY + edgeThreshold) {
-                                    scroll.scrollBy(0, -scrollAmount)
-                                } else if (event.y > scrollY + viewportHeight - edgeThreshold) {
-                                    scroll.scrollBy(0, scrollAmount)
-                                }
+                            lastDragViewportY = event.y - (scrollView?.scrollY ?: 0)
+                            applyDragTranslations(layout, draggedView, event.y)
+                            if (scrollView != null && !autoScrollRunning) {
+                                autoScrollRunning = true
+                                layout.postOnAnimation(object : Runnable {
+                                    override fun run() {
+                                        if (!dragActive) {
+                                            autoScrollRunning = false
+                                            return
+                                        }
+                                        val viewportHeight = scrollView.height
+                                        val step = when {
+                                            lastDragViewportY < DRAG_EDGE_PX -> -DRAG_SCROLL_STEP_PX
+                                            lastDragViewportY > viewportHeight - DRAG_EDGE_PX -> DRAG_SCROLL_STEP_PX
+                                            else -> 0
+                                        }
+                                        if (step != 0) {
+                                            scrollView.scrollBy(0, step)
+                                            applyDragTranslations(layout, draggedView, lastDragViewportY + scrollView.scrollY)
+                                        }
+                                        layout.postOnAnimation(this)
+                                    }
+                                })
                             }
                         }
                         true
@@ -267,9 +251,7 @@ class WidgetVisibilityManager(
                             val draggedView = viewMap[draggedId]
                             if (draggedView != null) {
 
-                                for (i in 0 until layout.childCount) {
-                                    layout.getChildAt(i).translationY = 0f
-                                }
+                                resetDragTranslations(layout)
 
                                 val targetIndex = findTargetIndex(layout, event.y, draggedView)
                                 val currentIndex = layout.indexOfChild(draggedView)
@@ -285,13 +267,12 @@ class WidgetVisibilityManager(
                         true
                     }
                     DragEvent.ACTION_DRAG_ENDED -> {
+                        dragActive = false
                         val draggedId = event.localState as? String
                         val view = viewMap[draggedId]
                         view?.visibility = View.VISIBLE
 
-                        for (i in 0 until layout.childCount) {
-                            layout.getChildAt(i).translationY = 0f
-                        }
+                        resetDragTranslations(layout)
 
                         layout.layoutTransition = originalLayoutTransition
 
@@ -313,22 +294,52 @@ class WidgetVisibilityManager(
         return failedWidgets
     }
 
-    private fun findTargetIndex(layout: LinearLayout, y: Float, draggedView: View): Int {
+    private var dragActive = false
+    private var autoScrollRunning = false
+    private var lastDragViewportY = 0f
+
+    private fun resetDragTranslations(layout: LinearLayout) {
+        for (i in 0 until layout.childCount) {
+            val child = layout.getChildAt(i)
+            child.animate().cancel()
+            child.translationY = 0f
+        }
+    }
+
+    private fun applyDragTranslations(layout: LinearLayout, draggedView: View, y: Float) {
         val currentIndex = layout.indexOfChild(draggedView)
-        val draggedHeight = draggedView.height
+        val targetIndex = findTargetIndex(layout, y, draggedView)
+        if (targetIndex == -1) return
+        val draggedHeight = draggedView.height.toFloat()
 
         for (i in 0 until layout.childCount) {
             val child = layout.getChildAt(i)
-            if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) continue
-
-            val childTop = child.y
-            val virtualChildCenter = if (currentIndex != -1 && currentIndex < i) {
-                childTop - draggedHeight + child.height / 2
-            } else {
-                childTop + child.height / 2
+            if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) {
+                if (child.translationY != 0f) child.translationY = 0f
+                continue
             }
 
-            if (y < virtualChildCenter) {
+            val targetTranslation = when {
+                currentIndex < targetIndex && i > currentIndex && i < targetIndex -> -draggedHeight
+                currentIndex > targetIndex && i >= targetIndex && i < currentIndex -> draggedHeight
+                else -> 0f
+            }
+
+            if (child.translationY != targetTranslation) {
+                child.animate()
+                    .translationY(targetTranslation)
+                    .setDuration(150)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
+                    .start()
+            }
+        }
+    }
+
+    private fun findTargetIndex(layout: LinearLayout, y: Float, draggedView: View): Int {
+        for (i in 0 until layout.childCount) {
+            val child = layout.getChildAt(i)
+            if (child == draggedView || child.id == com.guruswarupa.launch.R.id.widgets_empty_state) continue
+            if (y < child.top + child.height / 2f) {
                 return i
             }
         }
