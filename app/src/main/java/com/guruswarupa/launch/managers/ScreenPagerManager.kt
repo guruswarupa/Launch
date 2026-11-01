@@ -47,7 +47,11 @@ class ScreenPagerManager(
     private val viewConfiguration = ViewConfiguration.get(activity)
     private val minimumFlingVelocity = viewConfiguration.scaledMinimumFlingVelocity
 
-    private val horizontalInterceptThresholdPx = (24 * activity.resources.displayMetrics.density).toInt()
+    private val axisDecisionThresholdPx = viewConfiguration.scaledTouchSlop * 1.5f
+    private val minFlingDistancePx = (32 * activity.resources.displayMetrics.density).toInt()
+    private var gestureAxis = AXIS_UNDECIDED
+    private var touching = false
+    private val settleRunnable = Runnable { settleIfStranded() }
     private val pageViews = linkedMapOf<Page, View>()
     private var activePages = listOf(Page.WALLPAPER, Page.CENTER, Page.WIDGETS)
     private var suppressNextLayoutSnap = false
@@ -58,6 +62,11 @@ class ScreenPagerManager(
         private const val PAGE_SWITCH_THRESHOLD = 0.3f
         private const val PAGE_SWITCH_SETTLE_THRESHOLD = 0.42f
         private const val FLING_VELOCITY_MULTIPLIER = 5
+        private const val HORIZONTAL_DOMINANCE = 1.5f
+        private const val SETTLE_DELAY_MS = 160L
+        private const val AXIS_UNDECIDED = 0
+        private const val AXIS_HORIZONTAL = 1
+        private const val AXIS_VERTICAL = -1
     }
 
     fun setup() {
@@ -94,6 +103,22 @@ class ScreenPagerManager(
         }
 
         pagerScrollView = object : SafeHorizontalScrollView(activity) {
+            override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        touching = true
+                        gestureAxis = AXIS_UNDECIDED
+                        removeCallbacks(settleRunnable)
+                    }
+
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        touching = false
+                        scheduleSettle()
+                    }
+                }
+                return super.dispatchTouchEvent(event)
+            }
+
             override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
                 if (!pagingEnabled) return false
                 when (event.actionMasked) {
@@ -111,14 +136,15 @@ class ScreenPagerManager(
 
                     MotionEvent.ACTION_MOVE -> {
                         velocityTracker?.addMovement(event)
-                        val deltaX = event.x - touchStartX
-                        val deltaY = event.y - touchStartY
-                        val isHorizontalSwipe =
-                            kotlin.math.abs(deltaX) > horizontalInterceptThresholdPx &&
-                                kotlin.math.abs(deltaX) > kotlin.math.abs(deltaY) * 1.2f
-
-                        if (!isHorizontalSwipe) {
-                            return false
+                        if (gestureAxis == AXIS_VERTICAL) return false
+                        val absX = kotlin.math.abs(event.x - touchStartX)
+                        val absY = kotlin.math.abs(event.y - touchStartY)
+                        if (gestureAxis == AXIS_UNDECIDED) {
+                            if (absX < axisDecisionThresholdPx && absY < axisDecisionThresholdPx) {
+                                return false
+                            }
+                            gestureAxis = if (absX > absY * HORIZONTAL_DOMINANCE) AXIS_HORIZONTAL else AXIS_VERTICAL
+                            if (gestureAxis == AXIS_VERTICAL) return false
                         }
 
                         parent?.requestDisallowInterceptTouchEvent(true)
@@ -149,6 +175,7 @@ class ScreenPagerManager(
                 if (page != currentPage) {
                     notifyPageChanged(page, force = false)
                 }
+                scheduleSettle()
             }
             addOnLayoutChangeListener { _, left, _, right, _, oldLeft, _, oldRight, _ ->
                 val newWidth = right - left
@@ -331,6 +358,9 @@ class ScreenPagerManager(
     }
 
     fun cleanup() {
+        if (::pagerScrollView.isInitialized) {
+            pagerScrollView.removeCallbacks(settleRunnable)
+        }
         pageChangeListener = null
         velocityTracker?.recycle()
         velocityTracker = null
@@ -377,14 +407,29 @@ class ScreenPagerManager(
 
             MotionEvent.ACTION_MOVE -> {
                 velocityTracker?.addMovement(event)
+                if (gestureAxis == AXIS_UNDECIDED) {
+                    val absX = kotlin.math.abs(event.x - touchStartX)
+                    val absY = kotlin.math.abs(event.y - touchStartY)
+                    if (absX >= axisDecisionThresholdPx || absY >= axisDecisionThresholdPx) {
+                        gestureAxis = if (absX > absY * HORIZONTAL_DOMINANCE) AXIS_HORIZONTAL else AXIS_VERTICAL
+                    }
+                }
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 velocityTracker?.addMovement(event)
                 velocityTracker?.computeCurrentVelocity(1000)
                 val dragDistance = touchStartX - event.x
-                val flingVelocity = velocityTracker?.xVelocity ?: 0f
-                pagerScrollView.post { snapToNearestPage(dragDistance, flingVelocity) }
+                val xVelocity = velocityTracker?.xVelocity ?: 0f
+                val yVelocity = velocityTracker?.yVelocity ?: 0f
+                val horizontalIntent = gestureAxis == AXIS_HORIZONTAL
+                val flingVelocity = if (
+                    horizontalIntent &&
+                    kotlin.math.abs(dragDistance) > minFlingDistancePx &&
+                    kotlin.math.abs(xVelocity) > kotlin.math.abs(yVelocity) * HORIZONTAL_DOMINANCE
+                ) xVelocity else 0f
+                val effectiveDrag = if (horizontalIntent) dragDistance else 0f
+                pagerScrollView.post { snapToNearestPage(effectiveDrag, flingVelocity) }
                 recycleVelocityTracker()
             }
         }
@@ -464,7 +509,11 @@ class ScreenPagerManager(
         }
 
         pagerScrollView.postDelayed(
-            { notifyPageChanged(page, force = false) },
+            {
+                if (!touching && nearestPageFor(pagerScrollView.scrollX) == page) {
+                    notifyPageChanged(page, force = false)
+                }
+            },
             if (animated) 250L else 0L
         )
     }
@@ -499,6 +548,30 @@ class ScreenPagerManager(
             pagerScrollView.postDelayed({
                 snapToCurrentPageAfterLayout()
             }, 32L)
+        }
+    }
+
+    private fun scheduleSettle() {
+        if (!::pagerScrollView.isInitialized) {
+            return
+        }
+        pagerScrollView.removeCallbacks(settleRunnable)
+        if (!touching) {
+            pagerScrollView.postDelayed(settleRunnable, SETTLE_DELAY_MS)
+        }
+    }
+
+    private fun settleIfStranded() {
+        if (touching || !::pagerScrollView.isInitialized) {
+            return
+        }
+        updatePageWidth()
+        if (pageWidth <= 0 || activePages.isEmpty()) {
+            return
+        }
+        val targetX = pageIndex(nearestPageFor(pagerScrollView.scrollX)) * pageWidth
+        if (pagerScrollView.scrollX != targetX) {
+            pagerScrollView.smoothScrollTo(targetX, 0)
         }
     }
 

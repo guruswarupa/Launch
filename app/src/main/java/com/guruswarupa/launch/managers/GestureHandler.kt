@@ -150,11 +150,11 @@ class GestureHandler(
                         val deltaY = touchStartY - event.y
                         val deltaX = event.x - touchStartX
 
-                        if (deltaY > minSwipeUpDistancePx && deltaY > abs(deltaX) * 1.2f) {
+                        if (deltaY > minSwipeUpDistancePx && deltaY > abs(deltaX)) {
                             isSwipeUpCandidate = false
                             onSwipeUpFromHome?.invoke()
                             true
-                        } else if (abs(deltaX) > minSwipeUpDistancePx && abs(deltaX) > abs(deltaY) * 1.2f) {
+                        } else if (abs(deltaX) > minSwipeUpDistancePx && abs(deltaX) > abs(deltaY) * 1.5f) {
 
                             isSwipeUpCandidate = false
                             false

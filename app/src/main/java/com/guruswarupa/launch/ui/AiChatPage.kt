@@ -130,7 +130,9 @@ class AiChatPage(
 
         updateTypography()
         refreshAvailability()
-
+        if (activity.sharedPreferences.getBoolean(Constants.Prefs.AI_ASSISTANT_ENABLED, false)) {
+            refreshSource()
+        }
     }
 
     fun onPageShown() {
