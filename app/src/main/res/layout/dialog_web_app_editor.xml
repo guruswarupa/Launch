@@ -1,143 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="8dp">
-
-    <EditText
-        android:id="@+id/web_app_name_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/dialog_input_background"
-        android:hint="@string/web_app_name_hint"
-        android:inputType="textCapWords"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="12dp"
-        android:textColor="?attr/appTextPrimary"
-        android:textColorHint="?attr/appTextHint" />
+    android:overScrollMode="never"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/web_app_url_input"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/dialog_input_background"
-            android:hint="@string/web_app_url_hint"
-            android:inputType="textUri"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="12dp"
-            android:textColor="?attr/appTextPrimary"
-            android:textColorHint="?attr/appTextHint" />
-
-        <ImageButton
-            android:id="@+id/web_app_search_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/dialog_input_background"
-            android:contentDescription="@string/web_app_search_description"
-            android:padding="12dp"
-            android:src="@drawable/ic_search"
-            android:tint="?attr/appIconTint" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/web_app_suggestions_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:background="@drawable/dialog_input_background"
-        android:padding="8dp">
+        android:paddingHorizontal="2dp"
+        android:paddingTop="2dp">
 
-        <TextView
-            android:id="@+id/web_app_suggestions_title"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/web_app_popular_sites"
-            android:textColor="?attr/appTextPrimary"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:alpha="0.7"
-            android:paddingBottom="8dp" />
+            android:layout_height="wrap_content">
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
+            <EditText
+                android:id="@+id/web_app_url_input"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/web_app_search_field_background"
+                android:hint="@string/web_app_url_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:paddingStart="18dp"
+                android:paddingEnd="56dp"
+                android:textColor="?attr/appTextPrimary"
+                android:textColorHint="?attr/appTextHint"
+                android:textSize="16sp" />
 
-            <LinearLayout
-                android:id="@+id/web_app_suggestions_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/web_app_search_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/web_app_search_description"
+                android:padding="12dp"
+                android:src="@drawable/ic_search"
+                android:tint="?attr/appAccent" />
 
-    <ProgressBar
-        android:id="@+id/web_app_search_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="12dp"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/dialog_input_background"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="10dp">
+            <ProgressBar
+                android:id="@+id/web_app_search_progress"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="15dp"
+                android:indeterminate="true"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/web_app_results_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginTop="6dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="260dp"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/web_app_results_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="?android:attr/dividerVertical"
+                    android:orientation="vertical"
+                    android:showDividers="middle" />
+            </ScrollView>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/web_app_results_empty"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/block_external_redirects"
+                android:alpha="0.7"
+                android:padding="14dp"
+                android:text="@string/web_app_no_results"
                 android:textColor="?attr/appTextPrimary"
                 android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:alpha="0.6"
-                android:text="@string/prevent_navigation_to_external_domains"
-                android:textColor="?attr/appTextPrimary"
-                android:textSize="11sp" />
+                android:visibility="gone" />
         </LinearLayout>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/web_app_block_redirects_switch"
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="18dp"
+            android:alpha="0.65"
+            android:text="@string/web_app_label_name"
+            android:textColor="?attr/appTextPrimary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-    <CheckBox
-        android:id="@+id/web_app_allow_http_checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/allow_http_unencrypted_connection"
-        android:textColor="?attr/appTextPrimary"
-        android:textSize="13sp"
-        android:buttonTint="?attr/appIconTint"
-        android:alpha="0.7" />
-</LinearLayout>
+        <EditText
+            android:id="@+id/web_app_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/web_app_search_field_background"
+            android:hint="@string/web_app_name_hint"
+            android:inputType="textCapWords"
+            android:maxLines="1"
+            android:paddingHorizontal="18dp"
+            android:textColor="?attr/appTextPrimary"
+            android:textColorHint="?attr/appTextHint"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/web_app_advanced_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="8dp"
+            android:text="@string/web_app_advanced_show"
+            android:textColor="?attr/appAccent"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/web_app_advanced_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/block_external_redirects"
+                        android:textColor="?attr/appTextPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:alpha="0.6"
+                        android:text="@string/prevent_navigation_to_external_domains"
+                        android:textColor="?attr/appTextPrimary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/web_app_block_redirects_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/web_app_allow_http_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:buttonTint="?attr/appIconTint"
+                android:text="@string/allow_http_unencrypted_connection"
+                android:textColor="?attr/appTextPrimary"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

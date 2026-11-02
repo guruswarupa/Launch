@@ -37,6 +37,9 @@ import com.guruswarupa.launch.managers.WebAppAdBlocker
 import com.guruswarupa.launch.managers.WebAppIconFetcher
 
 class WebAppActivity : AppCompatActivity() {
+    @Volatile
+    private var currentPageUrl: String? = null
+
     companion object {
         const val EXTRA_WEB_APP_NAME = "web_app_name"
         const val EXTRA_WEB_APP_URL = "web_app_url"
@@ -228,8 +231,14 @@ class WebAppActivity : AppCompatActivity() {
         }
 
         webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                currentPageUrl = url ?: currentPageUrl
+                view?.evaluateJavascript(WebAppAdBlocker.cosmeticScriptFor(currentPageUrl), null)
+            }
+
             override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-                if (WebAppAdBlocker.shouldBlock(request?.url)) {
+                if (WebAppAdBlocker.shouldBlockRequest(request?.url, currentPageUrl)) {
                     return WebAppAdBlocker.createEmptyResponse()
                 }
                 return super.shouldInterceptRequest(view, request)
@@ -238,7 +247,7 @@ class WebAppActivity : AppCompatActivity() {
             @Deprecated("Deprecated in Java")
             @Suppress("DEPRECATION")
             override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
-                if (WebAppAdBlocker.shouldBlock(url?.toUri())) {
+                if (WebAppAdBlocker.shouldBlockRequest(url?.toUri(), currentPageUrl)) {
                     return WebAppAdBlocker.createEmptyResponse()
                 }
                 return super.shouldInterceptRequest(view, url)
@@ -331,6 +340,8 @@ class WebAppActivity : AppCompatActivity() {
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                currentPageUrl = url
+                view?.evaluateJavascript(WebAppAdBlocker.cosmeticScriptFor(url), null)
                 addressView.text = url ?: intent.getStringExtra(EXTRA_WEB_APP_URL).orEmpty()
 
                 subResourceErrorCount = 0
@@ -365,6 +376,7 @@ class WebAppActivity : AppCompatActivity() {
             }
         }
 
+        currentPageUrl = url
         webView.loadUrl(url)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

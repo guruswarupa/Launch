@@ -6,5 +6,5 @@ data class WebAppEntry(
     val id: String,
     val name: String,
     val url: String,
-    val blockRedirects: Boolean = true
+    val blockRedirects: Boolean = false
 ) : Serializable

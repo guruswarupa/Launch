@@ -12,7 +12,7 @@
     <string name="open_in_browser">Open in Browser</string>
     <string name="web_apps_empty_state">No web apps added yet. Add a site and it will appear in the launcher app list.</string>
     <string name="web_app_name_hint">Name</string>
-    <string name="web_app_url_hint" translatable="false">https://example.com</string>
+    <string name="web_app_url_hint" translatable="false">Search or enter a website</string>
     <string name="web_app_name_required">Enter a name</string>
     <string name="web_app_url_required">Enter a URL</string>
     <string name="web_app_https_required">Use an HTTPS website URL</string>
@@ -1441,4 +1441,10 @@
     <string name="stock_swipe_right_app_format">Swipe-right app: %1$s</string>
     <string name="stock_swipe_right_app_none">None</string>
     <string name="stock_swipe_right_app_choose">Choose swipe-right app</string>
+    <string name="web_app_label_website">Website</string>
+    <string name="web_app_label_name">Name</string>
+    <string name="web_app_no_results">No matches. Enter the full address (for example example.com).</string>
+    <string name="web_app_advanced_show">Advanced options ▾</string>
+    <string name="web_app_advanced_hide">Advanced options ▴</string>
+    <string name="web_app_scan_qr_short">Scan QR</string>
 </resources>

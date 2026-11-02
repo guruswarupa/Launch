@@ -50,7 +50,7 @@ class WebAppManager @Inject constructor(private val sharedPreferences: SharedPre
 
     fun getResolveInfos(): List<ResolveInfo> = getWebApps().map(::createResolveInfo)
 
-    fun addWebApp(name: String, url: String, blockRedirects: Boolean = true) {
+    fun addWebApp(name: String, url: String, blockRedirects: Boolean = false) {
         val normalizedName = name.trim()
         val normalizedUrl = normalizeUrl(url)
         val updated = getWebApps().toMutableList().apply {

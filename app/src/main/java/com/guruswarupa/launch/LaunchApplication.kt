@@ -66,6 +66,7 @@ class LaunchApplication : Application() {
             override fun onActivityDestroyed(activity: Activity) {}
         })
         setupCrashHandler()
+        com.guruswarupa.launch.managers.WebAppAdBlocker.init(this)
         initServices()
     }
 

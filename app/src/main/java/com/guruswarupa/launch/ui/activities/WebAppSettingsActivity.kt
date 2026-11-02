@@ -278,8 +278,6 @@ class WebAppSettingsActivity : AppCompatActivity() {
         val nameInput = dialogView.findViewById<EditText>(R.id.web_app_name_input)
         val urlInput = dialogView.findViewById<EditText>(R.id.web_app_url_input)
         val searchButton = dialogView.findViewById<ImageButton>(R.id.web_app_search_button)
-        val suggestionsContainer = dialogView.findViewById<LinearLayout>(R.id.web_app_suggestions_container)
-        val suggestionsList = dialogView.findViewById<LinearLayout>(R.id.web_app_suggestions_list)
         val searchProgress = dialogView.findViewById<ProgressBar>(R.id.web_app_search_progress)
         val blockRedirectsSwitch = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.web_app_block_redirects_switch)
         val allowHttpCheckbox = dialogView.findViewById<CheckBox>(R.id.web_app_allow_http_checkbox)
@@ -290,7 +288,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
 
         allowHttpCheckbox.isChecked = existing?.url?.startsWith("http://", ignoreCase = true) == true
 
-        blockRedirectsSwitch.isChecked = existing?.blockRedirects ?: true
+        blockRedirectsSwitch.isChecked = existing?.blockRedirects ?: false
 
         val enabledColor = Color.rgb(72, 191, 145)
         val disabledColor = ThemeManager.color(this, R.attr.appTextPrimary)
@@ -304,14 +302,31 @@ class WebAppSettingsActivity : AppCompatActivity() {
         }
         applySwitchColors(blockRedirectsSwitch.isChecked)
 
-        if (existing == null) {
-            suggestionsContainer.visibility = View.VISIBLE
-            setupPopularSuggestions(suggestionsList, nameInput, urlInput)
+        val resultsContainer = dialogView.findViewById<LinearLayout>(R.id.web_app_results_container)
+        val resultsList = dialogView.findViewById<LinearLayout>(R.id.web_app_results_list)
+        val resultsEmpty = dialogView.findViewById<TextView>(R.id.web_app_results_empty)
+        val advancedToggle = dialogView.findViewById<TextView>(R.id.web_app_advanced_toggle)
+        val advancedContainer = dialogView.findViewById<LinearLayout>(R.id.web_app_advanced_container)
+
+        advancedToggle.setOnClickListener {
+            val show = advancedContainer.visibility != View.VISIBLE
+            advancedContainer.visibility = if (show) View.VISIBLE else View.GONE
+            advancedToggle.setText(if (show) R.string.web_app_advanced_hide else R.string.web_app_advanced_show)
+        }
+        if (existing != null && (existing.blockRedirects.not() || existing.url.startsWith("http://", true))) {
+            advancedContainer.visibility = View.VISIBLE
+            advancedToggle.setText(R.string.web_app_advanced_hide)
         }
 
-        searchButton.setOnClickListener {
-            showSearchDialog(nameInput, urlInput, searchProgress)
-        }
+        bindInlineSearch(
+            nameInput = nameInput,
+            urlInput = urlInput,
+            searchButton = searchButton,
+            progress = searchProgress,
+            resultsContainer = resultsContainer,
+            resultsList = resultsList,
+            resultsEmpty = resultsEmpty
+        )
 
         nameInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus && nameInput.text.toString().trim().isBlank()) {
@@ -404,135 +419,132 @@ class WebAppSettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupPopularSuggestions(
-        suggestionsList: LinearLayout,
-        nameInput: EditText,
-        urlInput: EditText
-    ) {
-        suggestionsList.removeAllViews()
-
-        WebAppSearchHelper.POPULAR_WEBSITES.take(10).forEach { suggestion ->
-            val chip = TextView(this).apply {
-                text = suggestion.title
-                setPadding(24, 12, 24, 12)
-                setBackgroundResource(R.drawable.dialog_input_background)
-                setTextColor(ThemeManager.color(context, R.attr.appTextPrimary))
-                textSize = 13f
-                isSingleLine = true
-                maxLines = 1
-                setOnClickListener {
-                    nameInput.setText(suggestion.title)
-                    urlInput.setText(suggestion.url)
-                }
-            }
-
-            val params = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(0, 0, 12, 8)
-            }
-            chip.layoutParams = params
-
-            suggestionsList.addView(chip)
-        }
-    }
-
-    private fun showSearchDialog(
+    private fun bindInlineSearch(
         nameInput: EditText,
         urlInput: EditText,
-        searchProgress: ProgressBar
+        searchButton: ImageButton,
+        progress: ProgressBar,
+        resultsContainer: LinearLayout,
+        resultsList: LinearLayout,
+        resultsEmpty: TextView
     ) {
-        val searchView = LayoutInflater.from(this).inflate(R.layout.dialog_web_app_search, null)
-        val searchInput = searchView.findViewById<EditText>(R.id.search_input)
-        val searchProgressLocal = searchView.findViewById<ProgressBar>(R.id.search_progress)
-        val searchResultsList = searchView.findViewById<LinearLayout>(R.id.search_results_list)
-        val searchEmptyText = searchView.findViewById<TextView>(R.id.search_empty_text)
+        var suppress = false
+        var nameAutoFilled = nameInput.text.isNullOrBlank()
 
-        val searchDialog = AlertDialog.Builder(this, R.style.CustomDialogTheme)
-            .setTitle(R.string.web_app_search_title)
-            .setView(searchView)
-            .setPositiveButton(R.string.cancel_button, null)
-            .show()
+        fun hideResults() {
+            resultsContainer.visibility = View.GONE
+            resultsList.removeAllViews()
+            resultsEmpty.visibility = View.GONE
+        }
 
-        searchInput.setOnEditorActionListener { _, actionId, _ ->
+        fun select(result: SearchSuggestion) {
+            suppress = true
+            if (nameInput.text.isNullOrBlank() || nameAutoFilled) {
+                nameInput.setText(result.title)
+                nameAutoFilled = true
+            }
+            urlInput.setText(result.url)
+            urlInput.setSelection(urlInput.text.length)
+            suppress = false
+            searchJob?.cancel()
+            progress.visibility = View.GONE
+            searchButton.visibility = View.VISIBLE
+            hideResults()
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+            imm?.hideSoftInputFromWindow(urlInput.windowToken, 0)
+        }
+
+        fun show(results: List<SearchSuggestion>, keepExisting: Boolean = false) {
+            if (!keepExisting) resultsList.removeAllViews()
+            val known = HashSet<String>()
+            for (i in 0 until resultsList.childCount) {
+                (resultsList.getChildAt(i).tag as? String)?.let { known.add(it) }
+            }
+            results.forEach { result ->
+                if (!known.add(result.url)) return@forEach
+                val row = LayoutInflater.from(this).inflate(R.layout.item_web_app_search_result, resultsList, false)
+                row.tag = result.url
+                row.findViewById<TextView>(R.id.search_result_title).text = result.title
+                row.findViewById<TextView>(R.id.search_result_url).text =
+                    WebAppSearchHelper.hostOf(result.url)?.removePrefix("www.") ?: result.url
+                WebAppSearchHelper.faviconUrl(result.url)?.let { icon ->
+                    com.bumptech.glide.Glide.with(this)
+                        .load(icon)
+                        .circleCrop()
+                        .into(row.findViewById<android.widget.ImageView>(R.id.search_result_icon).apply { imageTintList = null })
+                }
+                row.setOnClickListener { select(result) }
+                resultsList.addView(row)
+            }
+            resultsContainer.visibility = View.VISIBLE
+            resultsEmpty.visibility = if (resultsList.childCount == 0) View.VISIBLE else View.GONE
+        }
+
+        fun query(forceOnline: Boolean) {
+            val text = urlInput.text.toString().trim().ifEmpty { nameInput.text.toString().trim() }
+            searchJob?.cancel()
+            if (text.isEmpty()) {
+                progress.visibility = View.GONE
+                searchButton.visibility = View.VISIBLE
+                hideResults()
+                return
+            }
+            val direct = WebAppSearchHelper.directAddress(text)
+            if (direct != null) {
+                progress.visibility = View.GONE
+                searchButton.visibility = View.VISIBLE
+                show(listOf(direct))
+                return
+            }
+            val local = WebAppSearchHelper.localSearch(text)
+            show(local)
+            if (text.length < 3 && !forceOnline) return
+            if (local.size >= 3 && !forceOnline) return
+
+            searchJob = lifecycleScope.launch {
+                kotlinx.coroutines.delay(if (forceOnline) 0L else 450L)
+                searchButton.visibility = View.INVISIBLE
+                progress.visibility = View.VISIBLE
+                val online = try {
+                    WebAppSearchHelper.searchGoogle(text)
+                } catch (_: Exception) {
+                    emptyList()
+                }
+                progress.visibility = View.GONE
+                searchButton.visibility = View.VISIBLE
+                show(
+                    online.filter { it.url.startsWith("https://", ignoreCase = true) }.take(8),
+                    keepExisting = true
+                )
+            }
+        }
+
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (!suppress) query(forceOnline = false)
+            }
+        }
+        urlInput.addTextChangedListener(watcher)
+        nameInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (suppress) return
+                nameAutoFilled = false
+                if (urlInput.text.isNullOrBlank()) query(forceOnline = false)
+            }
+        })
+        urlInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
-                performSearch(searchInput.text.toString(), searchResultsList, searchProgressLocal, searchEmptyText, nameInput, urlInput, searchDialog)
+                query(forceOnline = true)
                 true
             } else {
                 false
             }
         }
-    }
-
-    private fun performSearch(
-        query: String,
-        searchResultsList: LinearLayout,
-        searchProgress: ProgressBar,
-        searchEmptyText: TextView,
-        nameInput: EditText,
-        urlInput: EditText,
-        searchDialog: AlertDialog
-    ) {
-        if (query.isBlank()) return
-
-        searchJob?.cancel()
-
-        searchJob = lifecycleScope.launch {
-            searchProgress.visibility = View.VISIBLE
-            searchEmptyText.visibility = View.GONE
-            searchResultsList.removeAllViews()
-
-            val results = try {
-                WebAppSearchHelper.searchGoogle(query)
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    searchProgress.visibility = View.GONE
-                    searchEmptyText.text = getString(R.string.lbl_search_failed_try_again)
-                    searchEmptyText.visibility = View.VISIBLE
-                }
-                return@launch
-            }
-
-            withContext(Dispatchers.Main) {
-                searchProgress.visibility = View.GONE
-
-                if (results.isEmpty()) {
-                    searchEmptyText.visibility = View.VISIBLE
-                } else {
-                    searchEmptyText.visibility = View.GONE
-                    results.forEach { result ->
-                        addSearchResultItem(searchResultsList, result, nameInput, urlInput, searchDialog)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun addSearchResultItem(
-        container: LinearLayout,
-        result: SearchSuggestion,
-        nameInput: EditText,
-        urlInput: EditText,
-        searchDialog: AlertDialog
-    ) {
-        val itemView = LayoutInflater.from(this).inflate(R.layout.item_web_app_search_result, container, false)
-        val titleText = itemView.findViewById<TextView>(R.id.search_result_title)
-        val urlText = itemView.findViewById<TextView>(R.id.search_result_url)
-        val descText = itemView.findViewById<TextView>(R.id.search_result_description)
-
-        titleText.text = result.title
-        urlText.text = result.url
-        descText.text = result.description
-
-        itemView.setOnClickListener {
-            nameInput.setText(result.title)
-            urlInput.setText(result.url)
-            searchDialog.dismiss()
-            Toast.makeText(this, this.getString(R.string.toast_selected, result.title), Toast.LENGTH_SHORT).show()
-        }
-
-        container.addView(itemView)
+        searchButton.setOnClickListener { query(forceOnline = true) }
     }
 
     private fun confirmDelete(entry: WebAppEntry) {
