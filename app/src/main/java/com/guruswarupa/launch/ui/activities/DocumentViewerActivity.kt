@@ -15,6 +15,12 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.MediaController
+import android.widget.VideoView
+import android.widget.PopupMenu
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -28,8 +34,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.EncryptedFolderManager
 import com.guruswarupa.launch.ui.adapters.PdfPageAdapterLazy
-import com.guruswarupa.launch.ui.document.DocumentContentExtractor
-import com.guruswarupa.launch.utils.WallpaperDisplayHelper
+import com.guruswarupa.launch.ui.document.ConvertedDocument
+import com.guruswarupa.launch.ui.document.DocumentConverter
+import com.guruswarupa.launch.ui.document.UnsupportedLegacyFormatException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,8 +49,6 @@ import kotlin.math.min
 
 class DocumentViewerActivity : VaultBaseActivity() {
 
-    private lateinit var wallpaperBackground: ImageView
-    private lateinit var wallpaperOverlay: View
     private lateinit var documentTitle: TextView
     private lateinit var documentPageInfo: TextView
     private lateinit var pdfRecyclerView: RecyclerView
@@ -76,13 +81,25 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private var vaultFileName: String? = null
     private var externalUri: Uri? = null
 
+    private var currentDoc: ConvertedDocument? = null
+    private var showingAlternate = false
+    private var pendingScrollY = 0
+    private lateinit var mediaContainer: FrameLayout
+    private lateinit var mediaVideo: VideoView
+    private lateinit var mediaAudioLabel: TextView
+    private lateinit var findButton: ImageView
+    private lateinit var optionsButton: TextView
+    private lateinit var findBar: LinearLayout
+    private lateinit var findInput: EditText
+    private lateinit var findCount: TextView
+    private val viewPrefs by lazy { getSharedPreferences("document_viewer_prefs", MODE_PRIVATE) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_document_viewer)
 
         initViews()
-        setupWallpaper()
         setupZoomAndPan()
 
         vaultFileName = intent.getStringExtra(EXTRA_VAULT_FILE_NAME)
@@ -120,8 +137,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
     }
 
     private fun initViews() {
-        wallpaperBackground = findViewById(R.id.wallpaper_background)
-        wallpaperOverlay = findViewById(R.id.document_viewer_overlay)
         documentTitle = findViewById(R.id.document_title)
         documentPageInfo = findViewById(R.id.document_page_info)
         pdfRecyclerView = findViewById(R.id.pdf_recycler_view)
@@ -136,11 +151,14 @@ class DocumentViewerActivity : VaultBaseActivity() {
         btnPrevPage = findViewById(R.id.btn_prev_page)
         btnNextPage = findViewById(R.id.btn_next_page)
         shareButton = findViewById(R.id.share_button)
-    }
-
-    private fun setupWallpaper() {
-        WallpaperDisplayHelper.applySystemWallpaper(wallpaperBackground)
-        wallpaperOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.note_editor_overlay))
+        mediaContainer = findViewById(R.id.media_container)
+        mediaVideo = findViewById(R.id.media_video)
+        mediaAudioLabel = findViewById(R.id.media_audio_label)
+        findButton = findViewById(R.id.find_button)
+        optionsButton = findViewById(R.id.view_options_button)
+        findBar = findViewById(R.id.find_bar)
+        findInput = findViewById(R.id.find_input)
+        findCount = findViewById(R.id.find_count)
     }
 
     private fun setupZoomAndPan() {
@@ -302,6 +320,33 @@ class DocumentViewerActivity : VaultBaseActivity() {
         findViewById<ImageView>(R.id.back_button).setOnClickListener { finish() }
 
         shareButton.setOnClickListener { shareDocument() }
+        findButton.setOnClickListener { toggleFindBar() }
+        optionsButton.setOnClickListener { showViewOptions(it) }
+        findInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                val query = s?.toString().orEmpty()
+                if (query.isEmpty()) {
+                    documentWebView.clearMatches()
+                    findCount.text = ""
+                } else {
+                    documentWebView.findAllAsync(query)
+                }
+            }
+        })
+        findInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                documentWebView.findNext(true)
+                true
+            } else false
+        }
+        findViewById<TextView>(R.id.find_next).setOnClickListener { documentWebView.findNext(true) }
+        findViewById<TextView>(R.id.find_prev).setOnClickListener { documentWebView.findNext(false) }
+        findViewById<TextView>(R.id.find_close).setOnClickListener { toggleFindBar(forceClose = true) }
+        documentWebView.setFindListener { active, total, _ ->
+            findCount.text = if (total == 0) getString(R.string.doc_no_matches) else "${active + 1}/$total"
+        }
 
         openExternalButton.setOnClickListener { openWithExternalApp() }
 
@@ -385,30 +430,161 @@ class DocumentViewerActivity : VaultBaseActivity() {
         val extension = fileName.substringAfterLast('.', "").lowercase()
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: ""
 
-        when {
-            extension == "pdf" || mimeType == "application/pdf" -> {
-                openPdf(file)
-            }
-            extension in listOf("txt", "md", "json", "xml", "csv", "log", "html", "htm", "css", "js", "kt", "java", "py", "c", "cpp", "h", "yaml", "yml", "toml", "ini", "cfg", "conf", "sh", "bat", "ps1", "rb", "go", "rs", "swift", "dart", "ts", "tsx", "jsx", "vue", "sql") -> {
-                openTextFile(file)
-            }
-            mimeType.startsWith("text/") -> {
-                openTextFile(file)
-            }
-            else -> {
+        if (extension == "pdf" || mimeType == "application/pdf") {
+            openPdf(file)
+            return
+        }
 
-                try {
-                    val content = file.readText(Charsets.UTF_8)
-                    if (content.any { it.isISOControl() && it != '\n' && it != '\r' && it != '\t' }) {
-                        showError("Unsupported document format. Use the button below to open in another app.", showOpenWithButton = true)
-                    } else {
-                        openTextFile(file)
-                    }
-                } catch (e: Exception) {
-                    showError("Unsupported document format. Use the button below to open in another app.", showOpenWithButton = true)
-                }
+        val photoExtensions = com.guruswarupa.launch.ui.document.BinaryConverters.IMAGE_EXTENSIONS - "svg"
+        if (extension in photoExtensions) {
+            startActivity(Intent(this, PhotoViewerActivity::class.java).apply {
+                putExtra(PhotoViewerActivity.EXTRA_PATH, file.absolutePath)
+                putExtra(PhotoViewerActivity.EXTRA_NAME, fileName)
+                putExtra(PhotoViewerActivity.EXTRA_DELETE, !isVaultFile)
+            })
+            tempFile = null
+            finish()
+            return
+        }
+        if (extension in com.guruswarupa.launch.ui.document.BinaryConverters.MEDIA_EXTENSIONS) {
+            startActivity(Intent(this, VideoPlayerActivity::class.java).apply {
+                putExtra(VideoPlayerActivity.EXTRA_PATH, file.absolutePath)
+                putExtra(VideoPlayerActivity.EXTRA_NAME, fileName)
+                putExtra(VideoPlayerActivity.EXTRA_DELETE, !isVaultFile)
+            })
+            tempFile = null
+            finish()
+            return
+        }
+
+        showLoading("Preparing document…")
+        lifecycleScope.launch {
+            try {
+                val doc = withContext(Dispatchers.IO) { DocumentConverter.convert(file, fileName) }
+                currentDoc = doc
+                showingAlternate = false
+                hideLoading()
+                displayDocument(doc)
+            } catch (e: UnsupportedLegacyFormatException) {
+                showError(e.message ?: "Unsupported document format.", showOpenWithButton = true)
+            } catch (e: OutOfMemoryError) {
+                showError(getString(R.string.doc_too_large), showOpenWithButton = true)
+            } catch (e: Exception) {
+                showError("Unable to display this document. Use the button below to open it in another app.", showOpenWithButton = true)
             }
         }
+    }
+
+    private fun openMedia(file: File, fileName: String, isAudio: Boolean) {
+        hideLoading()
+        pdfRecyclerView.visibility = View.GONE
+        documentWebView.visibility = View.GONE
+        errorContainer.visibility = View.GONE
+        findButton.visibility = View.GONE
+        optionsButton.visibility = View.GONE
+        mediaContainer.visibility = View.VISIBLE
+        mediaAudioLabel.visibility = if (isAudio) View.VISIBLE else View.GONE
+        mediaAudioLabel.text = "\u266A\n\n$fileName"
+        val controller = MediaController(this)
+        controller.setAnchorView(mediaContainer)
+        mediaVideo.setMediaController(controller)
+        mediaVideo.setOnPreparedListener { player ->
+            player.isLooping = false
+            mediaVideo.start()
+        }
+        mediaVideo.setOnErrorListener { _, _, _ ->
+            mediaContainer.visibility = View.GONE
+            showError("This media format can't be played here. Use the button below to open it in another app.", showOpenWithButton = true)
+            true
+        }
+        mediaVideo.setVideoURI(Uri.fromFile(file))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::mediaVideo.isInitialized && mediaVideo.isPlaying) mediaVideo.pause()
+    }
+
+    private fun applyViewSettings(html: String): String {
+        val theme = viewPrefs.getString("theme", "light") ?: "light"
+        val wrap = viewPrefs.getBoolean("wrap", false)
+        return html
+            .replaceFirst("data-theme=\"light\"", "data-theme=\"$theme\"")
+            .replaceFirst("data-wrap=\"off\"", "data-wrap=\"${if (wrap) "on" else "off"}\"")
+    }
+
+    private fun displayDocument(doc: ConvertedDocument, keepScroll: Boolean = false) {
+        pendingScrollY = if (keepScroll) documentWebView.scrollY else 0
+        val html = if (showingAlternate && doc.alternateHtml != null) doc.alternateHtml else doc.html
+        findButton.visibility = View.VISIBLE
+        optionsButton.visibility = View.VISIBLE
+        showWebViewContent(applyViewSettings(html))
+    }
+
+    private fun toggleFindBar(forceClose: Boolean = false) {
+        val show = !forceClose && findBar.visibility != View.VISIBLE
+        findBar.visibility = if (show) View.VISIBLE else View.GONE
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+        if (show) {
+            findInput.requestFocus()
+            imm?.showSoftInput(findInput, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        } else {
+            documentWebView.clearMatches()
+            findInput.setText("")
+            findCount.text = ""
+            imm?.hideSoftInputFromWindow(findInput.windowToken, 0)
+        }
+    }
+
+    private fun showViewOptions(anchor: View) {
+        val doc = currentDoc ?: return
+        val menu = PopupMenu(this, anchor)
+        menu.menu.add(0, 1, 0, R.string.doc_text_larger)
+        menu.menu.add(0, 2, 1, R.string.doc_text_smaller)
+        val theme = viewPrefs.getString("theme", "light") ?: "light"
+        if (theme != "light") menu.menu.add(0, 3, 2, R.string.doc_theme_light)
+        if (theme != "dark") menu.menu.add(0, 4, 3, R.string.doc_theme_dark)
+        if (theme != "sepia") menu.menu.add(0, 5, 4, R.string.doc_theme_sepia)
+        if (doc.kind == ConvertedDocument.Kind.CODE || doc.kind == ConvertedDocument.Kind.TEXT || doc.alternateHtml != null) {
+            val wrapItem = menu.menu.add(0, 6, 5, R.string.doc_word_wrap)
+            wrapItem.isCheckable = true
+            wrapItem.isChecked = viewPrefs.getBoolean("wrap", false)
+        }
+        if (doc.alternateHtml != null) {
+            menu.menu.add(0, 7, 6, if (showingAlternate) R.string.doc_view_rendered else R.string.doc_view_source)
+        }
+        menu.menu.add(0, 8, 7, R.string.open_with_another_app)
+        menu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> changeTextZoom(10)
+                2 -> changeTextZoom(-10)
+                3 -> setTheme("light")
+                4 -> setTheme("dark")
+                5 -> setTheme("sepia")
+                6 -> {
+                    viewPrefs.edit().putBoolean("wrap", !viewPrefs.getBoolean("wrap", false)).apply()
+                    displayDocument(doc, keepScroll = true)
+                }
+                7 -> {
+                    showingAlternate = !showingAlternate
+                    displayDocument(doc)
+                }
+                8 -> openWithExternalApp()
+            }
+            true
+        }
+        menu.show()
+    }
+
+    private fun setTheme(theme: String) {
+        viewPrefs.edit().putString("theme", theme).apply()
+        currentDoc?.let { displayDocument(it, keepScroll = true) }
+    }
+
+    private fun changeTextZoom(delta: Int) {
+        val zoom = (viewPrefs.getInt("text_zoom", 100) + delta).coerceIn(70, 240)
+        viewPrefs.edit().putInt("text_zoom", zoom).apply()
+        documentWebView.settings.textZoom = zoom
     }
 
     private fun openPdf(file: File) {
@@ -505,39 +681,20 @@ class DocumentViewerActivity : VaultBaseActivity() {
         return bestIndex.coerceIn(0, (totalPages - 1).coerceAtLeast(0))
     }
 
-    private fun openTextFile(file: File) {
-        lifecycleScope.launch {
-            try {
-                val content = withContext(Dispatchers.IO) {
-                    file.readText(Charsets.UTF_8)
-                }
-
-                val extension = file.extension.lowercase()
-                val html = DocumentContentExtractor.buildTextFileHtml(content, extension)
-
-                hideLoading()
-                showWebViewContent(html)
-            } catch (e: Exception) {
-                showError("Unable to read file. Use the button below to open in another app.", showOpenWithButton = true)
-            }
-        }
-    }
-
     private fun showWebViewContent(html: String) {
-
-        documentWebView.clearHistory()
-        documentWebView.clearCache(true)
-        documentWebView.loadUrl("about:blank")
-
         documentWebView.visibility = View.VISIBLE
         documentWebView.setBackgroundColor(Color.TRANSPARENT)
         documentWebView.settings.apply {
             javaScriptEnabled = false
+            blockNetworkLoads = true
+            allowFileAccess = false
+            allowContentAccess = false
             loadWithOverviewMode = true
             useWideViewPort = true
             builtInZoomControls = true
             displayZoomControls = false
             setSupportZoom(true)
+            textZoom = viewPrefs.getInt("text_zoom", 100)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 @Suppress("DEPRECATION")
@@ -545,6 +702,27 @@ class DocumentViewerActivity : VaultBaseActivity() {
             }
         }
         documentWebView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: android.webkit.WebResourceRequest?): Boolean {
+                val url = request?.url ?: return true
+                val scheme = url.scheme.orEmpty().lowercase()
+                if (scheme == "http" || scheme == "https" || scheme == "mailto" || scheme == "tel") {
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, url))
+                    } catch (_: Exception) {
+                    }
+                    return true
+                }
+                return false
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                if (pendingScrollY > 0) {
+                    val target = pendingScrollY
+                    pendingScrollY = 0
+                    view?.postDelayed({ view.scrollTo(0, target) }, 60)
+                }
+            }
+
             @Deprecated("Deprecated in Java")
             override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
                 @Suppress("DEPRECATION")
@@ -552,7 +730,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 showError("Unable to display document. Use the button below to open in another app.", showOpenWithButton = true)
             }
         }
-        documentWebView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+        documentWebView.loadDataWithBaseURL("about:blank", html, "text/html", "UTF-8", null)
     }
 
     private fun showLoading(message: String) {
@@ -561,6 +739,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
         documentWebView.visibility = View.GONE
         pdfNavBar.visibility = View.GONE
         errorContainer.visibility = View.GONE
+        mediaContainer.visibility = View.GONE
 
         pdfRecyclerView.adapter = null
         documentWebView.clearHistory()
@@ -580,6 +759,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
         pdfRecyclerView.visibility = View.GONE
         documentWebView.visibility = View.GONE
         pdfNavBar.visibility = View.GONE
+        mediaContainer.visibility = View.GONE
         errorContainer.visibility = View.VISIBLE
         errorText.text = message
         openExternalButton.visibility = if (showOpenWithButton) View.VISIBLE else View.GONE
@@ -646,7 +826,18 @@ class DocumentViewerActivity : VaultBaseActivity() {
         super.onDestroy()
 
         try {
-            pdfRenderer?.close()
+            mediaVideo.stopPlayback()
+        } catch (_: Exception) {
+        }
+        val pdfAdapter = pdfRecyclerView.adapter as? PdfPageAdapterLazy
+        pdfAdapter?.clearCache()
+        try {
+            val lock = pdfAdapter?.renderLock()
+            if (lock != null) {
+                synchronized(lock) { pdfRenderer?.close() }
+            } else {
+                pdfRenderer?.close()
+            }
         } catch (e: Exception) {
         }
 
@@ -692,19 +883,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
         const val EXTRA_FILE_URI = "file_uri"
         const val EXTRA_FILE_NAME = "file_name"
 
-        val SUPPORTED_EXTENSIONS = setOf(
-            "pdf",
-            "txt", "md", "json", "xml", "csv", "log", "html", "htm",
-            "css", "js", "kt", "java", "py", "c", "cpp", "h",
-            "yaml", "yml", "toml", "ini", "cfg", "conf", "sh", "bat",
-            "rb", "go", "rs", "swift", "dart", "ts", "tsx", "jsx",
-            "vue", "sql", "ps1"
-        )
-
-        fun isSupported(fileName: String): Boolean {
-            val ext = fileName.substringAfterLast('.', "").lowercase()
-            return ext in SUPPORTED_EXTENSIONS
-        }
+        fun isSupported(fileName: String): Boolean = true
 
         fun createVaultIntent(context: Context, fileName: String): Intent {
 

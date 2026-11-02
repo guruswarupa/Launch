@@ -23,20 +23,15 @@ class PdfPageAdapterLazy(
 ) : RecyclerView.Adapter<PdfPageAdapterLazy.PageViewHolder>() {
 
     private val maxMemory = Runtime.getRuntime().maxMemory() / 1024
-    private val cacheSize = (maxMemory / 8).toInt()
+    private val cacheSize = (maxMemory / 6).toInt().coerceAtLeast(48 * 1024)
     private val bitmapCache = object : LruCache<Int, Bitmap>(cacheSize) {
         override fun sizeOf(key: Int, bitmap: Bitmap): Int {
             return bitmap.byteCount / 1024
         }
-
-        override fun entryRemoved(evicted: Boolean, key: Int, oldValue: Bitmap, newValue: Bitmap?) {
-            if (evicted && !oldValue.isRecycled) {
-                oldValue.recycle()
-            }
-        }
     }
 
-    private val renderExecutor: ExecutorService = Executors.newFixedThreadPool(2)
+    private val renderExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val rendererLock = Any()
     private val pendingTasks = ConcurrentHashMap<Int, Future<*>>()
 
     class PageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -64,22 +59,26 @@ class PdfPageAdapterLazy(
 
         val future = renderExecutor.submit {
             try {
-                pdfRenderer.openPage(position).use { page ->
-                    val scale = 2.0f
-                    val width = (page.width * scale).toInt()
-                    val height = (page.height * scale).toInt()
+                val bitmap = synchronized(rendererLock) {
+                    pdfRenderer.openPage(position).use { page ->
+                        val longSide = maxOf(page.width, page.height).toFloat()
+                        val scale = minOf(2.0f, MAX_RENDER_SIDE_PX / longSide)
+                        val width = (page.width * scale).toInt().coerceAtLeast(1)
+                        val height = (page.height * scale).toInt().coerceAtLeast(1)
 
-                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                    val canvas = Canvas(bitmap)
-                    canvas.drawColor(Color.WHITE)
-                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        val rendered = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(rendered)
+                        canvas.drawColor(Color.WHITE)
+                        page.render(rendered, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        rendered
+                    }
+                }
 
-                    bitmapCache.put(position, bitmap)
+                bitmapCache.put(position, bitmap)
 
-                    holder.imageView.post {
-                        if (holder.bindingAdapterPosition == position && !bitmap.isRecycled) {
-                            holder.imageView.setImageBitmap(bitmap)
-                        }
+                holder.imageView.post {
+                    if (holder.bindingAdapterPosition == position) {
+                        holder.imageView.setImageBitmap(bitmap)
                     }
                 }
             } catch (e: Exception) {
@@ -99,17 +98,27 @@ class PdfPageAdapterLazy(
 
     override fun getItemCount() = totalPages
 
+    companion object {
+        private const val MAX_RENDER_SIDE_PX = 2400f
+    }
+
     override fun onViewRecycled(holder: PageViewHolder) {
         super.onViewRecycled(holder)
         holder.imageView.setImageBitmap(null)
     }
 
     fun clearCache() {
-        bitmapCache.evictAll()
         pendingTasks.values.forEach { it.cancel(true) }
         pendingTasks.clear()
         renderExecutor.shutdownNow()
+        try {
+            renderExecutor.awaitTermination(800, java.util.concurrent.TimeUnit.MILLISECONDS)
+        } catch (_: InterruptedException) {
+        }
+        bitmapCache.evictAll()
     }
+
+    fun renderLock(): Any = rendererLock
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)

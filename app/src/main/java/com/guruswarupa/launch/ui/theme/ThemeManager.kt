@@ -108,6 +108,8 @@ object ThemeManager {
         return when (declared) {
             R.style.Theme_Launch -> if (light) R.style.Theme_Launch_Light else R.style.Theme_Launch
             R.style.Theme_Launch_Settings -> if (light) R.style.Theme_Launch_Settings_Light else R.style.Theme_Launch_Settings
+            R.style.Theme_Launch_Document -> R.style.Theme_Launch_Document
+            R.style.Theme_Launch_Media -> R.style.Theme_Launch_Media
             else -> null
         }
     }

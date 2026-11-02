@@ -7,19 +7,6 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <ImageView
-        android:id="@+id/wallpaper_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/wallpaper_background" />
-
-    <View
-        android:id="@+id/document_viewer_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#E6121212" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -79,6 +66,32 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/find_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/doc_find_in_document"
+                android:padding="9dp"
+                android:src="@drawable/ic_search"
+                android:visibility="gone"
+                app:tint="?attr/appIconTint" />
+
+            <TextView
+                android:id="@+id/view_options_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/doc_view_options"
+                android:gravity="center"
+                android:text="@string/doc_view_options_label"
+                android:textColor="?attr/appIconTint"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <ImageView
                 android:id="@+id/share_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -94,6 +107,72 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#1FFFFFFF" />
+
+        <LinearLayout
+            android:id="@+id/find_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF1B1B1B"
+            android:elevation="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/find_input"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/doc_find_in_document"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="?attr/appTextPrimary"
+                android:textColorHint="?attr/appTextHint"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/find_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:textColor="?attr/appTextSecondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/find_prev"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="▲"
+                android:textColor="?attr/appIconTint"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/find_next"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="▼"
+                android:textColor="?attr/appIconTint"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/find_close"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="✕"
+                android:textColor="?attr/appIconTint"
+                android:textSize="16sp" />
+        </LinearLayout>
+
 
         <!-- Content Area -->
         <FrameLayout
@@ -138,6 +217,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone" />
+
+            <!-- Video / audio player -->
+            <FrameLayout
+                android:id="@+id/media_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:visibility="gone">
+
+                <VideoView
+                    android:id="@+id/media_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/media_audio_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:paddingHorizontal="32dp"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
+            </FrameLayout>
 
             <!-- Loading indicator -->
             <LinearLayout

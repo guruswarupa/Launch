@@ -407,7 +407,7 @@
         <activity
             android:name=".ui.activities.DocumentViewerActivity"
             android:exported="true"
-            android:theme="@style/Theme.Launch.Settings"
+            android:theme="@style/Theme.Launch.Document"
             android:label="Document Viewer"
             android:excludeFromRecents="false"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density">
@@ -423,6 +423,35 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/*" />
             </intent-filter>
+            <!-- Office, OpenDocument, RTF, JSON/XML -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation" />
+                <data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.slideshow" />
+                <data android:mimeType="application/vnd.oasis.opendocument.text" />
+                <data android:mimeType="application/vnd.oasis.opendocument.spreadsheet" />
+                <data android:mimeType="application/vnd.oasis.opendocument.presentation" />
+                <data android:mimeType="application/rtf" />
+                <data android:mimeType="application/json" />
+                <data android:mimeType="application/xml" />
+                <data android:mimeType="application/csv" />
+                <data android:mimeType="application/x-yaml" />
+                <data android:mimeType="application/javascript" />
+                <data android:mimeType="application/x-sh" />
+                <data android:mimeType="application/sql" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+                <data android:mimeType="application/java-archive" />
+                <data android:mimeType="application/epub+zip" />
+                <data android:mimeType="application/x-tar" />
+                <data android:mimeType="application/msword" />
+                <data android:mimeType="application/vnd.ms-excel" />
+                <data android:mimeType="application/vnd.ms-powerpoint" />
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
         </activity>
 
         <!-- Unexported alias for viewing vault files: DocumentViewerActivity itself must stay
@@ -431,6 +460,46 @@
              vault contents whenever the in-process vault happened to be unlocked. Routing vault
              launches through this non-exported alias (same Activity class, same intent extras)
              means only this app itself can trigger that code path. -->
+        <activity
+            android:name=".ui.activities.PhotoViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Media"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density|keyboardHidden" />
+
+        <activity
+            android:name=".ui.activities.VideoPlayerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Media"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density|keyboardHidden"
+            android:supportsPictureInPicture="false" />
+
+        <activity-alias
+            android:name=".ui.activities.PhotoViewerExternalActivity"
+            android:exported="true"
+            android:label="Launch Photos"
+            android:targetActivity=".ui.activities.PhotoViewerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".ui.activities.VideoPlayerExternalActivity"
+            android:exported="true"
+            android:label="Launch Player"
+            android:targetActivity=".ui.activities.VideoPlayerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-mpegURL" />
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias
             android:name=".ui.activities.VaultDocumentViewerActivity"
             android:targetActivity=".ui.activities.DocumentViewerActivity"

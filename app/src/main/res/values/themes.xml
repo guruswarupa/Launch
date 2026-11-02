@@ -89,6 +89,12 @@
         <item name="appSurfaceStroke">@dimen/app_surface_stroke</item>
     </style>
 
+    <style name="Theme.Launch.Document" parent="Theme.Launch">
+        <item name="android:windowBackground">#121212</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowShowWallpaper">false</item>
+    </style>
+
     <style name="Theme.Launch.Settings" parent="Theme.Launch">
 
         <item name="android:windowBackground">@android:color/transparent</item>

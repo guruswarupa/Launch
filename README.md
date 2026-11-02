@@ -224,7 +224,21 @@ Turn any website into an app in your list.
 - A news page with your sources, topics and categories. Add and manage sources in **Settings → RSS Sources**.
 
 ### Documents and notes
-- **Document viewer** for PDF, Word, Excel, PowerPoint and other common formats.
+- **Document viewer** that opens files fully offline, with no cloud conversion and no network access:
+  - **Word:** `.docx`, `.docm`, `.dotx` with headings, bold, italic, underline, colors, lists and numbering, tables (merged cells and shading), images, hyperlinks, footnotes and page breaks.
+  - **Excel:** `.xlsx`, `.xlsm` with multiple sheets as tabs, merged cells, column widths, cell colors and bold, and correctly formatted dates, numbers, percentages and currencies.
+  - **PowerPoint:** `.pptx`, `.pptm`, `.ppsx` rendered as real slides with positioned text, shapes, pictures, tables, themes, backgrounds and speaker notes.
+  - **OpenDocument and RTF:** `.odt`, `.ods`, `.odp` and `.rtf`.
+  - **Text and data:** `.txt`, `.log`, `.srt`, `.csv` / `.tsv` as a spreadsheet grid, Markdown rendered with tables and code blocks (with a source view), HTML rendered safely (with a source view) and JSON pretty-printed.
+  - **Code:** 50+ languages and config formats with syntax colors, line numbers and optional word wrap.
+  - **PDF:** page-by-page viewing with a page counter.
+  - **Images:** PNG, JPEG, GIF, WebP, BMP, ICO and SVG (with a source view) with pinch-to-zoom.
+  - **Video and audio:** plays MP4, WebM, MKV, 3GP, MP3, WAV, OGG, FLAC, M4A and more inside the viewer, with playback controls.
+  - **Archives and anything else:** ZIP, JAR, APK and EPUB show their contents; unknown binary files show a hex dump.
+  - Older binary `.doc`, `.xls` and `.ppt` files show a basic text extraction and can be opened in another app.
+  - Find in document, adjustable text size, light, dark and sepia reading themes, pinch to zoom, share and open-with.
+  - Handles encodings automatically (UTF-8, UTF-16, Windows-1252) and large files by showing the first part.
+  - Launch can also open these files when you choose it from another app.
 - **Note editor** shared with the Notes widget.
 - **APK sharing** for installed apps.
 
