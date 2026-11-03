@@ -8,9 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
-import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.webkit.WebView
@@ -29,11 +27,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.EncryptedFolderManager
-import com.guruswarupa.launch.ui.adapters.PdfPageAdapterLazy
 import com.guruswarupa.launch.ui.document.ConvertedDocument
 import com.guruswarupa.launch.ui.document.DocumentConverter
 import com.guruswarupa.launch.ui.document.UnsupportedLegacyFormatException
@@ -51,7 +46,14 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
     private lateinit var documentTitle: TextView
     private lateinit var documentPageInfo: TextView
-    private lateinit var pdfRecyclerView: RecyclerView
+    private lateinit var pdfReader: com.guruswarupa.launch.ui.views.PdfReaderView
+    private var pdfIndex: com.guruswarupa.launch.ui.document.PdfTextIndex? = null
+    private var pdfMatches: List<com.guruswarupa.launch.ui.document.PdfTextIndex.Match> = emptyList()
+    private var pdfMatchIndex = 0
+    private var pdfSearchToken = 0
+    private var pdfIndexStarted = false
+    private var pdfFile: File? = null
+    private var pdfCurrentQuery = ""
     private lateinit var documentWebView: WebView
     private lateinit var loadingContainer: View
     private lateinit var loadingText: TextView
@@ -71,11 +73,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private var totalPages = 0
     private var currentPageIndex = 0
 
-    private var scaleFactor = 1.0f
-    private var lastTouchX = 0f
-    private var lastTouchY = 0f
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
-    private lateinit var gestureDetector: GestureDetector
 
     private var isVaultFile = false
     private var vaultFileName: String? = null
@@ -100,7 +97,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
         setContentView(R.layout.activity_document_viewer)
 
         initViews()
-        setupZoomAndPan()
 
         vaultFileName = intent.getStringExtra(EXTRA_VAULT_FILE_NAME)
         val uriString = intent.getStringExtra(EXTRA_FILE_URI)
@@ -139,7 +135,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private fun initViews() {
         documentTitle = findViewById(R.id.document_title)
         documentPageInfo = findViewById(R.id.document_page_info)
-        pdfRecyclerView = findViewById(R.id.pdf_recycler_view)
+        pdfReader = findViewById(R.id.pdf_reader)
         documentWebView = findViewById(R.id.document_webview)
         loadingContainer = findViewById(R.id.loading_container)
         loadingText = findViewById(R.id.loading_text)
@@ -161,161 +157,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
         findCount = findViewById(R.id.find_count)
     }
 
-    private fun setupZoomAndPan() {
-
-        pdfRecyclerView.post {
-            pdfRecyclerView.pivotX = 0f
-            pdfRecyclerView.pivotY = 0f
-        }
-
-        scaleGestureDetector = ScaleGestureDetector(this, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                val currentScale = scaleFactor
-                val requestedScale = currentScale * detector.scaleFactor
-                val nextScale = requestedScale.coerceIn(1.0f, 6.0f)
-                val relativeScale = nextScale / currentScale
-
-                val focusX = detector.focusX
-                val focusY = detector.focusY
-
-                pdfRecyclerView.translationX =
-                    pdfRecyclerView.translationX * relativeScale + focusX * (1 - relativeScale)
-                pdfRecyclerView.translationY =
-                    pdfRecyclerView.translationY * relativeScale + focusY * (1 - relativeScale)
-
-                scaleFactor = nextScale
-                pdfRecyclerView.scaleX = scaleFactor
-                pdfRecyclerView.scaleY = scaleFactor
-
-                applyBounds()
-                return true
-            }
-        })
-
-        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onDoubleTap(e: MotionEvent): Boolean {
-                if (scaleFactor > 1.0f) {
-                    scaleFactor = 1.0f
-                    pdfRecyclerView.animate()
-                        .scaleX(1.0f)
-                        .scaleY(1.0f)
-                        .translationX(0f)
-                        .translationY(0f)
-                        .setDuration(300)
-                        .start()
-                } else {
-                    val targetScale = 2.5f
-                    val relativeScale = targetScale / scaleFactor
-                    val targetX = pdfRecyclerView.translationX * relativeScale + e.x * (1 - relativeScale)
-                    val targetY = pdfRecyclerView.translationY * relativeScale + e.y * (1 - relativeScale)
-
-                    scaleFactor = targetScale
-                    pdfRecyclerView.animate()
-                        .scaleX(targetScale)
-                        .scaleY(targetScale)
-                        .translationX(targetX)
-                        .translationY(targetY)
-                        .setDuration(300)
-                        .start()
-                }
-                return true
-            }
-        })
-
-        pdfRecyclerView.setOnTouchListener { v, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            gestureDetector.onTouchEvent(event)
-
-            val isPinching = scaleGestureDetector.isInProgress
-            val isMultiTouch = event.pointerCount > 1
-            val shouldHandleZoomGesture = scaleFactor > 1.0f || isPinching || isMultiTouch
-
-            if (shouldHandleZoomGesture) {
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        lastTouchX = event.x
-                        lastTouchY = event.y
-                        pdfRecyclerView.parent?.requestDisallowInterceptTouchEvent(scaleFactor > 1.0f)
-                    }
-                    MotionEvent.ACTION_POINTER_DOWN -> {
-                        val (focusX, focusY) = getTouchFocus(event)
-                        lastTouchX = focusX
-                        lastTouchY = focusY
-                        pdfRecyclerView.parent?.requestDisallowInterceptTouchEvent(true)
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        if (isPinching) {
-
-                            val (focusX, focusY) = getTouchFocus(event)
-                            lastTouchX = focusX
-                            lastTouchY = focusY
-                            return@setOnTouchListener true
-                        } else if (isMultiTouch && scaleFactor > 1.0f) {
-                            val (focusX, focusY) = getTouchFocus(event)
-                            val dx = focusX - lastTouchX
-                            val dy = focusY - lastTouchY
-                            pdfRecyclerView.parent?.requestDisallowInterceptTouchEvent(true)
-                            pdfRecyclerView.translationX += dx
-                            pdfRecyclerView.translationY += dy
-                            applyBounds()
-                            lastTouchX = focusX
-                            lastTouchY = focusY
-                            return@setOnTouchListener true
-                        } else {
-                            if (scaleFactor <= 1.0f) return@setOnTouchListener false
-
-                            val dx = event.x - lastTouchX
-                            val dy = event.y - lastTouchY
-                            pdfRecyclerView.parent?.requestDisallowInterceptTouchEvent(true)
-                            pdfRecyclerView.translationX += dx
-                            pdfRecyclerView.translationY += dy
-                            applyBounds()
-                            lastTouchX = event.x
-                            lastTouchY = event.y
-                            return@setOnTouchListener true
-                        }
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        pdfRecyclerView.parent?.requestDisallowInterceptTouchEvent(scaleFactor > 1.0f)
-                        if (event.action == MotionEvent.ACTION_UP) {
-                            v.performClick()
-                        }
-                    }
-                }
-                true
-            } else {
-                false
-            }
-        }
-    }
-
-    private fun getTouchFocus(event: MotionEvent): Pair<Float, Float> {
-        var sumX = 0f
-        var sumY = 0f
-        val count = event.pointerCount.coerceAtLeast(1)
-        for (i in 0 until count) {
-            sumX += event.getX(i)
-            sumY += event.getY(i)
-        }
-        return Pair(sumX / count, sumY / count)
-    }
-
-    private fun applyBounds() {
-        if (scaleFactor <= 1.0f) {
-            pdfRecyclerView.translationX = 0f
-            pdfRecyclerView.translationY = 0f
-            return
-        }
-
-        val width = pdfRecyclerView.width.toFloat()
-        val height = pdfRecyclerView.height.toFloat()
-        val minX = width - (width * scaleFactor)
-        val minY = height - (height * scaleFactor)
-
-        pdfRecyclerView.translationX = max(minX, min(pdfRecyclerView.translationX, 0f))
-        pdfRecyclerView.translationY = max(minY, min(pdfRecyclerView.translationY, 0f))
-    }
-
     private fun setupClickListeners() {
         findViewById<ImageView>(R.id.back_button).setOnClickListener { finish() }
 
@@ -327,6 +168,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
                 val query = s?.toString().orEmpty()
+                if (pdfReader.visibility == View.VISIBLE) { onPdfQuery(query); return }
                 if (query.isEmpty()) {
                     documentWebView.clearMatches()
                     findCount.text = ""
@@ -337,12 +179,12 @@ class DocumentViewerActivity : VaultBaseActivity() {
         })
         findInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                documentWebView.findNext(true)
+                if (pdfReader.visibility == View.VISIBLE) stepPdfMatch(1) else documentWebView.findNext(true)
                 true
             } else false
         }
-        findViewById<TextView>(R.id.find_next).setOnClickListener { documentWebView.findNext(true) }
-        findViewById<TextView>(R.id.find_prev).setOnClickListener { documentWebView.findNext(false) }
+        findViewById<TextView>(R.id.find_next).setOnClickListener { if (pdfReader.visibility == View.VISIBLE) stepPdfMatch(1) else documentWebView.findNext(true) }
+        findViewById<TextView>(R.id.find_prev).setOnClickListener { if (pdfReader.visibility == View.VISIBLE) stepPdfMatch(-1) else documentWebView.findNext(false) }
         findViewById<TextView>(R.id.find_close).setOnClickListener { toggleFindBar(forceClose = true) }
         documentWebView.setFindListener { active, total, _ ->
             findCount.text = if (total == 0) getString(R.string.doc_no_matches) else "${active + 1}/$total"
@@ -350,27 +192,125 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
         openExternalButton.setOnClickListener { openWithExternalApp() }
 
-        btnPrevPage.setOnClickListener {
-            val layoutManager = pdfRecyclerView.layoutManager as? LinearLayoutManager ?: return@setOnClickListener
-            val currentPos = getCurrentPageIndex(layoutManager)
-            if (currentPos > 0) {
-                val target = currentPos - 1
-                currentPageIndex = target
-                updatePageIndicator(currentPageIndex + 1)
-                pdfRecyclerView.smoothScrollToPosition(target)
-            }
-        }
+        btnPrevPage.setOnClickListener { pdfReader.scrollToPage(pdfReader.currentPage() - 1) }
+        btnNextPage.setOnClickListener { pdfReader.scrollToPage(pdfReader.currentPage() + 1) }
+        pageIndicator.setOnClickListener { promptGoToPage() }
+    }
 
-        btnNextPage.setOnClickListener {
-            val layoutManager = pdfRecyclerView.layoutManager as? LinearLayoutManager ?: return@setOnClickListener
-            val currentPos = getCurrentPageIndex(layoutManager)
-            if (currentPos < totalPages - 1) {
-                val target = currentPos + 1
-                currentPageIndex = target
-                updatePageIndicator(currentPageIndex + 1)
-                pdfRecyclerView.smoothScrollToPosition(target)
-            }
+    private fun promptGoToPage() {
+        if (totalPages <= 1) return
+        val input = EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            hint = "1 - $totalPages"
+            setText((pdfReader.currentPage() + 1).toString())
+            selectAll()
         }
+        val wrap = android.widget.FrameLayout(this).apply {
+            val pad = (20 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Go to page")
+            .setView(wrap)
+            .setPositiveButton("Go") { _, _ ->
+                input.text.toString().toIntOrNull()?.let { pdfReader.scrollToPage(it.coerceIn(1, totalPages) - 1) }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun ensurePdfIndex() {
+        val file = pdfFile ?: return
+        if (pdfIndex == null) pdfIndex = com.guruswarupa.launch.ui.document.PdfTextIndex(this, file)
+        val index = pdfIndex ?: return
+        if (pdfIndexStarted) return
+        pdfIndexStarted = true
+        Thread {
+            index.buildIndex({ isDestroyed }) { done, total ->
+                runOnUiThread {
+                    if (pdfReader.visibility != View.VISIBLE) return@runOnUiThread
+                    if (pdfCurrentQuery.isNotEmpty() && (done == total || done % 12 == 0)) runPdfSearch(keepPosition = true)
+                    else if (pdfCurrentQuery.isNotEmpty() && pdfMatches.isEmpty()) findCount.text = "Indexing $done/$total"
+                }
+            }
+        }.start()
+    }
+
+    private fun onPdfQuery(query: String) {
+        pdfCurrentQuery = query.trim()
+        ensurePdfIndex()
+        if (pdfCurrentQuery.isEmpty()) {
+            pdfMatches = emptyList()
+            pdfReader.clearHighlights()
+            findCount.text = ""
+            return
+        }
+        runPdfSearch(keepPosition = false)
+    }
+
+    private fun runPdfSearch(keepPosition: Boolean) {
+        val index = pdfIndex ?: return
+        val token = ++pdfSearchToken
+        val query = pdfCurrentQuery
+        val startPage = pdfReader.currentPage()
+        val previous = pdfMatches.getOrNull(pdfMatchIndex)
+        Thread {
+            val found = index.search(query) { token != pdfSearchToken }
+            if (token != pdfSearchToken) return@Thread
+            runOnUiThread {
+                if (token != pdfSearchToken) return@runOnUiThread
+                pdfMatches = found
+                if (found.isEmpty()) {
+                    pdfReader.clearHighlights()
+                    findCount.text = if (index.finished) getString(R.string.doc_no_matches) else "Indexing ${index.indexed}/${index.pageCount}"
+                    if (index.finished && index.totalChars == 0L) findCount.text = "No text in this PDF"
+                    return@runOnUiThread
+                }
+                pdfMatchIndex = if (keepPosition && previous != null) found.indexOfFirst { it.page == previous.page && it.start == previous.start }.takeIf { it >= 0 } ?: 0
+                else found.indexOfFirst { it.page >= startPage }.takeIf { it >= 0 } ?: 0
+                showPdfMatch(true)
+            }
+        }.start()
+    }
+
+    private fun stepPdfMatch(dir: Int) {
+        if (pdfMatches.isEmpty()) return
+        pdfMatchIndex = (pdfMatchIndex + dir + pdfMatches.size) % pdfMatches.size
+        showPdfMatch(true)
+    }
+
+    private fun showPdfMatch(scroll: Boolean) {
+        val index = pdfIndex ?: return
+        val matches = pdfMatches
+        if (matches.isEmpty()) return
+        val current = matches[pdfMatchIndex]
+        val suffix = if (index.finished) "" else "+"
+        findCount.text = "${pdfMatchIndex + 1}/${matches.size}$suffix"
+        val token = pdfSearchToken
+        Thread {
+            val list = ArrayList<com.guruswarupa.launch.ui.views.PdfReaderView.Highlight>()
+            var focus: android.graphics.RectF? = null
+            val lo = (current.page - 2).coerceAtLeast(0)
+            val hi = current.page + 2
+            for (m in matches) {
+                if (m.page < lo) continue
+                if (m.page > hi) break
+                val isCurrent = m === current
+                index.rectsFor(m).forEach { r ->
+                    list.add(com.guruswarupa.launch.ui.views.PdfReaderView.Highlight(m.page, r, isCurrent))
+                    if (isCurrent && focus == null) focus = r
+                }
+            }
+            runOnUiThread {
+                if (token != pdfSearchToken) return@runOnUiThread
+                pdfReader.setHighlights(list)
+                val f = focus
+                if (scroll) {
+                    if (f != null) pdfReader.scrollToRect(current.page, f) else pdfReader.scrollToPage(current.page)
+                }
+            }
+        }.start()
     }
 
     private fun loadVaultDocument(fileName: String) {
@@ -477,7 +417,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
     private fun openMedia(file: File, fileName: String, isAudio: Boolean) {
         hideLoading()
-        pdfRecyclerView.visibility = View.GONE
+        pdfReader.visibility = View.GONE
         documentWebView.visibility = View.GONE
         errorContainer.visibility = View.GONE
         findButton.visibility = View.GONE
@@ -530,6 +470,10 @@ class DocumentViewerActivity : VaultBaseActivity() {
             imm?.showSoftInput(findInput, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
         } else {
             documentWebView.clearMatches()
+            pdfSearchToken++
+            pdfMatches = emptyList()
+            pdfCurrentQuery = ""
+            pdfReader.clearHighlights()
             findInput.setText("")
             findCount.text = ""
             imm?.hideSoftInputFromWindow(findInput.windowToken, 0)
@@ -590,48 +534,52 @@ class DocumentViewerActivity : VaultBaseActivity() {
     private fun openPdf(file: File) {
         lifecycleScope.launch {
             try {
-
+                pdfIndex?.close()
+                pdfIndex = null
+                pdfIndexStarted = false
                 pdfRenderer?.close()
                 fileDescriptor?.close()
 
-                withContext(Dispatchers.IO) {
+                val sizes = withContext(Dispatchers.IO) {
                     val fd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
                     fileDescriptor = fd
                     val renderer = PdfRenderer(fd)
                     pdfRenderer = renderer
                     totalPages = renderer.pageCount
+                    val widths = FloatArray(totalPages)
+                    val heights = FloatArray(totalPages)
+                    var lastW = 0f
+                    var lastH = 0f
+                    for (i in 0 until totalPages) {
+                        renderer.openPage(i).use { page ->
+                            widths[i] = page.width.toFloat()
+                            heights[i] = page.height.toFloat()
+                        }
+                    }
+                    Pair(widths, heights)
                 }
 
                 hideLoading()
-                pdfRecyclerView.visibility = View.VISIBLE
-                pdfNavBar.visibility = View.VISIBLE
-
-                documentPageInfo.visibility = View.VISIBLE
-                documentPageInfo.text = resources.getQuantityString(R.plurals.document_page_count, totalPages, totalPages)
-
-                val layoutManager = LinearLayoutManager(this@DocumentViewerActivity)
-                pdfRecyclerView.layoutManager = layoutManager
                 val renderer = pdfRenderer
-                if (renderer != null) {
-                    pdfRecyclerView.adapter = PdfPageAdapterLazy(renderer, totalPages)
-                } else {
+                if (renderer == null) {
                     showError("Failed to initialize PDF renderer")
                     return@launch
                 }
-
-                currentPageIndex = 0
-                updatePageIndicator(currentPageIndex + 1)
-
-                pdfRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        val page = getCurrentPageIndex(layoutManager)
-                        if (page != currentPageIndex) {
-                            currentPageIndex = page
-                            updatePageIndicator(currentPageIndex + 1)
-                        }
+                pdfReader.visibility = View.VISIBLE
+                pdfNavBar.visibility = View.VISIBLE
+                pdfReader.setDocument(renderer, sizes.first, sizes.second)
+                pdfReader.onPageChanged = { page ->
+                    if (page != currentPageIndex) {
+                        currentPageIndex = page
+                        updatePageIndicator(page + 1)
                     }
-                })
+                }
 
+                documentPageInfo.visibility = View.VISIBLE
+                documentPageInfo.text = resources.getQuantityString(R.plurals.document_page_count, totalPages, totalPages)
+                pdfFile = file
+                currentPageIndex = 0
+                updatePageIndicator(1)
             } catch (e: OutOfMemoryError) {
                 showError("PDF is too large to preview. Use the button below to open in another app.", showOpenWithButton = true)
             } catch (e: Exception) {
@@ -644,41 +592,6 @@ class DocumentViewerActivity : VaultBaseActivity() {
         pageIndicator.text = getString(R.string.document_page_indicator, currentPage, totalPages)
         btnPrevPage.alpha = if (currentPage <= 1) 0.3f else 1.0f
         btnNextPage.alpha = if (currentPage >= totalPages) 0.3f else 1.0f
-    }
-
-    private fun getCurrentPageIndex(layoutManager: LinearLayoutManager): Int {
-        val first = layoutManager.findFirstVisibleItemPosition()
-        val last = layoutManager.findLastVisibleItemPosition()
-        if (first == RecyclerView.NO_POSITION) return 0
-
-        val viewportTop = pdfRecyclerView.paddingTop
-        val viewportBottom = pdfRecyclerView.height - pdfRecyclerView.paddingBottom
-        var bestIndex = first
-        var bestVisibleHeight = -1
-        var bestDistanceToCenter = Int.MAX_VALUE
-        val centerY = (viewportTop + viewportBottom) / 2
-
-        for (pos in first..last) {
-            val child = layoutManager.findViewByPosition(pos) ?: continue
-            val visibleTop = max(child.top, viewportTop)
-            val visibleBottom = min(child.bottom, viewportBottom)
-            val visibleHeight = visibleBottom - visibleTop
-            if (visibleHeight <= 0) continue
-
-            val childCenterY = (child.top + child.bottom) / 2
-            val distanceToCenter = kotlin.math.abs(childCenterY - centerY)
-
-            if (visibleHeight > bestVisibleHeight ||
-                (visibleHeight == bestVisibleHeight && distanceToCenter < bestDistanceToCenter) ||
-                (visibleHeight == bestVisibleHeight && distanceToCenter == bestDistanceToCenter && pos > bestIndex)
-            ) {
-                bestVisibleHeight = visibleHeight
-                bestDistanceToCenter = distanceToCenter
-                bestIndex = pos
-            }
-        }
-
-        return bestIndex.coerceIn(0, (totalPages - 1).coerceAtLeast(0))
     }
 
     private fun showWebViewContent(html: String) {
@@ -735,14 +648,13 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
     private fun showLoading(message: String) {
 
-        pdfRecyclerView.visibility = View.GONE
+        pdfReader.visibility = View.GONE
         documentWebView.visibility = View.GONE
         pdfNavBar.visibility = View.GONE
         errorContainer.visibility = View.GONE
         mediaContainer.visibility = View.GONE
 
-        pdfRecyclerView.adapter = null
-        documentWebView.clearHistory()
+                documentWebView.clearHistory()
         documentWebView.clearCache(true)
         documentWebView.loadUrl("about:blank")
 
@@ -756,7 +668,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
 
     private fun showError(message: String, showOpenWithButton: Boolean = false) {
         loadingContainer.visibility = View.GONE
-        pdfRecyclerView.visibility = View.GONE
+        pdfReader.visibility = View.GONE
         documentWebView.visibility = View.GONE
         pdfNavBar.visibility = View.GONE
         mediaContainer.visibility = View.GONE
@@ -829,17 +741,10 @@ class DocumentViewerActivity : VaultBaseActivity() {
             mediaVideo.stopPlayback()
         } catch (_: Exception) {
         }
-        val pdfAdapter = pdfRecyclerView.adapter as? PdfPageAdapterLazy
-        pdfAdapter?.clearCache()
-        try {
-            val lock = pdfAdapter?.renderLock()
-            if (lock != null) {
-                synchronized(lock) { pdfRenderer?.close() }
-            } else {
-                pdfRenderer?.close()
-            }
-        } catch (e: Exception) {
-        }
+        pdfSearchToken++
+        pdfIndex?.close()
+        pdfReader.release()
+        pdfRenderer = null
 
         try {
             fileDescriptor?.close()

@@ -1,5 +1,6 @@
 package com.guruswarupa.launch
 
+import com.guruswarupa.launch.core.appMetaKey
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -122,7 +123,7 @@ class AppAdapter(
         userManager = userManager,
         mainUserSerial = mainUserSerial,
         labelResolver = { packageName, appInfo ->
-            labelCache["${packageName}|${appInfo.preferredOrder}"] ?: packageName
+            labelCache[appMetaKey(appInfo)] ?: packageName
         },
         launchEventStore = activity.launchEventStore
     )
@@ -141,7 +142,7 @@ class AppAdapter(
         activity = activity,
         executor = activity.backgroundExecutor,
         labelResolver = { packageName: String, appInfo: ResolveInfo ->
-            labelCache["${packageName}|${appInfo.preferredOrder}"] ?: packageName
+            labelCache[appMetaKey(appInfo)] ?: packageName
         },
         onAppModified = {
             notifyItemRangeChanged(0, getCurrentListSize(), PAYLOAD_ICON_VISUAL_STATE)
@@ -211,7 +212,7 @@ class AppAdapter(
     }
 
     private fun cachedMemberIcon(app: ResolveInfo): Drawable? {
-        val cached = iconLoader.getCachedIcon("${app.activityInfo.packageName}|${app.preferredOrder}") ?: return null
+        val cached = iconLoader.getCachedIcon(appMetaKey(app)) ?: return null
         return cached.constantState?.newDrawable(activity.resources) ?: cached
     }
 
@@ -428,7 +429,7 @@ class AppAdapter(
 
     fun applyNotificationBadge(packageName: String, badgeView: View?) {
         if (badgeView == null) return
-        val hasNotification = com.guruswarupa.launch.services.LaunchNotificationListenerService.getBadgeCount(packageName) > 0
+        val hasNotification = packageName != activity.packageName && com.guruswarupa.launch.services.LaunchNotificationListenerService.getBadgeCount(packageName) > 0
         badgeView.visibility = if (hasNotification) View.VISIBLE else View.GONE
     }
 
@@ -439,7 +440,7 @@ class AppAdapter(
         if (packageName == SEPARATOR_PACKAGE) return ""
         if (WebAppManager.isWebAppPackage(packageName)) return appInfo.activityInfo.name ?: ""
         if (packageName in SPECIAL_PACKAGE_NAMES) return appInfo.activityInfo.name ?: ""
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
+        val cacheKey = appMetaKey(appInfo)
         return labelCache[cacheKey] ?: appInfo.activityInfo.name ?: packageName
     }
 
@@ -453,7 +454,7 @@ class AppAdapter(
                 for (app in newItems) {
                     val packageName = app.activityInfo.packageName
                     if (packageName == SEPARATOR_PACKAGE) continue
-                    val cacheKey = "${packageName}|${app.preferredOrder}"
+                    val cacheKey = appMetaKey(app)
 
                     val cachedMetadata = metadataCache[cacheKey]
                     if (cachedMetadata != null && !labelCache.containsKey(cacheKey)) {
@@ -587,7 +588,7 @@ class AppAdapter(
             return
         }
 
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
+        val cacheKey = appMetaKey(appInfo)
         holder.itemView.tag = cacheKey
 
         val appName = labelCache[cacheKey]
@@ -646,7 +647,7 @@ class AppAdapter(
     }
 
     private fun bindCachedOrAsyncIcon(holder: ViewHolder, appInfo: ResolveInfo, packageName: String) {
-        val cacheKey = "${packageName}|${appInfo.preferredOrder}"
+        val cacheKey = appMetaKey(appInfo)
         val cachedIcon = iconLoader.getCachedIcon(cacheKey)
 
         if (cachedIcon != null) {

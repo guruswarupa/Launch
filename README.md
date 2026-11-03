@@ -244,6 +244,11 @@ Turn any website into an app in your list.
 
 ---
 
+### Camera and Files
+
+- **Launch Camera:** photo and video, front/back, flash (off/auto/on), 3s/10s timer, grid, and a last-capture thumbnail. Saves to DCIM/Camera.
+- **Launch Files:** category shortcuts (Images, Videos, Audio, Documents, Downloads, installers, archives, recent), folder browsing, list/grid, sort, search, multi-select, copy, move, rename, share, new folder, ZIP compress/extract, favorites, and details. Deleted files go to a recycle bin for 30 days (restore, or empty it yourself) before being removed automatically. Files open in the built-in photo, video and document viewers. Files also includes a storage analyzer (treemap, folder breakdown, largest files, per-type totals). Camera, Files, Gallery and Video Player appear in the app list like normal apps.
+
 ## 📡 File Transfer
 
 Send files between devices on the same network, with no accounts and no cloud (**Settings → File Transfer**).
@@ -375,7 +380,7 @@ Launch asks only for what a feature needs, and you can use the launcher without 
 | Boot completed | Restarting enabled services after reboot |
 | Internet / network state | Weather, RSS, web apps, fonts, AI model download and file transfer |
 
-Files you save or receive use Android's system pickers and the Downloads folder, so Launch does not ask for access to all your files. See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+The built-in Files app asks for "All files access" so it can browse and manage storage like any file manager. It is requested only when you open Files, can be revoked in system settings, and nothing is uploaded. Camera asks for the camera (and microphone for video). See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 
 ---
 

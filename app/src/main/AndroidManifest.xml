@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -460,6 +461,60 @@
              vault contents whenever the in-process vault happened to be unlocked. Routing vault
              launches through this non-exported alias (same Activity class, same intent extras)
              means only this app itself can trigger that code path. -->
+        <activity
+            android:name=".ui.activities.CameraActivity"
+            android:exported="true"
+            android:label="Camera"
+            android:icon="@drawable/ic_app_camera"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Launch.Media">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activities.FilesActivity"
+            android:exported="true"
+            android:label="Files"
+            android:icon="@drawable/ic_app_files"
+            android:theme="@style/Theme.Launch.Settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activities.GalleryActivity"
+            android:exported="true"
+            android:label="Gallery"
+            android:icon="@drawable/ic_app_gallery"
+            android:theme="@style/Theme.Launch.Settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activities.PlayerActivity"
+            android:exported="true"
+            android:label="Video Player"
+            android:icon="@drawable/ic_app_player"
+            android:theme="@style/Theme.Launch.Settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activities.StorageAnalyzerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Settings" />
+
         <activity
             android:name=".ui.activities.PhotoViewerActivity"
             android:exported="false"

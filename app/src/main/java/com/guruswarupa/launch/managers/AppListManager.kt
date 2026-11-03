@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.managers
 
+import com.guruswarupa.launch.core.appMetaKey
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.ResolveInfo
@@ -38,6 +39,8 @@ class AppListManager @Inject constructor(
         return favoriteAppManager.getFavoriteApps()
     }
 
+    private val bundledApps = listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity")
+
     fun filterAndPrepareApps(
         apps: List<ResolveInfo>,
         focusMode: Boolean,
@@ -54,7 +57,8 @@ class AppListManager @Inject constructor(
             val isAllowedInternalActivity = isLauncherApp && (activityName.contains("SettingsActivity") ||
                                               activityName.contains("EncryptedVaultActivity"))
 
-            if (isLauncherApp && !isAllowedInternalActivity) return@filter false
+            val isBundledApp = isLauncherApp && bundledApps.any { activityName.endsWith(it) }
+            if (isLauncherApp && !isAllowedInternalActivity && !isBundledApp) return@filter false
 
             if (isAllowedInternalActivity) {
                 return@filter !(focusMode && activityName.contains("SettingsActivity"))
@@ -329,7 +333,7 @@ class AppListManager @Inject constructor(
             return app.activityInfo.name.ifBlank { packageName }
         }
 
-        val cacheKey = "${packageName}|${app.preferredOrder}"
+        val cacheKey = appMetaKey(app)
         val cachedLabel = cacheManager?.getMetadataCache()?.get(cacheKey)?.label
         if (!cachedLabel.isNullOrBlank()) {
             return cachedLabel

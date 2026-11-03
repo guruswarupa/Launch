@@ -25,6 +25,7 @@ class ZoomImageView @JvmOverloads constructor(
     var onDismissProgress: ((Float) -> Unit)? = null
     var onDismiss: (() -> Unit)? = null
     var onZoomChanged: ((Boolean) -> Unit)? = null
+    var onSwipeHorizontal: ((Int) -> Unit)? = null
 
     private val drawMatrix = Matrix()
     private val values = FloatArray(9)
@@ -99,6 +100,10 @@ class ZoomImageView @JvmOverloads constructor(
 
         override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             if (!isZoomed()) {
+                if (!dismissing && abs(velocityX) > 1200f && abs(velocityX) > abs(velocityY) * 1.5f && onSwipeHorizontal != null) {
+                    onSwipeHorizontal?.invoke(if (velocityX < 0) 1 else -1)
+                    return true
+                }
                 if (dismissing && abs(velocityY) > 2500f && abs(dismissOffset) > height * 0.08f) {
                     finishDismiss()
                     return true

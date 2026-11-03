@@ -1,5 +1,6 @@
 package com.guruswarupa.launch
 
+import com.guruswarupa.launch.core.appMetaKey
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ResolveInfo
@@ -42,7 +43,7 @@ class ContactSearchResultBinder(
         holder.itemView.tag = packageName
         iconLoader.applyShapeAppearance(holder.appIcon)
         val contactName = appInfo.activityInfo.name
-        val cacheKey = "$packageName|${appInfo.preferredOrder}"
+        val cacheKey = appMetaKey(appInfo)
         iconLoader.loadContactPhoto(
             holder = holder,
             cacheKey = cacheKey,
@@ -73,7 +74,7 @@ class PackageIconSearchResultBinder(
     override fun bind(holder: AppAdapter.ViewHolder, appInfo: ResolveInfo, position: Int) {
         holder.itemView.tag = packageName
         iconLoader.applyShapeAppearance(holder.appIcon)
-        val cacheKey = "$packageName|${appInfo.preferredOrder}"
+        val cacheKey = appMetaKey(appInfo)
         iconLoader.loadSpecialAppIcon(
             holder = holder,
             cacheKey = cacheKey,

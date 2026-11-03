@@ -1,5 +1,6 @@
 package com.guruswarupa.launch
 
+import com.guruswarupa.launch.core.appMetaKey
 import android.content.Context
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
@@ -362,7 +363,7 @@ class IconLoader(
         val packageName = app.activityInfo.packageName
         if (packageName == separatorPackage) return
 
-        val cacheKey = "${packageName}|${app.preferredOrder}"
+        val cacheKey = appMetaKey(app)
         val cachedIcon = iconCache[cacheKey]
         if (cachedIcon != null) {
             if (holder?.appIcon != null) {
@@ -377,7 +378,7 @@ class IconLoader(
                 if (iconCache[cacheKey] == null) {
 
                     var shapedIcon: Drawable? = null
-                    if (cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
+                    if (packageName != activity.packageName && cacheManager.isIconCacheValid(currentIconStyle, currentIconSize)) {
                         shapedIcon = cacheManager.getCachedIcon(cacheKey, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                     }
 
@@ -397,7 +398,7 @@ class IconLoader(
                         }
                         shapedIcon = shapeIconDrawable(icon)
 
-                        cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
+                        if (packageName != activity.packageName) cacheManager.cacheIcon(cacheKey, shapedIcon, cacheManager.getIconCacheKey(currentIconStyle, currentIconSize))
                     }
 
                     iconCache.put(cacheKey, shapedIcon)

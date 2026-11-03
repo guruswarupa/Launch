@@ -107,7 +107,13 @@ class CacheManager @Inject constructor(
                 val apps = launcherApps.getActivityList(null, user)
                 for (app in apps) {
                     val resolveInfo = ResolveInfo()
-                    resolveInfo.activityInfo = android.content.pm.ActivityInfo().apply {
+                    resolveInfo.activityInfo = if (app.componentName.packageName == context.packageName) {
+                        try {
+                            context.packageManager.getActivityInfo(app.componentName, 0)
+                        } catch (e: Exception) {
+                            continue
+                        }
+                    } else android.content.pm.ActivityInfo().apply {
                         packageName = app.componentName.packageName
                         name = app.componentName.className
                         applicationInfo = app.applicationInfo
@@ -225,7 +231,7 @@ class CacheManager @Inject constructor(
 
                 apps.forEach { app ->
                     val packageName = app.activityInfo.packageName
-                    val cacheKey = "${packageName}|${app.preferredOrder}"
+                    val cacheKey = appMetaKey(app)
                     try {
                         val cached = appMetadataCache[cacheKey]
                         if (cached != null && (currentTime - cached.lastUpdated) < CACHE_DURATION) {
@@ -369,4 +375,10 @@ class CacheManager @Inject constructor(
         val cachedVersion = getIconCacheVersion()
         return currentVersion == cachedVersion && iconCacheDir.exists() && iconCacheDir.listFiles()?.isNotEmpty() == true
     }
+}
+
+
+fun appMetaKey(app: android.content.pm.ResolveInfo): String {
+    val pkg = app.activityInfo.packageName
+    return if (pkg == "com.guruswarupa.launch") "$pkg/${app.activityInfo.name}|${app.preferredOrder}" else "$pkg|${app.preferredOrder}"
 }

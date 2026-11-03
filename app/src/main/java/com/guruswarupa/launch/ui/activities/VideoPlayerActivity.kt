@@ -98,6 +98,8 @@ class VideoPlayerActivity : VaultBaseActivity() {
     private var startVolume = 0
     private var seekStartMs = 0L
     private var seekTargetMs = 0L
+    private var siblings: Array<String>? = null
+    private var siblingIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -155,8 +157,39 @@ class VideoPlayerActivity : VaultBaseActivity() {
         setupButtons()
         setupGestures()
         if (isAudio) setupAudioPanel(sourceUri!!)
+        setupSiblings()
         handler.post(progressTick)
         scheduleHide()
+    }
+
+    private fun setupSiblings() {
+        val list = intent.getStringArrayExtra(EXTRA_SIBLINGS) ?: return
+        siblings = list
+        siblingIndex = intent.getIntExtra(EXTRA_INDEX, 0)
+        fun skip(res: Int, dir: Int) = ImageView(this).apply {
+            setImageResource(res)
+            val pad = dp(10)
+            setPadding(pad, pad, pad, pad)
+            alpha = if (siblingIndex + dir in list.indices) 1f else 0.3f
+            setOnClickListener { goSibling(dir) }
+        }
+        val prev = skip(R.drawable.ic_media_prev, -1)
+        val next = skip(R.drawable.ic_media_next, 1)
+        (controlsCenter as android.widget.LinearLayout).addView(prev, 0, android.widget.LinearLayout.LayoutParams(dp(48), dp(48)))
+        (controlsCenter as android.widget.LinearLayout).addView(next, android.widget.LinearLayout.LayoutParams(dp(48), dp(48)))
+    }
+
+    private fun goSibling(dir: Int) {
+        val list = siblings ?: return
+        val n = siblingIndex + dir
+        if (n !in list.indices) return
+        startActivity(Intent(this, VideoPlayerActivity::class.java)
+            .putExtra(EXTRA_PATH, list[n])
+            .putExtra(EXTRA_NAME, File(list[n]).name)
+            .putExtra(EXTRA_SIBLINGS, list)
+            .putExtra(EXTRA_INDEX, n))
+        finish()
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun bindViews() {
@@ -635,5 +668,7 @@ class VideoPlayerActivity : VaultBaseActivity() {
         const val EXTRA_PATH = "video_path"
         const val EXTRA_NAME = "video_name"
         const val EXTRA_DELETE = "video_delete_on_exit"
+        const val EXTRA_SIBLINGS = "video_siblings"
+        const val EXTRA_INDEX = "video_index"
     }
 }

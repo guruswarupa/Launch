@@ -1,5 +1,6 @@
 package com.guruswarupa.launch.managers
 
+import com.guruswarupa.launch.core.appMetaKey
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
@@ -199,13 +200,24 @@ class AppListLoader(
 
                         for (app in apps) {
                             val packageName = app.componentName.packageName
-                            if (packageName == "com.guruswarupa.launch") continue
+                            val ownApp = packageName == "com.guruswarupa.launch"
+                            if (ownApp && (user != android.os.Process.myUserHandle() ||
+                                    listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity").none { app.componentName.className.endsWith(it) })) continue
 
                             val resolveInfo = ResolveInfo()
-                            val activityInfo = android.content.pm.ActivityInfo()
-                            activityInfo.packageName = packageName
-                            activityInfo.name = app.componentName.className
-                            activityInfo.applicationInfo = app.applicationInfo
+                            val activityInfo = if (ownApp) {
+                                try {
+                                    activity.packageManager.getActivityInfo(app.componentName, 0)
+                                } catch (e: Exception) {
+                                    continue
+                                }
+                            } else {
+                                android.content.pm.ActivityInfo().also {
+                                    it.packageName = packageName
+                                    it.name = app.componentName.className
+                                    it.applicationInfo = app.applicationInfo
+                                }
+                            }
 
                             resolveInfo.activityInfo = activityInfo
 
@@ -266,7 +278,7 @@ class AppListLoader(
                             val metadataCacheInner = cacheManager?.getMetadataCache() ?: emptyMap()
                             finalAppList.forEach { app ->
                                 val packageName = app.activityInfo.packageName
-                                val cacheKey = "${packageName}|${app.preferredOrder}"
+                                val cacheKey = appMetaKey(app)
                                 val cached = metadataCacheInner[cacheKey]
                                 if (cached == null) {
                                     try {

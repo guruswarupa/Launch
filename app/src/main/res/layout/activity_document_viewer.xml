@@ -202,13 +202,10 @@
             </HorizontalScrollView>
 
             <!-- PDF Viewer -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/pdf_recycler_view"
+            <com.guruswarupa.launch.ui.views.PdfReaderView
+                android:id="@+id/pdf_reader"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingVertical="12dp"
-                android:scrollbars="vertical"
                 android:visibility="gone" />
 
             <!-- WebView for Office docs -->

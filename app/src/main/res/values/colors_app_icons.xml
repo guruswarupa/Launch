@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_icon_camera_bg">#FF37474F</color>
+    <color name="app_icon_files_bg">#FF1E88E5</color>
+    <color name="app_icon_gallery_bg">#FF8E24AA</color>
+    <color name="app_icon_player_bg">#FFE53935</color>
+</resources>

@@ -54,6 +54,8 @@ class PhotoViewerActivity : VaultBaseActivity() {
     private var sourceWidth = 0
     private var sourceHeight = 0
     private var animated = false
+    private var siblings: Array<String>? = null
+    private var index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +87,9 @@ class PhotoViewerActivity : VaultBaseActivity() {
         findViewById<View>(R.id.photo_action_open).setOnClickListener { openWith() }
         rotateAction.setOnClickListener { rotate() }
 
+        siblings = intent.getStringArrayExtra(EXTRA_SIBLINGS)
+        index = intent.getIntExtra(EXTRA_INDEX, 0)
+        zoom.onSwipeHorizontal = { dir -> navigate(dir) }
         zoom.onSingleTap = { toggleChrome() }
         zoom.onDismissProgress = { progress ->
             root.background = ColorDrawable(Color.argb((255 * (1f - progress * 0.85f)).toInt(), 0, 0, 0))
@@ -132,10 +137,23 @@ class PhotoViewerActivity : VaultBaseActivity() {
         startWithFile(target)
     }
 
+    private fun navigate(dir: Int) {
+        val list = siblings ?: return
+        val next = index + dir
+        if (next !in list.indices) return
+        startActivity(Intent(this, PhotoViewerActivity::class.java)
+            .putExtra(EXTRA_PATH, list[next])
+            .putExtra(EXTRA_NAME, File(list[next]).name)
+            .putExtra(EXTRA_SIBLINGS, list)
+            .putExtra(EXTRA_INDEX, next))
+        finish()
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
     private fun startWithFile(target: File) {
         file = target
         findViewById<TextView>(R.id.photo_title).text = displayName
-        findViewById<TextView>(R.id.photo_subtitle).text = subtitleFor(target)
+        findViewById<TextView>(R.id.photo_subtitle).text = subtitleFor(target) + (siblings?.let { "  ·  ${index + 1}/${it.size}" } ?: "")
         loadImage(target)
     }
 
@@ -387,6 +405,8 @@ class PhotoViewerActivity : VaultBaseActivity() {
         const val EXTRA_PATH = "photo_path"
         const val EXTRA_NAME = "photo_name"
         const val EXTRA_DELETE = "photo_delete_on_exit"
+        const val EXTRA_SIBLINGS = "photo_siblings"
+        const val EXTRA_INDEX = "photo_index"
         private const val MAX_DECODE_SIDE = 4096
     }
 }
