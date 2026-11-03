@@ -335,6 +335,7 @@ class AppInitializer(private val activity: MainActivity) {
         AppUsageMonitor.syncMonitoring(activity)
 
         serviceManager.updateShakeDetectionService()
+        serviceManager.updateLockScreenService()
         serviceManager.updateWalkDetectionService()
         serviceManager.updateScreenDimmerService()
         serviceManager.updateFlipToDndService()

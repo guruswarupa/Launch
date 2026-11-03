@@ -64,6 +64,12 @@ class BootReceiver : BroadcastReceiver() {
                 ContextCompat.startForegroundService(context, shakeIntent)
             }
 
+            if (prefs.getBoolean(Constants.Prefs.LOCKSCREEN_ENABLED, false) && Settings.canDrawOverlays(context)) {
+                ContextCompat.startForegroundService(context, Intent(context, com.guruswarupa.launch.services.LockScreenService::class.java).apply {
+                    action = com.guruswarupa.launch.services.LockScreenService.ACTION_START
+                })
+            }
+
             val isWalkDetectEnabled = prefs.getBoolean(Constants.Prefs.WALK_DETECT_ENABLED, false)
             if (isWalkDetectEnabled) {
                 val walkIntent = Intent(context, WalkDetectionService::class.java).apply {

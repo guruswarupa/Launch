@@ -2,6 +2,7 @@ package com.guruswarupa.launch.ui.activities
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -382,6 +383,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun openLast() {
+        if ((getSystemService(Context.KEYGUARD_SERVICE) as android.app.KeyguardManager).isKeyguardLocked) return
         val uri = lastUri ?: return
         val type = contentResolver.getType(uri) ?: "image/*"
         val i = Intent(Intent.ACTION_VIEW).apply {

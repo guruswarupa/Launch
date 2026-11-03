@@ -22,6 +22,15 @@ class ServiceManager(
         }
     }
 
+    fun updateLockScreenService() {
+        val enabled = sharedPreferences.getBoolean(Constants.Prefs.LOCKSCREEN_ENABLED, false)
+        if (enabled && Settings.canDrawOverlays(context)) {
+            ContextCompat.startForegroundService(context, Intent(context, LockScreenService::class.java).apply { action = LockScreenService.ACTION_START })
+        } else {
+            context.stopService(Intent(context, LockScreenService::class.java))
+        }
+    }
+
     fun updateBackTapService() {
         val isBackTapEnabled = sharedPreferences.getBoolean(Constants.Prefs.BACK_TAP_ENABLED, false)
         if (isBackTapEnabled) {

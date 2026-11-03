@@ -29,6 +29,8 @@ object Constants {
 
         const val STOCK_DOCK_ORDER = "stock_dock_order"
         const val SHAKE_TORCH_ENABLED = "shake_torch_enabled"
+        const val LOCKSCREEN_ENABLED = "lockscreen_enabled"
+        const val LOCKSCREEN_NOTIF_CONTENT = "lockscreen_notif_content"
         const val SHAKE_SENSITIVITY = "shake_sensitivity"
         const val SCREEN_DIMMER_ENABLED = "screen_dimmer_enabled"
         const val SCREEN_DIMMER_LEVEL = "screen_dimmer_level"

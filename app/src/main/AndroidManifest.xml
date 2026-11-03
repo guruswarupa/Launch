@@ -197,6 +197,14 @@
             android:foregroundServiceType="health" />
 
         <service
+            android:name=".services.LockScreenService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_CATEGORY" android:value="Custom lock screen shown over the system lock screen" />
+        </service>
+
+        <service
             android:name=".services.ShakeDetectionService"
             android:enabled="true"
             android:exported="false"
@@ -462,7 +470,17 @@
              launches through this non-exported alias (same Activity class, same intent extras)
              means only this app itself can trigger that code path. -->
         <activity
+            android:name=".ui.activities.LockScreenActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:theme="@style/Theme.Launch.Document" />
+
+        <activity
             android:name=".ui.activities.CameraActivity"
+            android:showWhenLocked="true"
             android:exported="true"
             android:label="Camera"
             android:icon="@drawable/ic_app_camera"

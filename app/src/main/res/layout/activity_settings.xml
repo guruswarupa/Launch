@@ -2111,6 +2111,92 @@
                             android:layout_height="1dp"
                             android:background="?attr/appDivider" />
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="12dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Custom lock screen"
+                                    android:textColor="?attr/appTextPrimary"
+                                    android:textSize="15sp"
+                                    tools:ignore="HardcodedText"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Shows a Launch lock screen with clock, notifications, flashlight and camera over the system lock screen. Needs Display over other apps."
+                                    android:textColor="?attr/appTextSecondary"
+                                    android:textSize="12sp"
+                                    tools:ignore="HardcodedText"/>
+                            </LinearLayout>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/lockscreen_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/appDivider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="12dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Show notification content on lock screen"
+                                    android:textColor="?attr/appTextPrimary"
+                                    android:textSize="15sp"
+                                    tools:ignore="HardcodedText"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Off shows only app names and counts."
+                                    android:textColor="?attr/appTextSecondary"
+                                    android:textSize="12sp"
+                                    tools:ignore="HardcodedText"/>
+                            </LinearLayout>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/lockscreen_content_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="#30FFFFFF"/>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/appDivider" />
+
                         
                         <LinearLayout
                             android:layout_width="match_parent"

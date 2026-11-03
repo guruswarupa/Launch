@@ -535,3 +535,25 @@ internal fun SettingsActivity.showWalkDetectionAppPicker(onAppSelected: () -> Un
         .setNegativeButton(getString(R.string.cancel_button), null)
         .show()
 }
+
+
+internal fun SettingsActivity.setupLockScreen() {
+    val sw = findViewById<SwitchCompat>(R.id.lockscreen_switch)
+    val content = findViewById<SwitchCompat>(R.id.lockscreen_content_switch)
+    sw.isChecked = prefs.getBoolean(Constants.Prefs.LOCKSCREEN_ENABLED, false) && Settings.canDrawOverlays(this)
+    content.isChecked = prefs.getBoolean(Constants.Prefs.LOCKSCREEN_NOTIF_CONTENT, false)
+    sw.setOnCheckedChangeListener { _, isChecked ->
+        if (isChecked && !Settings.canDrawOverlays(this)) {
+            sw.isChecked = false
+            showPermissionDialog("Display over other apps", "Allow Launch to display over other apps so the lock screen can appear.") {
+                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:$packageName")))
+            }
+        } else {
+            prefs.edit { putBoolean(Constants.Prefs.LOCKSCREEN_ENABLED, isChecked) }
+            com.guruswarupa.launch.managers.ServiceManager(this, prefs).updateLockScreenService()
+        }
+    }
+    content.setOnCheckedChangeListener { _, isChecked ->
+        prefs.edit { putBoolean(Constants.Prefs.LOCKSCREEN_NOTIF_CONTENT, isChecked) }
+    }
+}

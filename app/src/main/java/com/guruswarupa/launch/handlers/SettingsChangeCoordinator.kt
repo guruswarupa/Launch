@@ -255,6 +255,7 @@ class SettingsChangeCoordinator(
         activity.updateFastScrollerVisibility()
 
         activity.serviceManager.updateShakeDetectionService()
+        activity.serviceManager.updateLockScreenService()
         activity.serviceManager.updateWalkDetectionService()
         activity.serviceManager.updateScreenDimmerService()
         activity.serviceManager.updateNightModeService()
