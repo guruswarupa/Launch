@@ -50,3 +50,9 @@
 -dontwarn com.google.mediapipe.**
 -keep class com.google.protobuf.** { *; }
 -dontwarn com.google.protobuf.**
+
+-dontwarn com.gemalto.jp2.**
+-dontwarn com.tom_roush.pdfbox.**
+-dontwarn org.apache.fontbox.**
+-keep class com.tom_roush.pdfbox.** { *; }
+-keep class com.tom_roush.fontbox.** { *; }

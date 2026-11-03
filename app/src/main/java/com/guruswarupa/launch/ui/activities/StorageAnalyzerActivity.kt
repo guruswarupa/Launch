@@ -106,7 +106,7 @@ private class Scanner(private val cancelled: () -> Boolean, private val onProgre
                     totals[c] += len
                     bytes += len
                     files++
-                    if (largest.size < 120) largest.add(fn) else if (len > largest.peek().size) { largest.poll(); largest.add(fn) }
+                    if (largest.size < 120) largest.add(fn) else if (len > (largest.peek()?.size ?: 0L)) { largest.poll(); largest.add(fn) }
                     val now = System.currentTimeMillis()
                     if (now - lastReport > 250) { lastReport = now; onProgress(files, bytes) }
                 }
