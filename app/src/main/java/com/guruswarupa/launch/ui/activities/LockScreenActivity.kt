@@ -73,6 +73,9 @@ class LockScreenActivity : AppCompatActivity() {
     private var torchOn = false
     private var tracker: VelocityTracker? = null
     private var downY = 0f
+    private var downX = 0f
+    private var horizontalGesture = false
+    @Volatile private var cardDragging = false
     private var unlocking = false
     private val ui = Handler(Looper.getMainLooper())
     private val refresh = object : Runnable {
@@ -318,9 +321,10 @@ class LockScreenActivity : AppCompatActivity() {
         val prefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
         val showContent = prefs.getBoolean(Constants.Prefs.LOCKSCREEN_NOTIF_CONTENT, false)
         val active = try { LaunchNotificationListenerService.instance?.activeNotifications?.toList() } catch (e: Exception) { null }
+        if (cardDragging) return
         notifBox.removeAllViews()
         if (active == null) return
-        val shown = active.filter { !it.isOngoing && (it.notification.flags and android.app.Notification.FLAG_GROUP_SUMMARY) == 0 && it.packageName != packageName }
+        val shown = active.filter { !it.isOngoing && (it.notification.flags and android.app.Notification.FLAG_GROUP_SUMMARY) == 0 && it.packageName != packageName && it.isClearable }
             .sortedByDescending { it.postTime }
         val pm = packageManager
         if (showContent) {
@@ -328,11 +332,11 @@ class LockScreenActivity : AppCompatActivity() {
                 val extras = sbn.notification.extras
                 val title = extras.getCharSequence(android.app.Notification.EXTRA_TITLE)?.toString().orEmpty()
                 val text = extras.getCharSequence(android.app.Notification.EXTRA_TEXT)?.toString().orEmpty()
-                notifBox.addView(card(sbn.packageName, appLabel(sbn.packageName), listOf(title, text).filter { it.isNotEmpty() }.joinToString(" · ")), cardParams())
+                notifBox.addView(card(sbn.packageName, appLabel(sbn.packageName), listOf(title, text).filter { it.isNotEmpty() }.joinToString(" · "), listOf(sbn.key)), cardParams())
             }
         } else {
             shown.groupBy { it.packageName }.entries.take(5).forEach { (pkg, list) ->
-                notifBox.addView(card(pkg, appLabel(pkg), if (list.size == 1) getString(R.string.lock_one_notification) else getString(R.string.lock_n_notifications, list.size)), cardParams())
+                notifBox.addView(card(pkg, appLabel(pkg), if (list.size == 1) getString(R.string.lock_one_notification) else getString(R.string.lock_n_notifications, list.size), list.map { it.key }), cardParams())
             }
         }
         val extra = if (showContent) shown.size - 5 else shown.groupBy { it.packageName }.size - 5
@@ -345,7 +349,7 @@ class LockScreenActivity : AppCompatActivity() {
         packageManager.getApplicationLabel(packageManager.getApplicationInfo(pkg, 0)).toString()
     } catch (e: Exception) { pkg }
 
-    private fun card(pkg: String, title: String, body: String): View {
+    private fun card(pkg: String, title: String, body: String, keys: List<String>): View {
         val row = LinearLayout(this).apply {
             gravity = Gravity.CENTER_VERTICAL
             background = GradientDrawable().apply { setColor(0x55000000); cornerRadius = dp(18).toFloat(); setStroke(1, 0x33FFFFFF) }
@@ -358,20 +362,75 @@ class LockScreenActivity : AppCompatActivity() {
         texts.addView(label(title, 14f, Color.WHITE, true).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.END })
         if (body.isNotEmpty()) texts.addView(label(body, 13f, 0xDDFFFFFF.toInt()).apply { maxLines = 2; ellipsize = TextUtils.TruncateAt.END })
         row.addView(texts, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f).apply { marginStart = dp(12) })
+        attachSwipe(row, keys)
         return row
+    }
+
+    private fun attachSwipe(view: View, keys: List<String>) {
+        var startX = 0f
+        var startY = 0f
+        var dragging = false
+        var vt: VelocityTracker? = null
+        view.setOnTouchListener { v, e ->
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    startX = e.rawX; startY = e.rawY; dragging = false
+                    vt?.recycle(); vt = VelocityTracker.obtain().also { it.addMovement(e) }
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    vt?.addMovement(e)
+                    val dx = e.rawX - startX
+                    val dy = e.rawY - startY
+                    if (!dragging && abs(dx) > dp(10) && abs(dx) > abs(dy)) {
+                        dragging = true
+                        cardDragging = true
+                        v.parent?.requestDisallowInterceptTouchEvent(true)
+                    }
+                    if (dragging) {
+                        v.translationX = dx
+                        v.alpha = 1f - (abs(dx) / v.width.coerceAtLeast(1)).coerceIn(0f, 1f) * 0.8f
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    vt?.addMovement(e)
+                    vt?.computeCurrentVelocity(1000)
+                    val vx = vt?.xVelocity ?: 0f
+                    vt?.recycle(); vt = null
+                    val dx = e.rawX - startX
+                    val flung = abs(vx) > 1200f && (vx > 0) == (dx > 0)
+                    if (dragging && e.actionMasked == MotionEvent.ACTION_UP && (abs(dx) > v.width * 0.35f || flung)) {
+                        val dir = if (dx > 0) 1 else -1
+                        v.animate().translationX(dir * v.width * 1.2f).alpha(0f).setDuration(180).withEndAction {
+                            try { LaunchNotificationListenerService.instance?.cancelNotifications(keys.toTypedArray()) } catch (_: Exception) {}
+                            (v.parent as? android.view.ViewGroup)?.removeView(v)
+                            cardDragging = false
+                        }.start()
+                    } else {
+                        v.animate().translationX(0f).alpha(1f).setDuration(150).withEndAction { cardDragging = false }.start()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 downY = ev.rawY
+                downX = ev.rawX
+                horizontalGesture = false
                 tracker?.recycle()
                 tracker = VelocityTracker.obtain().also { it.addMovement(ev) }
             }
             MotionEvent.ACTION_MOVE -> {
                 tracker?.addMovement(ev)
                 val dy = ev.rawY - downY
-                if (dy < -dp(12)) {
+                if (!horizontalGesture && abs(ev.rawX - downX) > dp(10) && abs(ev.rawX - downX) > abs(dy)) horizontalGesture = true
+                if (!horizontalGesture && dy < -dp(12)) {
                     val p = (abs(dy) / (resources.displayMetrics.heightPixels * 0.35f)).coerceIn(0f, 1f)
                     content.translationY = dy
                     content.alpha = 1f - p * 0.8f
@@ -383,7 +442,7 @@ class LockScreenActivity : AppCompatActivity() {
                 val vy = tracker?.yVelocity ?: 0f
                 val dy = ev.rawY - downY
                 tracker?.recycle(); tracker = null
-                if (ev.actionMasked == MotionEvent.ACTION_UP && (dy < -resources.displayMetrics.heightPixels * 0.15f || vy < -1500f)) unlock()
+                if (!horizontalGesture && ev.actionMasked == MotionEvent.ACTION_UP && (dy < -resources.displayMetrics.heightPixels * 0.15f || vy < -1500f)) unlock()
                 else content.animate().translationY(0f).alpha(1f).setDuration(180).start()
             }
         }
