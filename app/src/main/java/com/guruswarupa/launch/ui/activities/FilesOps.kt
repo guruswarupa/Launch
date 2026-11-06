@@ -1,6 +1,8 @@
 package com.guruswarupa.launch.ui.activities
 
 import android.content.Context
+import android.os.Bundle
+import android.provider.MediaStore
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
@@ -142,7 +144,39 @@ internal object FilesOps {
         java.util.zip.ZipFile(zip).use { it.size() }
     } catch (e: Exception) { 0 }
 
-    fun search(root: File, query: String, limit: Int, cancelled: () -> Boolean): List<File> {
+    private fun queryIndex(ctx: Context, root: File, selection: String?, args: List<String>, sort: String, limit: Int): List<File>? {
+        return try {
+            val sel = StringBuilder("(${MediaStore.Files.FileColumns.DATA} NOT LIKE ?) AND (${MediaStore.Files.FileColumns.DISPLAY_NAME} NOT LIKE ?)")
+            val a = arrayListOf("${root.absolutePath}/Android/%", ".%")
+            if (selection != null) { sel.append(" AND ($selection)"); a.addAll(args) }
+            val bundle = Bundle().apply {
+                putString(android.content.ContentResolver.QUERY_ARG_SQL_SELECTION, sel.toString())
+                putStringArray(android.content.ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, a.toTypedArray())
+                putString(android.content.ContentResolver.QUERY_ARG_SQL_SORT_ORDER, sort)
+                putInt(android.content.ContentResolver.QUERY_ARG_LIMIT, limit)
+            }
+            val out = ArrayList<File>()
+            ctx.contentResolver.query(MediaStore.Files.getContentUri("external"), arrayOf(MediaStore.Files.FileColumns.DATA), bundle, null)?.use { c ->
+                while (c.moveToNext()) c.getString(0)?.let { out.add(File(it)) }
+            } ?: return null
+            out
+        } catch (e: Exception) { null }
+    }
+
+    private fun extLike(exts: Set<String>): Pair<String, List<String>> =
+        exts.joinToString(" OR ") { "${MediaStore.Files.FileColumns.DISPLAY_NAME} LIKE ?" } to exts.map { "%.$it" }
+
+    fun search(ctx: Context, root: File, query: String, limit: Int, cancelled: () -> Boolean): List<File> {
+        if (query.isNotBlank()) {
+            val like = query.replace("%", "").replace("_", "")
+            val indexed = queryIndex(ctx, File(root.absolutePath), "${MediaStore.Files.FileColumns.DISPLAY_NAME} LIKE ? AND ${MediaStore.Files.FileColumns.DATA} LIKE ?",
+                listOf("%$like%", root.absolutePath + "/%"), "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC", limit)
+            if (indexed != null) return indexed
+        }
+        return searchWalk(root, query, limit, cancelled)
+    }
+
+    private fun searchWalk(root: File, query: String, limit: Int, cancelled: () -> Boolean): List<File> {
         val out = ArrayList<File>()
         val stack = ArrayDeque<File>()
         stack.add(root)
@@ -158,7 +192,26 @@ internal object FilesOps {
         return out
     }
 
-    fun scanCategory(root: File, key: String, cancelled: () -> Boolean): List<File> {
+    fun scanCategory(ctx: Context, root: File, key: String, cancelled: () -> Boolean): List<File> {
+        val name = MediaStore.Files.FileColumns.DISPLAY_NAME
+        val type = MediaStore.Files.FileColumns.MEDIA_TYPE
+        val date = "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC"
+        val indexed: List<File>? = when (key) {
+            "images" -> queryIndex(ctx, root, "$type = ?", listOf("1"), date, 6000)
+            "videos" -> queryIndex(ctx, root, "$type = ?", listOf("3"), date, 6000)
+            "audio" -> queryIndex(ctx, root, "$type = ?", listOf("2"), date, 6000)
+            "documents" -> extLike(docExt).let { queryIndex(ctx, root, it.first, it.second, date, 6000) }
+            "apks" -> queryIndex(ctx, root, "$name LIKE ?", listOf("%.apk"), date, 6000)
+            "archives" -> extLike(archiveExt).let { queryIndex(ctx, root, it.first, it.second, date, 6000) }
+            "downloads" -> queryIndex(ctx, root, "${MediaStore.Files.FileColumns.DATA} LIKE ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL", listOf(File(root, "Download").absolutePath + "/%"), date, 6000)
+            "recent" -> queryIndex(ctx, root, "${MediaStore.Files.FileColumns.MIME_TYPE} IS NOT NULL", emptyList(), date, 150)
+            else -> null
+        }
+        if (indexed != null) return indexed
+        return scanCategoryWalk(root, key, cancelled)
+    }
+
+    private fun scanCategoryWalk(root: File, key: String, cancelled: () -> Boolean): List<File> {
         val out = ArrayList<File>()
         fun match(f: File): Boolean {
             val e = ext(f)
@@ -182,7 +235,7 @@ internal object FilesOps {
             for (k in kids) {
                 if (k.name.startsWith(".")) continue
                 if (k.isDirectory) {
-                    if (k.absolutePath != androidDir) stack.add(k)
+                    if (k.absolutePath != androidDir && k.name != "node_modules") stack.add(k)
                 } else if (match(k)) out.add(k)
             }
         }
@@ -195,11 +248,11 @@ internal class FilesThumbs(private val context: Context) {
     private val cache = object : LruCache<String, Bitmap>(((Runtime.getRuntime().maxMemory() / 1024) / 10).toInt()) {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount / 1024
     }
-    private val pool = Executors.newFixedThreadPool(3)
+    private val pool = Executors.newFixedThreadPool(2)
     private val main = Handler(Looper.getMainLooper())
 
-    fun hasThumb(f: File): Boolean {
-        if (!f.isFile) return false
+    fun hasThumb(f: File, dir: Boolean = !f.isFile): Boolean {
+        if (dir) return false
         val e = FilesOps.ext(f)
         return (e in FilesOps.imageExt && e != "svg") || e in FilesOps.videoExt || e == "apk"
     }
@@ -232,7 +285,7 @@ internal class FilesThumbs(private val context: Context) {
                 val r = MediaMetadataRetriever()
                 try {
                     r.setDataSource(f.absolutePath)
-                    r.getFrameAtTime(1_000_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)?.let { Bitmap.createScaledBitmap(it, px, (px * it.height / it.width.toFloat()).toInt().coerceAtLeast(1), true) }
+                    if (android.os.Build.VERSION.SDK_INT >= 27) r.getScaledFrameAtTime(1_000_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, px, px) else r.getFrameAtTime(1_000_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
                 } finally { r.release() }
             }
             e == "apk" -> {

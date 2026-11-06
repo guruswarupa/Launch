@@ -52,13 +52,17 @@ open class FilesActivity : AppCompatActivity() {
 
     private enum class Sort(val labelRes: Int) { NAME(R.string.files_name), DATE(R.string.files_sort_date), SIZE(R.string.files_size), TYPE(R.string.files_type) }
 
+    private class Meta(val dir: Boolean, val size: Long, val modified: Long)
+
+    private val dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM)
+
     private class Cat(val key: String, val label: String, val icon: Int, val color: Int)
 
     private sealed class Row {
         object Storage : Row()
         data class Header(val text: String) : Row()
         data class Category(val cat: Cat) : Row()
-        data class Entry(val file: File, val sub: String? = null, val home: Boolean = false) : Row()
+        data class Entry(val file: File, val sub: String? = null, val home: Boolean = false, val meta: Meta? = null) : Row()
     }
 
     private val root: File = Environment.getExternalStorageDirectory()
@@ -434,11 +438,11 @@ open class FilesActivity : AppCompatActivity() {
             subtitleView.text = getString(R.string.files_searching)
             val scope = current ?: root
             Thread {
-                val found = FilesOps.search(scope, q, 400) { token != searchToken }
-                val sortedFound = sorted(found)
+                val found = FilesOps.search(this, scope, q, 400) { token != searchToken }
+                val sortedFound = buildEntries(found) { it.parentFile?.absolutePath?.removePrefix(root.absolutePath)?.ifEmpty { "/" } }
                 runOnUiThread {
                     if (token == searchToken) {
-                        searchRows = sortedFound.map { Row.Entry(it, it.parentFile?.absolutePath?.removePrefix(root.absolutePath)?.ifEmpty { "/" }) }
+                        searchRows = sortedFound
                         subtitleView.text = getString(R.string.files_results, sortedFound.size)
                         render()
                     }
@@ -503,12 +507,12 @@ open class FilesActivity : AppCompatActivity() {
             subtitleView.text = getString(R.string.files_loading)
             Thread {
                 val files = (dir.listFiles() ?: emptyArray()).toList()
-                val ordered = sorted(files)
+                val entries = buildEntries(files)
+                val folders = entries.count { it.meta?.dir == true }
                 runOnUiThread {
                     if (token == loadToken) {
-                        rows = ordered.map { Row.Entry(it) }
-                        val folders = ordered.count { it.isDirectory }
-                        subtitleView.text = getString(R.string.files_folders_files, folders, ordered.size - folders)
+                        rows = entries
+                        subtitleView.text = getString(R.string.files_folders_files, folders, entries.size - folders)
                         render()
                     }
                 }
@@ -536,11 +540,15 @@ open class FilesActivity : AppCompatActivity() {
                 return
             }
             Thread {
-                val found = FilesOps.scanCategory(root, cat!!) { token != loadToken }
+                val found = FilesOps.scanCategory(this, root, cat!!) { token != loadToken }
+                val entries = found.mapNotNull { f ->
+                    val m = metaOrNull(f) ?: return@mapNotNull null
+                    Row.Entry(f, f.parentFile?.name, meta = m)
+                }
                 runOnUiThread {
                     if (token == loadToken) {
-                        rows = found.map { Row.Entry(it, it.parentFile?.name) }
-                        subtitleView.text = getString(R.string.files_items_count, found.size)
+                        rows = entries
+                        subtitleView.text = getString(R.string.files_items_count, entries.size)
                         render()
                     }
                 }
@@ -548,16 +556,36 @@ open class FilesActivity : AppCompatActivity() {
         }
     }
 
-    private fun sorted(files: List<File>): List<File> {
-        val visible = if (showHidden) files else files.filter { !it.name.startsWith(".") }
-        val cmp: Comparator<File> = when (sort) {
-            Sort.NAME -> compareBy { it.name.lowercase(Locale.ROOT) }
-            Sort.DATE -> compareBy { it.lastModified() }
-            Sort.SIZE -> compareBy { if (it.isDirectory) 0L else it.length() }
-            Sort.TYPE -> compareBy<File> { it.extension.lowercase(Locale.ROOT) }.thenBy { it.name.lowercase(Locale.ROOT) }
+    private fun metaOrNull(f: File): Meta? = try {
+        val a = java.nio.file.Files.readAttributes(f.toPath(), java.nio.file.attribute.BasicFileAttributes::class.java)
+        Meta(a.isDirectory, if (a.isDirectory) 0L else a.size(), a.lastModifiedTime().toMillis())
+    } catch (e: Exception) { null }
+
+    private fun metaOf(f: File): Meta {
+        return try {
+            val a = java.nio.file.Files.readAttributes(f.toPath(), java.nio.file.attribute.BasicFileAttributes::class.java)
+            Meta(a.isDirectory, if (a.isDirectory) 0L else a.size(), a.lastModifiedTime().toMillis())
+        } catch (e: Exception) {
+            val d = f.isDirectory
+            Meta(d, if (d) 0L else f.length(), f.lastModified())
         }
-        val ordered = visible.sortedWith(if (ascending) cmp else cmp.reversed())
-        return ordered.filter { it.isDirectory } + ordered.filter { !it.isDirectory }
+    }
+
+    private fun buildEntries(files: List<File>, subOf: ((File) -> String?)? = null): List<Row.Entry> {
+        class M(val f: File, val m: Meta, val lower: String)
+        val visible = if (showHidden) files else files.filter { !it.name.startsWith(".") }
+        val all = ArrayList<M>(visible.size)
+        for (f in visible) all.add(M(f, metaOf(f), f.name.lowercase(Locale.ROOT)))
+        val cmp: Comparator<M> = when (sort) {
+            Sort.NAME -> compareBy { it.lower }
+            Sort.DATE -> compareBy { it.m.modified }
+            Sort.SIZE -> compareBy { it.m.size }
+            Sort.TYPE -> compareBy<M> { it.f.extension.lowercase(Locale.ROOT) }.thenBy { it.lower }
+        }
+        val ordered = all.sortedWith(if (ascending) cmp else cmp.reversed())
+        val dirs = ordered.filter { it.m.dir }
+        val others = ordered.filter { !it.m.dir }
+        return (dirs + others).map { Row.Entry(it.f, subOf?.invoke(it.f), meta = it.m) }
     }
 
     private fun useGrid(): Boolean = (gridSetting ?: (category == "images" || category == "videos")) && searchRows == null && !(current == null && category == null)
@@ -946,8 +974,8 @@ open class FilesActivity : AppCompatActivity() {
         dialogs.sheet(f.name, items)
     }
 
-    private fun iconFor(f: File): Pair<Int, Int> {
-        if (f.isDirectory) return R.drawable.ic_f_folder to 0xFFFFC107.toInt()
+    private fun iconFor(f: File, dir: Boolean = f.isDirectory): Pair<Int, Int> {
+        if (dir) return R.drawable.ic_f_folder to 0xFFFFC107.toInt()
         val e = FilesOps.ext(f)
         return when {
             e in FilesOps.imageExt -> R.drawable.ic_f_image to 0xFF26A69A.toInt()
@@ -1104,19 +1132,22 @@ open class FilesActivity : AppCompatActivity() {
 
         private fun bindEntry(h: VH, r: Row.Entry) {
             val f = r.file
-            val (res, color) = iconFor(f)
+            val isDir = r.meta?.dir ?: f.isDirectory
+            val fLen = r.meta?.size ?: (if (isDir) 0L else f.length())
+            val fMod = r.meta?.modified ?: f.lastModified()
+            val (res, color) = iconFor(f, isDir)
             val selecting = selected.isNotEmpty()
             val isSel = selected.contains(f)
             val homeRoot = r.home && f.absolutePath == root.absolutePath
             h.name?.text = if (homeRoot) getString(R.string.files_internal_storage) else f.name
             val grid = gridMode && !r.home
             if (!grid) {
-                val date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(f.lastModified()))
+                val date = dateFmt.format(Date(fMod))
                 h.meta?.text = when {
                     r.home -> f.absolutePath.removePrefix(root.absolutePath).ifEmpty { "/" }
-                    r.sub != null -> r.sub + " · " + (if (f.isFile) FilesOps.formatSize(f.length()) else getString(R.string.files_folder))
-                    f.isDirectory -> date + " · " + getString(R.string.files_items_count, f.list()?.size ?: 0)
-                    else -> date + " · " + FilesOps.formatSize(f.length())
+                    r.sub != null -> r.sub + " · " + (if (!isDir) FilesOps.formatSize(fLen) else getString(R.string.files_folder))
+                    isDir -> date
+                    else -> date + " · " + FilesOps.formatSize(fLen)
                 }
             }
             val thumb = h.thumb!!
@@ -1127,7 +1158,7 @@ open class FilesActivity : AppCompatActivity() {
             thumb.setPadding(pd, pd, pd, pd)
             thumb.background = dialogs.rounded(withAlpha(color, 45), if (grid) 16 else 14)
             thumb.tag = null
-            if (thumbs.hasThumb(f)) {
+            if (thumbs.hasThumb(f, isDir)) {
                 val size = if (grid) dp(220) else dp(120)
                 thumbs.load(f, thumb, size) { ok ->
                     if (ok) {
@@ -1148,7 +1179,7 @@ open class FilesActivity : AppCompatActivity() {
                 when {
                     selecting -> toggle(f)
                     category == "trash" -> showItemSheet(f)
-                    f.isDirectory -> { current = f; category = null; if (searching) toggleSearch(); refresh() }
+                    isDir -> { current = f; category = null; if (searching) toggleSearch(); refresh() }
                     else -> open(f)
                 }
             }
