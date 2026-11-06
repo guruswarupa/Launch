@@ -34,6 +34,13 @@ class AppInitializer(private val activity: MainActivity) {
                 return@with
             }
 
+            if (sharedPreferences.getLong(Constants.Prefs.ONBOARDING_ACTIVE_UNTIL, 0L) > System.currentTimeMillis()) {
+                startActivity(Intent(activity, com.guruswarupa.launch.ui.activities.OnboardingTourActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+                finish()
+                return@with
+            }
+
             initializeViews()
             setupNavigationAndGestures()
             setupAppList()
@@ -44,7 +51,29 @@ class AppInitializer(private val activity: MainActivity) {
             window.decorView.post {
                 systemBarManager.makeSystemBarsTransparent(isFullyTransparent = true)
             }
+
+            promptTourForExistingUsers()
         }
+    }
+
+    private fun MainActivity.promptTourForExistingUsers() {
+        if (sharedPreferences.getBoolean(Constants.Prefs.ONBOARDING_TOUR_DONE, false) ||
+            sharedPreferences.getBoolean(Constants.Prefs.ONBOARDING_PROMPTED, false) ||
+            intent.getBooleanExtra("request_permissions_after_disclosure", false)
+        ) return
+        handler.postDelayed({
+            if (isFinishing || isDestroyed) return@postDelayed
+            sharedPreferences.edit().putBoolean(Constants.Prefs.ONBOARDING_PROMPTED, true).apply()
+            android.app.AlertDialog.Builder(activity, R.style.CustomDialogTheme)
+                .setTitle(R.string.tour_prompt_title)
+                .setMessage(R.string.tour_prompt_message)
+                .setPositiveButton(R.string.tour_prompt_start) { _, _ ->
+                    startActivity(Intent(activity, com.guruswarupa.launch.ui.activities.OnboardingTourActivity::class.java)
+                        .putExtra(com.guruswarupa.launch.ui.activities.OnboardingTourActivity.EXTRA_FROM_SETTINGS, true))
+                }
+                .setNegativeButton(R.string.tour_prompt_later, null)
+                .show()
+        }, 2500)
     }
 
     private fun MainActivity.setupCoreManagers() {

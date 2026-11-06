@@ -1016,6 +1016,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         setupNightMode()
         setupFlipToDnd()
         setupLockScreen()
+        setupTourEntry()
         setupGrayscaleMode()
 
         findViewById<View>(R.id.config_control_center_button).setOnClickListener {

@@ -557,3 +557,10 @@ internal fun SettingsActivity.setupLockScreen() {
         prefs.edit { putBoolean(Constants.Prefs.LOCKSCREEN_NOTIF_CONTENT, isChecked) }
     }
 }
+
+
+internal fun SettingsActivity.setupTourEntry() {
+    findViewById<View>(R.id.app_tour_card).setOnClickListener {
+        startActivity(Intent(this, OnboardingTourActivity::class.java).putExtra(OnboardingTourActivity.EXTRA_FROM_SETTINGS, true))
+    }
+}

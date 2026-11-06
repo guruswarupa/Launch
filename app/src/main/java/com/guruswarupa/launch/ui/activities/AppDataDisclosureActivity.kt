@@ -213,6 +213,15 @@ class AppDataDisclosureActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity(requestPermissions: Boolean = false) {
+        val tourPrefs = getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
+        if (!tourPrefs.getBoolean(Constants.Prefs.ONBOARDING_TOUR_DONE, false)) {
+            startActivity(Intent(this, OnboardingTourActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                if (requestPermissions) putExtra(OnboardingTourActivity.EXTRA_REQUEST_PERMISSIONS, true)
+            })
+            finish()
+            return
+        }
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             if (requestPermissions) {

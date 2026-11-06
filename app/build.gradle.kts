@@ -140,6 +140,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation(libs.cardview)
     implementation(libs.material)
     implementation(libs.exp4j)

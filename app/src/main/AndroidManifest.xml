@@ -529,6 +529,11 @@
         </activity>
 
         <activity
+            android:name=".ui.activities.OnboardingTourActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Settings" />
+
+        <activity
             android:name=".ui.activities.StorageAnalyzerActivity"
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings" />
