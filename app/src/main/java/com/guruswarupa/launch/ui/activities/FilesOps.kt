@@ -10,6 +10,7 @@ import android.util.LruCache
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toBitmap
+import com.guruswarupa.launch.R
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -38,18 +39,18 @@ internal object FilesOps {
         return String.format(Locale.US, if (v >= 100) "%.0f %s" else "%.1f %s", v, u[i])
     }
 
-    fun typeName(f: File): String {
-        if (f.isDirectory) return "Folder"
+    fun typeName(ctx: android.content.Context, f: File): String {
+        if (f.isDirectory) return ctx.getString(R.string.files_folder)
         val e = ext(f)
         return when {
-            e in imageExt -> "Image"
-            e in videoExt -> "Video"
-            e in audioExt -> "Audio"
-            e in docExt -> "Document"
-            e == "apk" -> "Android package"
-            e in archiveExt -> "Archive"
-            e.isEmpty() -> "File"
-            else -> e.uppercase(Locale.ROOT) + " file"
+            e in imageExt -> ctx.getString(R.string.files_type_image)
+            e in videoExt -> ctx.getString(R.string.files_type_video)
+            e in audioExt -> ctx.getString(R.string.files_type_audio)
+            e in docExt -> ctx.getString(R.string.files_type_document)
+            e == "apk" -> ctx.getString(R.string.files_type_apk)
+            e in archiveExt -> ctx.getString(R.string.files_type_archive)
+            e.isEmpty() -> ctx.getString(R.string.files_type_file)
+            else -> ctx.getString(R.string.files_type_ext, e.uppercase(Locale.ROOT))
         }
     }
 

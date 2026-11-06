@@ -50,7 +50,7 @@ open class FilesActivity : AppCompatActivity() {
         const val EXTRA_OPEN_PATH = "open_path"
     }
 
-    private enum class Sort(val label: String) { NAME("Name"), DATE("Date modified"), SIZE("Size"), TYPE("Type") }
+    private enum class Sort(val labelRes: Int) { NAME(R.string.files_name), DATE(R.string.files_sort_date), SIZE(R.string.files_size), TYPE(R.string.files_type) }
 
     private class Cat(val key: String, val label: String, val icon: Int, val color: Int)
 
@@ -112,15 +112,15 @@ open class FilesActivity : AppCompatActivity() {
 
     private val cats by lazy {
         listOf(
-            Cat("images", "Images", R.drawable.ic_f_image, 0xFF26A69A.toInt()),
-            Cat("videos", "Videos", R.drawable.ic_f_video, 0xFFEF5350.toInt()),
-            Cat("audio", "Audio", R.drawable.ic_f_music, 0xFFAB47BC.toInt()),
-            Cat("documents", "Docs", R.drawable.ic_f_doc, 0xFF42A5F5.toInt()),
-            Cat("downloads", "Downloads", R.drawable.ic_f_download, 0xFF66BB6A.toInt()),
-            Cat("apks", "Installers", R.drawable.ic_f_apk, 0xFFFFA726.toInt()),
-            Cat("archives", "Archives", R.drawable.ic_f_archive, 0xFF8D6E63.toInt()),
-            Cat("recent", "Recent", R.drawable.ic_f_recent, 0xFF78909C.toInt()),
-            Cat("trash", "Recycle bin", R.drawable.ic_f_delete, 0xFF8E8E93.toInt())
+            Cat("images", getString(R.string.files_cat_images), R.drawable.ic_f_image, 0xFF26A69A.toInt()),
+            Cat("videos", getString(R.string.files_cat_videos), R.drawable.ic_f_video, 0xFFEF5350.toInt()),
+            Cat("audio", getString(R.string.files_cat_audio), R.drawable.ic_f_music, 0xFFAB47BC.toInt()),
+            Cat("documents", getString(R.string.files_cat_docs), R.drawable.ic_f_doc, 0xFF42A5F5.toInt()),
+            Cat("downloads", getString(R.string.files_cat_downloads), R.drawable.ic_f_download, 0xFF66BB6A.toInt()),
+            Cat("apks", getString(R.string.files_cat_installers), R.drawable.ic_f_apk, 0xFFFFA726.toInt()),
+            Cat("archives", getString(R.string.files_cat_archives), R.drawable.ic_f_archive, 0xFF8D6E63.toInt()),
+            Cat("recent", getString(R.string.files_cat_recent), R.drawable.ic_f_recent, 0xFF78909C.toInt()),
+            Cat("trash", getString(R.string.files_cat_trash), R.drawable.ic_f_delete, 0xFF8E8E93.toInt())
         )
     }
 
@@ -217,17 +217,17 @@ open class FilesActivity : AppCompatActivity() {
 
         val headerBox = FrameLayout(this)
         val bar = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL; setPadding(dp(6), dp(4), dp(6), dp(4)) }
-        backButton = iconBtn(R.drawable.ic_f_back, "Back") { if (!goBack()) finish() }
+        backButton = iconBtn(R.drawable.ic_f_back, getString(R.string.files_back)) { if (!goBack()) finish() }
         bar.addView(backButton)
         val titles = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(4), 0, dp(4), 0) }
-        titleView = text("My Files", 22f, p.text, true).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.MIDDLE }
+        titleView = text(getString(R.string.files_title), 22f, p.text, true).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.MIDDLE }
         subtitleView = text("", 12.5f, p.text2).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.MIDDLE }
         titles.addView(titleView); titles.addView(subtitleView)
         bar.addView(titles, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
-        bar.addView(iconBtn(R.drawable.ic_f_search, "Search") { toggleSearch() })
-        viewToggle = iconBtn(R.drawable.ic_f_view_grid, "Layout") { val next = !useGrid(); gridSetting = next; prefs.edit().putBoolean("grid", next).apply(); render() }
+        bar.addView(iconBtn(R.drawable.ic_f_search, getString(R.string.files_search)) { toggleSearch() })
+        viewToggle = iconBtn(R.drawable.ic_f_view_grid, getString(R.string.files_layout)) { val next = !useGrid(); gridSetting = next; prefs.edit().putBoolean("grid", next).apply(); render() }
         bar.addView(viewToggle)
-        bar.addView(iconBtn(R.drawable.ic_f_more, "More") { showMoreSheet() })
+        bar.addView(iconBtn(R.drawable.ic_f_more, getString(R.string.files_more)) { showMoreSheet() })
         normalBar = bar
         headerBox.addView(bar)
 
@@ -237,25 +237,25 @@ open class FilesActivity : AppCompatActivity() {
             background = dialogs.rounded(withAlpha(p.accent, 70), 0)
             visibility = View.GONE
         }
-        sel.addView(iconBtn(R.drawable.ic_f_close, "Cancel selection") { clearSelection() })
+        sel.addView(iconBtn(R.drawable.ic_f_close, getString(R.string.files_cancel_selection)) { clearSelection() })
         selectionCount = text("", 18f, p.text, true)
         sel.addView(selectionCount, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f).apply { marginStart = dp(6) })
-        sel.addView(iconBtn(R.drawable.ic_f_select_all, "Select all") { selectAll() })
-        val restoreBtn = iconBtn(R.drawable.ic_f_recent, "Restore") { restoreItems(selected.toList()) }
+        sel.addView(iconBtn(R.drawable.ic_f_select_all, getString(R.string.files_select_all)) { selectAll() })
+        val restoreBtn = iconBtn(R.drawable.ic_f_recent, getString(R.string.files_restore)) { restoreItems(selected.toList()) }
         trashButtons.add(restoreBtn); sel.addView(restoreBtn)
-        val shareBtn = iconBtn(R.drawable.ic_f_share, "Share") { shareFiles(selected.toList()) }
-        val copyBtn = iconBtn(R.drawable.ic_f_copy, "Copy") { setClipboard(selected.toList(), false) }
-        val moveBtn = iconBtn(R.drawable.ic_f_move, "Move") { setClipboard(selected.toList(), true) }
+        val shareBtn = iconBtn(R.drawable.ic_f_share, getString(R.string.files_share)) { shareFiles(selected.toList()) }
+        val copyBtn = iconBtn(R.drawable.ic_f_copy, getString(R.string.files_copy)) { setClipboard(selected.toList(), false) }
+        val moveBtn = iconBtn(R.drawable.ic_f_move, getString(R.string.files_move)) { setClipboard(selected.toList(), true) }
         normalSelButtons.addAll(listOf(shareBtn, copyBtn, moveBtn))
         sel.addView(shareBtn); sel.addView(copyBtn); sel.addView(moveBtn)
-        sel.addView(iconBtn(R.drawable.ic_f_delete, "Delete") { if (category == "trash") confirmDeleteForever(selected.toList()) else confirmDelete(selected.toList()) })
-        sel.addView(iconBtn(R.drawable.ic_f_more, "More") { showSelectionSheet() })
+        sel.addView(iconBtn(R.drawable.ic_f_delete, getString(R.string.files_delete)) { if (category == "trash") confirmDeleteForever(selected.toList()) else confirmDelete(selected.toList()) })
+        sel.addView(iconBtn(R.drawable.ic_f_more, getString(R.string.files_more)) { showSelectionSheet() })
         selectionBar = sel
         headerBox.addView(sel)
         column.addView(headerBox)
 
         searchBox = EditText(this).apply {
-            hint = "Search files and folders"
+            hint = getString(R.string.files_search_hint)
             setHintTextColor(p.text2)
             setTextColor(p.text)
             textSize = 15f
@@ -306,7 +306,7 @@ open class FilesActivity : AppCompatActivity() {
         }
         body.addView(refreshLayout, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
-        emptyText = text("Nothing here", 15f, p.text2).apply { gravity = Gravity.CENTER }
+        emptyText = text(getString(R.string.files_nothing_here), 15f, p.text2).apply { gravity = Gravity.CENTER }
         emptyBox = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -392,9 +392,9 @@ open class FilesActivity : AppCompatActivity() {
             background = dialogs.rounded(withAlpha(0xFFFFC107.toInt(), 45), 24)
             val pd = dp(18); setPadding(pd, pd, pd, pd)
         }, LinearLayout.LayoutParams(dp(84), dp(84)))
-        card.addView(text("Access your files", 21f, p.text, true).apply { gravity = Gravity.CENTER; setPadding(0, dp(18), 0, dp(8)) })
-        card.addView(text("Launch Files needs All files access so it can browse, copy, move and organise everything on your device. Nothing ever leaves your phone.", 14f, p.text2).apply { gravity = Gravity.CENTER })
-        card.addView(text("Allow access", 16f, p.onAccent, true).apply {
+        card.addView(text(getString(R.string.files_access_title), 21f, p.text, true).apply { gravity = Gravity.CENTER; setPadding(0, dp(18), 0, dp(8)) })
+        card.addView(text(getString(R.string.files_access_message), 14f, p.text2).apply { gravity = Gravity.CENTER })
+        card.addView(text(getString(R.string.files_allow_access), 16f, p.onAccent, true).apply {
             gravity = Gravity.CENTER
             background = dialogs.rounded(p.accent, 26)
             setPadding(dp(30), dp(13), dp(30), dp(13))
@@ -431,7 +431,7 @@ open class FilesActivity : AppCompatActivity() {
         if (q.isEmpty()) { searchRows = null; render(); return }
         handler.removeCallbacksAndMessages("search")
         handler.postAtTime({
-            subtitleView.text = "Searching…"
+            subtitleView.text = getString(R.string.files_searching)
             val scope = current ?: root
             Thread {
                 val found = FilesOps.search(scope, q, 400) { token != searchToken }
@@ -439,7 +439,7 @@ open class FilesActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (token == searchToken) {
                         searchRows = sortedFound.map { Row.Entry(it, it.parentFile?.absolutePath?.removePrefix(root.absolutePath)?.ifEmpty { "/" }) }
-                        subtitleView.text = "${sortedFound.size} results"
+                        subtitleView.text = getString(R.string.files_results, sortedFound.size)
                         render()
                     }
                 }
@@ -469,7 +469,7 @@ open class FilesActivity : AppCompatActivity() {
         val set = HashSet(prefs.getStringSet("fav", emptySet()) ?: emptySet())
         val added = if (set.contains(f.absolutePath)) { set.remove(f.absolutePath); false } else { set.add(f.absolutePath); true }
         prefs.edit().putStringSet("fav", set).apply()
-        notify(if (added) "Added to favorites" else "Removed from favorites")
+        notify(if (added) getString(R.string.files_fav_added) else getString(R.string.files_fav_removed))
         if (current == null && category == null) refresh()
     }
 
@@ -486,21 +486,21 @@ open class FilesActivity : AppCompatActivity() {
             cats.forEach { home.add(Row.Category(it)) }
             val favs = favorites()
             if (favs.isNotEmpty()) {
-                home.add(Row.Header("Favorites"))
+                home.add(Row.Header(getString(R.string.files_favorites)))
                 favs.forEach { home.add(Row.Entry(it, home = true)) }
             }
-            home.add(Row.Header("Quick access"))
+            home.add(Row.Header(getString(R.string.files_quick_access)))
             listOf("Download", "DCIM", "Pictures", "Documents", "Music", "Movies").map { File(root, it) }.filter { it.isDirectory }
                 .forEach { home.add(Row.Entry(it, home = true)) }
             home.add(Row.Entry(root, home = true))
             rows = home
-            titleView.text = "My Files"
-            subtitleView.text = "Internal storage"
+            titleView.text = getString(R.string.files_title)
+            subtitleView.text = getString(R.string.files_internal_storage)
             render(); return
         }
         if (dir != null) {
-            titleView.text = if (dir.absolutePath == root.absolutePath) "Internal storage" else dir.name
-            subtitleView.text = "Loading…"
+            titleView.text = if (dir.absolutePath == root.absolutePath) getString(R.string.files_internal_storage) else dir.name
+            subtitleView.text = getString(R.string.files_loading)
             Thread {
                 val files = (dir.listFiles() ?: emptyArray()).toList()
                 val ordered = sorted(files)
@@ -508,7 +508,7 @@ open class FilesActivity : AppCompatActivity() {
                     if (token == loadToken) {
                         rows = ordered.map { Row.Entry(it) }
                         val folders = ordered.count { it.isDirectory }
-                        subtitleView.text = "$folders folders · ${ordered.size - folders} files"
+                        subtitleView.text = getString(R.string.files_folders_files, folders, ordered.size - folders)
                         render()
                     }
                 }
@@ -516,7 +516,7 @@ open class FilesActivity : AppCompatActivity() {
         } else {
             val c = cats.first { it.key == cat }
             titleView.text = c.label
-            subtitleView.text = "Searching…"
+            subtitleView.text = getString(R.string.files_searching)
             rows = emptyList()
             render()
             if (cat == "trash") {
@@ -526,9 +526,9 @@ open class FilesActivity : AppCompatActivity() {
                     runOnUiThread {
                         if (token == loadToken) {
                             trashMap = found.associateBy { it.data.absolutePath }
-                            rows = if (found.isEmpty()) emptyList() else listOf<Row>(Row.Header("Deleted items are removed automatically after ${FilesTrash.RETENTION_DAYS} days")) +
-                                found.map { Row.Entry(it.data, "${it.daysLeft} days left") }
-                            subtitleView.text = "${found.size} items"
+                            rows = if (found.isEmpty()) emptyList() else listOf<Row>(Row.Header(getString(R.string.files_trash_notice, FilesTrash.RETENTION_DAYS))) +
+                                found.map { Row.Entry(it.data, getString(R.string.files_days_left, it.daysLeft)) }
+                            subtitleView.text = getString(R.string.files_items_count, found.size)
                             render()
                         }
                     }
@@ -540,7 +540,7 @@ open class FilesActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (token == loadToken) {
                         rows = found.map { Row.Entry(it, it.parentFile?.name) }
-                        subtitleView.text = "${found.size} items"
+                        subtitleView.text = getString(R.string.files_items_count, found.size)
                         render()
                     }
                 }
@@ -569,14 +569,14 @@ open class FilesActivity : AppCompatActivity() {
         viewToggle.visibility = if (atHome) View.GONE else View.VISIBLE
         viewToggle.setImageResource(if (useGrid()) R.drawable.ic_f_view_list else R.drawable.ic_f_view_grid)
         emptyBox.visibility = if (shown.isEmpty() && hasAccess() && !atHome && !subtitleView.text.toString().endsWith("…")) View.VISIBLE else View.GONE
-        emptyText.text = if (query.isNotEmpty()) "No matches for \"$query\"" else if (category == "trash") "Recycle bin is empty" else "This folder is empty"
+        emptyText.text = if (query.isNotEmpty()) getString(R.string.files_no_matches, query) else if (category == "trash") getString(R.string.files_trash_empty) else getString(R.string.files_folder_empty)
         pasteBar.visibility = if (clipboard.isNotEmpty() && current != null) View.VISIBLE else View.GONE
-        pasteText.text = (if (clipboardMove) "Move " else "Copy ") + "${clipboard.size} here"
+        pasteText.text = getString(if (clipboardMove) R.string.files_move_here else R.string.files_copy_here, clipboard.size)
         fab.visibility = if (current != null && selected.isEmpty() && searchRows == null) View.VISIBLE else View.GONE
         val sel = selected.isNotEmpty()
         selectionBar.visibility = if (sel) View.VISIBLE else View.GONE
         normalBar.visibility = if (sel) View.INVISIBLE else View.VISIBLE
-        selectionCount.text = "${selected.size} selected"
+        selectionCount.text = getString(R.string.files_selected_count, selected.size)
         val inTrash = category == "trash"
         trashButtons.forEach { it.visibility = if (inTrash) View.VISIBLE else View.GONE }
         normalSelButtons.forEach { it.visibility = if (inTrash) View.GONE else View.VISIBLE }
@@ -594,7 +594,7 @@ open class FilesActivity : AppCompatActivity() {
         chain.forEachIndexed { i, seg ->
             val last = i == chain.lastIndex
             if (i > 0) crumbs.addView(text("›", 16f, p.text2).apply { setPadding(dp(4), 0, dp(4), 0) })
-            crumbs.addView(text(if (seg.absolutePath == root.absolutePath) "Internal storage" else seg.name, 13.5f, if (last) p.onAccent else p.text, last).apply {
+            crumbs.addView(text(if (seg.absolutePath == root.absolutePath) getString(R.string.files_internal_storage) else seg.name, 13.5f, if (last) p.onAccent else p.text, last).apply {
                 background = dialogs.rounded(if (last) p.accent else p.card, 16)
                 setPadding(dp(12), dp(6), dp(12), dp(6))
                 setOnClickListener { if (!last) { current = seg; category = null; refresh() } }
@@ -620,7 +620,7 @@ open class FilesActivity : AppCompatActivity() {
         if (files.isEmpty()) return
         clipboard = files; clipboardMove = move
         selected.clear()
-        notify(if (current == null) "Open a folder and tap Paste" else "${files.size} item(s) ready to ${if (move) "move" else "copy"}")
+        notify(if (current == null) getString(R.string.files_open_folder_paste) else getString(if (move) R.string.files_ready_move else R.string.files_ready_copy, files.size))
         if (current == null && category == null) current = root
         refresh()
     }
@@ -632,7 +632,7 @@ open class FilesActivity : AppCompatActivity() {
         Thread {
             val total = FilesOps.countFiles(files)
             val prog = FilesOps.Progress(h, total)
-            val message = try { work(prog) } catch (e: Exception) { "Failed: ${e.message ?: "unknown error"}" }
+            val message = try { work(prog) } catch (e: Exception) { getString(R.string.files_failed, e.message ?: getString(R.string.files_unknown_error)) }
             runOnUiThread {
                 h.dismiss()
                 selected.clear()
@@ -646,7 +646,7 @@ open class FilesActivity : AppCompatActivity() {
         val dir = current ?: return
         val items = clipboard
         val move = clipboardMove
-        runTask(if (move) "Moving" else "Copying", items) { prog ->
+        runTask(if (move) getString(R.string.files_moving) else getString(R.string.files_copying), items) { prog ->
             var failed = 0
             for (src in items) {
                 if (prog.cancelled) break
@@ -659,31 +659,31 @@ open class FilesActivity : AppCompatActivity() {
                 } catch (e: Exception) { failed++ }
             }
             clipboard = emptyList()
-            if (failed > 0) "$failed item(s) failed" else "Done"
+            if (failed > 0) getString(R.string.files_n_failed, failed) else getString(R.string.files_done)
         }
     }
 
     private fun confirmDelete(files: List<File>) {
         if (files.isEmpty()) return
-        val msg = if (files.size == 1) "\"${files[0].name}\"" else "${files.size} items"
-        dialogs.confirm("Move to recycle bin?", "$msg will be kept for ${FilesTrash.RETENTION_DAYS} days before being deleted for good. You can restore ${if (files.size == 1) "it" else "them"} any time.", "Move to bin", true) {
-            runTask("Moving to recycle bin", files) { prog ->
+        val msg = if (files.size == 1) "\"${files[0].name}\"" else getString(R.string.files_items_count, files.size)
+        dialogs.confirm(getString(R.string.files_trash_title), getString(if (files.size == 1) R.string.files_trash_message_one else R.string.files_trash_message_many, msg, FilesTrash.RETENTION_DAYS), getString(R.string.files_trash_confirm), true) {
+            runTask(getString(R.string.files_trash_progress), files) { prog ->
                 var failed = 0
                 files.forEach { if (prog.cancelled) return@forEach; if (!FilesTrash.moveToTrash(root, it)) failed++; prog.step(it.name) }
-                if (failed > 0) "$failed item(s) couldn't be moved" else "Moved ${files.size} item(s) to recycle bin"
+                if (failed > 0) getString(R.string.files_n_move_failed, failed) else getString(R.string.files_moved_to_trash, files.size)
             }
         }
     }
 
     private fun confirmDeleteForever(files: List<File>) {
         if (files.isEmpty()) return
-        val msg = if (files.size == 1) "\"${files[0].name}\" will be permanently deleted." else "${files.size} items will be permanently deleted."
-        dialogs.confirm("Delete permanently?", "$msg This can't be undone.", "Delete", true) {
-            runTask("Deleting", files) { prog ->
+        val msg = if (files.size == 1) getString(R.string.files_delete_one, files[0].name) else getString(R.string.files_delete_many, files.size)
+        dialogs.confirm(getString(R.string.files_delete_forever_title), getString(R.string.files_cant_undo, msg), getString(R.string.files_delete), true) {
+            runTask(getString(R.string.files_deleting), files) { prog ->
                 files.forEach { f ->
                     if (category == "trash") trashMap[f.absolutePath]?.folder?.let { folder -> FilesOps.deleteTree(folder, prog) } else FilesOps.deleteTree(f, prog)
                 }
-                "Deleted ${files.size} item(s)"
+                getString(R.string.files_deleted_n, files.size)
             }
         }
     }
@@ -697,59 +697,59 @@ open class FilesActivity : AppCompatActivity() {
             runOnUiThread {
                 selected.clear()
                 refresh()
-                notify(if (ok == items.size) "Restored $ok item(s)" else "Restored $ok of ${items.size}")
+                notify(if (ok == items.size) getString(R.string.files_restored_n, ok) else getString(R.string.files_restored_of, ok, items.size))
             }
         }.start()
     }
 
     private fun emptyTrash() {
-        dialogs.confirm("Empty recycle bin?", "Everything in the recycle bin will be permanently deleted.", "Empty", true) {
+        dialogs.confirm(getString(R.string.files_empty_trash_title), getString(R.string.files_empty_trash_message), getString(R.string.files_empty), true) {
             Thread {
                 FilesTrash.empty(root)
-                runOnUiThread { refresh(); notify("Recycle bin emptied") }
+                runOnUiThread { refresh(); notify(getString(R.string.files_trash_emptied)) }
             }.start()
         }
     }
 
     private fun rename(f: File) {
-        dialogs.input("Rename", "Name", f.name, "Rename") { name ->
-            if (name.contains('/')) { notify("Name can't contain /"); return@input }
+        dialogs.input(getString(R.string.files_rename), getString(R.string.files_name), f.name, getString(R.string.files_rename)) { name ->
+            if (name.contains('/')) { notify(getString(R.string.files_name_invalid)); return@input }
             val target = File(f.parentFile, name)
             when {
-                target.exists() && target != f -> notify("\"$name\" already exists")
-                !f.renameTo(target) -> notify("Couldn't rename")
-                else -> { selected.clear(); refresh(); notify("Renamed") }
+                target.exists() && target != f -> notify(getString(R.string.files_exists, name))
+                !f.renameTo(target) -> notify(getString(R.string.files_rename_failed))
+                else -> { selected.clear(); refresh(); notify(getString(R.string.files_renamed)) }
             }
         }
     }
 
     private fun createFolder() {
         val dir = current ?: return
-        dialogs.input("New folder", "Folder name", "", "Create") { name ->
-            if (name.contains('/')) { notify("Name can't contain /"); return@input }
+        dialogs.input(getString(R.string.files_new_folder), getString(R.string.files_folder_name), "", getString(R.string.files_create)) { name ->
+            if (name.contains('/')) { notify(getString(R.string.files_name_invalid)); return@input }
             val t = File(dir, name)
-            if (t.exists()) notify("\"$name\" already exists") else if (t.mkdirs()) { refresh(); notify("Folder created") } else notify("Couldn't create folder")
+            if (t.exists()) notify(getString(R.string.files_exists, name)) else if (t.mkdirs()) { refresh(); notify(getString(R.string.files_folder_created)) } else notify(getString(R.string.files_folder_failed))
         }
     }
 
     private fun createTextFile() {
         val dir = current ?: return
-        dialogs.input("New text file", "File name", "note.txt", "Create") { name ->
-            if (name.contains('/')) { notify("Name can't contain /"); return@input }
+        dialogs.input(getString(R.string.files_new_text), getString(R.string.files_file_name), "note.txt", getString(R.string.files_create)) { name ->
+            if (name.contains('/')) { notify(getString(R.string.files_name_invalid)); return@input }
             val t = File(dir, name)
-            if (t.exists()) notify("\"$name\" already exists") else if (runCatching { t.createNewFile() }.getOrDefault(false)) { refresh(); notify("File created") } else notify("Couldn't create file")
+            if (t.exists()) notify(getString(R.string.files_exists, name)) else if (runCatching { t.createNewFile() }.getOrDefault(false)) { refresh(); notify(getString(R.string.files_file_created)) } else notify(getString(R.string.files_file_failed))
         }
     }
 
     private fun compress(files: List<File>) {
         val dir = current ?: files.firstOrNull()?.parentFile ?: return
-        val baseName = if (files.size == 1) files[0].nameWithoutExtension.ifEmpty { files[0].name } else "Archive"
-        dialogs.input("Compress", "Archive name", "$baseName.zip", "Compress") { raw ->
+        val baseName = if (files.size == 1) files[0].nameWithoutExtension.ifEmpty { files[0].name } else getString(R.string.files_archive_default)
+        dialogs.input(getString(R.string.files_compress), getString(R.string.files_archive_name), "$baseName.zip", getString(R.string.files_compress)) { raw ->
             val name = if (raw.endsWith(".zip", true)) raw else "$raw.zip"
             val out = FilesOps.uniqueTarget(dir, name)
-            runTask("Compressing", files) { prog ->
+            runTask(getString(R.string.files_compressing), files) { prog ->
                 FilesOps.zip(files, out, prog)
-                if (prog.cancelled) { out.delete(); "Cancelled" } else "Created ${out.name}"
+                if (prog.cancelled) { out.delete(); getString(R.string.files_cancelled) } else getString(R.string.files_created, out.name)
             }
         }
     }
@@ -759,30 +759,30 @@ open class FilesActivity : AppCompatActivity() {
         val dest = FilesOps.uniqueTarget(dir, zip.nameWithoutExtension)
         val count = FilesOps.zipEntryCount(zip)
         var handle: ProgressHandle? = null
-        handle = dialogs.progress("Extracting") {}
+        handle = dialogs.progress(getString(R.string.files_extracting)) {}
         val h = handle
         Thread {
             val prog = FilesOps.Progress(h, count)
-            val msg = try { FilesOps.unzip(zip, dest, prog); if (prog.cancelled) "Cancelled" else "Extracted to ${dest.name}" } catch (e: Exception) { "Couldn't extract this archive" }
+            val msg = try { FilesOps.unzip(zip, dest, prog); if (prog.cancelled) getString(R.string.files_cancelled) else getString(R.string.files_extracted_to, dest.name) } catch (e: Exception) { getString(R.string.files_extract_failed) }
             runOnUiThread { h.dismiss(); refresh(); notify(msg) }
         }.start()
     }
 
     private fun shareFiles(files: List<File>) {
         val regular = files.filter { it.isFile }
-        if (regular.isEmpty()) { notify("Folders can't be shared"); return }
+        if (regular.isEmpty()) { notify(getString(R.string.files_cant_share_folders)); return }
         val uris = ArrayList(regular.map { FileProvider.getUriForFile(this, "$packageName.fileprovider", it) })
         val i = if (uris.size == 1) Intent(Intent.ACTION_SEND).apply { putExtra(Intent.EXTRA_STREAM, uris[0]); type = FilesOps.mime(regular[0]) }
         else Intent(Intent.ACTION_SEND_MULTIPLE).apply { putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris); type = "*/*" }
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivity(Intent.createChooser(i, "Share"))
+        startActivity(Intent.createChooser(i, getString(R.string.files_share)))
         selected.clear(); render()
     }
 
     private fun openWith(f: File) {
         val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", f)
         val i = Intent(Intent.ACTION_VIEW).setDataAndType(uri, FilesOps.mime(f)).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        try { startActivity(Intent.createChooser(i, "Open with")) } catch (e: Exception) { notify("No app can open this file") }
+        try { startActivity(Intent.createChooser(i, getString(R.string.files_open_with))) } catch (e: Exception) { notify(getString(R.string.files_no_app)) }
     }
 
     private fun open(f: File) {
@@ -808,14 +808,14 @@ open class FilesActivity : AppCompatActivity() {
                 Intent(Intent.ACTION_VIEW).setDataAndType(uri, FilesOps.mime(f)).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
         }
-        try { startActivity(i) } catch (ex: Exception) { notify("No app can open this file") }
+        try { startActivity(i) } catch (ex: Exception) { notify(getString(R.string.files_no_app)) }
     }
 
     private fun siblingPaths(match: (File) -> Boolean): Array<String> =
         (searchRows ?: rows).filterIsInstance<Row.Entry>().map { it.file }.filter { it.isFile && match(it) }.map { it.absolutePath }.toTypedArray()
 
     private fun extractPrompt(zip: File) {
-        dialogs.confirm("Extract archive?", "Extract \"${zip.name}\" into a new folder here?", "Extract") { extract(zip) }
+        dialogs.confirm(getString(R.string.files_extract_title), getString(R.string.files_extract_message, zip.name), getString(R.string.files_extract)) { extract(zip) }
     }
 
     private fun details(files: List<File>) {
@@ -823,16 +823,16 @@ open class FilesActivity : AppCompatActivity() {
             val f = files[0]
             val (icon, color) = iconFor(f)
             val rows = ArrayList<Pair<String, String>>()
-            rows.add("Type" to FilesOps.typeName(f))
-            rows.add("Location" to (f.parentFile?.absolutePath ?: "/"))
-            rows.add("Size" to if (f.isDirectory) "Calculating…" else "${FilesOps.formatSize(f.length())} (${f.length()} bytes)")
-            if (f.isDirectory) rows.add("Contains" to "Calculating…")
-            rows.add("Modified" to DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(f.lastModified())))
-            rows.add("Permissions" to (if (f.canRead()) "Read" else "") + (if (f.canWrite()) " · Write" else "") + (if (f.isHidden) " · Hidden" else ""))
+            rows.add(getString(R.string.files_type) to FilesOps.typeName(this, f))
+            rows.add(getString(R.string.files_location) to (f.parentFile?.absolutePath ?: "/"))
+            rows.add(getString(R.string.files_size) to if (f.isDirectory) getString(R.string.files_calculating) else "${FilesOps.formatSize(f.length())} (${f.length()} bytes)")
+            if (f.isDirectory) rows.add(getString(R.string.files_contains) to getString(R.string.files_calculating))
+            rows.add(getString(R.string.files_modified) to DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(f.lastModified())))
+            rows.add(getString(R.string.files_permissions) to (if (f.canRead()) getString(R.string.files_perm_read) else "") + (if (f.canWrite()) " · " + getString(R.string.files_perm_write) else "") + (if (f.isHidden) " · " + getString(R.string.files_perm_hidden) else ""))
             if (FilesOps.ext(f) in FilesOps.imageExt && f.isFile) {
                 val o = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
                 android.graphics.BitmapFactory.decodeFile(f.absolutePath, o)
-                if (o.outWidth > 0) rows.add("Dimensions" to "${o.outWidth} × ${o.outHeight}")
+                if (o.outWidth > 0) rows.add(getString(R.string.files_dimensions) to "${o.outWidth} × ${o.outHeight}")
             }
             val values = dialogs.details(f.name, icon, color, rows)
             if (f.isDirectory) {
@@ -842,14 +842,14 @@ open class FilesActivity : AppCompatActivity() {
                     f.walkTopDown().drop(1).forEach { if (it.isDirectory) folders++ else fileCount++ }
                     runOnUiThread {
                         values[2].text = FilesOps.formatSize(size)
-                        values[3].text = "$fileCount files, $folders folders"
+                        values[3].text = getString(R.string.files_files_folders, fileCount, folders)
                     }
                 }.start()
             }
         } else {
-            val values = dialogs.details("${files.size} items", R.drawable.ic_f_file, 0xFF90A4AE.toInt(), listOf(
-                "Selected" to "${files.count { it.isDirectory }} folders, ${files.count { it.isFile }} files",
-                "Total size" to "Calculating…"
+            val values = dialogs.details(getString(R.string.files_items_count, files.size), R.drawable.ic_f_file, 0xFF90A4AE.toInt(), listOf(
+                getString(R.string.files_selected) to getString(R.string.files_folders_files_comma, files.count { it.isDirectory }, files.count { it.isFile }),
+                getString(R.string.files_total_size) to getString(R.string.files_calculating)
             ))
             Thread {
                 val total = files.sumOf { FilesOps.sizeOf(it) }
@@ -861,43 +861,43 @@ open class FilesActivity : AppCompatActivity() {
     private fun showSortSheet() {
         val items = ArrayList<SheetItem>()
         Sort.values().forEach { s ->
-            items.add(SheetItem(R.drawable.ic_f_sort, s.label, checked = sort == s) {
+            items.add(SheetItem(R.drawable.ic_f_sort, getString(s.labelRes), checked = sort == s) {
                 sort = s; prefs.edit().putInt("sort", s.ordinal).apply(); refresh()
             })
         }
-        items.add(SheetItem(R.drawable.ic_f_sort, if (ascending) "Order: Ascending" else "Order: Descending") {
+        items.add(SheetItem(R.drawable.ic_f_sort, if (ascending) getString(R.string.files_order_asc) else getString(R.string.files_order_desc)) {
             ascending = !ascending; prefs.edit().putBoolean("asc", ascending).apply(); refresh()
         })
-        dialogs.sheet("Sort by", items)
+        dialogs.sheet(getString(R.string.files_sort_by), items)
     }
 
     private fun showMoreSheet() {
         val items = ArrayList<SheetItem>()
         if (category == "trash") {
-            items.add(SheetItem(R.drawable.ic_f_recent, "Restore all") { restoreItems(trashMap.values.map { it.data }) })
-            items.add(SheetItem(R.drawable.ic_f_delete, "Empty recycle bin", danger = true) { emptyTrash() })
-            items.add(SheetItem(R.drawable.ic_f_select_all, "Select all") { selectAll() })
+            items.add(SheetItem(R.drawable.ic_f_recent, getString(R.string.files_restore_all)) { restoreItems(trashMap.values.map { it.data }) })
+            items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_empty_trash), danger = true) { emptyTrash() })
+            items.add(SheetItem(R.drawable.ic_f_select_all, getString(R.string.files_select_all)) { selectAll() })
             dialogs.sheet(null, items)
             return
         }
         if (current != null) {
-            items.add(SheetItem(R.drawable.ic_f_newfolder, "New folder") { createFolder() })
-            items.add(SheetItem(R.drawable.ic_f_doc, "New text file") { createTextFile() })
+            items.add(SheetItem(R.drawable.ic_f_newfolder, getString(R.string.files_new_folder)) { createFolder() })
+            items.add(SheetItem(R.drawable.ic_f_doc, getString(R.string.files_new_text)) { createTextFile() })
         }
-        if (current == null && category == null) items.add(SheetItem(R.drawable.ic_f_info, "Storage analyzer") { startActivity(Intent(this, StorageAnalyzerActivity::class.java)) })
-        items.add(SheetItem(R.drawable.ic_f_sort, "Sort by…") { showSortSheet() })
-        items.add(SheetItem(R.drawable.ic_f_select_all, "Select all") { selectAll() })
-        items.add(SheetItem(R.drawable.ic_f_view_list, if (showHidden) "Hide hidden files" else "Show hidden files", checked = showHidden) {
+        if (current == null && category == null) items.add(SheetItem(R.drawable.ic_f_info, getString(R.string.files_storage_analyzer)) { startActivity(Intent(this, StorageAnalyzerActivity::class.java)) })
+        items.add(SheetItem(R.drawable.ic_f_sort, getString(R.string.files_sort_by_more)) { showSortSheet() })
+        items.add(SheetItem(R.drawable.ic_f_select_all, getString(R.string.files_select_all)) { selectAll() })
+        items.add(SheetItem(R.drawable.ic_f_view_list, if (showHidden) getString(R.string.files_hide_hidden) else getString(R.string.files_show_hidden), checked = showHidden) {
             showHidden = !showHidden; prefs.edit().putBoolean("hidden", showHidden).apply(); refresh()
         })
-        items.add(SheetItem(R.drawable.ic_f_recent, "Refresh") { refresh() })
+        items.add(SheetItem(R.drawable.ic_f_recent, getString(R.string.files_refresh)) { refresh() })
         dialogs.sheet(null, items)
     }
 
     private fun showCreateSheet() {
-        dialogs.sheet("Create", listOf(
-            SheetItem(R.drawable.ic_f_newfolder, "New folder") { createFolder() },
-            SheetItem(R.drawable.ic_f_doc, "New text file") { createTextFile() }
+        dialogs.sheet(getString(R.string.files_create), listOf(
+            SheetItem(R.drawable.ic_f_newfolder, getString(R.string.files_new_folder)) { createFolder() },
+            SheetItem(R.drawable.ic_f_doc, getString(R.string.files_new_text)) { createTextFile() }
         ))
     }
 
@@ -906,43 +906,43 @@ open class FilesActivity : AppCompatActivity() {
         if (files.isEmpty()) return
         val items = ArrayList<SheetItem>()
         if (category == "trash") {
-            items.add(SheetItem(R.drawable.ic_f_recent, "Restore") { restoreItems(files) })
-            items.add(SheetItem(R.drawable.ic_f_delete, "Delete permanently", danger = true) { confirmDeleteForever(files) })
-            dialogs.sheet("${files.size} selected", items)
+            items.add(SheetItem(R.drawable.ic_f_recent, getString(R.string.files_restore)) { restoreItems(files) })
+            items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_delete_forever), danger = true) { confirmDeleteForever(files) })
+            dialogs.sheet(getString(R.string.files_selected_count, files.size), items)
             return
         }
-        if (files.size == 1) items.add(SheetItem(R.drawable.ic_f_rename, "Rename") { rename(files[0]) })
-        items.add(SheetItem(R.drawable.ic_f_archive, "Compress to ZIP") { compress(files) })
-        items.add(SheetItem(R.drawable.ic_f_info, "Details") { details(files) })
-        items.add(SheetItem(R.drawable.ic_f_delete, "Move to recycle bin", danger = true) { confirmDelete(files) })
-        dialogs.sheet("${files.size} selected", items)
+        if (files.size == 1) items.add(SheetItem(R.drawable.ic_f_rename, getString(R.string.files_rename)) { rename(files[0]) })
+        items.add(SheetItem(R.drawable.ic_f_archive, getString(R.string.files_compress_zip)) { compress(files) })
+        items.add(SheetItem(R.drawable.ic_f_info, getString(R.string.files_details)) { details(files) })
+        items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_move_to_trash), danger = true) { confirmDelete(files) })
+        dialogs.sheet(getString(R.string.files_selected_count, files.size), items)
     }
 
     private fun showItemSheet(f: File) {
         val items = ArrayList<SheetItem>()
         if (category == "trash") {
             val item = trashMap[f.absolutePath]
-            items.add(SheetItem(R.drawable.ic_f_recent, "Restore") { restoreItems(listOf(f)) })
-            items.add(SheetItem(R.drawable.ic_f_delete, "Delete permanently", danger = true) { confirmDeleteForever(listOf(f)) })
-            items.add(SheetItem(R.drawable.ic_f_info, "Details") { details(listOf(f)) })
-            dialogs.sheet(f.name + (item?.let { "  ·  from ${it.original.parentFile?.name ?: ""}" } ?: ""), items)
+            items.add(SheetItem(R.drawable.ic_f_recent, getString(R.string.files_restore)) { restoreItems(listOf(f)) })
+            items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_delete_forever), danger = true) { confirmDeleteForever(listOf(f)) })
+            items.add(SheetItem(R.drawable.ic_f_info, getString(R.string.files_details)) { details(listOf(f)) })
+            dialogs.sheet(f.name + (item?.let { "  ·  " + getString(R.string.files_from, it.original.parentFile?.name ?: "") } ?: ""), items)
             return
         }
         if (f.isFile) {
-            items.add(SheetItem(R.drawable.ic_f_file, "Open") { open(f) })
-            items.add(SheetItem(R.drawable.ic_f_file, "Open with…") { openWith(f) })
-            items.add(SheetItem(R.drawable.ic_f_share, "Share") { shareFiles(listOf(f)) })
+            items.add(SheetItem(R.drawable.ic_f_file, getString(R.string.files_open)) { open(f) })
+            items.add(SheetItem(R.drawable.ic_f_file, getString(R.string.files_open_with_more)) { openWith(f) })
+            items.add(SheetItem(R.drawable.ic_f_share, getString(R.string.files_share)) { shareFiles(listOf(f)) })
         } else {
             val fav = favorites().any { it.absolutePath == f.absolutePath }
-            items.add(SheetItem(R.drawable.ic_f_folder, if (fav) "Remove from favorites" else "Add to favorites") { toggleFavorite(f) })
+            items.add(SheetItem(R.drawable.ic_f_folder, if (fav) getString(R.string.files_remove_fav) else getString(R.string.files_add_fav)) { toggleFavorite(f) })
         }
-        items.add(SheetItem(R.drawable.ic_f_copy, "Copy") { setClipboard(listOf(f), false) })
-        items.add(SheetItem(R.drawable.ic_f_move, "Move") { setClipboard(listOf(f), true) })
-        items.add(SheetItem(R.drawable.ic_f_rename, "Rename") { rename(f) })
-        if (FilesOps.ext(f) == "zip") items.add(SheetItem(R.drawable.ic_f_archive, "Extract here") { extract(f) })
-        items.add(SheetItem(R.drawable.ic_f_archive, "Compress to ZIP") { compress(listOf(f)) })
-        items.add(SheetItem(R.drawable.ic_f_info, "Details") { details(listOf(f)) })
-        items.add(SheetItem(R.drawable.ic_f_delete, "Move to recycle bin", danger = true) { confirmDelete(listOf(f)) })
+        items.add(SheetItem(R.drawable.ic_f_copy, getString(R.string.files_copy)) { setClipboard(listOf(f), false) })
+        items.add(SheetItem(R.drawable.ic_f_move, getString(R.string.files_move)) { setClipboard(listOf(f), true) })
+        items.add(SheetItem(R.drawable.ic_f_rename, getString(R.string.files_rename)) { rename(f) })
+        if (FilesOps.ext(f) == "zip") items.add(SheetItem(R.drawable.ic_f_archive, getString(R.string.files_extract_here)) { extract(f) })
+        items.add(SheetItem(R.drawable.ic_f_archive, getString(R.string.files_compress_zip)) { compress(listOf(f)) })
+        items.add(SheetItem(R.drawable.ic_f_info, getString(R.string.files_details)) { details(listOf(f)) })
+        items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_move_to_trash), danger = true) { confirmDelete(listOf(f)) })
         dialogs.sheet(f.name, items)
     }
 
@@ -1002,8 +1002,8 @@ open class FilesActivity : AppCompatActivity() {
                         layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { setMargins(dp(4), dp(4), dp(4), dp(10)) }
                     }
                     val titleRow = LinearLayout(ctx).apply { gravity = Gravity.CENTER_VERTICAL }
-                    titleRow.addView(text("Internal storage", 16f, p.text, true), LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
-                    titleRow.addView(text("Analyze", 13f, p.onAccent, true).apply {
+                    titleRow.addView(text(getString(R.string.files_internal_storage), 16f, p.text, true), LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
+                    titleRow.addView(text(getString(R.string.files_analyze), 13f, p.onAccent, true).apply {
                         background = dialogs.rounded(p.accent, 16)
                         setPadding(dp(14), dp(6), dp(14), dp(6))
                         setOnClickListener { startActivity(Intent(ctx, StorageAnalyzerActivity::class.java)) }
@@ -1082,7 +1082,7 @@ open class FilesActivity : AppCompatActivity() {
             when (val r = data[position]) {
                 is Row.Storage -> {
                     val used = root.totalSpace - root.usableSpace
-                    h.meta?.text = "${FilesOps.formatSize(used)} used of ${FilesOps.formatSize(root.totalSpace)} · ${FilesOps.formatSize(root.usableSpace)} free"
+                    h.meta?.text = getString(R.string.files_storage_summary, FilesOps.formatSize(used), FilesOps.formatSize(root.totalSpace), FilesOps.formatSize(root.usableSpace))
                     val frac = if (root.totalSpace > 0) used.toFloat() / root.totalSpace else 0f
                     h.box.post {
                         val w = (h.box.width - dp(36))
@@ -1108,14 +1108,14 @@ open class FilesActivity : AppCompatActivity() {
             val selecting = selected.isNotEmpty()
             val isSel = selected.contains(f)
             val homeRoot = r.home && f.absolutePath == root.absolutePath
-            h.name?.text = if (homeRoot) "Internal storage" else f.name
+            h.name?.text = if (homeRoot) getString(R.string.files_internal_storage) else f.name
             val grid = gridMode && !r.home
             if (!grid) {
                 val date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(f.lastModified()))
                 h.meta?.text = when {
                     r.home -> f.absolutePath.removePrefix(root.absolutePath).ifEmpty { "/" }
-                    r.sub != null -> r.sub + " · " + (if (f.isFile) FilesOps.formatSize(f.length()) else "Folder")
-                    f.isDirectory -> date + " · " + (f.list()?.size ?: 0) + " items"
+                    r.sub != null -> r.sub + " · " + (if (f.isFile) FilesOps.formatSize(f.length()) else getString(R.string.files_folder))
+                    f.isDirectory -> date + " · " + getString(R.string.files_items_count, f.list()?.size ?: 0)
                     else -> date + " · " + FilesOps.formatSize(f.length())
                 }
             }

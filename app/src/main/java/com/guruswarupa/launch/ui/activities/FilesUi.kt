@@ -146,7 +146,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
         c.addView(label(message, 14.5f, p.text2).apply { setPadding(0, dp(10), 0, 0) })
         lateinit var d: Dialog
         c.addView(buttonRow(
-            button("Cancel", false, p.text2) { d.dismiss() },
+            button(a.getString(R.string.files_cancel), false, p.text2) { d.dismiss() },
             button(positive, true, if (destructive) p.error else p.accent) { d.dismiss(); onOk() }
         ))
         d = makeDialog(c, false)
@@ -171,7 +171,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
         c.addView(field, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { topMargin = dp(14) })
         lateinit var d: Dialog
         val submit = { val t = field.text.toString().trim(); if (t.isNotEmpty()) { d.dismiss(); onOk(t) } }
-        c.addView(buttonRow(button("Cancel", false, p.text2) { d.dismiss() }, button(positive, true, p.accent) { submit() }))
+        c.addView(buttonRow(button(a.getString(R.string.files_cancel), false, p.text2) { d.dismiss() }, button(positive, true, p.accent) { submit() }))
         d = makeDialog(c, false)
         d.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         field.setOnEditorActionListener { _, _, _ -> submit(); true }
@@ -244,7 +244,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
         }
         c.addView(ScrollView(a).apply { addView(body) }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         lateinit var d: Dialog
-        c.addView(buttonRow(button("Close", true, p.accent) { d.dismiss() }))
+        c.addView(buttonRow(button(a.getString(R.string.files_close), true, p.accent) { d.dismiss() }))
         d = makeDialog(c, false)
         d.show()
         return values
@@ -253,7 +253,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
     fun progress(title: String, onCancel: () -> Unit): ProgressHandle {
         val c = card()
         c.addView(label(title, 19f, p.text, true))
-        val msg = label("Preparing…", 13.5f, p.text2).apply { maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.MIDDLE; setPadding(0, dp(10), 0, dp(10)) }
+        val msg = label(a.getString(R.string.files_preparing), 13.5f, p.text2).apply { maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.MIDDLE; setPadding(0, dp(10), 0, dp(10)) }
         c.addView(msg)
         val bar = ProgressBar(a, null, android.R.attr.progressBarStyleHorizontal).apply {
             isIndeterminate = true
@@ -262,7 +262,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
         }
         c.addView(bar, LinearLayout.LayoutParams(MATCH_PARENT, dp(8)))
         lateinit var handle: ProgressHandle
-        c.addView(buttonRow(button("Cancel", false, p.text2) { handle.cancelled = true; onCancel() }))
+        c.addView(buttonRow(button(a.getString(R.string.files_cancel), false, p.text2) { handle.cancelled = true; onCancel() }))
         val d = makeDialog(c, false)
         d.setCancelable(false)
         handle = ProgressHandle(d, msg, bar, a)

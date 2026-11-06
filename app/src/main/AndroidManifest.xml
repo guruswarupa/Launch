@@ -347,7 +347,7 @@
 
         <service
             android:name=".services.LaunchNotificationListenerService"
-            android:label="Launch Notification Access"
+            android:label="@string/app_notification_access"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -411,13 +411,13 @@
             android:name=".ui.activities.SystemMonitorActivity"
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings"
-            android:label="System Monitor" />
+            android:label="@string/app_system_monitor" />
 
         <activity
             android:name=".ui.activities.DocumentViewerActivity"
             android:exported="true"
             android:theme="@style/Theme.Launch.Document"
-            android:label="Document Viewer"
+            android:label="@string/app_document_viewer"
             android:excludeFromRecents="false"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density">
             <!-- PDF -->
@@ -482,7 +482,7 @@
             android:name=".ui.activities.CameraActivity"
             android:showWhenLocked="true"
             android:exported="true"
-            android:label="Camera"
+            android:label="@string/app_camera"
             android:icon="@drawable/ic_app_camera"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Launch.Media">
@@ -495,7 +495,7 @@
         <activity
             android:name=".ui.activities.FilesActivity"
             android:exported="true"
-            android:label="Files"
+            android:label="@string/app_files"
             android:icon="@drawable/ic_app_files"
             android:theme="@style/Theme.Launch.Settings">
             <intent-filter>
@@ -507,7 +507,7 @@
         <activity
             android:name=".ui.activities.GalleryActivity"
             android:exported="true"
-            android:label="Gallery"
+            android:label="@string/app_gallery"
             android:icon="@drawable/ic_app_gallery"
             android:theme="@style/Theme.Launch.Settings">
             <intent-filter>
@@ -519,7 +519,7 @@
         <activity
             android:name=".ui.activities.PlayerActivity"
             android:exported="true"
-            android:label="Video Player"
+            android:label="@string/app_video_player"
             android:icon="@drawable/ic_app_player"
             android:theme="@style/Theme.Launch.Settings">
             <intent-filter>
@@ -549,7 +549,7 @@
         <activity-alias
             android:name=".ui.activities.PhotoViewerExternalActivity"
             android:exported="true"
-            android:label="Launch Photos"
+            android:label="@string/app_photos_viewer"
             android:targetActivity=".ui.activities.PhotoViewerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -561,7 +561,7 @@
         <activity-alias
             android:name=".ui.activities.VideoPlayerExternalActivity"
             android:exported="true"
-            android:label="Launch Player"
+            android:label="@string/app_player_viewer"
             android:targetActivity=".ui.activities.VideoPlayerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

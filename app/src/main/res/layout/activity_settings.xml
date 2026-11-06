@@ -2127,7 +2127,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Custom lock screen"
+                                    android:text="@string/set_lockscreen"
                                     android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"
                                     tools:ignore="HardcodedText"/>
@@ -2135,7 +2135,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Shows a Launch lock screen with clock, notifications, flashlight and camera over the system lock screen. Needs Display over other apps."
+                                    android:text="@string/set_lockscreen_desc"
                                     android:textColor="?attr/appTextSecondary"
                                     android:textSize="12sp"
                                     tools:ignore="HardcodedText"/>
@@ -2170,7 +2170,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Show notification content on lock screen"
+                                    android:text="@string/set_lockscreen_content"
                                     android:textColor="?attr/appTextPrimary"
                                     android:textSize="15sp"
                                     tools:ignore="HardcodedText"/>
@@ -2178,7 +2178,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Off shows only app names and counts."
+                                    android:text="@string/set_lockscreen_content_desc"
                                     android:textColor="?attr/appTextSecondary"
                                     android:textSize="12sp"
                                     tools:ignore="HardcodedText"/>

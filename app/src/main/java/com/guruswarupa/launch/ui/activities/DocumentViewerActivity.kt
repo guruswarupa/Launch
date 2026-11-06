@@ -201,7 +201,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
         if (totalPages <= 1) return
         val input = EditText(this).apply {
             inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            hint = "1 - $totalPages"
+            hint = getString(R.string.doc_goto_hint, totalPages)
             setText((pdfReader.currentPage() + 1).toString())
             selectAll()
         }
@@ -211,9 +211,9 @@ class DocumentViewerActivity : VaultBaseActivity() {
             addView(input)
         }
         androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Go to page")
+            .setTitle(getString(R.string.doc_goto_title))
             .setView(wrap)
-            .setPositiveButton("Go") { _, _ ->
+            .setPositiveButton(getString(R.string.doc_goto_go)) { _, _ ->
                 input.text.toString().toIntOrNull()?.let { pdfReader.scrollToPage(it.coerceIn(1, totalPages) - 1) }
             }
             .setNegativeButton(android.R.string.cancel, null)
@@ -231,7 +231,7 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 runOnUiThread {
                     if (pdfReader.visibility != View.VISIBLE) return@runOnUiThread
                     if (pdfCurrentQuery.isNotEmpty() && (done == total || done % 12 == 0)) runPdfSearch(keepPosition = true)
-                    else if (pdfCurrentQuery.isNotEmpty() && pdfMatches.isEmpty()) findCount.text = "Indexing $done/$total"
+                    else if (pdfCurrentQuery.isNotEmpty() && pdfMatches.isEmpty()) findCount.text = getString(R.string.doc_indexing, done, total)
                 }
             }
         }.start()
@@ -263,8 +263,8 @@ class DocumentViewerActivity : VaultBaseActivity() {
                 pdfMatches = found
                 if (found.isEmpty()) {
                     pdfReader.clearHighlights()
-                    findCount.text = if (index.finished) getString(R.string.doc_no_matches) else "Indexing ${index.indexed}/${index.pageCount}"
-                    if (index.finished && index.totalChars == 0L) findCount.text = "No text in this PDF"
+                    findCount.text = if (index.finished) getString(R.string.doc_no_matches) else getString(R.string.doc_indexing, index.indexed, index.pageCount)
+                    if (index.finished && index.totalChars == 0L) findCount.text = getString(R.string.doc_no_text)
                     return@runOnUiThread
                 }
                 pdfMatchIndex = if (keepPosition && previous != null) found.indexOfFirst { it.page == previous.page && it.start == previous.start }.takeIf { it >= 0 } ?: 0

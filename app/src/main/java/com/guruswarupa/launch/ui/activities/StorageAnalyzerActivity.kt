@@ -53,7 +53,7 @@ internal class SNode(val name: String, val file: File?, var size: Long, val isDi
 }
 
 internal object StorageCats {
-    val names = arrayOf("Images", "Videos", "Audio", "Documents", "Apps", "Archives", "Other files")
+    val nameRes = intArrayOf(R.string.files_cat_images, R.string.files_cat_videos, R.string.files_cat_audio, R.string.an_cat_documents, R.string.an_cat_apps, R.string.files_cat_archives, R.string.an_cat_other)
     val colors = intArrayOf(0xFF26A69A.toInt(), 0xFFEF5350.toInt(), 0xFFAB47BC.toInt(), 0xFF42A5F5.toInt(), 0xFFFFA726.toInt(), 0xFF8D6E63.toInt(), 0xFF90A4AE.toInt())
     val system = 0xFF5C6BC0.toInt()
 
@@ -71,7 +71,7 @@ internal object StorageCats {
     }
 }
 
-private class Scanner(private val cancelled: () -> Boolean, private val onProgress: (Long, Long) -> Unit) {
+private class Scanner(private val smallerFiles: (Int) -> String, private val cancelled: () -> Boolean, private val onProgress: (Long, Long) -> Unit) {
     val totals = LongArray(7)
     val largest = PriorityQueue<SNode>(compareBy { it.size })
     var files = 0L
@@ -121,7 +121,7 @@ private class Scanner(private val cancelled: () -> Boolean, private val onProgre
             val restSize = rest.sumOf { it.size }
             val restCats = LongArray(7)
             rest.forEach { restCats[it.cat] += it.size }
-            val other = SNode("${rest.size} smaller files", null, restSize, false, restCats.indices.maxByOrNull { restCats[it] } ?: 6)
+            val other = SNode(smallerFiles(rest.size), null, restSize, false, restCats.indices.maxByOrNull { restCats[it] } ?: 6)
             other.synthetic = true
             other.catSizes = restCats
             list.add(other)
@@ -180,7 +180,7 @@ internal class TreemapView(context: Context) : View(context) {
             if (i < 70 && n.size.toDouble() / total >= 0.002) shown.add(n) else { smallSum += n.size; smallCount++ }
         }
         if (smallCount > 0 && smallSum > 0) {
-            val o = SNode("$smallCount smaller items", null, smallSum, false, 6)
+            val o = SNode(context.getString(R.string.an_smaller_items, smallCount), null, smallSum, false, 6)
             o.synthetic = true
             shown.add(o)
         }
@@ -379,25 +379,25 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         val column = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
 
         val bar = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL; setPadding(dp(6), dp(4), dp(6), dp(4)) }
-        bar.addView(iconBtn(R.drawable.ic_f_back, "Back") { finish() })
+        bar.addView(iconBtn(R.drawable.ic_f_back, getString(R.string.files_back)) { finish() })
         val titles = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(4), 0, dp(4), 0) }
-        titles.addView(text("Storage analyzer", 21f, p.text, true))
+        titles.addView(text(getString(R.string.files_storage_analyzer), 21f, p.text, true))
         summaryText = text("", 12.5f, p.text2)
         titles.addView(summaryText)
         bar.addView(titles, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
-        bar.addView(iconBtn(R.drawable.ic_f_recent, "Rescan") { startScan() })
+        bar.addView(iconBtn(R.drawable.ic_f_recent, getString(R.string.an_rescan)) { startScan() })
         column.addView(bar)
 
         val body = FrameLayout(this)
 
-        scanText = text("Scanning…", 14f, p.text2).apply { gravity = Gravity.CENTER; setPadding(dp(24), dp(14), dp(24), 0) }
+        scanText = text(getString(R.string.an_scanning), 14f, p.text2).apply { gravity = Gravity.CENTER; setPadding(dp(24), dp(14), dp(24), 0) }
         scanBox = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             addView(android.widget.ProgressBar(this@StorageAnalyzerActivity).apply {
                 indeterminateTintList = android.content.res.ColorStateList.valueOf(p.accent)
             }, LinearLayout.LayoutParams(dp(54), dp(54)).apply { gravity = Gravity.CENTER_HORIZONTAL })
-            addView(text("Analyzing storage", 18f, p.text, true).apply { gravity = Gravity.CENTER; textAlignment = View.TEXT_ALIGNMENT_CENTER; setPadding(0, dp(18), 0, 0) }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            addView(text(getString(R.string.an_analyzing), 18f, p.text, true).apply { gravity = Gravity.CENTER; textAlignment = View.TEXT_ALIGNMENT_CENTER; setPadding(0, dp(18), 0, 0) }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
             scanText.textAlignment = View.TEXT_ALIGNMENT_CENTER
             addView(scanText, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
@@ -417,7 +417,7 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         result.addView(summary, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { setMargins(dp(12), dp(4), dp(12), dp(8)) })
 
         val tabs = LinearLayout(this).apply { setPadding(dp(12), 0, dp(12), dp(8)) }
-        val names = listOf("Map", "Folders", "Largest", "Apps")
+        val names = listOf(getString(R.string.an_tab_map), getString(R.string.an_tab_folders), getString(R.string.an_tab_largest), getString(R.string.an_tab_apps))
         tabViews = names.mapIndexed { i, n ->
             text(n, 14f, p.text, true).apply {
                 gravity = Gravity.CENTER
@@ -435,7 +435,7 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         appsSummary = text("", 13f, p.text2)
         appsBox.addView(appsSummary)
         val chipRow = LinearLayout(this).apply { setPadding(0, dp(8), 0, 0) }
-        appChips = listOf("Total", "App", "Data", "Cache").mapIndexed { i, n ->
+        appChips = listOf(getString(R.string.an_total), getString(R.string.an_app), getString(R.string.an_data), getString(R.string.an_cache)).mapIndexed { i, n ->
             text(n, 12.5f, p.text, true).apply {
                 setPadding(dp(14), dp(6), dp(14), dp(6))
                 setOnClickListener { appSort = i; refreshTab() }
@@ -451,7 +451,7 @@ class StorageAnalyzerActivity : AppCompatActivity() {
             onLong = { n -> if (!n.synthetic) showActions(n) }
         }
         content.addView(treemap, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply { setMargins(dp(10), 0, dp(10), dp(30)) })
-        hint = text("Tap a block to open a folder · long-press for actions", 11.5f, p.text2).apply { gravity = Gravity.CENTER }
+        hint = text(getString(R.string.an_hint), 11.5f, p.text2).apply { gravity = Gravity.CENTER }
         content.addView(hint, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, Gravity.BOTTOM).apply { bottomMargin = dp(8) })
         adapter = ListAdapter()
         listView = RecyclerView(this).apply {
@@ -471,9 +471,9 @@ class StorageAnalyzerActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             setPadding(dp(32), dp(32), dp(32), dp(32))
-            addView(text("All files access needed", 20f, p.text, true).apply { gravity = Gravity.CENTER })
-            addView(text("The analyzer reads file sizes on your device. Nothing leaves your phone.", 14f, p.text2).apply { gravity = Gravity.CENTER; setPadding(0, dp(10), 0, dp(20)) })
-            addView(text("Allow access", 16f, p.onAccent, true).apply {
+            addView(text(getString(R.string.an_perm_title), 20f, p.text, true).apply { gravity = Gravity.CENTER })
+            addView(text(getString(R.string.an_perm_message), 14f, p.text2).apply { gravity = Gravity.CENTER; setPadding(0, dp(10), 0, dp(20)) })
+            addView(text(getString(R.string.files_allow_access), 16f, p.onAccent, true).apply {
                 gravity = Gravity.CENTER
                 background = dialogs.rounded(p.accent, 26)
                 setPadding(dp(30), dp(13), dp(30), dp(13))
@@ -515,13 +515,13 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         current = null
         scanBox.visibility = View.VISIBLE
         resultBox.visibility = View.GONE
-        summaryText.text = "Scanning…"
-        scanText.text = "Starting…"
+        summaryText.text = getString(R.string.an_scanning)
+        scanText.text = getString(R.string.an_starting)
         Thread {
-            val scanner = Scanner({ token != scanToken }) { files, bytes ->
-                ui.post { if (token == scanToken) scanText.text = "${NumberFormat.getInstance().format(files)} files · ${FilesOps.formatSize(bytes)}" }
+            val scanner = Scanner({ n -> getString(R.string.an_smaller_files, n) }, { token != scanToken }) { files, bytes ->
+                ui.post { if (token == scanToken) scanText.text = getString(R.string.an_scan_progress, NumberFormat.getInstance().format(files), FilesOps.formatSize(bytes)) }
             }
-            val result = scanner.scan(root, "Internal storage")
+            val result = scanner.scan(root, getString(R.string.files_internal_storage))
             val top = scanner.largest.sortedByDescending { it.size }
             runOnUiThread {
                 if (token != scanToken) return@runOnUiThread
@@ -541,7 +541,7 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         val used = total - root.usableSpace
         val scanned = result.size
         val system = max(0L, used - scanned)
-        summaryText.text = "${FilesOps.formatSize(used)} used of ${FilesOps.formatSize(total)} · ${FilesOps.formatSize(root.usableSpace)} free"
+        summaryText.text = getString(R.string.files_storage_summary, FilesOps.formatSize(used), FilesOps.formatSize(total), FilesOps.formatSize(root.usableSpace))
         summaryBar.removeAllViews()
         legend.removeAllViews()
         fun seg(weight: Long, color: Int) {
@@ -558,8 +558,8 @@ class StorageAnalyzerActivity : AppCompatActivity() {
             row.addView(text(FilesOps.formatSize(size), 12.5f, p.text, true))
             legend.addView(row, android.widget.GridLayout.LayoutParams(android.widget.GridLayout.spec(android.widget.GridLayout.UNDEFINED, 1f), android.widget.GridLayout.spec(android.widget.GridLayout.UNDEFINED, 1f)).apply { width = 0 })
         }
-        for (i in 0..6) if (totals[i] > 0) legendItem(StorageCats.colors[i], StorageCats.names[i], totals[i])
-        if (system > 0) legendItem(StorageCats.system, "System & app data", system)
+        for (i in 0..6) if (totals[i] > 0) legendItem(StorageCats.colors[i], getString(StorageCats.nameRes[i]), totals[i])
+        if (system > 0) legendItem(StorageCats.system, getString(R.string.an_system), system)
     }
 
     private fun select(node: SNode?) {
@@ -630,7 +630,7 @@ class StorageAnalyzerActivity : AppCompatActivity() {
             c.background = dialogs.rounded(if (i == appSort) p.accent else p.card, 15)
         }
         if (!hasUsageAccess()) {
-            appsSummary.text = "Usage access is needed to read app sizes. Tap here to allow it."
+            appsSummary.text = getString(R.string.an_usage_needed)
             appsSummary.setTextColor(p.accent)
             appsSummary.setOnClickListener { startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) }
             adapter.submit(emptyList())
@@ -640,7 +640,7 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         appsSummary.setOnClickListener(null)
         val list = apps
         if (list == null) {
-            appsSummary.text = "Measuring apps…"
+            appsSummary.text = getString(R.string.an_measuring)
             adapter.submit(emptyList())
             loadApps()
             return
@@ -648,9 +648,9 @@ class StorageAnalyzerActivity : AppCompatActivity() {
         val key: (AppEntry) -> Long = when (appSort) { 1 -> { a -> a.appBytes }; 2 -> { a -> a.dataOnly }; 3 -> { a -> a.cacheBytes }; else -> { a -> a.total } }
         val sorted = list.sortedByDescending(key)
         val top = max(1L, sorted.firstOrNull()?.let(key) ?: 1L)
-        appsSummary.text = "${list.size} apps · ${FilesOps.formatSize(list.sumOf { it.total })} total · ${FilesOps.formatSize(list.sumOf { it.cacheBytes })} cache"
+        appsSummary.text = getString(R.string.an_apps_summary, list.size, FilesOps.formatSize(list.sumOf { it.total }), FilesOps.formatSize(list.sumOf { it.cacheBytes }))
         adapter.submit(sorted.map { a ->
-            ListRow(a.label + if (a.system) "  ·  system" else "", a.pkg + "\nApp ${FilesOps.formatSize(a.appBytes)}  ·  Data ${FilesOps.formatSize(a.dataOnly)}  ·  Cache ${FilesOps.formatSize(a.cacheBytes)}",
+            ListRow(a.label + if (a.system) "  ·  " + getString(R.string.an_system_tag) else "", a.pkg + "\n" + getString(R.string.an_app_breakdown, FilesOps.formatSize(a.appBytes), FilesOps.formatSize(a.dataOnly), FilesOps.formatSize(a.cacheBytes)),
                 key(a).let { if (appSort == 0) a.total else it }, key(a).toFloat() / top, p.accent, R.drawable.ic_f_apk, null, a.pkg, a.icon)
         })
     }
@@ -658,20 +658,20 @@ class StorageAnalyzerActivity : AppCompatActivity() {
     private fun showAppActions(pkg: String) {
         val entry = apps?.firstOrNull { it.pkg == pkg } ?: return
         val items = ArrayList<SheetItem>()
-        packageManager.getLaunchIntentForPackage(pkg)?.let { li -> items.add(SheetItem(R.drawable.ic_f_file, "Open app") { startActivity(li) }) }
-        items.add(SheetItem(R.drawable.ic_f_info, "App info & storage settings") {
+        packageManager.getLaunchIntentForPackage(pkg)?.let { li -> items.add(SheetItem(R.drawable.ic_f_file, getString(R.string.an_open_app)) { startActivity(li) }) }
+        items.add(SheetItem(R.drawable.ic_f_info, getString(R.string.an_app_info)) {
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$pkg")))
         })
-        if (!entry.system && pkg != packageName) items.add(SheetItem(R.drawable.ic_f_delete, "Uninstall", danger = true) {
+        if (!entry.system && pkg != packageName) items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.an_uninstall), danger = true) {
             startActivity(Intent(Intent.ACTION_DELETE, Uri.parse("package:$pkg")))
         })
         dialogs.sheet("${entry.label}  ·  ${FilesOps.formatSize(entry.total)}\n$pkg", items)
     }
 
     private fun subtitleFor(n: SNode): String = when {
-        n.synthetic -> StorageCats.names[n.cat.coerceIn(0, 6)]
-        n.isDir -> "${NumberFormat.getInstance().format(n.fileCount)} files"
-        else -> StorageCats.names[n.cat.coerceIn(0, 6)]
+        n.synthetic -> getString(StorageCats.nameRes[n.cat.coerceIn(0, 6)])
+        n.isDir -> getString(R.string.an_files_count, NumberFormat.getInstance().format(n.fileCount))
+        else -> getString(StorageCats.nameRes[n.cat.coerceIn(0, 6)])
     }
 
     private fun updateCrumbs(node: SNode) {
@@ -694,16 +694,16 @@ class StorageAnalyzerActivity : AppCompatActivity() {
     private fun showActions(n: SNode) {
         val f = n.file ?: return
         val items = ArrayList<SheetItem>()
-        if (n.isDir && n.children.isNotEmpty()) items.add(SheetItem(R.drawable.ic_f_folder, "Open in map") { select(n) })
-        items.add(SheetItem(R.drawable.ic_f_folder, "Show in Files") {
+        if (n.isDir && n.children.isNotEmpty()) items.add(SheetItem(R.drawable.ic_f_folder, getString(R.string.an_open_map)) { select(n) })
+        items.add(SheetItem(R.drawable.ic_f_folder, getString(R.string.an_show_files)) {
             startActivity(Intent(this, FilesActivity::class.java).putExtra(FilesActivity.EXTRA_OPEN_PATH, f.absolutePath))
         })
-        items.add(SheetItem(R.drawable.ic_f_delete, "Move to recycle bin", danger = true) {
-            dialogs.confirm("Move to recycle bin?", "\"${n.name}\" (${FilesOps.formatSize(n.size)}) will be kept for ${FilesTrash.RETENTION_DAYS} days before being deleted for good.", "Move to bin", true) {
+        items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_move_to_trash), danger = true) {
+            dialogs.confirm(getString(R.string.files_trash_title), getString(R.string.an_trash_message, n.name, FilesOps.formatSize(n.size), FilesTrash.RETENTION_DAYS), getString(R.string.files_trash_confirm), true) {
                 Thread {
                     val ok = FilesTrash.moveToTrash(root, f)
                     runOnUiThread {
-                        if (ok) { removeNode(n); notify("Moved ${FilesOps.formatSize(n.size)} to recycle bin") } else notify("Couldn't move it")
+                        if (ok) { removeNode(n); notify(getString(R.string.an_moved, FilesOps.formatSize(n.size))) } else notify(getString(R.string.an_move_failed))
                     }
                 }.start()
             }

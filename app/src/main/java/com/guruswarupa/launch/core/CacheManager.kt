@@ -174,8 +174,21 @@ class CacheManager @Inject constructor(
         }
     }
 
+    private val metadataLocaleFile: File = File(context.cacheDir, "app_metadata_locale.txt")
+
+    private fun currentLocaleTag(): String = context.resources.configuration.locales[0].toLanguageTag()
+
+    private fun metadataLocaleMatches(): Boolean {
+        val saved = runCatching { metadataLocaleFile.readText() }.getOrNull()
+        if (saved == currentLocaleTag()) return true
+        runCatching { appMetadataCacheFile.delete(); metadataLocaleFile.writeText(currentLocaleTag()) }
+        appMetadataCache.clear()
+        return false
+    }
+
     fun loadAppMetadataFromCache(): Map<String, AppMetadata> {
         return try {
+            if (!metadataLocaleMatches()) return emptyMap()
             if (!appMetadataCacheFile.exists()) return emptyMap()
 
             val json = FileInputStream(appMetadataCacheFile).use { inputStream ->

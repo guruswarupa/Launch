@@ -285,7 +285,7 @@ class LockScreenActivity : AppCompatActivity() {
         bottom.addView(torchButton, FrameLayout.LayoutParams(dp(56), dp(56), Gravity.START or Gravity.CENTER_VERTICAL))
         bottom.addView(circle(R.drawable.ic_cam_camera) { startActivity(Intent(this, CameraActivity::class.java)) },
             FrameLayout.LayoutParams(dp(56), dp(56), Gravity.END or Gravity.CENTER_VERTICAL))
-        hint = label("Swipe up to unlock", 13.5f, 0xCCFFFFFF.toInt())
+        hint = label(getString(R.string.lock_swipe_up), 13.5f, 0xCCFFFFFF.toInt())
         bottom.addView(hint, FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER))
         content.addView(bottom, LinearLayout.LayoutParams(MATCH_PARENT, dp(64)))
         root.addView(content, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
@@ -311,7 +311,7 @@ class LockScreenActivity : AppCompatActivity() {
         val level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100 / i.getIntExtra(BatteryManager.EXTRA_SCALE, 100).coerceAtLeast(1)
         val status = i.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
         val charging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
-        batteryView.text = "$level%" + if (charging) " · Charging" else ""
+        batteryView.text = "$level%" + if (charging) " · " + getString(R.string.lock_charging) else ""
     }
 
     private fun updateNotifications() {
@@ -332,11 +332,11 @@ class LockScreenActivity : AppCompatActivity() {
             }
         } else {
             shown.groupBy { it.packageName }.entries.take(5).forEach { (pkg, list) ->
-                notifBox.addView(card(pkg, appLabel(pkg), if (list.size == 1) "1 notification" else "${list.size} notifications"), cardParams())
+                notifBox.addView(card(pkg, appLabel(pkg), if (list.size == 1) getString(R.string.lock_one_notification) else getString(R.string.lock_n_notifications, list.size)), cardParams())
             }
         }
         val extra = if (showContent) shown.size - 5 else shown.groupBy { it.packageName }.size - 5
-        if (extra > 0) notifBox.addView(label("+$extra more", 12.5f, 0xCCFFFFFF.toInt()), LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply { topMargin = dp(4) })
+        if (extra > 0) notifBox.addView(label(getString(R.string.lock_more, extra), 12.5f, 0xCCFFFFFF.toInt()), LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply { topMargin = dp(4) })
     }
 
     private fun cardParams() = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { bottomMargin = dp(8) }

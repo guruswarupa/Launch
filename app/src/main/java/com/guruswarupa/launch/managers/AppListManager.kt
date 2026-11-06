@@ -304,8 +304,8 @@ class AppListManager @Inject constructor(
         ri.activityInfo.packageName = shortcutType
 
         ri.activityInfo.name = when (shortcutType) {
-            "launcher_settings_shortcut" -> "Launch Settings"
-            "launcher_vault_shortcut" -> "Launch Vault"
+            "launcher_settings_shortcut" -> context.getString(com.guruswarupa.launch.R.string.settings_app_name)
+            "launcher_vault_shortcut" -> context.getString(com.guruswarupa.launch.R.string.vault_app_name)
             else -> shortcutType
         }
 
@@ -331,6 +331,10 @@ class AppListManager @Inject constructor(
         val packageName = app.activityInfo.packageName
         if (WebAppManager.isWebAppPackage(packageName)) {
             return app.activityInfo.name.ifBlank { packageName }
+        }
+
+        if (packageName == context.packageName) {
+            return try { app.loadLabel(context.packageManager).toString() } catch (e: Exception) { packageName }
         }
 
         val cacheKey = appMetaKey(app)

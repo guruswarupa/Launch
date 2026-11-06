@@ -80,7 +80,7 @@ class CameraActivity : AppCompatActivity() {
 
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         if (hasCamera()) startCamera() else {
-            Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.cam_permission), Toast.LENGTH_LONG).show()
             finish()
         }
     }
@@ -169,8 +169,8 @@ class CameraActivity : AppCompatActivity() {
             setBackgroundColor(0x66000000)
         }
         val modes = LinearLayout(this).apply { gravity = Gravity.CENTER }
-        photoMode = modeLabel("PHOTO") { selectMode(false) }
-        videoMode = modeLabel("VIDEO") { selectMode(true) }
+        photoMode = modeLabel(getString(R.string.cam_photo)) { selectMode(false) }
+        videoMode = modeLabel(getString(R.string.cam_video)) { selectMode(true) }
         modes.addView(photoMode); modes.addView(videoMode)
         bottom.addView(modes, LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
 
@@ -247,7 +247,7 @@ class CameraActivity : AppCompatActivity() {
             }
             applyFlash()
         } catch (e: Exception) {
-            Toast.makeText(this, "Camera unavailable", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.cam_unavailable), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -273,7 +273,7 @@ class CameraActivity : AppCompatActivity() {
     private fun cycleTimer() {
         timerSeconds = when (timerSeconds) { 0 -> 3; 3 -> 10; else -> 0 }
         timerLabel.visibility = if (timerSeconds == 0) View.GONE else View.VISIBLE
-        timerLabel.text = "${timerSeconds}s"
+        timerLabel.text = getString(R.string.cam_timer_seconds, timerSeconds)
         timerButton.setColorFilter(if (timerSeconds == 0) Color.WHITE else 0xFFFFD54F.toInt())
     }
 
@@ -310,7 +310,7 @@ class CameraActivity : AppCompatActivity() {
                 loadLastThumb()
             }
             override fun onError(e: ImageCaptureException) {
-                Toast.makeText(this@CameraActivity, "Could not save photo", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CameraActivity, getString(R.string.cam_save_failed), Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -342,7 +342,7 @@ class CameraActivity : AppCompatActivity() {
                     recordingLabel.visibility = View.GONE
                     shutterInner.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
                     if (!ev.hasError()) { lastUri = ev.outputResults.outputUri; loadLastThumb() }
-                    else Toast.makeText(this, "Recording failed", Toast.LENGTH_SHORT).show()
+                    else Toast.makeText(this, getString(R.string.cam_record_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }

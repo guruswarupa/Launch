@@ -545,7 +545,7 @@ internal fun SettingsActivity.setupLockScreen() {
     sw.setOnCheckedChangeListener { _, isChecked ->
         if (isChecked && !Settings.canDrawOverlays(this)) {
             sw.isChecked = false
-            showPermissionDialog("Display over other apps", "Allow Launch to display over other apps so the lock screen can appear.") {
+            showPermissionDialog(getString(R.string.set_overlay_title), getString(R.string.set_overlay_message)) {
                 startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:$packageName")))
             }
         } else {
