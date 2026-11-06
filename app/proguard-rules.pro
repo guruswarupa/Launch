@@ -7,12 +7,12 @@
 }
 
 
--keep class com.guruswarupa.launch.models.** { *; }
+-keep,allowoptimization class com.guruswarupa.launch.models.** { *; }
 
--keep class androidx.security.crypto.** { *; }
+-keep,allowoptimization class androidx.security.crypto.** { *; }
 -dontwarn androidx.security.crypto.**
 
--keep class androidx.biometric.** { *; }
+-keep,allowoptimization class androidx.biometric.** { *; }
 
 -dontwarn javax.naming.**
 -dontwarn org.ietf.jgss.**
@@ -41,18 +41,18 @@
 }
 
 # Local file transfer: self-signed certificate generation uses BouncyCastle via JCA lookups.
--keep class org.bouncycastle.** { *; }
+-keep,allowoptimization class org.bouncycastle.** { *; }
 -dontwarn org.bouncycastle.**
 -dontwarn javax.naming.**
 
 # MediaPipe Tasks GenAI (on-device LLM assistant) — JNI + protobuf rely on reflection.
--keep class com.google.mediapipe.** { *; }
+-keep,allowoptimization class com.google.mediapipe.** { *; }
 -dontwarn com.google.mediapipe.**
--keep class com.google.protobuf.** { *; }
+-keep,allowoptimization class com.google.protobuf.** { *; }
 -dontwarn com.google.protobuf.**
 
 -dontwarn com.gemalto.jp2.**
 -dontwarn com.tom_roush.pdfbox.**
 -dontwarn org.apache.fontbox.**
--keep class com.tom_roush.pdfbox.** { *; }
--keep class com.tom_roush.fontbox.** { *; }
+-keep,allowoptimization class com.tom_roush.pdfbox.** { *; }
+-keep,allowoptimization class com.tom_roush.fontbox.** { *; }

@@ -101,6 +101,26 @@ class LockScreenActivity : AppCompatActivity() {
         })
     }
 
+    private var wasDeviceLocked = false
+    private val unlockWatcher = object : Runnable {
+        override fun run() {
+            val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+            if (km.isDeviceSecure) {
+                val locked = km.isDeviceLocked
+                if (wasDeviceLocked && !locked) { unlock(); return }
+                wasDeviceLocked = locked
+            }
+            ui.postDelayed(this, 250)
+        }
+    }
+
+    private fun goHome() {
+        try {
+            startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        } catch (_: Exception) {}
+        finish()
+    }
+
     private val lyricTicker = object : Runnable {
         override fun run() { updateLyricLine(); ui.postDelayed(this, 400) }
     }
@@ -150,12 +170,16 @@ class LockScreenActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         ui.post(refresh)
+        wasDeviceLocked = (getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager).isDeviceLocked
+        ui.removeCallbacks(unlockWatcher)
+        ui.postDelayed(unlockWatcher, 250)
         startMedia()
         mediaMonitor?.refresh()
     }
 
     override fun onPause() {
         ui.removeCallbacks(refresh)
+        ui.removeCallbacks(unlockWatcher)
         super.onPause()
     }
 
@@ -370,9 +394,9 @@ class LockScreenActivity : AppCompatActivity() {
         if (unlocking) return
         unlocking = true
         val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        if (!km.isKeyguardLocked) { finish(); return }
+        if (!km.isKeyguardLocked) { goHome(); return }
         km.requestDismissKeyguard(this, object : KeyguardManager.KeyguardDismissCallback() {
-            override fun onDismissSucceeded() { finish() }
+            override fun onDismissSucceeded() { goHome() }
             override fun onDismissCancelled() { unlocking = false; content.animate().translationY(0f).alpha(1f).setDuration(180).start() }
             override fun onDismissError() { unlocking = false; content.animate().translationY(0f).alpha(1f).setDuration(180).start() }
         })

@@ -469,7 +469,7 @@ class EncryptedFolderManager(private val context: Context) {
                 cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
 
                 val cis = javax.crypto.CipherInputStream(fis, cipher)
-                BitmapFactory.decodeStream(cis)
+                com.guruswarupa.launch.utils.SampledBitmap.fromBytes(cis.readBytes(), 512)
             }
         } catch (e: Exception) {
             null

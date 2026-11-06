@@ -228,4 +228,10 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Activity</item>
     </style>
+
+    <style name="Theme.Launch.LockScreen" parent="Theme.Launch.Document">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
 </resources>

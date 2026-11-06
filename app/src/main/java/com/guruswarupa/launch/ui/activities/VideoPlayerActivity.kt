@@ -317,7 +317,7 @@ class VideoPlayerActivity : VaultBaseActivity() {
             artist.text = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST).orEmpty()
             val art = retriever.embeddedPicture
             if (art != null) {
-                val bitmap = BitmapFactory.decodeByteArray(art, 0, art.size)
+                val bitmap = com.guruswarupa.launch.utils.SampledBitmap.fromBytes(art, 1024)
                 if (bitmap != null) {
                     val image = findViewById<ImageView>(R.id.audio_art)
                     image.setPadding(0, 0, 0, 0)

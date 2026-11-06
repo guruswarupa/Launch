@@ -310,7 +310,7 @@ class CacheManager @Inject constructor(
             val iconFile = File(iconCacheDir, "${version}_${cacheKey.replace("/", "_")}.png")
             if (!iconFile.exists()) return null
 
-            val bitmap = android.graphics.BitmapFactory.decodeFile(iconFile.absolutePath)
+            val bitmap = com.guruswarupa.launch.utils.SampledBitmap.fromFile(iconFile.absolutePath, 512)
             if (bitmap != null) {
                 android.graphics.drawable.BitmapDrawable(context.resources, bitmap)
             } else {

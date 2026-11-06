@@ -476,7 +476,7 @@
             android:taskAffinity=""
             android:excludeFromRecents="true"
             android:showWhenLocked="true"
-            android:theme="@style/Theme.Launch.Document" />
+            android:theme="@style/Theme.Launch.LockScreen" />
 
         <activity
             android:name=".ui.activities.CameraActivity"

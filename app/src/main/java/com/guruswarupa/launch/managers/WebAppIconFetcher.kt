@@ -97,7 +97,7 @@ object WebAppIconFetcher {
         val iconBytes = resolveIconBytes(siteUrl)
         val file = getIconFile(context, siteUrl)
 
-        val primaryBitmap = iconBytes?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+        val primaryBitmap = iconBytes?.let { com.guruswarupa.launch.utils.SampledBitmap.fromBytes(it, 512) }
         if (primaryBitmap != null) {
             runCatching {
                 file.parentFile?.mkdirs()
@@ -108,7 +108,7 @@ object WebAppIconFetcher {
 
         val fallbackUrl = fallbackFaviconUrl(siteUrl)?.takeIf { it != siteUrl } ?: return null
         val fallbackBytes = fetchBytes(fallbackUrl) ?: return null
-        val fallbackBitmap = BitmapFactory.decodeByteArray(fallbackBytes, 0, fallbackBytes.size) ?: return null
+        val fallbackBitmap = com.guruswarupa.launch.utils.SampledBitmap.fromBytes(fallbackBytes, 512) ?: return null
         runCatching {
             file.parentFile?.mkdirs()
             file.writeBytes(fallbackBytes)
@@ -120,7 +120,7 @@ object WebAppIconFetcher {
         val file = getIconFile(context, siteUrl)
         if (!file.exists()) return null
         val bytes = runCatching { file.readBytes() }.getOrNull() ?: return null
-        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return null
+        val bitmap = com.guruswarupa.launch.utils.SampledBitmap.fromBytes(bytes, 512) ?: return null
         return bitmap.toDrawable(context.resources)
     }
 
