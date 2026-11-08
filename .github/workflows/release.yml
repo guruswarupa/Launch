@@ -5,7 +5,25 @@ on:
     branches: [master]
     paths:
       - app/build.gradle.kts
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Google Play track to publish to
+        type: choice
+        default: production
+        options:
+          - production
+          - beta
+          - alpha
+          - internal
+          - none (GitHub release only)
+      status:
+        description: Release status on Google Play
+        type: choice
+        default: completed
+        options:
+          - completed
+          - draft
 
 permissions:
   contents: write
@@ -17,6 +35,8 @@ jobs:
       should_release: ${{ steps.diff.outputs.should_release }}
       version_name: ${{ steps.diff.outputs.version_name }}
       version_code: ${{ steps.diff.outputs.version_code }}
+      track: ${{ steps.diff.outputs.track }}
+      status: ${{ steps.diff.outputs.status }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +45,18 @@ jobs:
 
       - name: Compare versionName against previous commit
         id: diff
+        env:
+          INPUT_TRACK: ${{ inputs.track }}
+          INPUT_STATUS: ${{ inputs.status }}
         run: |
+          track="${INPUT_TRACK:-production}"
+          status="${INPUT_STATUS:-completed}"
+          case "$track" in
+            none*) track="none" ;;
+          esac
+          echo "track=$track" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "Play track: $track ($status)"
           current_code=$(git rev-list --count HEAD)
           current_name=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
           echo "version_code=$current_code" >> "$GITHUB_OUTPUT"
@@ -53,6 +84,8 @@ jobs:
     env:
       VERSION_NAME: ${{ needs.check-version.outputs.version_name }}
       VERSION_CODE: ${{ needs.check-version.outputs.version_code }}
+      PLAY_TRACK: ${{ needs.check-version.outputs.track }}
+      PLAY_STATUS: ${{ needs.check-version.outputs.status }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -111,11 +144,12 @@ jobs:
               app/build/outputs/apk/release/app-release.apk
           fi
 
-      - name: Publish to Play Store (production)
+      - name: Publish to Play Store (${{ env.PLAY_TRACK }})
+        if: env.PLAY_TRACK != 'none'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.guruswarupa.launch
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: production
-          status: completed
+          track: ${{ env.PLAY_TRACK }}
+          status: ${{ env.PLAY_STATUS }}
