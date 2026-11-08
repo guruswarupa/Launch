@@ -36,6 +36,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.guruswarupa.launch.MainActivity
 import com.guruswarupa.launch.R
+import com.guruswarupa.launch.apps.OptionalApps
+import com.guruswarupa.launch.apps.SuiteApp
 import com.guruswarupa.launch.models.Constants
 import com.guruswarupa.launch.ui.theme.ThemeManager
 
@@ -45,7 +47,7 @@ class OnboardingTourActivity : AppCompatActivity() {
 
     private class Perm(val icon: Int, val titleRes: Int, val whyRes: Int, val granted: () -> Boolean, val request: () -> Unit)
 
-    private class Page(val icon: Int, val color: Int, val titleRes: Int, val bodyRes: Int, val actions: List<TourAction> = emptyList(), val perms: List<Perm>? = null)
+    private class Page(val icon: Int, val color: Int, val titleRes: Int, val bodyRes: Int, val actions: List<TourAction> = emptyList(), val perms: List<Perm>? = null, val suite: Boolean = false)
 
     private var permissionsShown = false
     private val askedPrefs by lazy { getSharedPreferences("tour_permission_asks", MODE_PRIVATE) }
@@ -137,6 +139,7 @@ class OnboardingTourActivity : AppCompatActivity() {
             Page(R.drawable.ic_vault, 0xFF5C6BC0.toInt(), R.string.tour_p10_title, R.string.tour_p10_body),
             Page(R.drawable.ic_settings, 0xFF26C6DA.toInt(), R.string.tour_p11_title, R.string.tour_p11_body),
             Page(R.drawable.ic_image, 0xFFEC407A.toInt(), R.string.tour_p12_title, R.string.tour_p12_body),
+            Page(R.drawable.ic_apps_grid, 0xFF42A5F5.toInt(), R.string.tour_apps_title, R.string.tour_apps_body, suite = true),
             Page(R.drawable.ic_check_circle, 0xFF66BB6A.toInt(), R.string.tour_pp1_title, R.string.tour_pp1_body, perms = essentialPerms()),
             Page(R.drawable.ic_settings, 0xFF26C6DA.toInt(), R.string.tour_pp2_title, R.string.tour_pp2_body, perms = optionalPerms()),
             Page(R.drawable.ic_heart_filled, 0xFFEF5350.toInt(), R.string.tour_p14_title, R.string.tour_p14_body, perms = listOf(homePerm()))
@@ -301,7 +304,7 @@ class OnboardingTourActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(h: VH, position: Int) {
             val p = pages[position]
-            val compact = (p.perms?.size ?: 0) > 1
+            val compact = (p.perms?.size ?: 0) > 1 || p.suite
             (h.tile.layoutParams as LinearLayout.LayoutParams).apply {
                 width = dp(if (compact) 72 else 120); height = dp(if (compact) 72 else 120)
                 topMargin = dp(if (compact) 4 else 24); bottomMargin = dp(if (compact) 14 else 28)
@@ -325,6 +328,13 @@ class OnboardingTourActivity : AppCompatActivity() {
             h.body.text = getString(p.bodyRes)
             h.body.gravity = if (position == 0 || position == pages.lastIndex) Gravity.CENTER else Gravity.START
             h.actions.removeAllViews()
+            if (p.suite) {
+                OptionalApps.all.forEach { app -> h.actions.addView(suiteRow(app), LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { topMargin = dp(10) }) }
+                h.actions.addView(TextView(this@OnboardingTourActivity).apply {
+                    text = getString(R.string.tour_apps_hint); textSize = 12.5f; setTextColor(textSecondary); gravity = Gravity.CENTER
+                    setPadding(0, dp(6), 0, 0)
+                })
+            }
             p.perms?.forEach { perm -> h.actions.addView(permRow(perm), LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { topMargin = dp(10) }) }
             p.actions.forEach { a ->
                 h.actions.addView(TextView(this@OnboardingTourActivity).apply {
@@ -336,6 +346,25 @@ class OnboardingTourActivity : AppCompatActivity() {
                     setOnClickListener { a.run(this@OnboardingTourActivity) }
                 }, LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply { topMargin = dp(8) })
             }
+        }
+
+        private fun suiteRow(app: SuiteApp): View {
+            val ctx = this@OnboardingTourActivity
+            val row = LinearLayout(ctx).apply {
+                gravity = Gravity.CENTER_VERTICAL
+                background = GradientDrawable().apply { setColor(0x22FFFFFF); cornerRadius = dp(18).toFloat(); setStroke(dp(1), 0x22FFFFFF) }
+                setPadding(dp(14), dp(10), dp(14), dp(10))
+            }
+            row.addView(ImageView(ctx).apply { setImageResource(app.iconRes) }, LinearLayout.LayoutParams(dp(40), dp(40)))
+            val texts = LinearLayout(ctx).apply { orientation = LinearLayout.VERTICAL }
+            texts.addView(TextView(ctx).apply { text = getString(app.labelRes); textSize = 15f; typeface = Typeface.DEFAULT_BOLD; setTextColor(textPrimary) })
+            texts.addView(TextView(ctx).apply { text = getString(app.descRes); textSize = 12.5f; setTextColor(textSecondary) })
+            row.addView(texts, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f).apply { marginStart = dp(12); marginEnd = dp(10) })
+            row.addView(androidx.appcompat.widget.SwitchCompat(ctx).apply {
+                isChecked = OptionalApps.isEnabled(ctx, app.id)
+                setOnCheckedChangeListener { _, on -> OptionalApps.setEnabled(ctx, app.id, on) }
+            })
+            return row
         }
 
         private fun permRow(perm: Perm): View {

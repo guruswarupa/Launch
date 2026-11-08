@@ -98,7 +98,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
         if (bold) typeface = Typeface.DEFAULT_BOLD
     }
 
-    private fun makeDialog(content: View, bottom: Boolean): Dialog {
+    internal fun makeDialog(content: View, bottom: Boolean): Dialog {
         val d = Dialog(a)
         d.requestWindowFeature(Window.FEATURE_NO_TITLE)
         d.setContentView(content)
@@ -133,7 +133,7 @@ internal class FilesDialogs(private val a: Activity, private val p: FilesPalette
         }
     }
 
-    private fun card(): LinearLayout = LinearLayout(a).apply {
+    internal fun card(): LinearLayout = LinearLayout(a).apply {
         orientation = LinearLayout.VERTICAL
         background = rounded(p.dialog, 24, withAlpha(p.text, 40), 1)
         setPadding(dp(22), dp(22), dp(22), dp(16))

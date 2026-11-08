@@ -123,8 +123,8 @@ class AppSearchManager @Inject constructor(
 
     private fun getAppLabel(info: ResolveInfo): String {
         val packageName = info.activityInfo.packageName
-        val serial = info.preferredOrder
-        val cacheKey = "${packageName}|$serial"
+        // Launch's own apps share one package, so each needs its own cache key or they all get the first app's label.
+        val cacheKey = com.guruswarupa.launch.core.appMetaKey(info)
 
         synchronized(dataLock) {
             appMetadataCache?.get(cacheKey)?.label?.lowercase()?.let { return it }
@@ -262,7 +262,9 @@ class AppSearchManager @Inject constructor(
                         if (packageName == context.packageName) {
                             val activityName = info.activityInfo.name
                             val isAllowedInternalActivity = activityName.contains("SettingsActivity") ||
-                                                          activityName.contains("EncryptedVaultActivity")
+                                                          activityName.contains("EncryptedVaultActivity") ||
+                                                          (com.guruswarupa.launch.apps.OptionalApps.all.any { activityName.endsWith(it.activity) } &&
+                                                              com.guruswarupa.launch.apps.OptionalApps.isActivityEnabled(context, activityName))
                             if (!isAllowedInternalActivity || activityName.contains("MainActivity")) {
                                 return@forEach
                             }

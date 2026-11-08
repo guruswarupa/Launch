@@ -687,6 +687,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var lastSuiteRevision: Long? = null
+
     override fun onResume() {
         super.onResume()
         if (!::sharedPreferences.isInitialized) return
@@ -694,6 +696,13 @@ class MainActivity : AppCompatActivity() {
         if (com.guruswarupa.launch.ui.theme.ThemeManager.isStale(this, sharedPreferences)) {
             recreate()
             return
+        }
+
+        val suiteRev = com.guruswarupa.launch.apps.OptionalApps.revision(this)
+        if (suiteRev != lastSuiteRevision) {
+            val first = lastSuiteRevision == null
+            lastSuiteRevision = suiteRev
+            if (!first && ::appListLoader.isInitialized) appListLoader.loadApps(forceRefresh = true)
         }
 
         val widgetsChanged = sharedPreferences.getBoolean("saved_widgets_changed", false)

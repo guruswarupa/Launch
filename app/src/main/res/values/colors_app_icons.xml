@@ -4,4 +4,7 @@
     <color name="app_icon_files_bg">#FF1E88E5</color>
     <color name="app_icon_gallery_bg">#FF8E24AA</color>
     <color name="app_icon_player_bg">#FFE53935</color>
+    <color name="app_icon_calculator_bg">#FFF57C00</color>
+    <color name="app_icon_calendar_bg">#FF00897B</color>
+    <color name="app_icon_clock_bg">#FF3949AB</color>
 </resources>

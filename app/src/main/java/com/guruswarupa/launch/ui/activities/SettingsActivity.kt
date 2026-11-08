@@ -1124,6 +1124,8 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         setupSectionToggle(h, c, a)
 
         findViewById<View>(R.id.app_lock_button).setOnClickListener { startActivity(Intent(this, AppLockSettingsActivity::class.java)) }
+        findViewById<View>(R.id.launch_apps_button).setOnClickListener { startActivity(Intent(this, LaunchAppsActivity::class.java)) }
+        findViewById<View>(R.id.bloat_button).setOnClickListener { startActivity(Intent(this, BloatwareActivity::class.java)) }
         findViewById<View>(R.id.hidden_apps_button).setOnClickListener { startActivity(Intent(this, HiddenAppsSettingsActivity::class.java)) }
         findViewById<View>(R.id.privacy_dashboard_button).setOnClickListener { startActivity(Intent(this, PrivacyDashboardActivity::class.java)) }
     }

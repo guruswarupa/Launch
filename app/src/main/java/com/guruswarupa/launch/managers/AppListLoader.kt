@@ -202,7 +202,8 @@ class AppListLoader(
                             val packageName = app.componentName.packageName
                             val ownApp = packageName == "com.guruswarupa.launch"
                             if (ownApp && (user != android.os.Process.myUserHandle() ||
-                                    listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity").none { app.componentName.className.endsWith(it) })) continue
+                                    com.guruswarupa.launch.apps.OptionalApps.all.none { app.componentName.className.endsWith(it.activity) } ||
+                                    !com.guruswarupa.launch.apps.OptionalApps.isActivityEnabled(activity, app.componentName.className))) continue
 
                             val resolveInfo = ResolveInfo()
                             val activityInfo = if (ownApp) {

@@ -39,7 +39,7 @@ class AppListManager @Inject constructor(
         return favoriteAppManager.getFavoriteApps()
     }
 
-    private val bundledApps = listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity")
+    private val bundledApps = listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity", "CalculatorActivity", "CalendarActivity", "ClockActivity")
 
     fun filterAndPrepareApps(
         apps: List<ResolveInfo>,
@@ -57,7 +57,8 @@ class AppListManager @Inject constructor(
             val isAllowedInternalActivity = isLauncherApp && (activityName.contains("SettingsActivity") ||
                                               activityName.contains("EncryptedVaultActivity"))
 
-            val isBundledApp = isLauncherApp && bundledApps.any { activityName.endsWith(it) }
+            val isBundledApp = isLauncherApp && bundledApps.any { activityName.endsWith(it) } &&
+                com.guruswarupa.launch.apps.OptionalApps.isActivityEnabled(context, activityName)
             if (isLauncherApp && !isAllowedInternalActivity && !isBundledApp) return@filter false
 
             if (isAllowedInternalActivity) {

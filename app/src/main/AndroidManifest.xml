@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -532,6 +535,83 @@
             android:name=".ui.activities.OnboardingTourActivity"
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings" />
+
+        <activity
+            android:name=".ui.activities.LaunchAppsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Settings" />
+
+        <activity
+            android:name=".ui.activities.BloatwareActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Settings" />
+
+        <activity
+            android:name="com.guruswarupa.launch.apps.calculator.CalculatorActivity"
+            android:exported="true"
+            android:label="@string/app_calculator"
+            android:icon="@drawable/ic_app_calculator"
+            android:theme="@style/Theme.Launch.Settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.guruswarupa.launch.apps.calendar.CalendarActivity"
+            android:exported="true"
+            android:label="@string/app_calendar"
+            android:icon="@drawable/ic_app_calendar"
+            android:theme="@style/Theme.Launch.Settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.guruswarupa.launch.apps.clock.ClockActivity"
+            android:exported="true"
+            android:label="@string/app_clock"
+            android:icon="@drawable/ic_app_clock"
+            android:theme="@style/Theme.Launch.Settings">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.guruswarupa.launch.apps.clock.AlarmRingActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.Launch.Document" />
+
+        <receiver
+            android:name="com.guruswarupa.launch.apps.clock.AlarmReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.guruswarupa.launch.apps.clock.ClockSystemReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.guruswarupa.launch.apps.clock.AlarmRingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_CATEGORY" android:value="Ringing an alarm or timer the user set" />
+        </service>
 
         <activity
             android:name=".ui.activities.StorageAnalyzerActivity"

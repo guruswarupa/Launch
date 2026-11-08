@@ -2441,6 +2441,26 @@
                             android:layout_marginBottom="8dp"/>
 
                         <Button
+                            android:id="@+id/launch_apps_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/launch_apps_title"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"
+                            android:layout_marginBottom="8dp"/>
+
+                        <Button
+                            android:id="@+id/bloat_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/bloat_title"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"
+                            android:layout_marginBottom="8dp"/>
+
+                        <Button
                             android:id="@+id/hidden_apps_button"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
