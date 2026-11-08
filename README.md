@@ -28,16 +28,6 @@
   </a>
 </p>
 
-<!-- WhatsApp Community -->
-<p align="center">
-  <a href="https://whatsapp.com/channel/0029VbEBgpf4inox5taK290F">
-    <img
-      src="https://img.shields.io/badge/Join%20our%20WhatsApp%20Channel-25D366?style=for-the-badge&logo=whatsapp&logoColor=white"
-      alt="Join Launch on WhatsApp"
-    />
-  </a>
-</p>
-
 ## Star History
 
 <a href="https://www.star-history.com/?repos=guruswarupa%2Flaunch&type=date&legend=top-left">
