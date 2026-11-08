@@ -178,6 +178,20 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/btn_aspect"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:minWidth="48dp"
+            android:paddingHorizontal="8dp"
+            android:text="@string/aspect_fit"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/btn_speed"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -239,7 +253,6 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@null"
-                android:scaleX="-1"
                 android:src="@drawable/ic_media_replay" />
 
             <TextView
@@ -274,6 +287,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@null"
+                android:scaleX="-1"
                 android:src="@drawable/ic_media_replay" />
 
             <TextView

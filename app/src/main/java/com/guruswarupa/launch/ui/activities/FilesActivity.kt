@@ -545,15 +545,29 @@ open class FilesActivity : AppCompatActivity() {
                     val m = metaOrNull(f) ?: return@mapNotNull null
                     Row.Entry(f, f.parentFile?.name, meta = m)
                 }
+                val resumable = if (cat == "videos") VideoResume.recent(this, 6).mapNotNull { r ->
+                    val vf = File(r.id)
+                    if (!vf.isFile) return@mapNotNull null
+                    val m = metaOrNull(vf) ?: return@mapNotNull null
+                    val pct = if (r.duration > 0) " · ${(r.position * 100 / r.duration).toInt()}%" else ""
+                    Row.Entry(vf, getString(R.string.video_resume_at, resumeTime(r.position)) + pct, meta = m)
+                } else emptyList()
                 runOnUiThread {
                     if (token == loadToken) {
-                        rows = entries
+                        rows = if (resumable.isEmpty()) entries
+                        else listOf<Row>(Row.Header(getString(R.string.video_continue))) + resumable + Row.Header(getString(R.string.video_all))  + entries
                         subtitleView.text = getString(R.string.files_items_count, entries.size)
                         render()
                     }
                 }
             }.start()
         }
+    }
+
+    private fun resumeTime(ms: Long): String {
+        val t = ms / 1000
+        return if (t >= 3600) String.format(java.util.Locale.US, "%d:%02d:%02d", t / 3600, t % 3600 / 60, t % 60)
+        else String.format(java.util.Locale.US, "%d:%02d", t / 60, t % 60)
     }
 
     private fun metaOrNull(f: File): Meta? = try {

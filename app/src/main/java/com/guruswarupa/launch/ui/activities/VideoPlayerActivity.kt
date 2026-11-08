@@ -17,6 +17,7 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.SeekBar
@@ -27,7 +28,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.Tracks
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -82,12 +87,30 @@ class VideoPlayerActivity : VaultBaseActivity() {
     private var zoomFill = false
     private var longPressBoost = false
 
+    private enum class Aspect(val labelRes: Int, val ratio: Float?) {
+        FIT(R.string.aspect_fit, null), FILL(R.string.aspect_fill, null), STRETCH(R.string.aspect_stretch, null),
+        R16_9(R.string.aspect_16_9, 16f / 9f), R4_3(R.string.aspect_4_3, 4f / 3f), R21_9(R.string.aspect_21_9, 21f / 9f),
+        R1_1(R.string.aspect_1_1, 1f), ORIGINAL(R.string.aspect_original, null)
+    }
+
+    private var aspect = Aspect.FIT
+    private lateinit var btnAspect: TextView
+    private var resumeId = ""
+    private var resumeTicks = 0
+    private var resumeChip: TextView? = null
+    private val palette by lazy { FilesPalette(this) }
+    private val sheets by lazy { FilesDialogs(this, palette) }
+    private val subtitlePicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) addSubtitle(uri)
+    }
+
     private val handler = Handler(Looper.getMainLooper())
     private val hideControls = Runnable { setControlsVisible(false) }
     private val hideIndicator = Runnable { indicator.animate().alpha(0f).setDuration(200).start() }
     private val progressTick = object : Runnable {
         override fun run() {
             updateProgress()
+            if (++resumeTicks % 20 == 0) saveResume()
             handler.postDelayed(this, 250)
         }
     }
@@ -204,6 +227,7 @@ class VideoPlayerActivity : VaultBaseActivity() {
         btnFullscreen = findViewById(R.id.btn_fullscreen)
         btnLoop = findViewById(R.id.btn_loop)
         btnSpeed = findViewById(R.id.btn_speed)
+        btnAspect = findViewById(R.id.btn_aspect)
         seekBar = findViewById(R.id.seek_bar)
         timeCurrent = findViewById(R.id.time_current)
         timeTotal = findViewById(R.id.time_total)
@@ -229,20 +253,51 @@ class VideoPlayerActivity : VaultBaseActivity() {
         return uri.lastPathSegment?.substringAfterLast('/').orEmpty().ifBlank { "video" }
     }
 
+    private fun subtitleMime(name: String): String? = when (name.substringAfterLast('.', "").lowercase()) {
+        "srt" -> "application/x-subrip"
+        "vtt" -> "text/vtt"
+        "ass", "ssa" -> "text/x-ssa"
+        "ttml", "xml" -> "application/ttml+xml"
+        else -> null
+    }
+
+    /** Subtitle files that sit next to the video and share its name are picked up automatically. */
+    private fun sidecarSubtitles(): List<MediaItem.SubtitleConfiguration> {
+        val video = file ?: return emptyList()
+        val dir = video.parentFile ?: return emptyList()
+        val base = video.nameWithoutExtension
+        return (dir.listFiles() ?: emptyArray())
+            .filter { it.isFile && it.name != video.name && it.name.startsWith(base) && subtitleMime(it.name) != null && it.extension.lowercase() != "xml" }
+            .take(6)
+            .map { MediaItem.SubtitleConfiguration.Builder(Uri.fromFile(it)).setMimeType(subtitleMime(it.name)!!).setLabel(it.name.removePrefix(base).trimStart('.', '_', '-', ' ').ifBlank { it.extension.uppercase() }).build() }
+    }
+
     private fun setupPlayer(source: Uri) {
         val exo = ExoPlayer.Builder(this).build()
         player = exo
         playerView.player = exo
-        exo.setMediaItem(MediaItem.fromUri(source))
+        resumeId = file?.absolutePath ?: source.toString()
+        val item = MediaItem.Builder().setUri(source).setSubtitleConfigurations(sidecarSubtitles()).build()
+        val saved = VideoResume.get(this, resumeId)
+        if (saved != null) exo.setMediaItem(item, saved.position) else exo.setMediaItem(item)
+        aspect = runCatching { Aspect.valueOf(getSharedPreferences("video_player", MODE_PRIVATE).getString("aspect", "FIT")!!) }.getOrDefault(Aspect.FIT)
+        zoomFill = aspect == Aspect.FILL
+        if (!isAudio) applyAspect()
+        if (saved != null && !isAudio) showResumeChip(saved.position)
         exo.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
                 buffering.visibility = if (state == Player.STATE_BUFFERING) View.VISIBLE else View.GONE
                 if (state == Player.STATE_ENDED) {
+                    VideoResume.clear(this@VideoPlayerActivity, resumeId)
                     setControlsVisible(true)
                     handler.removeCallbacks(hideControls)
                 }
                 updatePlayIcon()
                 updateProgress()
+            }
+
+            override fun onVideoSizeChanged(videoSize: androidx.media3.common.VideoSize) {
+                applyAspect()
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -252,6 +307,7 @@ class VideoPlayerActivity : VaultBaseActivity() {
                     scheduleHide()
                 } else {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    saveResume()
                 }
             }
 
@@ -263,6 +319,143 @@ class VideoPlayerActivity : VaultBaseActivity() {
         })
         exo.prepare()
         exo.playWhenReady = true
+    }
+
+    private fun saveResume() {
+        val p = player ?: return
+        if (resumeId.isEmpty() || p.playbackState == Player.STATE_IDLE) return
+        VideoResume.save(this, resumeId, displayName, p.currentPosition, p.duration.takeIf { it > 0 } ?: 0L)
+    }
+
+    private fun showResumeChip(position: Long) {
+        val chip = TextView(this).apply {
+            text = getString(R.string.video_resumed, formatTime(position)) + "   •   " + getString(R.string.video_start_over)
+            setTextColor(Color.WHITE); textSize = 13.5f; typeface = android.graphics.Typeface.DEFAULT_BOLD
+            setPadding(dp(16), dp(10), dp(16), dp(10))
+            background = android.graphics.drawable.GradientDrawable().apply { setColor(0xCC202020.toInt()); cornerRadius = dp(22).toFloat() }
+            setOnClickListener {
+                player?.seekTo(0)
+                VideoResume.clear(this@VideoPlayerActivity, resumeId)
+                animate().alpha(0f).setDuration(150).withEndAction { visibility = View.GONE }.start()
+            }
+        }
+        resumeChip = chip
+        root.let { (it as FrameLayout).addView(chip, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, android.view.Gravity.BOTTOM or android.view.Gravity.START).apply { setMargins(dp(20), 0, 0, dp(110)) }) }
+        handler.postDelayed({ chip.animate().alpha(0f).setDuration(300).withEndAction { chip.visibility = View.GONE }.start() }, 6000)
+    }
+
+    // ---- aspect ratio / view modes ----
+
+    private fun setAspect(mode: Aspect, announce: Boolean = false) {
+        aspect = mode
+        zoomFill = mode == Aspect.FILL
+        getSharedPreferences("video_player", MODE_PRIVATE).edit().putString("aspect", mode.name).apply()
+        applyAspect()
+        if (announce) showIndicator(R.drawable.ic_media_fullscreen, getString(mode.labelRes))
+    }
+
+    private fun applyAspect() {
+        if (!::btnAspect.isInitialized) return
+        btnAspect.text = getString(aspect.labelRes)
+        val frame = playerView.findViewById<AspectRatioFrameLayout>(androidx.media3.ui.R.id.exo_content_frame) ?: return
+        val size = player?.videoSize
+        val vw = size?.width ?: 0
+        val vh = size?.height ?: 0
+        val natural = if (vw > 0 && vh > 0) vw * (size?.pixelWidthHeightRatio ?: 1f) / vh else 0f
+        frame.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT, android.view.Gravity.CENTER)
+        when (aspect) {
+            Aspect.FIT -> { playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT; if (natural > 0) frame.setAspectRatio(natural) }
+            Aspect.FILL -> { playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM; if (natural > 0) frame.setAspectRatio(natural) }
+            Aspect.STRETCH -> playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+            Aspect.ORIGINAL -> {
+                playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                if (vw > 0 && vh > 0) frame.layoutParams = FrameLayout.LayoutParams((vw * (size?.pixelWidthHeightRatio ?: 1f)).toInt(), vh, android.view.Gravity.CENTER)
+            }
+            else -> { playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT; aspect.ratio?.let { frame.setAspectRatio(it) } }
+        }
+    }
+
+    private fun showAspectSheet() {
+        sheets.sheet(getString(R.string.video_aspect), Aspect.values().map { m ->
+            SheetItem(R.drawable.ic_f_view_grid, getString(m.labelRes), checked = m == aspect) { setAspect(m) }
+        })
+    }
+
+    // ---- tracks ----
+
+    private fun trackLabel(group: Tracks.Group, index: Int): String {
+        val f = group.getTrackFormat(0)
+        val lang = f.language?.takeIf { it != "und" }?.let { java.util.Locale(it).displayLanguage }
+        val bits = ArrayList<String>()
+        (f.label ?: lang)?.let { bits.add(it) }
+        if (f.channelCount > 0 && group.type == C.TRACK_TYPE_AUDIO) bits.add(when (f.channelCount) { 1 -> "mono"; 2 -> "stereo"; 6 -> "5.1"; 8 -> "7.1"; else -> "${f.channelCount}ch" })
+        f.sampleMimeType?.substringAfter('/')?.uppercase()?.takeIf { group.type == C.TRACK_TYPE_AUDIO }?.let { bits.add(it) }
+        return if (bits.isEmpty()) getString(R.string.video_track_n, index + 1) else bits.joinToString(" · ")
+    }
+
+    private fun showAudioTracks() {
+        val p = player ?: return
+        val groups = p.currentTracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO && it.isSupported }
+        if (groups.isEmpty()) { Toast.makeText(this, R.string.video_no_tracks, Toast.LENGTH_SHORT).show(); return }
+        sheets.sheet(getString(R.string.video_audio_track), groups.mapIndexed { i, g ->
+            SheetItem(R.drawable.ic_f_music, trackLabel(g, i), checked = g.isSelected) {
+                p.trackSelectionParameters = p.trackSelectionParameters.buildUpon()
+                    .setOverrideForType(TrackSelectionOverride(g.mediaTrackGroup, 0)).build()
+            }
+        })
+    }
+
+    private fun showSubtitles() {
+        val p = player ?: return
+        val groups = p.currentTracks.groups.filter { it.type == C.TRACK_TYPE_TEXT && it.isSupported }
+        val textOff = p.trackSelectionParameters.disabledTrackTypes.contains(C.TRACK_TYPE_TEXT)
+        val items = ArrayList<SheetItem>()
+        items.add(SheetItem(R.drawable.ic_f_doc, getString(R.string.video_subs_off), checked = textOff || groups.none { it.isSelected }) {
+            p.trackSelectionParameters = p.trackSelectionParameters.buildUpon().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true).build()
+        })
+        groups.forEachIndexed { i, g ->
+            items.add(SheetItem(R.drawable.ic_f_doc, trackLabel(g, i), checked = g.isSelected && !textOff) {
+                p.trackSelectionParameters = p.trackSelectionParameters.buildUpon()
+                    .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+                    .setOverrideForType(TrackSelectionOverride(g.mediaTrackGroup, 0)).build()
+            })
+        }
+        items.add(SheetItem(R.drawable.ic_f_newfolder, getString(R.string.video_subs_add)) {
+            try { subtitlePicker.launch(arrayOf("*/*")) } catch (_: Exception) {}
+        })
+        sheets.sheet(getString(R.string.video_subtitles), items)
+    }
+
+    private fun addSubtitle(uri: Uri) {
+        val p = player ?: return
+        val name = queryDisplayName(uri)
+        val mime = subtitleMime(name) ?: "application/x-subrip"
+        val pos = p.currentPosition
+        val wasPlaying = p.playWhenReady
+        val item = MediaItem.Builder().setUri(sourceUri!!)
+            .setSubtitleConfigurations(sidecarSubtitles() + MediaItem.SubtitleConfiguration.Builder(uri).setMimeType(mime).setLabel(name).setSelectionFlags(C.SELECTION_FLAG_DEFAULT).build())
+            .build()
+        p.setMediaItem(item, pos)
+        p.trackSelectionParameters = p.trackSelectionParameters.buildUpon().setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false).build()
+        p.prepare()
+        p.playWhenReady = wasPlaying
+    }
+
+    private fun showVideoInfo() {
+        val p = player ?: return
+        val rows = ArrayList<Pair<String, String>>()
+        p.videoFormat?.let { v ->
+            if (v.width > 0) rows.add(getString(R.string.video_info_resolution) to "${v.width} × ${v.height}")
+            v.sampleMimeType?.let { rows.add(getString(R.string.video_info_codec) to (it.substringAfter('/').uppercase() + (v.codecs?.let { c -> " ($c)" } ?: ""))) }
+            if (v.frameRate > 0) rows.add(getString(R.string.video_info_framerate) to String.format(Locale.US, "%.2f fps", v.frameRate))
+            if (v.bitrate > 0) rows.add(getString(R.string.video_info_bitrate) to String.format(Locale.US, "%.1f Mbps", v.bitrate / 1_000_000f))
+        }
+        p.audioFormat?.let { a ->
+            rows.add(getString(R.string.video_info_audio) to listOfNotNull(a.sampleMimeType?.substringAfter('/')?.uppercase(), if (a.channelCount > 0) "${a.channelCount}ch" else null, if (a.sampleRate > 0) "${a.sampleRate / 1000} kHz" else null).joinToString(" · "))
+        }
+        if (p.duration > 0) rows.add(getString(R.string.video_info_duration) to formatTime(p.duration))
+        file?.let { rows.add(getString(R.string.video_info_size) to android.text.format.Formatter.formatFileSize(this, it.length())) }
+        sheets.details(displayName, R.drawable.ic_f_video, palette.accent, rows)
     }
 
     private fun setupButtons() {
@@ -280,6 +473,7 @@ class VideoPlayerActivity : VaultBaseActivity() {
             scheduleHide()
         }
         btnSpeed.setOnClickListener { showSpeedMenu(it) }
+        btnAspect.setOnClickListener { showAspectSheet(); scheduleHide() }
         findViewById<View>(R.id.btn_share).setOnClickListener { share() }
         findViewById<View>(R.id.btn_more).setOnClickListener { showMoreMenu(it) }
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -336,10 +530,10 @@ class VideoPlayerActivity : VaultBaseActivity() {
                 if (locked || isAudio) return false
                 if (detector.scaleFactor > 1.04f && !zoomFill) {
                     zoomFill = true
-                    playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    setAspect(Aspect.FILL, announce = true)
                 } else if (detector.scaleFactor < 0.96f && zoomFill) {
                     zoomFill = false
-                    playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                    setAspect(Aspect.FIT, announce = true)
                 }
                 return true
             }
@@ -599,13 +793,15 @@ class VideoPlayerActivity : VaultBaseActivity() {
         if (value == value.toInt().toFloat()) value.toInt().toString() else String.format(Locale.US, "%.2f", value).trimEnd('0')
 
     private fun showMoreMenu(anchor: View) {
-        val menu = PopupMenu(this, anchor)
-        menu.menu.add(0, 1, 0, R.string.media_action_open_with)
-        menu.setOnMenuItemClickListener {
-            openWith()
-            true
+        val items = ArrayList<SheetItem>()
+        if (!isAudio) {
+            items.add(SheetItem(R.drawable.ic_f_view_grid, getString(R.string.video_aspect)) { showAspectSheet() })
+            items.add(SheetItem(R.drawable.ic_f_doc, getString(R.string.video_subtitles)) { showSubtitles() })
         }
-        menu.show()
+        items.add(SheetItem(R.drawable.ic_f_music, getString(R.string.video_audio_track)) { showAudioTracks() })
+        items.add(SheetItem(R.drawable.ic_f_info, getString(R.string.video_info)) { showVideoInfo() })
+        items.add(SheetItem(R.drawable.ic_f_share, getString(R.string.media_action_open_with)) { openWith() })
+        sheets.sheet(null, items)
     }
 
     private fun mimeOf(name: String): String =
@@ -646,10 +842,12 @@ class VideoPlayerActivity : VaultBaseActivity() {
 
     override fun onPause() {
         super.onPause()
+        saveResume()
         player?.pause()
     }
 
     override fun onDestroy() {
+        saveResume()
         handler.removeCallbacksAndMessages(null)
         playerView.player = null
         player?.release()
