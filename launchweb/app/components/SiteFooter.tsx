@@ -19,6 +19,8 @@ export default function SiteFooter() {
             <li><Link className="hover:text-fg" href="/#features">Features</Link></li>
             <li><Link className="hover:text-fg" href="/docs">Documentation</Link></li>
             <li><Link className="hover:text-fg" href="/docs/faq">FAQ</Link></li>
+            <li><Link className="hover:text-fg" href="/terms">Terms of Service</Link></li>
+            <li><Link className="hover:text-fg" href="/privacy">Privacy Policy</Link></li>
           </ul>
         </div>
         <div>
