@@ -111,6 +111,23 @@ launch/
 └── gradle.properties                      # Gradle properties
 ```
 
+### Modules
+
+Launch ships as one APK/AAB built from several Gradle modules:
+
+| Module | What it holds |
+|---|---|
+| `:app` | The launcher itself, plus Files, Gallery, Video Player and the document/photo viewers |
+| `:shared` | Shared UI helpers (`FilesPalette`, `FilesDialogs`, pickers, month grid), theme attributes, `Constants`, unit and currency converters, contact lookup |
+| `:feature-calculator` | Calculator and converter |
+| `:feature-calendar` | Calendar |
+| `:feature-clock` | Alarms, timer, stopwatch, world clock |
+| `:feature-phone` | Phone (keypad, recents, in-call screen), Contacts |
+| `:feature-messages` | Messages (SMS and MMS) |
+| `:feature-camera` | Camera |
+
+Each feature module declares its own activities, services and receivers in its own `AndroidManifest.xml` and owns the strings and drawables only it uses (all translations included). Anything used by two or more modules lives in `:shared`. Feature modules depend on `:shared`, never on `:app` or on each other. Themes stay in `:app`; a feature activity gets its theme through a `tools:node="merge"` entry in the app manifest.
+
 ## Build Configuration
 
 ### Key Configuration Files

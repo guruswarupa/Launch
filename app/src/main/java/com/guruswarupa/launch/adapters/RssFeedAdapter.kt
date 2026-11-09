@@ -90,17 +90,7 @@ class RssFeedAdapter : RecyclerView.Adapter<RssFeedAdapter.RssArticleViewHolder>
             }
 
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, WebAppActivity::class.java).apply {
-                    addFlags(
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                            Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                            Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                    )
-                    putExtra(WebAppActivity.EXTRA_WEB_APP_NAME, article.title.ifBlank { article.source })
-                    putExtra(WebAppActivity.EXTRA_WEB_APP_URL, article.link)
-
-                    putExtra(WebAppActivity.EXTRA_BLOCK_REDIRECTS, true)
-                }
+                val intent = WebAppActivity.launchIntent(itemView.context, article.title.ifBlank { article.source }, article.link, true)
                 itemView.context.startActivity(intent)
             }
         }

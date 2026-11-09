@@ -197,6 +197,7 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         setupMaintenanceSection()
         setupSupportSection()
         setupVersionInfo()
+        setupSettingsNavigation()
         openSupportSectionIfRequested()
         openAiSectionIfRequested()
     }
@@ -1124,8 +1125,6 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         setupSectionToggle(h, c, a)
 
         findViewById<View>(R.id.app_lock_button).setOnClickListener { startActivity(Intent(this, AppLockSettingsActivity::class.java)) }
-        findViewById<View>(R.id.launch_apps_button).setOnClickListener { startActivity(Intent(this, LaunchAppsActivity::class.java)) }
-        findViewById<View>(R.id.bloat_button).setOnClickListener { startActivity(Intent(this, BloatwareActivity::class.java)) }
         findViewById<View>(R.id.hidden_apps_button).setOnClickListener { startActivity(Intent(this, HiddenAppsSettingsActivity::class.java)) }
         findViewById<View>(R.id.privacy_dashboard_button).setOnClickListener { startActivity(Intent(this, PrivacyDashboardActivity::class.java)) }
     }
@@ -1269,13 +1268,115 @@ class SettingsActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
+    /** Quick links, section chips and a search box that filters every card and opens the ones that match. */
+    private fun setupSettingsNavigation() {
+        findViewById<View>(R.id.launch_apps_card).setOnClickListener { startActivity(Intent(this, LaunchAppsActivity::class.java)) }
+        findViewById<View>(R.id.bloat_card).setOnClickListener { startActivity(Intent(this, BloatwareActivity::class.java)) }
+
+        val container = findViewById<LinearLayout>(R.id.settings_content_container)
+        val scroll = findViewById<ScrollView>(R.id.settings_scroll_view)
+        val dp = resources.displayMetrics.density
+
+        listOf(R.id.chip_appearance to R.id.sec_appearance, R.id.chip_search to R.id.sec_search, R.id.chip_content to R.id.sec_content,
+            R.id.chip_privacy to R.id.sec_privacy, R.id.chip_tools to R.id.sec_tools, R.id.chip_about to R.id.sec_about).forEach { (chip, target) ->
+            findViewById<View>(chip).setOnClickListener {
+                val label = findViewById<View>(target)
+                scroll.smoothScrollTo(0, (label.top - 12 * dp).toInt().coerceAtLeast(0))
+            }
+        }
+
+        // Group every card under the section label above it.
+        class Entry(val view: View, val label: View?, val blob: String)
+        fun textOf(v: View, out: StringBuilder) {
+            if (v is TextView) { out.append(v.text).append(' '); v.hint?.let { out.append(it).append(' ') } }
+            if (v is android.view.ViewGroup) for (i in 0 until v.childCount) textOf(v.getChildAt(i), out)
+        }
+        val entries = ArrayList<Entry>()
+        var label: View? = null
+        for (i in 0 until container.childCount) {
+            val v = container.getChildAt(i)
+            if (v.tag == "section") { label = v; continue }
+            if (v is com.google.android.material.card.MaterialCardView && v.id != R.id.settings_search_card) {
+                val sb = StringBuilder(); textOf(v, sb)
+                entries.add(Entry(v, label, sb.toString().lowercase()))
+            }
+        }
+        val wasOpen = HashMap<View, Boolean>()
+        val searchBox = findViewById<EditText>(R.id.settings_search)
+        val clear = findViewById<View>(R.id.settings_search_clear)
+        val chips = findViewById<View>(R.id.settings_chips).parent as View
+
+        fun contentOf(card: View): Pair<View, TextView?>? {
+            val inner = (card as? android.view.ViewGroup)?.getChildAt(0) as? android.view.ViewGroup ?: return null
+            if (inner.childCount < 2 || inner.getChildAt(0).id == View.NO_ID) return null
+            val header = inner.getChildAt(0) as? android.view.ViewGroup ?: return null
+            var arrow: TextView? = null
+            for (k in 0 until header.childCount) (header.getChildAt(k) as? TextView)?.let { if (it.text == "▼") arrow = it }
+            return inner.getChildAt(1) to arrow
+        }
+
+        fun filter(q: String) {
+            val query = q.trim().lowercase()
+            searching = query.isNotEmpty()
+            clear.visibility = if (searching) View.VISIBLE else View.GONE
+            chips.visibility = if (searching) View.GONE else View.VISIBLE
+            val visibleLabels = HashSet<View>()
+            entries.forEach { e ->
+                val match = query.isEmpty() || e.blob.contains(query)
+                e.view.visibility = if (match) View.VISIBLE else View.GONE
+                if (match) e.label?.let { visibleLabels.add(it) }
+                contentOf(e.view)?.let { (content, arrow) ->
+                    if (searching && match) {
+                        if (!wasOpen.containsKey(e.view)) wasOpen[e.view] = content.visibility == View.VISIBLE
+                        content.visibility = View.VISIBLE; arrow?.rotation = 180f
+                    } else if (!searching) {
+                        wasOpen.remove(e.view)?.let { open -> content.visibility = if (open) View.VISIBLE else View.GONE; arrow?.rotation = if (open) 180f else 0f }
+                    }
+                }
+            }
+            for (i in 0 until container.childCount) {
+                val v = container.getChildAt(i)
+                if (v.tag == "section") v.visibility = if (!searching || v in visibleLabels) View.VISIBLE else View.GONE
+            }
+            findViewById<View>(R.id.settings_no_results).visibility = if (searching && entries.none { it.view.visibility == View.VISIBLE }) View.VISIBLE else View.GONE
+        }
+        searchBox.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) { filter(s?.toString().orEmpty()) }
+            override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+            override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+        })
+        clear.setOnClickListener { searchBox.setText("") }
+    }
+
+    private class Section(val content: View, val arrow: TextView, val onToggle: ((Boolean) -> Unit)?, val topLevel: Boolean)
+
+    private val sections = ArrayList<Section>()
+    private var searching = false
+
     internal fun setupSectionToggle(header: View, content: View, arrow: TextView, onToggle: ((Boolean) -> Unit)? = null) {
+        val container = findViewById<View>(R.id.settings_content_container)
+        // Only the main cards take part in "open one at a time"; sections nested inside a card just open and close.
+        val card = header.parent?.parent as? View
+        val topLevel = card?.parent === container
+        val me = Section(content, arrow, onToggle, topLevel)
+        sections.add(me)
         header.setOnClickListener {
-            val visible = content.visibility == View.VISIBLE
-            val expanded = !visible
+            val expanded = content.visibility != View.VISIBLE
+            if (expanded && topLevel && !searching) {
+                sections.filter { it !== me && it.topLevel && it.content.visibility == View.VISIBLE }.forEach {
+                    it.content.visibility = View.GONE
+                    it.arrow.animate().rotation(0f).setDuration(200).start()
+                    it.onToggle?.invoke(false)
+                }
+            }
             content.visibility = if (expanded) View.VISIBLE else View.GONE
             arrow.animate().rotation(if (expanded) 180f else 0f).setDuration(250).start()
             onToggle?.invoke(expanded)
+            if (expanded && topLevel && card != null) {
+                findViewById<ScrollView>(R.id.settings_scroll_view).post {
+                    findViewById<ScrollView>(R.id.settings_scroll_view).smoothScrollTo(0, (card.top - (12 * resources.displayMetrics.density)).toInt().coerceAtLeast(0))
+                }
+            }
         }
     }
 

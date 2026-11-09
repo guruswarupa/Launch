@@ -688,6 +688,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var lastSuiteRevision: Long? = null
+    private var pendingCallNumber: String? = null
+
+    /** Starts a call right away when allowed. Otherwise it asks once, and falls back to the dialer if refused. */
+    fun placeCall(number: String) {
+        val uri = android.net.Uri.parse("tel:" + android.net.Uri.encode(number))
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            try { startActivity(Intent(Intent.ACTION_CALL, uri)) } catch (_: Exception) { startActivity(Intent(Intent.ACTION_DIAL, uri)) }
+        } else {
+            pendingCallNumber = number
+            permissionManager.requestCallPhonePermission()
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -821,6 +833,16 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == com.guruswarupa.launch.core.PermissionManager.REQUEST_CODE_CALL_PHONE) {
+            val number = pendingCallNumber
+            pendingCallNumber = null
+            if (number != null) {
+                val granted = grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
+                val uri = android.net.Uri.parse("tel:" + android.net.Uri.encode(number))
+                try { startActivity(Intent(if (granted) Intent.ACTION_CALL else Intent.ACTION_DIAL, uri)) } catch (_: Exception) {}
+            }
+        }
 
         permissionManager.handlePermissionResult(
             requestCode,

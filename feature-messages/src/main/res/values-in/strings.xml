@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">Kirim ke %s</string>
+    <string name="msg_retry">Coba lagi</string>
+    <string name="msg_photo">Foto</string>
+    <string name="msg_attach">Lampirkan</string>
+    <string name="msg_to_hint">Kepada (nama atau nomor)</string>
+    <string name="msg_no_conversations">Belum ada percakapan</string>
+    <string name="msg_notif_channel">Pesan masuk</string>
+    <string name="msg_picture_message">Pesan gambar</string>
+    <string name="msg_new">Pesan baru</string>
+    <string name="msg_permission_message">Pesan Launch memerlukan akses ke SMS dan kontakmu.</string>
+    <string name="msg_send_failed">Tidak dapat mengirim pesan</string>
+    <string name="msg_type_hint">Pesan</string>
+    <string name="msg_too_large">Terlalu besar untuk dikirim. Operator ini mengizinkan sekitar %d KB per pesan.</string>
+    <string name="msg_set_default">Jadikan default</string>
+    <string name="msg_today">Hari ini</string>
+    <string name="msg_emoji">Emoji</string>
+    <string name="msg_search_hint">Cari pesan</string>
+    <string name="msg_video">Video</string>
+    <string name="msg_not_sent">Belum terkirim</string>
+    <string name="msg_send">Kirim</string>
+    <string name="msg_need_default">Jadikan Pesan Launch sebagai aplikasi SMS default untuk mengirim SMS</string>
+    <string name="msg_sending">Mengirim…</string>
+    <string name="msg_delete_message">Percakapan ini akan dihapus permanen dari ponselmu.</string>
+    <string name="msg_delete_conversation">Hapus percakapan</string>
+    <string name="app_messages">Pesan</string>
+    <string name="msg_audio">Audio</string>
+    <string name="msg_you">Anda: </string>
+    <string name="msg_default_banner">Jadikan Pesan Launch sebagai aplikasi SMS default untuk mengirim dan menerima SMS.</string>
+</resources>

@@ -42,7 +42,9 @@ object BloatCatalog {
         s("com.samsung.android.samsungpass", "Samsung Pass", "Samsung"),
         s("com.sec.android.app.shealth", "Samsung Health", "Samsung"),
         s("com.sec.android.app.sbrowser", "Samsung Internet", "Samsung"),
-        c("com.samsung.android.messaging", "Samsung Messages", "Samsung"),
+        c("com.samsung.android.messaging", "Samsung Messages", "Samsung", "messages"),
+        c("com.android.mms", "Messaging", "Xiaomi / AOSP", "messages"),
+        c("com.google.android.apps.messaging", "Google Messages", "Google", "messages"),
 
         // ---- Xiaomi / Redmi / POCO ----
         s("com.miui.calculator", "Mi Calculator", "Xiaomi", "calculator"),

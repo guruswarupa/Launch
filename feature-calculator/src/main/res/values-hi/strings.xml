@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conv_currency">मुद्रा</string>
+    <string name="conv_temperature">तापमान</string>
+    <string name="calc_history">इतिहास</string>
+    <string name="calc_clear_history">इतिहास साफ़ करें</string>
+    <string name="conv_base">संख्या आधार</string>
+    <string name="calc_err_format">अमान्य प्रारूप</string>
+    <string name="conv_mass">द्रव्यमान</string>
+    <string name="conv_title">बदलें</string>
+    <string name="calc_err_domain">अमान्य इनपुट</string>
+    <string name="conv_time">समय</string>
+    <string name="calc_history_empty">अभी कोई इतिहास नहीं</string>
+    <string name="calc_err_range">नतीजा बहुत बड़ा है</string>
+    <string name="calc_err_div0">शून्य से भाग नहीं हो सकता</string>
+    <string name="conv_area">क्षेत्रफल</string>
+    <string name="conv_volume">आयतन</string>
+    <string name="conv_swap">इकाइयाँ बदलें</string>
+    <string name="conv_length">लंबाई</string>
+    <string name="conv_speed">गति</string>
+    <string name="calc_scientific">वैज्ञानिक</string>
+    <string name="converter_rate_unavailable">वर्तमान दरें अनुपलब्ध</string>
+    <string name="calc_basic">सामान्य</string>
+    <string name="conv_data">डेटा</string>
+    <string name="converter_result_cached_format">%1$s (कैश किया गया)</string>
+    <string name="calc_deg">DEG</string>
+    <string name="app_calculator">कैलकुलेटर</string>
+    <string name="calc_rad">RAD</string>
+</resources>

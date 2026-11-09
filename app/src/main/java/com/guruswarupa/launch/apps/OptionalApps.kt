@@ -20,6 +20,9 @@ object OptionalApps {
     private const val PREFS = "optional_apps"
 
     val all = listOf(
+        SuiteApp("phone", "PhoneActivity", R.string.app_phone, R.string.suite_phone_desc, R.drawable.ic_app_phone, "com.guruswarupa.launch.apps.phone.PhoneActivity"),
+        SuiteApp("messages", "MessagesActivity", R.string.app_messages, R.string.suite_messages_desc, R.drawable.ic_app_messages, "com.guruswarupa.launch.apps.messages.MessagesActivity"),
+        SuiteApp("contacts", "ContactsActivity", R.string.app_contacts, R.string.suite_contacts_desc, R.drawable.ic_app_contacts, "com.guruswarupa.launch.apps.phone.ContactsActivity"),
         SuiteApp("files", "FilesActivity", R.string.app_files, R.string.suite_files_desc, R.drawable.ic_app_files, "com.guruswarupa.launch.ui.activities.FilesActivity"),
         SuiteApp("camera", "CameraActivity", R.string.app_camera, R.string.suite_camera_desc, R.drawable.ic_app_camera, "com.guruswarupa.launch.ui.activities.CameraActivity"),
         SuiteApp("gallery", "GalleryActivity", R.string.app_gallery, R.string.suite_gallery_desc, R.drawable.ic_app_gallery, "com.guruswarupa.launch.ui.activities.GalleryActivity"),

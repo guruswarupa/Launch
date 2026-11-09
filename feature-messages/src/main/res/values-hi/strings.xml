@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">%s को भेजें</string>
+    <string name="msg_retry">फिर कोशिश करें</string>
+    <string name="msg_photo">फ़ोटो</string>
+    <string name="msg_attach">जोड़ें</string>
+    <string name="msg_to_hint">प्रति (नाम या नंबर)</string>
+    <string name="msg_no_conversations">अभी कोई बातचीत नहीं</string>
+    <string name="msg_notif_channel">आने वाले संदेश</string>
+    <string name="msg_picture_message">मीडिया संदेश</string>
+    <string name="msg_new">नया संदेश</string>
+    <string name="msg_permission_message">Launch संदेश को आपके टेक्स्ट संदेशों और संपर्कों तक पहुँच चाहिए।</string>
+    <string name="msg_send_failed">संदेश भेजा नहीं जा सका</string>
+    <string name="msg_type_hint">संदेश</string>
+    <string name="msg_too_large">भेजने के लिए बहुत बड़ा। यह ऑपरेटर प्रति संदेश लगभग %d KB की अनुमति देता है।</string>
+    <string name="msg_set_default">डिफ़ॉल्ट बनाएँ</string>
+    <string name="msg_today">आज</string>
+    <string name="msg_emoji">इमोजी</string>
+    <string name="msg_search_hint">संदेश खोजें</string>
+    <string name="msg_video">वीडियो</string>
+    <string name="msg_not_sent">भेजा नहीं गया</string>
+    <string name="msg_send">भेजें</string>
+    <string name="msg_need_default">SMS भेजने के लिए Launch संदेश को डिफ़ॉल्ट SMS ऐप बनाएँ</string>
+    <string name="msg_sending">भेजा जा रहा है…</string>
+    <string name="msg_delete_message">यह बातचीत आपके फ़ोन से हमेशा के लिए हट जाएगी।</string>
+    <string name="msg_delete_conversation">बातचीत हटाएँ</string>
+    <string name="app_messages">संदेश</string>
+    <string name="msg_audio">ऑडियो</string>
+    <string name="msg_you">आप: </string>
+    <string name="msg_default_banner">SMS भेजने और पाने के लिए Launch संदेश को अपना डिफ़ॉल्ट SMS ऐप बनाएँ।</string>
+</resources>

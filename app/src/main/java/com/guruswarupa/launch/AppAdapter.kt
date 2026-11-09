@@ -752,14 +752,7 @@ class AppAdapter(
             it.name == name && it.url == url
         }
 
-        activity.startActivity(
-            Intent(activity, WebAppActivity::class.java).apply {
-                putExtra(WebAppActivity.EXTRA_WEB_APP_NAME, name)
-                putExtra(WebAppActivity.EXTRA_WEB_APP_URL, url)
-                putExtra(WebAppActivity.EXTRA_BLOCK_REDIRECTS, webAppEntry?.blockRedirects ?: true)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            }
-        )
+        activity.startActivity(WebAppActivity.launchIntent(activity, name, url, webAppEntry?.blockRedirects ?: true, webAppEntry?.viewMode ?: "auto"))
     }
 
     private fun showContactChoiceDialog(contactName: String) {
@@ -831,9 +824,7 @@ class AppAdapter(
         return photoUri
     }
 
-    private fun call(phoneNumber: String) {
-        activity.startActivity(Intent(Intent.ACTION_DIAL).apply { data = "tel:$phoneNumber".toUri() })
-    }
+    private fun call(phoneNumber: String) = activity.placeCall(phoneNumber)
 
     private fun getPhoneNumberForContact(contactName: String): String {
         val cursor: Cursor? = activity.contentResolver.query(

@@ -24,3 +24,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "launch"
 include(":app")
+include(":shared")
+include(":feature-calculator")
+include(":feature-calendar")
+include(":feature-clock")
+include(":feature-phone")
+include(":feature-messages")
+include(":feature-camera")

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">Отправить на %s</string>
+    <string name="msg_retry">Повторить</string>
+    <string name="msg_photo">Фото</string>
+    <string name="msg_attach">Прикрепить</string>
+    <string name="msg_to_hint">Кому (имя или номер)</string>
+    <string name="msg_no_conversations">Переписок пока нет</string>
+    <string name="msg_notif_channel">Входящие сообщения</string>
+    <string name="msg_picture_message">MMS-сообщение</string>
+    <string name="msg_new">Новое сообщение</string>
+    <string name="msg_permission_message">«Сообщениям Launch» нужен доступ к SMS и контактам.</string>
+    <string name="msg_send_failed">Не удалось отправить сообщение</string>
+    <string name="msg_type_hint">Сообщение</string>
+    <string name="msg_too_large">Слишком большое для отправки. Оператор разрешает около %d КБ на сообщение.</string>
+    <string name="msg_set_default">Сделать основным</string>
+    <string name="msg_today">Сегодня</string>
+    <string name="msg_emoji">Эмодзи</string>
+    <string name="msg_search_hint">Поиск сообщений</string>
+    <string name="msg_video">Видео</string>
+    <string name="msg_not_sent">Не отправлено</string>
+    <string name="msg_send">Отправить</string>
+    <string name="msg_need_default">Сделайте «Сообщения Launch» приложением SMS по умолчанию, чтобы отправлять SMS</string>
+    <string name="msg_sending">Отправка…</string>
+    <string name="msg_delete_message">Эта переписка будет удалена с телефона навсегда.</string>
+    <string name="msg_delete_conversation">Удалить переписку</string>
+    <string name="app_messages">Сообщения</string>
+    <string name="msg_audio">Аудио</string>
+    <string name="msg_you">Вы: </string>
+    <string name="msg_default_banner">Сделайте «Сообщения Launch» приложением SMS по умолчанию, чтобы отправлять и получать SMS.</string>
+</resources>

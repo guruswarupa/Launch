@@ -60,8 +60,310 @@
                     android:shadowDy="2"
                     android:shadowRadius="6"/>
             </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/settings_search_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/appSurface"
+                app:cardCornerRadius="28dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/appOutline">
 
-            
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="20dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="?attr/appIconTint"
+                        android:contentDescription="@null"/>
+
+                    <EditText
+                        android:id="@+id/settings_search"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:background="@null"
+                        android:hint="@string/settings_search_hint"
+                        android:textColorHint="?attr/appTextSecondary"
+                        android:textColor="?attr/appTextPrimary"
+                        android:textSize="15sp"
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
+                        android:maxLines="1"
+                        android:paddingVertical="15dp"/>
+
+                    <TextView
+                        android:id="@+id/settings_search_clear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✕"
+                        android:textSize="16sp"
+                        android:textColor="?attr/appTextPrimary"
+                        android:alpha="0.6"
+                        android:padding="8dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/settings_no_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="32dp"
+                android:text="@string/settings_no_results"
+                android:textColor="?attr/appTextSecondary"
+                android:textSize="15sp"
+                android:visibility="gone"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:scrollbars="none"
+                android:clipToPadding="false">
+
+                <LinearLayout
+                    android:id="@+id/settings_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="2dp">
+                <TextView
+                    android:id="@+id/chip_appearance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/settings_card_background"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/set_sec_appearance"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/settings_card_background"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/set_sec_search"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/settings_card_background"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/set_sec_content"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_privacy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/settings_card_background"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/set_sec_privacy"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_tools"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/settings_card_background"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/set_sec_tools"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                <TextView
+                    android:id="@+id/chip_about"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/settings_card_background"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/set_sec_about"
+                    android:textColor="?attr/appTextPrimary"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:clickable="true"
+                    android:focusable="true"/>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/sec_suite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="section"
+                android:text="@string/set_sec_suite"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
+                android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="12dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/launch_apps_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/appSurface"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/appOutline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="22dp"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_apps_grid"
+                        app:tint="?attr/appIconTint"
+                        android:contentDescription="@null"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/launch_apps_title"
+                            android:textColor="?attr/appTextPrimary"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/launch_apps_card_desc"
+                            android:textColor="?attr/appTextSecondary"
+                            android:textSize="13sp"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="22sp"
+                        android:textColor="?attr/appTextPrimary"
+                        android:alpha="0.4"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/bloat_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/appSurface"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/appOutline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="22dp"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_f_info"
+                        app:tint="?attr/appIconTint"
+                        android:contentDescription="@null"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bloat_title"
+                            android:textColor="?attr/appTextPrimary"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bloat_card_desc"
+                            android:textColor="?attr/appTextSecondary"
+                            android:textSize="13sp"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textSize="22sp"
+                        android:textColor="?attr/appTextPrimary"
+                        android:alpha="0.4"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/app_tour_card"
                 android:layout_width="match_parent"
@@ -114,17 +416,20 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
+                android:id="@+id/sec_appearance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/appearance"
+                android:tag="section"
+                android:text="@string/set_sec_appearance"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
                 android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:layout_marginStart="12dp"/>
 
-            
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -722,7 +1027,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -830,6 +1135,17 @@
                                 android:paddingVertical="4dp"/>
                         </com.guruswarupa.launch.ui.views.SafeHorizontalScrollView>
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/apply_theme_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/set_theme_wallpaper"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"
+                            android:visibility="gone"/>
+
                         <TextView
                             android:text="@string/accent_color"
                             android:layout_width="wrap_content"
@@ -886,20 +1202,6 @@
                             android:alpha="0.5"
                             android:layout_marginTop="4dp"/>
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/apply_theme_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:layout_marginTop="16dp"
-                            android:text="@string/set_theme_wallpaper"
-                            android:textAllCaps="false"
-                            app:cornerRadius="12dp"
-                            android:backgroundTint="#66000000"
-                            android:textColor="?attr/appTextPrimary"
-                            app:strokeWidth="1dp"
-                            app:strokeColor="#40FFFFFF"
-                            android:fontFamily="sans-serif-black"
-                            android:visibility="gone"/>
 
                         <View
                             android:layout_width="match_parent"
@@ -919,7 +1221,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -1208,22 +1509,179 @@
                         <Button
                             android:id="@+id/browse_icon_packs_button"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/browse_icon_packs_on_play_store"
-                            android:textSize="12sp"
-                            android:textColor="?attr/appTextPrimary"
-                            android:fontFamily="sans-serif-medium"
+                            android:layout_height="52dp"
                             android:layout_marginTop="12dp"
-                            android:paddingVertical="10dp"
-                            app:strokeColor="#40FFFFFF"
-                            app:rippleColor="#20FFFFFF"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                            android:text="@string/browse_icon_packs_on_play_store"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"/>
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/appSurface"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/appOutline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <LinearLayout
+                        android:id="@+id/dock_settings_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="16dp"
+                        android:background="?attr/selectableItemBackgroundBorderless">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_apps_grid"
+                            app:tint="?attr/appIconTint"
+                            android:alpha="1.0"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/dock_controls"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/appTextPrimary"/>
+
+                        <TextView
+                            android:id="@+id/dock_settings_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="▼"
+                            android:textSize="10sp"
+                            android:textColor="?attr/appTextPrimary"
+                            android:alpha="0.4"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/dock_settings_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hide_work_profile"
+                                android:textColor="?attr/appTextPrimary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/dock_hide_work_profile_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hide_focus_mode"
+                                android:textColor="?attr/appTextPrimary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/dock_hide_focus_mode_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hide_workspaces"
+                                android:textColor="?attr/appTextPrimary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/dock_hide_workspaces_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="?attr/appAccent"
+                                app:trackTint="?attr/appAccent" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hiding_all_three_will_remove_the_dock_entirely"
+                            android:textColor="?attr/appTextPrimary"
+                            android:textSize="12sp"
+                            android:alpha="0.5"
+                            android:fontFamily="sans-serif" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/sec_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="section"
+                android:text="@string/set_sec_search"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
+                android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="12dp"/>
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -1333,19 +1791,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/features"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="?attr/appAccent"
-                android:letterSpacing="0.15"
-                android:layout_marginBottom="12dp"
-                android:layout_marginStart="12dp"/>
-
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -1501,7 +1946,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -2289,199 +2733,21 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            
-            
-            <com.google.android.material.card.MaterialCardView
+
+            <TextView
+                android:id="@+id/sec_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:tag="section"
+                android:text="@string/set_sec_content"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
+                android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/appSurface"
-                app:cardCornerRadius="24dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/appOutline">
-            
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="6dp">
-            
-                    <LinearLayout
-                        android:id="@+id/app_timer_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="64dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:paddingHorizontal="16dp"
-                        android:background="?attr/selectableItemBackgroundBorderless">
-            
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:src="@drawable/ic_timer"
-                            app:tint="?attr/appIconTint"
-                            android:alpha="1.0"/>
-            
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="@string/app_timer"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textColor="?attr/appTextPrimary"/>
-            
-                        <TextView
-                            android:id="@+id/app_timer_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="▼"
-                            android:textSize="10sp"
-                            android:textColor="?attr/appTextPrimary"
-                            android:alpha="0.4"/>
-                    </LinearLayout>
-            
-                    <LinearLayout
-                        android:id="@+id/app_timer_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp">
-            
-                        <Button
-                            android:id="@+id/manage_app_timers_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/manage_app_timers"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-            
-            
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/appSurface"
-                app:cardCornerRadius="24dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/appOutline">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="6dp">
-
-                    <LinearLayout
-                        android:id="@+id/app_lock_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="64dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:paddingHorizontal="16dp"
-                        android:background="?attr/selectableItemBackgroundBorderless">
-
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:src="@drawable/ic_vault_icon"
-                            app:tint="?attr/appIconTint"
-                            android:alpha="1.0"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="@string/category_security_privacy"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textColor="?attr/appTextPrimary"/>
-
-                        <TextView
-                            android:id="@+id/app_lock_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="▼"
-                            android:textSize="10sp"
-                            android:textColor="?attr/appTextPrimary"
-                            android:alpha="0.4"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/app_lock_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp">
-
-                        <Button
-                            android:id="@+id/app_lock_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/app_lock_and_vault"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"
-                            android:layout_marginBottom="8dp"/>
-
-                        <Button
-                            android:id="@+id/launch_apps_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/launch_apps_title"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"
-                            android:layout_marginBottom="8dp"/>
-
-                        <Button
-                            android:id="@+id/bloat_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/bloat_title"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"
-                            android:layout_marginBottom="8dp"/>
-
-                        <Button
-                            android:id="@+id/hidden_apps_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/hidden_applications"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"
-                            android:layout_marginBottom="8dp"/>
-
-                        <Button
-                            android:id="@+id/privacy_dashboard_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/privacy_dashboard"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"/>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:layout_marginStart="12dp"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -2729,7 +2995,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -2804,7 +3070,97 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/sec_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="section"
+                android:text="@string/set_sec_privacy"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
+                android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="12dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/appSurface"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/appOutline">
             
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+            
+                    <LinearLayout
+                        android:id="@+id/app_timer_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="16dp"
+                        android:background="?attr/selectableItemBackgroundBorderless">
+            
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_timer"
+                            app:tint="?attr/appIconTint"
+                            android:alpha="1.0"/>
+            
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/app_timer"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/appTextPrimary"/>
+            
+                        <TextView
+                            android:id="@+id/app_timer_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="▼"
+                            android:textSize="10sp"
+                            android:textColor="?attr/appTextPrimary"
+                            android:alpha="0.4"/>
+                    </LinearLayout>
+            
+                    <LinearLayout
+                        android:id="@+id/app_timer_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp">
+            
+                        <Button
+                            android:id="@+id/manage_app_timers_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/manage_app_timers"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -2822,7 +3178,7 @@
                     android:padding="6dp">
 
                     <LinearLayout
-                        android:id="@+id/dock_settings_header"
+                        android:id="@+id/app_lock_header"
                         android:layout_width="match_parent"
                         android:layout_height="64dp"
                         android:orientation="horizontal"
@@ -2835,7 +3191,7 @@
                         <ImageView
                             android:layout_width="22dp"
                             android:layout_height="22dp"
-                            android:src="@drawable/ic_apps_grid"
+                            android:src="@drawable/ic_vault_icon"
                             app:tint="?attr/appIconTint"
                             android:alpha="1.0"/>
 
@@ -2844,13 +3200,13 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
-                            android:text="@string/dock_controls"
+                            android:text="@string/category_security_privacy"
                             android:textSize="16sp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="?attr/appTextPrimary"/>
 
                         <TextView
-                            android:id="@+id/dock_settings_arrow"
+                            android:id="@+id/app_lock_arrow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="▼"
@@ -2860,7 +3216,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/dock_settings_content"
+                        android:id="@+id/app_lock_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -2868,90 +3224,143 @@
                         android:paddingHorizontal="16dp"
                         android:paddingBottom="16dp">
 
-                        <LinearLayout
+                        <Button
+                            android:id="@+id/app_lock_button"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/hide_work_profile"
-                                android:textColor="?attr/appTextPrimary"
-                                android:textSize="14sp"
-                                android:fontFamily="sans-serif-medium" />
-
-                            <androidx.appcompat.widget.SwitchCompat
-                                android:id="@+id/dock_hide_work_profile_switch"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:thumbTint="?attr/appAccent"
-                                app:trackTint="?attr/appAccent" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/hide_focus_mode"
-                                android:textColor="?attr/appTextPrimary"
-                                android:textSize="14sp"
-                                android:fontFamily="sans-serif-medium" />
-
-                            <androidx.appcompat.widget.SwitchCompat
-                                android:id="@+id/dock_hide_focus_mode_switch"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:thumbTint="?attr/appAccent"
-                                app:trackTint="?attr/appAccent" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/hide_workspaces"
-                                android:textColor="?attr/appTextPrimary"
-                                android:textSize="14sp"
-                                android:fontFamily="sans-serif-medium" />
-
-                            <androidx.appcompat.widget.SwitchCompat
-                                android:id="@+id/dock_hide_workspaces_switch"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:thumbTint="?attr/appAccent"
-                                app:trackTint="?attr/appAccent" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/hiding_all_three_will_remove_the_dock_entirely"
+                            android:layout_height="52dp"
+                            android:text="@string/app_lock_and_vault"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
                             android:textColor="?attr/appTextPrimary"
-                            android:textSize="12sp"
-                            android:alpha="0.5"
-                            android:fontFamily="sans-serif" />
+                            android:layout_marginBottom="8dp"/>
+
+
+
+                        <Button
+                            android:id="@+id/hidden_apps_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/hidden_applications"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"
+                            android:layout_marginBottom="8dp"/>
+
+                        <Button
+                            android:id="@+id/privacy_dashboard_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/privacy_dashboard"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"/>
+
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="?attr/appSurface"
+                app:cardCornerRadius="24dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/appOutline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <LinearLayout
+                        android:id="@+id/permissions_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="16dp"
+                        android:background="?attr/selectableItemBackgroundBorderless">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="?attr/appIconTint"
+                            android:alpha="1.0"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/launcher_info"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/appTextPrimary"/>
+
+                        <TextView
+                            android:id="@+id/permissions_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="▼"
+                            android:textSize="10sp"
+                            android:textColor="?attr/appTextPrimary"
+                            android:alpha="0.4"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/permissions_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp">
+
+                        <Button
+                            android:id="@+id/check_permissions_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/manage_system_permissions"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"
+                            android:layout_marginBottom="12dp"/>
+
+                        <Button
+                            android:id="@+id/app_info_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/system_app_settings"
+                            android:textAllCaps="false"
+                            android:background="@drawable/settings_card_background"
+                            android:textColor="?attr/appTextPrimary"
+                            android:layout_marginBottom="12dp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/sec_tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="section"
+                android:text="@string/set_sec_tools"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
+                android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="12dp"/>
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -3122,17 +3531,20 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
+                android:id="@+id/sec_about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/maintenance"
+                android:tag="section"
+                android:text="@string/set_sec_about"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="?attr/appAccent"
+                android:textAllCaps="true"
                 android:letterSpacing="0.15"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:layout_marginStart="12dp"/>
 
-            
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -3338,95 +3750,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="?attr/appSurface"
-                app:cardCornerRadius="24dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/appOutline">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="6dp">
-
-                    <LinearLayout
-                        android:id="@+id/permissions_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="64dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:paddingHorizontal="16dp"
-                        android:background="?attr/selectableItemBackgroundBorderless">
-
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:src="@drawable/ic_person"
-                            app:tint="?attr/appIconTint"
-                            android:alpha="1.0"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="@string/launcher_info"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textColor="?attr/appTextPrimary"/>
-
-                        <TextView
-                            android:id="@+id/permissions_arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="▼"
-                            android:textSize="10sp"
-                            android:textColor="?attr/appTextPrimary"
-                            android:alpha="0.4"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/permissions_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp">
-
-                        <Button
-                            android:id="@+id/check_permissions_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/manage_system_permissions"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"
-                            android:layout_marginBottom="12dp"/>
-
-                        <Button
-                            android:id="@+id/app_info_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:text="@string/system_app_settings"
-                            android:textAllCaps="false"
-                            android:background="@drawable/settings_card_background"
-                            android:textColor="?attr/appTextPrimary"
-                            android:layout_marginBottom="12dp"/>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -3626,7 +3949,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

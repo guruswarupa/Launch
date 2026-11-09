@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">Tidak dapat menyimpan foto</string>
+    <string name="cam_pro_focus">Fokus</string>
+    <string name="app_camera">Kamera</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">Kualitas maks.</string>
+    <string name="cam_quality_fast">Cepat</string>
+    <string name="cam_cd_flip">Ganti kamera</string>
+    <string name="cam_locked">AE/AF terkunci</string>
+    <string name="cam_pro_wb">WB</string>
+    <string name="cam_mic_on">Mik aktif</string>
+    <string name="cam_video">VIDEO</string>
+    <string name="cam_mode_night">MALAM</string>
+    <string name="cam_cd_shutter">Tombol rana</string>
+    <string name="cam_mode_pro">PRO</string>
+    <string name="cam_photo">FOTO</string>
+    <string name="cam_cd_flash">Lampu kilat</string>
+    <string name="cam_pro_shutter">Rana</string>
+    <string name="cam_mode_portrait">POTRET</string>
+    <string name="cam_cd_level">Level</string>
+    <string name="cam_timer_seconds">%1$d dtk</string>
+    <string name="cam_cd_back">Kembali</string>
+    <string name="cam_permission">Izin kamera diperlukan</string>
+    <string name="cam_stabilize">Stabilkan</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">Buka hasil terakhir</string>
+    <string name="cam_unavailable">Kamera tidak tersedia</string>
+    <string name="cam_mic_off">Bisu</string>
+    <string name="cam_record_failed">Perekaman gagal</string>
+    <string name="cam_auto">Otomatis</string>
+    <string name="cam_wb_cloudy">Berawan</string>
+    <string name="cam_wb_tungsten">Tungsten</string>
+    <string name="cam_cd_timer">Timer</string>
+    <string name="cam_wb_fluorescent">Neon</string>
+    <string name="cam_wb_sunny">Cerah</string>
+    <string name="cam_cd_ratio">Rasio aspek</string>
+    <string name="cam_cd_grid">Kisi</string>
+</resources>

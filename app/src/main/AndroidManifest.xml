@@ -16,6 +16,19 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_MMS" />
+    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
@@ -34,6 +47,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SENSOR" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -166,9 +180,20 @@
             android:label=""
             android:excludeFromRecents="true" />
 
+        <service
+            android:name=".services.WebMediaService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <activity
+            android:name=".ui.activities.PhotoEditorActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Launch.Media" />
+
         <activity
             android:name=".ui.activities.WebAppActivity"
             android:exported="false"
+            android:supportsPictureInPicture="true"
             android:theme="@style/Theme.Launch.Settings"
             android:label="@string/app_name"
             android:launchMode="standard"
@@ -481,22 +506,11 @@
             android:showWhenLocked="true"
             android:theme="@style/Theme.Launch.LockScreen" />
 
-        <activity
-            android:name=".ui.activities.CameraActivity"
-            android:showWhenLocked="true"
-            android:exported="true"
-            android:label="@string/app_camera"
-            android:icon="@drawable/ic_app_camera"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Launch.Media">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
 
         <activity
             android:name=".ui.activities.FilesActivity"
+            android:taskAffinity="com.guruswarupa.launch.files"
             android:exported="true"
             android:label="@string/app_files"
             android:icon="@drawable/ic_app_files"
@@ -509,6 +523,7 @@
 
         <activity
             android:name=".ui.activities.GalleryActivity"
+            android:taskAffinity="com.guruswarupa.launch.gallery"
             android:exported="true"
             android:label="@string/app_gallery"
             android:icon="@drawable/ic_app_gallery"
@@ -521,6 +536,7 @@
 
         <activity
             android:name=".ui.activities.PlayerActivity"
+            android:taskAffinity="com.guruswarupa.launch.player"
             android:exported="true"
             android:label="@string/app_video_player"
             android:icon="@drawable/ic_app_player"
@@ -546,72 +562,49 @@
             android:exported="false"
             android:theme="@style/Theme.Launch.Settings" />
 
-        <activity
-            android:name="com.guruswarupa.launch.apps.calculator.CalculatorActivity"
-            android:exported="true"
-            android:label="@string/app_calculator"
-            android:icon="@drawable/ic_app_calculator"
-            android:theme="@style/Theme.Launch.Settings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
-        <activity
-            android:name="com.guruswarupa.launch.apps.calendar.CalendarActivity"
-            android:exported="true"
-            android:label="@string/app_calendar"
-            android:icon="@drawable/ic_app_calendar"
-            android:theme="@style/Theme.Launch.Settings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
-        <activity
-            android:name="com.guruswarupa.launch.apps.clock.ClockActivity"
-            android:exported="true"
-            android:label="@string/app_clock"
-            android:icon="@drawable/ic_app_clock"
-            android:theme="@style/Theme.Launch.Settings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
-        <activity
-            android:name="com.guruswarupa.launch.apps.clock.AlarmRingActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:excludeFromRecents="true"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:theme="@style/Theme.Launch.Document" />
 
-        <receiver
-            android:name="com.guruswarupa.launch.apps.clock.AlarmReceiver"
-            android:exported="false" />
 
-        <receiver
-            android:name="com.guruswarupa.launch.apps.clock.ClockSystemReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
 
-        <service
-            android:name="com.guruswarupa.launch.apps.clock.AlarmRingService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property android:name="android.app.PROPERTY_SPECIAL_USE_CATEGORY" android:value="Ringing an alarm or timer the user set" />
-        </service>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <activity
             android:name=".ui.activities.StorageAnalyzerActivity"
@@ -662,6 +655,30 @@
             android:name=".ui.activities.VaultDocumentViewerActivity"
             android:targetActivity=".ui.activities.DocumentViewerActivity"
             android:exported="false" />
+
+            <activity android:name="com.guruswarupa.launch.apps.clock.AlarmRingActivity" android:theme="@style/Theme.Launch.Document" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.clock.ClockActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.calendar.CalendarActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.calculator.CalculatorActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.messages.ConversationActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.messages.MessagesActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.phone.InCallActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.phone.ContactDetailActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.phone.ContactEditActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.phone.ContactsActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.apps.phone.PhoneActivity" android:theme="@style/Theme.Launch.Settings" tools:node="merge" />
+
+        <activity android:name="com.guruswarupa.launch.ui.activities.CameraActivity" android:theme="@style/Theme.Launch.Media" tools:node="merge" />
 
     </application>
 

@@ -34,7 +34,7 @@ class WebAppManager @Inject constructor(private val sharedPreferences: SharedPre
                     val url = item.optString("url").trim()
                     val blockRedirects = item.optBoolean("blockRedirects", true)
                     if (name.isNotBlank() && url.isNotBlank()) {
-                        add(WebAppEntry(id = id, name = name, url = url, blockRedirects = blockRedirects))
+                        add(WebAppEntry(id = id, name = name, url = url, blockRedirects = blockRedirects, viewMode = item.optString("viewMode", "auto")))
                     }
                 }
             }
@@ -50,25 +50,25 @@ class WebAppManager @Inject constructor(private val sharedPreferences: SharedPre
 
     fun getResolveInfos(): List<ResolveInfo> = getWebApps().map(::createResolveInfo)
 
-    fun addWebApp(name: String, url: String, blockRedirects: Boolean = false) {
+    fun addWebApp(name: String, url: String, blockRedirects: Boolean = false, viewMode: String = "auto") {
         val normalizedName = name.trim()
         val normalizedUrl = normalizeUrl(url)
         val updated = getWebApps().toMutableList().apply {
-            add(WebAppEntry(UUID.randomUUID().toString(), normalizedName, normalizedUrl, blockRedirects))
+            add(WebAppEntry(UUID.randomUUID().toString(), normalizedName, normalizedUrl, blockRedirects, viewMode))
         }
         saveWebApps(updated)
     }
 
-    fun updateWebApp(id: String, name: String, url: String, blockRedirects: Boolean? = null) {
+    fun updateWebApp(id: String, name: String, url: String, blockRedirects: Boolean? = null, viewMode: String? = null) {
         val normalizedName = name.trim()
         val normalizedUrl = normalizeUrl(url)
         val updated = getWebApps().map { entry ->
             if (entry.id == id) {
-                if (blockRedirects != null) {
-                    entry.copy(name = normalizedName, url = normalizedUrl, blockRedirects = blockRedirects)
-                } else {
-                    entry.copy(name = normalizedName, url = normalizedUrl)
-                }
+                entry.copy(
+                    name = normalizedName, url = normalizedUrl,
+                    blockRedirects = blockRedirects ?: entry.blockRedirects,
+                    viewMode = viewMode ?: entry.viewMode
+                )
             } else entry
         }
         saveWebApps(updated)
@@ -130,6 +130,7 @@ class WebAppManager @Inject constructor(private val sharedPreferences: SharedPre
                     put("name", entry.name)
                     put("url", entry.url)
                     put("blockRedirects", entry.blockRedirects)
+                    put("viewMode", entry.viewMode)
                 }
             )
         }

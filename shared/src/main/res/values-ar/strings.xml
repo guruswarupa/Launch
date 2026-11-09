@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="files_cancel">إلغاء</string>
+    <string name="pick_today">اليوم</string>
+    <string name="files_close">إغلاق</string>
+    <string name="pick_ok">موافق</string>
+    <string name="pick_select_date">اختر التاريخ</string>
+    <string name="pick_select_time">اختر الوقت</string>
+    <string name="files_preparing">جارٍ التحضير…</string>
+    <string name="files_back">رجوع</string>
+    <string name="files_copy">نسخ</string>
+    <string name="calc_copied">تم النسخ</string>
+    <string name="clock_save">حفظ</string>
+    <string name="files_allow_access">السماح بالوصول</string>
+    <string name="files_delete">حذف</string>
+    <string name="msg_yesterday">أمس</string>
+    <string name="phone_call">اتصال</string>
+</resources>

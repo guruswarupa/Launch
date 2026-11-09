@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conv_currency">Валюта</string>
+    <string name="conv_temperature">Температура</string>
+    <string name="calc_history">История</string>
+    <string name="calc_clear_history">Очистить историю</string>
+    <string name="conv_base">Система счисления</string>
+    <string name="calc_err_format">Неверный формат</string>
+    <string name="conv_mass">Масса</string>
+    <string name="conv_title">Конвертер</string>
+    <string name="calc_err_domain">Недопустимый ввод</string>
+    <string name="conv_time">Время</string>
+    <string name="calc_history_empty">История пуста</string>
+    <string name="calc_err_range">Слишком большой результат</string>
+    <string name="calc_err_div0">Делить на ноль нельзя</string>
+    <string name="conv_area">Площадь</string>
+    <string name="conv_volume">Объём</string>
+    <string name="conv_swap">Поменять единицы</string>
+    <string name="conv_length">Длина</string>
+    <string name="conv_speed">Скорость</string>
+    <string name="calc_scientific">Инженерный</string>
+    <string name="converter_rate_unavailable">Текущие курсы недоступны</string>
+    <string name="calc_basic">Обычный</string>
+    <string name="conv_data">Данные</string>
+    <string name="converter_result_cached_format">%1$s (кэшировано)</string>
+    <string name="calc_deg">ГРАД</string>
+    <string name="app_calculator">Калькулятор</string>
+    <string name="calc_rad">РАД</string>
+</resources>

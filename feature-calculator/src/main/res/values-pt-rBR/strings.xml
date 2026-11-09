@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conv_currency">Moeda</string>
+    <string name="conv_temperature">Temperatura</string>
+    <string name="calc_history">Histórico</string>
+    <string name="calc_clear_history">Limpar histórico</string>
+    <string name="conv_base">Base numérica</string>
+    <string name="calc_err_format">Formato inválido</string>
+    <string name="conv_mass">Massa</string>
+    <string name="conv_title">Converter</string>
+    <string name="calc_err_domain">Entrada inválida</string>
+    <string name="conv_time">Tempo</string>
+    <string name="calc_history_empty">Nenhum histórico ainda</string>
+    <string name="calc_err_range">O resultado é muito grande</string>
+    <string name="calc_err_div0">Não é possível dividir por zero</string>
+    <string name="conv_area">Área</string>
+    <string name="conv_volume">Volume</string>
+    <string name="conv_swap">Trocar unidades</string>
+    <string name="conv_length">Comprimento</string>
+    <string name="conv_speed">Velocidade</string>
+    <string name="calc_scientific">Científica</string>
+    <string name="converter_rate_unavailable">Taxas atuais indisponíveis</string>
+    <string name="calc_basic">Básica</string>
+    <string name="conv_data">Dados</string>
+    <string name="converter_result_cached_format">%1$s (em cache)</string>
+    <string name="calc_deg">DEG</string>
+    <string name="app_calculator">Calculadora</string>
+    <string name="calc_rad">RAD</string>
+</resources>

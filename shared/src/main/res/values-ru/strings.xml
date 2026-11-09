@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="files_cancel">Отмена</string>
+    <string name="pick_today">Сегодня</string>
+    <string name="files_close">Закрыть</string>
+    <string name="pick_ok">ОК</string>
+    <string name="pick_select_date">Выберите дату</string>
+    <string name="pick_select_time">Выберите время</string>
+    <string name="files_preparing">Подготовка…</string>
+    <string name="files_back">Назад</string>
+    <string name="files_copy">Копировать</string>
+    <string name="calc_copied">Скопировано</string>
+    <string name="clock_save">Сохранить</string>
+    <string name="files_allow_access">Разрешить доступ</string>
+    <string name="files_delete">Удалить</string>
+    <string name="msg_yesterday">Вчера</string>
+    <string name="phone_call">Позвонить</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="files_cancel">ರದ್ದುಮಾಡಿ</string>
+    <string name="pick_today">ಇಂದು</string>
+    <string name="files_close">ಮುಚ್ಚಿ</string>
+    <string name="pick_ok">ಸರಿ</string>
+    <string name="pick_select_date">ದಿನಾಂಕ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="pick_select_time">ಸಮಯ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="files_preparing">ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ…</string>
+    <string name="files_back">ಹಿಂದೆ</string>
+    <string name="files_copy">ನಕಲಿಸಿ</string>
+    <string name="calc_copied">ನಕಲಿಸಲಾಗಿದೆ</string>
+    <string name="clock_save">ಉಳಿಸಿ</string>
+    <string name="files_allow_access">ಪ್ರವೇಶ ಅನುಮತಿಸಿ</string>
+    <string name="files_delete">ಅಳಿಸಿ</string>
+    <string name="msg_yesterday">ನಿನ್ನೆ</string>
+    <string name="phone_call">ಕರೆ</string>
+</resources>

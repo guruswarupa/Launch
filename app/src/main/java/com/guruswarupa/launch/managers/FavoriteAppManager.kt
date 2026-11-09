@@ -5,6 +5,17 @@ import androidx.core.content.edit
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val OWN_PACKAGE = "com.guruswarupa.launch"
+
+/**
+ * Launch's own apps (Calculator, Calendar, Files...) all live in one package, so a favorite for them has to
+ * include the activity name. Every other app is identified by its package name as before.
+ */
+fun favoriteKey(app: android.content.pm.ResolveInfo): String {
+    val pkg = app.activityInfo.packageName
+    return if (pkg == OWN_PACKAGE) "$pkg/${app.activityInfo.name}" else pkg
+}
+
 @Singleton
 class FavoriteAppManager @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
@@ -47,6 +58,12 @@ class FavoriteAppManager @Inject constructor(private val sharedPreferences: Shar
                     putStringSet(FAVORITE_APPS_KEY, recoveredSet)
                 }
                 favoritesCache = recoveredSet.toSet()
+            }
+            // Older versions stored a bare package name for Launch's own apps, which marked all of them as favorites at once.
+            if (favoritesCache?.contains(OWN_PACKAGE) == true) {
+                val cleaned = favoritesCache!!.toMutableSet().apply { remove(OWN_PACKAGE) }
+                sharedPreferences.edit { putStringSet(FAVORITE_APPS_KEY, cleaned) }
+                favoritesCache = cleaned.toSet()
             }
             cacheValid = true
         }

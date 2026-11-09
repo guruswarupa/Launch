@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="files_cancel">Batal</string>
+    <string name="pick_today">Hari ini</string>
+    <string name="files_close">Tutup</string>
+    <string name="pick_ok">OK</string>
+    <string name="pick_select_date">Pilih tanggal</string>
+    <string name="pick_select_time">Pilih waktu</string>
+    <string name="files_preparing">Menyiapkan…</string>
+    <string name="files_back">Kembali</string>
+    <string name="files_copy">Salin</string>
+    <string name="calc_copied">Disalin</string>
+    <string name="clock_save">Simpan</string>
+    <string name="files_allow_access">Izinkan akses</string>
+    <string name="files_delete">Hapus</string>
+    <string name="msg_yesterday">Kemarin</string>
+    <string name="phone_call">Panggil</string>
+</resources>

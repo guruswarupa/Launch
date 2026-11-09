@@ -127,6 +127,13 @@ gradle.projectsEvaluated {
 }
 
 dependencies {
+    implementation(project(":shared"))
+    implementation(project(":feature-calculator"))
+    implementation(project(":feature-calendar"))
+    implementation(project(":feature-clock"))
+    implementation(project(":feature-phone"))
+    implementation(project(":feature-messages"))
+    implementation(project(":feature-camera"))
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -169,12 +176,6 @@ dependencies {
         exclude(group = "org.bouncycastle", module = "bcpkix-jdk15to18")
         exclude(group = "org.bouncycastle", module = "bcutil-jdk15to18")
     }
-    implementation("androidx.camera:camera-core:1.4.2")
-    implementation("androidx.camera:camera-camera2:1.4.2")
-    implementation("androidx.camera:camera-lifecycle:1.4.2")
-    implementation("androidx.camera:camera-video:1.4.2")
-    implementation("androidx.camera:camera-view:1.4.2")
-    implementation("androidx.camera:camera-extensions:1.4.2")
     // Local file transfer (com.guruswarupa.launch.transfer)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)

@@ -100,8 +100,8 @@
         <LinearLayout
             android:id="@+id/photo_action_rotate"
             style="@style/MediaAction">
-            <ImageView style="@style/MediaActionIcon" android:src="@drawable/ic_media_rotate" android:contentDescription="@null" />
-            <TextView style="@style/MediaActionLabel" android:text="@string/media_action_rotate" />
+            <ImageView style="@style/MediaActionIcon" android:src="@drawable/ic_f_rename" android:contentDescription="@null" />
+            <TextView style="@style/MediaActionLabel" android:text="@string/media_action_edit" />
         </LinearLayout>
 
         <LinearLayout
@@ -114,8 +114,8 @@
         <LinearLayout
             android:id="@+id/photo_action_open"
             style="@style/MediaAction">
-            <ImageView style="@style/MediaActionIcon" android:src="@drawable/ic_media_open" android:contentDescription="@null" />
-            <TextView style="@style/MediaActionLabel" android:text="@string/media_action_open_with" />
+            <ImageView style="@style/MediaActionIcon" android:src="@drawable/ic_media_more" android:contentDescription="@null" />
+            <TextView style="@style/MediaActionLabel" android:text="@string/media_action_more" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

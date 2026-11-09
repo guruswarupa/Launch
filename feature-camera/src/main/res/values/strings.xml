@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">Could not save photo</string>
+    <string name="cam_pro_focus">Focus</string>
+    <string name="app_camera">Camera</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">Max quality</string>
+    <string name="cam_quality_fast">Fast</string>
+    <string name="cam_cd_flip">Switch camera</string>
+    <string name="cam_locked">AE/AF locked</string>
+    <string name="cam_pro_wb">WB</string>
+    <string name="cam_mic_on">Mic on</string>
+    <string name="cam_video">VIDEO</string>
+    <string name="cam_mode_night">NIGHT</string>
+    <string name="cam_cd_shutter">Shutter button</string>
+    <string name="cam_mode_pro">PRO</string>
+    <string name="cam_photo">PHOTO</string>
+    <string name="cam_cd_flash">Flash</string>
+    <string name="cam_pro_shutter">Shutter</string>
+    <string name="cam_mode_portrait">PORTRAIT</string>
+    <string name="cam_cd_level">Level</string>
+    <string name="cam_timer_seconds">%1$ds</string>
+    <string name="cam_cd_back">Back</string>
+    <string name="cam_permission">Camera permission is required</string>
+    <string name="cam_stabilize">Stabilize</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">Open last capture</string>
+    <string name="cam_unavailable">Camera unavailable</string>
+    <string name="cam_mic_off">Muted</string>
+    <string name="cam_record_failed">Recording failed</string>
+    <string name="cam_auto">Auto</string>
+    <string name="cam_wb_cloudy">Cloudy</string>
+    <string name="cam_wb_tungsten">Tungsten</string>
+    <string name="cam_cd_timer">Timer</string>
+    <string name="cam_wb_fluorescent">Fluorescent</string>
+    <string name="cam_wb_sunny">Sunny</string>
+    <string name="cam_cd_ratio">Aspect ratio</string>
+    <string name="cam_cd_grid">Grid</string>
+</resources>

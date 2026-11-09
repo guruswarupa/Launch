@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conv_currency">العملة</string>
+    <string name="conv_temperature">درجة الحرارة</string>
+    <string name="calc_history">السجل</string>
+    <string name="calc_clear_history">مسح السجل</string>
+    <string name="conv_base">نظام العد</string>
+    <string name="calc_err_format">تنسيق غير صالح</string>
+    <string name="conv_mass">الكتلة</string>
+    <string name="conv_title">تحويل</string>
+    <string name="calc_err_domain">إدخال غير صالح</string>
+    <string name="conv_time">الوقت</string>
+    <string name="calc_history_empty">لا يوجد سجل بعد</string>
+    <string name="calc_err_range">النتيجة كبيرة جدًا</string>
+    <string name="calc_err_div0">لا يمكن القسمة على صفر</string>
+    <string name="conv_area">المساحة</string>
+    <string name="conv_volume">الحجم</string>
+    <string name="conv_swap">تبديل الوحدات</string>
+    <string name="conv_length">الطول</string>
+    <string name="conv_speed">السرعة</string>
+    <string name="calc_scientific">علمية</string>
+    <string name="converter_rate_unavailable">الأسعار المباشرة غير متوفرة</string>
+    <string name="calc_basic">أساسي</string>
+    <string name="conv_data">البيانات</string>
+    <string name="converter_result_cached_format">%1$s (مخزّن مؤقتًا)</string>
+    <string name="calc_deg">DEG</string>
+    <string name="app_calculator">الآلة الحاسبة</string>
+    <string name="calc_rad">RAD</string>
+</resources>

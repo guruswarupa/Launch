@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">Impossible d\'enregistrer la photo</string>
+    <string name="cam_pro_focus">Mise au point</string>
+    <string name="app_camera">Appareil photo</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">Qualité max</string>
+    <string name="cam_quality_fast">Rapide</string>
+    <string name="cam_cd_flip">Changer de caméra</string>
+    <string name="cam_locked">AE/AF verrouillés</string>
+    <string name="cam_pro_wb">BdB</string>
+    <string name="cam_mic_on">Micro actif</string>
+    <string name="cam_video">VIDÉO</string>
+    <string name="cam_mode_night">NUIT</string>
+    <string name="cam_cd_shutter">Bouton de déclenchement</string>
+    <string name="cam_mode_pro">PRO</string>
+    <string name="cam_photo">PHOTO</string>
+    <string name="cam_cd_flash">Flash</string>
+    <string name="cam_pro_shutter">Obturation</string>
+    <string name="cam_mode_portrait">PORTRAIT</string>
+    <string name="cam_cd_level">Niveau</string>
+    <string name="cam_timer_seconds">%1$d s</string>
+    <string name="cam_cd_back">Retour</string>
+    <string name="cam_permission">L\'autorisation de l\'appareil photo est requise</string>
+    <string name="cam_stabilize">Stabiliser</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">Ouvrir la dernière capture</string>
+    <string name="cam_unavailable">Appareil photo indisponible</string>
+    <string name="cam_mic_off">Muet</string>
+    <string name="cam_record_failed">Échec de l\'enregistrement</string>
+    <string name="cam_auto">Auto</string>
+    <string name="cam_wb_cloudy">Nuageux</string>
+    <string name="cam_wb_tungsten">Tungstène</string>
+    <string name="cam_cd_timer">Minuteur</string>
+    <string name="cam_wb_fluorescent">Fluorescent</string>
+    <string name="cam_wb_sunny">Soleil</string>
+    <string name="cam_cd_ratio">Format d\'image</string>
+    <string name="cam_cd_grid">Grille</string>
+</resources>

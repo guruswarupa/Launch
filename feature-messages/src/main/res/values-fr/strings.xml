@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">Envoyer à %s</string>
+    <string name="msg_retry">Réessayer</string>
+    <string name="msg_photo">Photo</string>
+    <string name="msg_attach">Joindre</string>
+    <string name="msg_to_hint">À (nom ou numéro)</string>
+    <string name="msg_no_conversations">Aucune conversation pour le moment</string>
+    <string name="msg_notif_channel">Messages entrants</string>
+    <string name="msg_picture_message">Message multimédia</string>
+    <string name="msg_new">Nouveau message</string>
+    <string name="msg_permission_message">Messages de Launch a besoin d\'accéder à vos SMS et à vos contacts.</string>
+    <string name="msg_send_failed">Impossible d\'envoyer le message</string>
+    <string name="msg_type_hint">Message</string>
+    <string name="msg_too_large">Trop volumineux pour être envoyé. Cet opérateur autorise environ %d Ko par message.</string>
+    <string name="msg_set_default">Définir par défaut</string>
+    <string name="msg_today">Aujourd\'hui</string>
+    <string name="msg_emoji">Émoji</string>
+    <string name="msg_search_hint">Rechercher des messages</string>
+    <string name="msg_video">Vidéo</string>
+    <string name="msg_not_sent">Non envoyé</string>
+    <string name="msg_send">Envoyer</string>
+    <string name="msg_need_default">Définissez Messages de Launch comme appli SMS par défaut pour envoyer des SMS</string>
+    <string name="msg_sending">Envoi…</string>
+    <string name="msg_delete_message">Cette conversation sera définitivement supprimée de votre téléphone.</string>
+    <string name="msg_delete_conversation">Supprimer la conversation</string>
+    <string name="app_messages">Messages</string>
+    <string name="msg_audio">Audio</string>
+    <string name="msg_you">Vous : </string>
+    <string name="msg_default_banner">Définissez Messages de Launch comme appli SMS par défaut pour envoyer et recevoir des SMS.</string>
+</resources>

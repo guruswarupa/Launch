@@ -20,6 +20,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -157,17 +158,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
             }
 
             itemView.findViewById<ImageButton>(R.id.web_app_item_open).setOnClickListener {
-                val intent = Intent(this, WebAppActivity::class.java).apply {
-                    putExtra(WebAppActivity.EXTRA_WEB_APP_NAME, entry.name)
-                    putExtra(WebAppActivity.EXTRA_WEB_APP_URL, entry.url)
-                    putExtra(WebAppActivity.EXTRA_BLOCK_REDIRECTS, entry.blockRedirects)
-
-                    addFlags(
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                                Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                    )
-                }
+                val intent = WebAppActivity.launchIntent(this, entry.name, entry.url, entry.blockRedirects, entry.viewMode)
                 val options = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left)
                 startActivity(intent, options.toBundle())
             }
@@ -281,6 +272,8 @@ class WebAppSettingsActivity : AppCompatActivity() {
         val searchProgress = dialogView.findViewById<ProgressBar>(R.id.web_app_search_progress)
         val blockRedirectsSwitch = dialogView.findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.web_app_block_redirects_switch)
         val allowHttpCheckbox = dialogView.findViewById<CheckBox>(R.id.web_app_allow_http_checkbox)
+        val modeGroup = dialogView.findViewById<RadioGroup>(R.id.web_app_mode_group)
+        modeGroup.check(when (existing?.viewMode) { "mobile" -> R.id.web_app_mode_mobile; "desktop" -> R.id.web_app_mode_desktop; else -> R.id.web_app_mode_auto })
 
         nameInput.setText(existing?.name.orEmpty())
         urlInput.setText(existing?.url.orEmpty())
@@ -364,6 +357,7 @@ class WebAppSettingsActivity : AppCompatActivity() {
             val url = urlInput.text.toString().trim()
             val blockRedirects = blockRedirectsSwitch.isChecked
             val allowHttp = allowHttpCheckbox.isChecked
+            val viewMode = when (modeGroup.checkedRadioButtonId) { R.id.web_app_mode_mobile -> "mobile"; R.id.web_app_mode_desktop -> "desktop"; else -> "auto" }
 
             when {
                 name.isBlank() -> {
@@ -405,13 +399,13 @@ class WebAppSettingsActivity : AppCompatActivity() {
                             .setTitle(getString(R.string.dlg_security_warning))
                             .setMessage(getString(R.string.dlg_this_web_app_uses_http_unencrypted_connection_yo))
                             .setPositiveButton(getString(R.string.dlg_add_anyway)) { _, _ ->
-                                saveWebApp(existing, name, url, blockRedirects)
+                                saveWebApp(existing, name, url, blockRedirects, viewMode)
                                 dialog.dismiss()
                             }
                             .setNegativeButton(getString(R.string.cancel_button), null)
                             .show()
                     } else {
-                        saveWebApp(existing, name, url, blockRedirects)
+                        saveWebApp(existing, name, url, blockRedirects, viewMode)
                         dialog.dismiss()
                     }
                 }
@@ -635,11 +629,11 @@ class WebAppSettingsActivity : AppCompatActivity() {
         return false
     }
 
-    private fun saveWebApp(existing: WebAppEntry?, name: String, url: String, blockRedirects: Boolean) {
+    private fun saveWebApp(existing: WebAppEntry?, name: String, url: String, blockRedirects: Boolean, viewMode: String) {
         if (existing == null) {
-            webAppManager.addWebApp(name, url, blockRedirects)
+            webAppManager.addWebApp(name, url, blockRedirects, viewMode)
         } else {
-            webAppManager.updateWebApp(existing.id, name, url, blockRedirects)
+            webAppManager.updateWebApp(existing.id, name, url, blockRedirects, viewMode)
         }
         notifySettingsChanged()
         renderWebApps()

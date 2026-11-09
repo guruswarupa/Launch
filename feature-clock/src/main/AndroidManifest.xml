@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <activity
+            android:name="com.guruswarupa.launch.apps.clock.ClockActivity"
+            android:taskAffinity="com.guruswarupa.launch.clock"
+            android:exported="true"
+            android:label="@string/app_clock"
+            android:icon="@drawable/ic_app_clock">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.guruswarupa.launch.apps.clock.AlarmRingActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+
+        <receiver
+            android:name="com.guruswarupa.launch.apps.clock.AlarmReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.guruswarupa.launch.apps.clock.ClockSystemReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.guruswarupa.launch.apps.clock.AlarmRingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_CATEGORY" android:value="Ringing an alarm or timer the user set" />
+        </service>
+
+    </application>
+</manifest>

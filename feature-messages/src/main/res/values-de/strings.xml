@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">An %s senden</string>
+    <string name="msg_retry">Erneut versuchen</string>
+    <string name="msg_photo">Foto</string>
+    <string name="msg_attach">Anhängen</string>
+    <string name="msg_to_hint">An (Name oder Nummer)</string>
+    <string name="msg_no_conversations">Noch keine Unterhaltungen</string>
+    <string name="msg_notif_channel">Eingehende Nachrichten</string>
+    <string name="msg_picture_message">Bildnachricht</string>
+    <string name="msg_new">Neue Nachricht</string>
+    <string name="msg_permission_message">Launch Nachrichten braucht Zugriff auf deine SMS und Kontakte.</string>
+    <string name="msg_send_failed">Nachricht konnte nicht gesendet werden</string>
+    <string name="msg_type_hint">Nachricht</string>
+    <string name="msg_too_large">Zu groß zum Senden. Dieser Anbieter erlaubt etwa %d KB pro Nachricht.</string>
+    <string name="msg_set_default">Als Standard festlegen</string>
+    <string name="msg_today">Heute</string>
+    <string name="msg_emoji">Emoji</string>
+    <string name="msg_search_hint">Nachrichten suchen</string>
+    <string name="msg_video">Video</string>
+    <string name="msg_not_sent">Nicht gesendet</string>
+    <string name="msg_send">Senden</string>
+    <string name="msg_need_default">Lege Launch Nachrichten als Standard-SMS-App fest, um SMS zu senden</string>
+    <string name="msg_sending">Wird gesendet…</string>
+    <string name="msg_delete_message">Diese Unterhaltung wird endgültig vom Handy gelöscht.</string>
+    <string name="msg_delete_conversation">Unterhaltung löschen</string>
+    <string name="app_messages">Nachrichten</string>
+    <string name="msg_audio">Audio</string>
+    <string name="msg_you">Du: </string>
+    <string name="msg_default_banner">Mach Launch Nachrichten zur Standard-SMS-App, um SMS zu senden und zu empfangen.</string>
+</resources>

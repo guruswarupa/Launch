@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">%s ಗೆ ಕಳುಹಿಸಿ</string>
+    <string name="msg_retry">ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</string>
+    <string name="msg_photo">ಫೋಟೋ</string>
+    <string name="msg_attach">ಲಗತ್ತಿಸಿ</string>
+    <string name="msg_to_hint">ಗೆ (ಹೆಸರು ಅಥವಾ ಸಂಖ್ಯೆ)</string>
+    <string name="msg_no_conversations">ಇನ್ನೂ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ</string>
+    <string name="msg_notif_channel">ಬರುವ ಸಂದೇಶಗಳು</string>
+    <string name="msg_picture_message">ಮಾಧ್ಯಮ ಸಂದೇಶ</string>
+    <string name="msg_new">ಹೊಸ ಸಂದೇಶ</string>
+    <string name="msg_permission_message">Launch ಸಂದೇಶಗಳಿಗೆ ನಿಮ್ಮ ಪಠ್ಯ ಸಂದೇಶಗಳು ಮತ್ತು ಸಂಪರ್ಕಗಳ ಪ್ರವೇಶ ಬೇಕು.</string>
+    <string name="msg_send_failed">ಸಂದೇಶ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ</string>
+    <string name="msg_type_hint">ಸಂದೇಶ</string>
+    <string name="msg_too_large">ಕಳುಹಿಸಲು ತುಂಬಾ ದೊಡ್ಡದು. ಈ ಆಪರೇಟರ್ ಪ್ರತಿ ಸಂದೇಶಕ್ಕೆ ಸುಮಾರು %d KB ಅನುಮತಿಸುತ್ತದೆ.</string>
+    <string name="msg_set_default">ಡೀಫಾಲ್ಟ್ ಮಾಡಿ</string>
+    <string name="msg_today">ಇಂದು</string>
+    <string name="msg_emoji">ಎಮೋಜಿ</string>
+    <string name="msg_search_hint">ಸಂದೇಶಗಳನ್ನು ಹುಡುಕಿ</string>
+    <string name="msg_video">ವಿಡಿಯೋ</string>
+    <string name="msg_not_sent">ಕಳುಹಿಸಿಲ್ಲ</string>
+    <string name="msg_send">ಕಳುಹಿಸಿ</string>
+    <string name="msg_need_default">SMS ಕಳುಹಿಸಲು Launch ಸಂದೇಶಗಳನ್ನು ಡೀಫಾಲ್ಟ್ SMS ಆ್ಯಪ್ ಮಾಡಿ</string>
+    <string name="msg_sending">ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ…</string>
+    <string name="msg_delete_message">ಈ ಸಂಭಾಷಣೆ ನಿಮ್ಮ ಫೋನ್‌ನಿಂದ ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲ್ಪಡುತ್ತದೆ.</string>
+    <string name="msg_delete_conversation">ಸಂಭಾಷಣೆ ಅಳಿಸಿ</string>
+    <string name="app_messages">ಸಂದೇಶಗಳು</string>
+    <string name="msg_audio">ಆಡಿಯೋ</string>
+    <string name="msg_you">ನೀವು: </string>
+    <string name="msg_default_banner">SMS ಕಳುಹಿಸಲು ಮತ್ತು ಪಡೆಯಲು Launch ಸಂದೇಶಗಳನ್ನು ಡೀಫಾಲ್ಟ್ SMS ಆ್ಯಪ್ ಮಾಡಿ.</string>
+</resources>

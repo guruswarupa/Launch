@@ -308,7 +308,7 @@ internal fun StockDrawerManager.attachFolderContentsDrag(
             val key = appOrderManager.keyOf(app)
             folderManager.removeAppFromFolder(foldersKey, folderId, key)
             if (droppedOnZone === addToHomeZone) {
-                favoriteAppManager.addFavoriteApp(app.activityInfo.packageName)
+                favoriteAppManager.addFavoriteApp(favoriteKey(app))
             }
 
             val updated = contentsAdapter.currentList.toMutableList()

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="files_cancel">Cancel</string>
+    <string name="pick_today">Today</string>
+    <string name="files_close">Close</string>
+    <string name="pick_ok">OK</string>
+    <string name="pick_select_date">Select date</string>
+    <string name="pick_select_time">Select time</string>
+    <string name="files_preparing">Preparing…</string>
+    <string name="files_back">Back</string>
+    <string name="files_copy">Copy</string>
+    <string name="calc_copied">Copied</string>
+    <string name="clock_save">Save</string>
+    <string name="files_allow_access">Allow access</string>
+    <string name="files_delete">Delete</string>
+    <string name="msg_yesterday">Yesterday</string>
+    <string name="phone_call">Call</string>
+</resources>

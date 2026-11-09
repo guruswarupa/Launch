@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">ಫೋಟೋ ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ</string>
+    <string name="cam_pro_focus">ಫೋಕಸ್</string>
+    <string name="app_camera">ಕ್ಯಾಮೆರಾ</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">ಗರಿಷ್ಠ ಗುಣಮಟ್ಟ</string>
+    <string name="cam_quality_fast">ವೇಗ</string>
+    <string name="cam_cd_flip">ಕ್ಯಾಮೆರಾ ಬದಲಿಸಿ</string>
+    <string name="cam_locked">AE/AF ಲಾಕ್</string>
+    <string name="cam_pro_wb">WB</string>
+    <string name="cam_mic_on">ಮೈಕ್ ಆನ್</string>
+    <string name="cam_video">ವೀಡಿಯೊ</string>
+    <string name="cam_mode_night">ರಾತ್ರಿ</string>
+    <string name="cam_cd_shutter">ಶಟರ್ ಬಟನ್</string>
+    <string name="cam_mode_pro">ಪ್ರೊ</string>
+    <string name="cam_photo">ಫೋಟೋ</string>
+    <string name="cam_cd_flash">ಫ್ಲ್ಯಾಶ್</string>
+    <string name="cam_pro_shutter">ಶಟರ್</string>
+    <string name="cam_mode_portrait">ಪೋರ್ಟ್ರೇಟ್</string>
+    <string name="cam_cd_level">ಲೆವೆಲ್</string>
+    <string name="cam_timer_seconds">%1$d ಸೆ</string>
+    <string name="cam_cd_back">ಹಿಂದೆ</string>
+    <string name="cam_permission">ಕ್ಯಾಮೆರಾ ಅನುಮತಿ ಅಗತ್ಯ</string>
+    <string name="cam_stabilize">ಸ್ಥಿರೀಕರಿಸಿ</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">ಕೊನೆಯ ಕ್ಯಾಪ್ಚರ್ ತೆರೆಯಿರಿ</string>
+    <string name="cam_unavailable">ಕ್ಯಾಮೆರಾ ಲಭ್ಯವಿಲ್ಲ</string>
+    <string name="cam_mic_off">ಮ್ಯೂಟ್</string>
+    <string name="cam_record_failed">ರೆಕಾರ್ಡಿಂಗ್ ವಿಫಲವಾಯಿತು</string>
+    <string name="cam_auto">ಸ್ವಯಂ</string>
+    <string name="cam_wb_cloudy">ಮೋಡ</string>
+    <string name="cam_wb_tungsten">ಟಂಗ್‌ಸ್ಟನ್</string>
+    <string name="cam_cd_timer">ಟೈಮರ್</string>
+    <string name="cam_wb_fluorescent">ಫ್ಲೋರೊಸೆಂಟ್</string>
+    <string name="cam_wb_sunny">ಬಿಸಿಲು</string>
+    <string name="cam_cd_ratio">ಆಕಾರ ಅನುಪಾತ</string>
+    <string name="cam_cd_grid">ಗ್ರಿಡ್</string>
+</resources>

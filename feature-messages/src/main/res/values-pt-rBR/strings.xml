@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">Enviar para %s</string>
+    <string name="msg_retry">Tentar de novo</string>
+    <string name="msg_photo">Foto</string>
+    <string name="msg_attach">Anexar</string>
+    <string name="msg_to_hint">Para (nome ou número)</string>
+    <string name="msg_no_conversations">Ainda não há conversas</string>
+    <string name="msg_notif_channel">Mensagens recebidas</string>
+    <string name="msg_picture_message">Mensagem multimídia</string>
+    <string name="msg_new">Nova mensagem</string>
+    <string name="msg_permission_message">O Mensagens do Launch precisa acessar seus SMS e contatos.</string>
+    <string name="msg_send_failed">Não foi possível enviar a mensagem</string>
+    <string name="msg_type_hint">Mensagem</string>
+    <string name="msg_too_large">Grande demais para enviar. Esta operadora permite cerca de %d KB por mensagem.</string>
+    <string name="msg_set_default">Definir como padrão</string>
+    <string name="msg_today">Hoje</string>
+    <string name="msg_emoji">Emoji</string>
+    <string name="msg_search_hint">Pesquisar mensagens</string>
+    <string name="msg_video">Vídeo</string>
+    <string name="msg_not_sent">Não enviada</string>
+    <string name="msg_send">Enviar</string>
+    <string name="msg_need_default">Defina o Mensagens do Launch como app de SMS padrão para enviar SMS</string>
+    <string name="msg_sending">Enviando…</string>
+    <string name="msg_delete_message">Esta conversa será excluída do celular permanentemente.</string>
+    <string name="msg_delete_conversation">Excluir conversa</string>
+    <string name="app_messages">Mensagens</string>
+    <string name="msg_audio">Áudio</string>
+    <string name="msg_you">Você: </string>
+    <string name="msg_default_banner">Defina o Mensagens do Launch como app de SMS padrão para enviar e receber SMS.</string>
+</resources>

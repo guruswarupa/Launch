@@ -16,14 +16,7 @@ object ThemeManager {
 
     @ColorInt
     fun color(context: Context, @AttrRes attr: Int): Int {
-        val typedValue = TypedValue()
-        val resolved = context.theme.resolveAttribute(attr, typedValue, true)
-        check(resolved) { "Theme attribute 0x${Integer.toHexString(attr)} not resolvable on $context" }
-        return if (typedValue.resourceId != 0) {
-            androidx.core.content.ContextCompat.getColor(context, typedValue.resourceId)
-        } else {
-            typedValue.data
-        }
+        return com.guruswarupa.launch.ui.ThemeAttrs.color(context, attr)
     }
 
     @ColorInt

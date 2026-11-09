@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">إرسال إلى %s</string>
+    <string name="msg_retry">أعد المحاولة</string>
+    <string name="msg_photo">صورة</string>
+    <string name="msg_attach">إرفاق</string>
+    <string name="msg_to_hint">إلى (اسم أو رقم)</string>
+    <string name="msg_no_conversations">لا توجد محادثات بعد</string>
+    <string name="msg_notif_channel">الرسائل الواردة</string>
+    <string name="msg_picture_message">رسالة وسائط</string>
+    <string name="msg_new">رسالة جديدة</string>
+    <string name="msg_permission_message">تحتاج رسائل Launch إلى الوصول إلى رسائلك النصية وجهات الاتصال.</string>
+    <string name="msg_send_failed">تعذّر إرسال الرسالة</string>
+    <string name="msg_type_hint">رسالة</string>
+    <string name="msg_too_large">كبيرة جدًا للإرسال. يسمح المشغّل بنحو %d كيلوبايت لكل رسالة.</string>
+    <string name="msg_set_default">تعيين كافتراضي</string>
+    <string name="msg_today">اليوم</string>
+    <string name="msg_emoji">رموز تعبيرية</string>
+    <string name="msg_search_hint">بحث في الرسائل</string>
+    <string name="msg_video">فيديو</string>
+    <string name="msg_not_sent">لم تُرسل</string>
+    <string name="msg_send">إرسال</string>
+    <string name="msg_need_default">عيّن رسائل Launch كتطبيق الرسائل الافتراضي لإرسال الرسائل</string>
+    <string name="msg_sending">جارٍ الإرسال…</string>
+    <string name="msg_delete_message">ستُحذف هذه المحادثة من هاتفك نهائيًا.</string>
+    <string name="msg_delete_conversation">حذف المحادثة</string>
+    <string name="app_messages">الرسائل</string>
+    <string name="msg_audio">صوت</string>
+    <string name="msg_you">أنت: </string>
+    <string name="msg_default_banner">اجعل رسائل Launch تطبيق الرسائل القصيرة الافتراضي لإرسال الرسائل واستقبالها.</string>
+</resources>

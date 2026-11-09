@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">फ़ोटो सेव नहीं हो सकी</string>
+    <string name="cam_pro_focus">फ़ोकस</string>
+    <string name="app_camera">कैमरा</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">अधिकतम गुणवत्ता</string>
+    <string name="cam_quality_fast">तेज़</string>
+    <string name="cam_cd_flip">कैमरा बदलें</string>
+    <string name="cam_locked">AE/AF लॉक</string>
+    <string name="cam_pro_wb">WB</string>
+    <string name="cam_mic_on">माइक चालू</string>
+    <string name="cam_video">वीडियो</string>
+    <string name="cam_mode_night">रात</string>
+    <string name="cam_cd_shutter">शटर बटन</string>
+    <string name="cam_mode_pro">प्रो</string>
+    <string name="cam_photo">फ़ोटो</string>
+    <string name="cam_cd_flash">फ़्लैश</string>
+    <string name="cam_pro_shutter">शटर</string>
+    <string name="cam_mode_portrait">पोर्ट्रेट</string>
+    <string name="cam_cd_level">लेवल</string>
+    <string name="cam_timer_seconds">%1$d सेकंड</string>
+    <string name="cam_cd_back">वापस</string>
+    <string name="cam_permission">कैमरे की अनुमति ज़रूरी है</string>
+    <string name="cam_stabilize">स्टेबलाइज़</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">आख़िरी कैप्चर खोलें</string>
+    <string name="cam_unavailable">कैमरा उपलब्ध नहीं है</string>
+    <string name="cam_mic_off">म्यूट</string>
+    <string name="cam_record_failed">रिकॉर्डिंग विफल रही</string>
+    <string name="cam_auto">ऑटो</string>
+    <string name="cam_wb_cloudy">बादल</string>
+    <string name="cam_wb_tungsten">टंगस्टन</string>
+    <string name="cam_cd_timer">टाइमर</string>
+    <string name="cam_wb_fluorescent">फ़्लोरोसेंट</string>
+    <string name="cam_wb_sunny">धूप</string>
+    <string name="cam_cd_ratio">आस्पेक्ट रेशियो</string>
+    <string name="cam_cd_grid">ग्रिड</string>
+</resources>

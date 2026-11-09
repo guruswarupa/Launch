@@ -39,7 +39,7 @@ class AppListManager @Inject constructor(
         return favoriteAppManager.getFavoriteApps()
     }
 
-    private val bundledApps = listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity", "CalculatorActivity", "CalendarActivity", "ClockActivity")
+    private val bundledApps = listOf("CameraActivity", "FilesActivity", "GalleryActivity", "PlayerActivity", "CalculatorActivity", "CalendarActivity", "ClockActivity", "PhoneActivity", "ContactsActivity", "MessagesActivity")
 
     fun filterAndPrepareApps(
         apps: List<ResolveInfo>,
@@ -117,7 +117,7 @@ class AppListManager @Inject constructor(
                 computeStockHomeOrdered(apps)
             } else {
                 val favorites = favoriteAppManager.getFavoriteApps()
-                apps.filter { favorites.contains(it.activityInfo.packageName) }.sortedWith(comparator)
+                apps.filter { favorites.contains(favoriteKey(it)) }.sortedWith(comparator)
             }
         } else {
             return apps.sortedWith(comparator)
@@ -130,7 +130,7 @@ class AppListManager @Inject constructor(
             filteredApps
         } else {
             val favorites = favoriteAppManager.getFavoriteApps()
-            filteredApps.filter { favorites.contains(it.activityInfo.packageName) }
+            filteredApps.filter { favorites.contains(favoriteKey(it)) }
         }
     }
 

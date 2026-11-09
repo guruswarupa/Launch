@@ -115,6 +115,52 @@
             android:textSize="16sp" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/web_app_view_mode"
+            android:textColor="?attr/appTextPrimary"
+            android:textSize="14sp" />
+
+        <RadioGroup
+            android:id="@+id/web_app_mode_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/web_app_mode_auto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="?attr/appIconTint"
+                android:text="@string/web_app_mode_auto"
+                android:textColor="?attr/appTextPrimary"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/web_app_mode_mobile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="?attr/appIconTint"
+                android:text="@string/web_app_mode_mobile"
+                android:textColor="?attr/appTextPrimary"
+                android:textSize="13sp" />
+
+            <RadioButton
+                android:id="@+id/web_app_mode_desktop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="?attr/appIconTint"
+                android:text="@string/web_app_mode_desktop"
+                android:textColor="?attr/appTextPrimary"
+                android:textSize="13sp" />
+        </RadioGroup>
+
+        <TextView
             android:id="@+id/web_app_advanced_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

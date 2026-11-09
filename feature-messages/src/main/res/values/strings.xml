@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="msg_send_to_number">Send to %s</string>
+    <string name="msg_retry">Try again</string>
+    <string name="msg_photo">Photo</string>
+    <string name="msg_attach">Attach</string>
+    <string name="msg_to_hint">To (name or number)</string>
+    <string name="msg_no_conversations">No conversations yet</string>
+    <string name="msg_notif_channel">Incoming messages</string>
+    <string name="msg_picture_message">Picture message</string>
+    <string name="msg_new">New message</string>
+    <string name="msg_permission_message">Launch Messages needs access to your text messages and contacts.</string>
+    <string name="msg_send_failed">Couldn\'t send the message</string>
+    <string name="msg_type_hint">Message</string>
+    <string name="msg_too_large">Too big to send. This carrier allows about %d KB per message.</string>
+    <string name="msg_set_default">Set as default</string>
+    <string name="msg_today">Today</string>
+    <string name="msg_emoji">Emoji</string>
+    <string name="msg_search_hint">Search messages</string>
+    <string name="msg_video">Video</string>
+    <string name="msg_not_sent">Not sent</string>
+    <string name="msg_send">Send</string>
+    <string name="msg_need_default">Set Launch Messages as the default SMS app to send texts</string>
+    <string name="msg_sending">Sending…</string>
+    <string name="msg_delete_message">This conversation will be deleted from your phone for good.</string>
+    <string name="msg_delete_conversation">Delete conversation</string>
+    <string name="app_messages">Messages</string>
+    <string name="msg_audio">Audio</string>
+    <string name="msg_you">You: </string>
+    <string name="msg_default_banner">Make Launch Messages your default SMS app to send and receive texts.</string>
+</resources>

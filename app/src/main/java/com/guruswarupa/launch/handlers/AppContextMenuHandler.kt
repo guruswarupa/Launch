@@ -72,7 +72,7 @@ class AppContextMenuHandler(
 
         val favoriteMenuItem = popupMenu.menu.findItem(R.id.toggle_favorite)
         if (favoriteMenuItem != null) {
-            val isFavorite = activity.favoriteAppManager.isFavoriteApp(packageName)
+            val isFavorite = activity.favoriteAppManager.isFavoriteApp(favKey(packageName, appInfo))
             favoriteMenuItem.title = if (isFavorite) "Remove from Favorites" else "Add to Favorites"
             val spannable = android.text.SpannableString(favoriteMenuItem.title)
             spannable.setSpan(android.text.style.ForegroundColorSpan(textColor), 0, spannable.length, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -157,7 +157,7 @@ class AppContextMenuHandler(
         popupMenu.menu.add(0, 201, 1, activity.getString(R.string.edit_web_app))
         popupMenu.menu.add(0, 202, 2, activity.getString(R.string.open_in_browser))
         popupMenu.menu.add(0, 203, 3, activity.getString(R.string.remove_web_app))
-        popupMenu.menu.add(0, 204, 4, if (activity.favoriteAppManager.isFavoriteApp(packageName)) activity.getString(R.string.remove_from_favorites_plain) else activity.getString(R.string.add_to_favorites_plain))
+        popupMenu.menu.add(0, 204, 4, if (activity.favoriteAppManager.isFavoriteApp(favKey(packageName, appInfo))) activity.getString(R.string.remove_from_favorites_plain) else activity.getString(R.string.add_to_favorites_plain))
         popupMenu.menu.add(0, 205, 5, if (activity.hiddenAppManager.isAppHidden(packageName)) activity.getString(R.string.unhide_app_plain) else activity.getString(R.string.hide_app_plain))
 
         for (i in 0 until popupMenu.menu.size()) {
@@ -286,10 +286,15 @@ class AppContextMenuHandler(
         activity.startActivity(Intent(Intent.ACTION_UNINSTALL_PACKAGE).apply { data = "package:$packageName".toUri() })
     }
 
+    /** Launch's own apps need the activity in the key; everything else keeps using the package name. */
+    private fun favKey(packageName: String, appInfo: ResolveInfo): String =
+        if (appInfo.activityInfo?.packageName == activity.packageName) com.guruswarupa.launch.managers.favoriteKey(appInfo) else packageName
+
     private fun toggleFavoriteApp(packageName: String, appInfo: ResolveInfo) {
         val appName = labelResolver(packageName, appInfo)
-        if (activity.favoriteAppManager.isFavoriteApp(packageName)) {
-            activity.favoriteAppManager.removeFavoriteApp(packageName)
+        val key = favKey(packageName, appInfo)
+        if (activity.favoriteAppManager.isFavoriteApp(key)) {
+            activity.favoriteAppManager.removeFavoriteApp(key)
             Toast.makeText(activity, activity.getString(R.string.removed_from_favorites, appName), Toast.LENGTH_SHORT).show()
 
             val remainingFavorites = activity.favoriteAppManager.getFavoriteApps()
@@ -299,7 +304,7 @@ class AppContextMenuHandler(
                 activity.showOnlyFavoritesInitially = false
             }
         } else {
-            activity.favoriteAppManager.addFavoriteApp(packageName)
+            activity.favoriteAppManager.addFavoriteApp(key)
             Toast.makeText(activity, activity.getString(R.string.added_to_favorites, appName), Toast.LENGTH_SHORT).show()
         }
         activity.filterAppsWithoutReload()

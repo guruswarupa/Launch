@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">تعذّر حفظ الصورة</string>
+    <string name="cam_pro_focus">التركيز</string>
+    <string name="app_camera">الكاميرا</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">أعلى جودة</string>
+    <string name="cam_quality_fast">سريع</string>
+    <string name="cam_cd_flip">تبديل الكاميرا</string>
+    <string name="cam_locked">تم قفل AE/AF</string>
+    <string name="cam_pro_wb">WB</string>
+    <string name="cam_mic_on">الميكروفون يعمل</string>
+    <string name="cam_video">فيديو</string>
+    <string name="cam_mode_night">ليلي</string>
+    <string name="cam_cd_shutter">زر الالتقاط</string>
+    <string name="cam_mode_pro">احترافي</string>
+    <string name="cam_photo">صورة</string>
+    <string name="cam_cd_flash">الفلاش</string>
+    <string name="cam_pro_shutter">الغالق</string>
+    <string name="cam_mode_portrait">بورتريه</string>
+    <string name="cam_cd_level">المستوى</string>
+    <string name="cam_timer_seconds">%1$d ث</string>
+    <string name="cam_cd_back">رجوع</string>
+    <string name="cam_permission">إذن الكاميرا مطلوب</string>
+    <string name="cam_stabilize">تثبيت</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">فتح آخر لقطة</string>
+    <string name="cam_unavailable">الكاميرا غير متاحة</string>
+    <string name="cam_mic_off">كتم</string>
+    <string name="cam_record_failed">فشل التسجيل</string>
+    <string name="cam_auto">تلقائي</string>
+    <string name="cam_wb_cloudy">غائم</string>
+    <string name="cam_wb_tungsten">تنغستن</string>
+    <string name="cam_cd_timer">المؤقت</string>
+    <string name="cam_wb_fluorescent">فلورسنت</string>
+    <string name="cam_wb_sunny">مشمس</string>
+    <string name="cam_cd_ratio">نسبة الأبعاد</string>
+    <string name="cam_cd_grid">الشبكة</string>
+</resources>

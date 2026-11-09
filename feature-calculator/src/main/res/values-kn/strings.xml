@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conv_currency">ಕರೆನ್ಸಿ</string>
+    <string name="conv_temperature">ತಾಪಮಾನ</string>
+    <string name="calc_history">ಇತಿಹಾಸ</string>
+    <string name="calc_clear_history">ಇತಿಹಾಸ ತೆರವುಗೊಳಿಸಿ</string>
+    <string name="conv_base">ಸಂಖ್ಯಾ ಆಧಾರ</string>
+    <string name="calc_err_format">ಅಮಾನ್ಯ ಸ್ವರೂಪ</string>
+    <string name="conv_mass">ರಾಶಿ</string>
+    <string name="conv_title">ಪರಿವರ್ತಿಸಿ</string>
+    <string name="calc_err_domain">ಅಮಾನ್ಯ ಇನ್‌ಪುಟ್</string>
+    <string name="conv_time">ಸಮಯ</string>
+    <string name="calc_history_empty">ಇನ್ನೂ ಇತಿಹಾಸವಿಲ್ಲ</string>
+    <string name="calc_err_range">ಫಲಿತಾಂಶ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ</string>
+    <string name="calc_err_div0">ಸೊನ್ನೆಯಿಂದ ಭಾಗಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ</string>
+    <string name="conv_area">ವಿಸ್ತೀರ್ಣ</string>
+    <string name="conv_volume">ಗಾತ್ರ</string>
+    <string name="conv_swap">ಘಟಕಗಳನ್ನು ಬದಲಿಸಿ</string>
+    <string name="conv_length">ಉದ್ದ</string>
+    <string name="conv_speed">ವೇಗ</string>
+    <string name="calc_scientific">ವೈಜ್ಞಾನಿಕ</string>
+    <string name="converter_rate_unavailable">ಪ್ರಸ್ತುತ ದರಗಳು ಲಭ್ಯವಿಲ್ಲ</string>
+    <string name="calc_basic">ಮೂಲ</string>
+    <string name="conv_data">ಡೇಟಾ</string>
+    <string name="converter_result_cached_format">%1$s (ಕ್ಯಾಶ್ ಮಾಡಲಾಗಿದೆ)</string>
+    <string name="calc_deg">DEG</string>
+    <string name="app_calculator">ಕ್ಯಾಲ್ಕುಲೇಟರ್</string>
+    <string name="calc_rad">RAD</string>
+</resources>

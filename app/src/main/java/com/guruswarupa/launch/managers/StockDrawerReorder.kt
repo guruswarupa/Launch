@@ -205,7 +205,7 @@ internal fun StockDrawerManager.addDraggedEntryToHome(adapter: AppAdapter, posit
         val folder = folderManager.findFolder(com.guruswarupa.launch.models.Constants.Prefs.STOCK_DRAWER_FOLDERS, folderId) ?: return
         folder.appKeys.forEach { key ->
             activity.fullAppList.find { appOrderManager.keyOf(it) == key }?.let {
-                favoriteAppManager.addFavoriteApp(it.activityInfo.packageName)
+                favoriteAppManager.addFavoriteApp(favoriteKey(it))
             }
         }
         val alreadyOnHome = folderManager.getFolders(homeFoldersKey).any { it.appKeys.toSet() == folder.appKeys.toSet() }
@@ -221,7 +221,7 @@ internal fun StockDrawerManager.addDraggedEntryToHome(adapter: AppAdapter, posit
             activity, activity.getString(R.string.stock_folder_added_to_home, folder.name), android.widget.Toast.LENGTH_SHORT
         ).show()
     } else {
-        favoriteAppManager.addFavoriteApp(entry.activityInfo.packageName)
+        favoriteAppManager.addFavoriteApp(favoriteKey(entry))
         val label = appListManager.getDisplayLabel(entry)
         android.widget.Toast.makeText(
             activity, activity.getString(R.string.stock_app_added_to_home, label), android.widget.Toast.LENGTH_SHORT
@@ -254,7 +254,7 @@ internal fun StockDrawerManager.removeDraggedEntryFromHome(adapter: AppAdapter, 
         val folder = folderManager.findFolder(foldersKey, folderId)
         folder?.appKeys?.forEach { key ->
             activity.fullAppList.find { appOrderManager.keyOf(it) == key }?.let {
-                favoriteAppManager.removeFavoriteApp(it.activityInfo.packageName)
+                favoriteAppManager.removeFavoriteApp(favoriteKey(it))
             }
         }
         if (folder != null) folderManager.deleteFolder(foldersKey, folderId)
@@ -263,7 +263,7 @@ internal fun StockDrawerManager.removeDraggedEntryFromHome(adapter: AppAdapter, 
         ).show()
     } else {
         val label = appListManager.getDisplayLabel(entry)
-        favoriteAppManager.removeFavoriteApp(entry.activityInfo.packageName)
+        favoriteAppManager.removeFavoriteApp(favoriteKey(entry))
         android.widget.Toast.makeText(
             activity, activity.getString(R.string.stock_app_removed_from_home, label), android.widget.Toast.LENGTH_SHORT
         ).show()

@@ -31,7 +31,11 @@ import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.guruswarupa.launch.services.WebMediaBridge
+import com.guruswarupa.launch.services.WebMediaService
 import com.guruswarupa.launch.R
 import com.guruswarupa.launch.managers.WebAppAdBlocker
 import com.guruswarupa.launch.managers.WebAppIconFetcher
@@ -44,8 +48,41 @@ class WebAppActivity : AppCompatActivity() {
         const val EXTRA_WEB_APP_NAME = "web_app_name"
         const val EXTRA_WEB_APP_URL = "web_app_url"
         const val EXTRA_BLOCK_REDIRECTS = "block_redirects"
+        const val EXTRA_VIEW_MODE = "view_mode"
         private const val TAG = "WebAppActivity"
+        private const val PLAY_SCRIPT = "(function(){document.querySelectorAll('video,audio').forEach(function(m){ if(m.paused && !m.ended && m.currentTime>0){ try{ m.play(); }catch(e){} } });})()"
+        private const val DESKTOP_USER_AGENT =
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+
+        /** Desktop was asked for, or the mode is "auto" and the site is one that only keeps playing on its desktop version. */
+        private fun resolveDesktop(mode: String, url: String): Boolean = when (mode) { "desktop" -> true; "mobile" -> false; else -> isYouTube(url) }
+
+        private fun isYouTube(url: String): Boolean {
+            val host = try { Uri.parse(url).host.orEmpty().lowercase() } catch (_: Exception) { "" }
+            return host == "youtube.com" || host.endsWith(".youtube.com") || host == "youtu.be"
+        }
+
+        /** m.youtube.com always serves the phone layout, so send it to the main site. */
+        private fun desktopYouTubeUrl(url: String): String {
+            val uri = Uri.parse(url)
+            return if (uri.host.equals("m.youtube.com", ignoreCase = true)) uri.buildUpon().authority("www.youtube.com").build().toString() else url
+        }
+
         private val BLOCKED_SCHEMES = setOf("javascript", "file", "content", "intent")
+
+        /**
+         * Each web app runs in its own task. The address is part of the intent, so opening the same web app again
+         * (or tapping its playback notification) returns to the one that's already running.
+         */
+        fun launchIntent(context: android.content.Context, name: String, url: String, blockRedirects: Boolean = true, viewMode: String = "auto"): Intent =
+            Intent(context, WebAppActivity::class.java).apply {
+                data = Uri.parse("launch-web://app/" + url.hashCode().toUInt())
+                putExtra(EXTRA_WEB_APP_NAME, name)
+                putExtra(EXTRA_WEB_APP_URL, url)
+                putExtra(EXTRA_BLOCK_REDIRECTS, blockRedirects)
+                putExtra(EXTRA_VIEW_MODE, viewMode)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
+            }
     }
 
     private lateinit var webView: WebView
@@ -55,11 +92,31 @@ class WebAppActivity : AppCompatActivity() {
     private lateinit var fullscreenContainer: FrameLayout
 
     private var allowedDomain: String? = null
+    private fun wantsDesktop(url: String) = resolveDesktop(intent.getStringExtra(EXTRA_VIEW_MODE) ?: "auto", url)
     private var blockRedirects: Boolean = true
     private var trustedDomains = mutableSetOf<String>()
     private var subResourceErrorCount = 0
 
     private var customView: View? = null
+    private var mediaPlaying = false
+    private var videoPlaying = false
+    private var resumeWanted = false
+    private var resumeTries = 0
+    private val resumeLoop = object : Runnable {
+        override fun run() {
+            if (!::webView.isInitialized || inForeground || !resumeWanted || isFinishing) return
+            // Pages sometimes pause themselves when you leave. If it was playing a moment ago, press play again.
+            // A few polite retries only. If the page keeps pausing itself, fighting it just makes the video stutter.
+            if (resumeTries++ >= 3) { resumeWanted = false; return }
+            webView.evaluateJavascript(PLAY_SCRIPT, null)
+            window.decorView.postDelayed(this, 2500)
+        }
+    }
+    private var videoWidth = 16
+    private var videoHeight = 9
+    private var inForeground = true
+    private var mediaServiceRunning = false
+    private var originalOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
 
     private val mediaPickerLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
@@ -79,6 +136,179 @@ class WebAppActivity : AppCompatActivity() {
 
     private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
 
+    /** The page tells us when a video or audio element starts or stops, so we know whether to keep playing in the background. */
+    private inner class MediaBridge {
+        @android.webkit.JavascriptInterface
+        fun state(playing: Boolean, video: Boolean, width: Int, height: Int) {
+            runOnUiThread { videoPlaying = playing && video; if (video && width > 0 && height > 0) { videoWidth = width; videoHeight = height }; onMediaState(playing) }
+        }
+    }
+
+    private val mediaScript = """
+        (function(){ if (window.__launchMedia) return; window.__launchMedia = true;
+          // Sites like YouTube pause themselves when the page is "hidden". Keep reporting it as visible so playback carries on.
+          try {
+            Object.defineProperty(Document.prototype, 'hidden', { configurable: true, get: function(){ return false; } });
+            Object.defineProperty(Document.prototype, 'webkitHidden', { configurable: true, get: function(){ return false; } });
+            Object.defineProperty(Document.prototype, 'visibilityState', { configurable: true, get: function(){ return 'visible'; } });
+            Object.defineProperty(Document.prototype, 'webkitVisibilityState', { configurable: true, get: function(){ return 'visible'; } });
+            ['visibilitychange','webkitvisibilitychange','pagehide','blur','freeze'].forEach(function(t){
+              window.addEventListener(t, function(e){ e.stopImmediatePropagation(); }, true);
+              document.addEventListener(t, function(e){ e.stopImmediatePropagation(); }, true);
+            });
+          } catch(e) {}
+          function report(){ var p = false, v = false, w = 0, h = 0;
+            document.querySelectorAll('video,audio').forEach(function(m){ if(!m.paused && !m.ended && m.readyState > 2){ p = true;
+              if (m.tagName === 'VIDEO' && m.videoWidth > 0) { v = true; w = m.videoWidth; h = m.videoHeight; } } });
+            try { LaunchMedia.state(p, v, w, h); } catch(e) {} }
+          ['play','playing','pause','ended','emptied','waiting'].forEach(function(t){ document.addEventListener(t, report, true); });
+          window.__launchPip = function(on){
+            var id = '__launchPipStyle';
+            function clear(){
+              var el = document.getElementById(id); if (el) el.remove();
+              document.querySelectorAll('[data-launch-pip],[data-launch-pip-up]').forEach(function(n){ n.removeAttribute('data-launch-pip'); n.removeAttribute('data-launch-pip-up'); });
+              if (window.__launchPipTimer) { clearInterval(window.__launchPipTimer); window.__launchPipTimer = null; }
+            }
+            function apply(){
+              var v = document.querySelector('video[data-launch-pip]');
+              if (!v) { document.querySelectorAll('video').forEach(function(x){ if(!x.paused && !x.ended && (!v || x.videoWidth > v.videoWidth)) v = x; }); }
+              if (!v) return;
+              v.setAttribute('data-launch-pip','1');
+              // A fixed video only fills the screen if no parent traps it (transforms, clipping, containment), so release them all.
+              var n = v.parentElement;
+              while (n && n !== document.documentElement) { n.setAttribute('data-launch-pip-up','1'); n = n.parentElement; }
+              if (!document.getElementById(id)) {
+                var st = document.createElement('style'); st.id = id;
+                st.textContent = 'html,body{background:#000!important;overflow:hidden!important;margin:0!important} ' +
+                  '[data-launch-pip-up]{transform:none!important;contain:none!important;filter:none!important;perspective:none!important;will-change:auto!important;clip-path:none!important;overflow:visible!important;} ' +
+                  'video[data-launch-pip]{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100vw!important;height:100vh!important;' +
+                  'max-width:none!important;max-height:none!important;object-fit:contain!important;z-index:2147483647!important;background:#000!important;transform:none!important;margin:0!important;padding:0!important}';
+                document.documentElement.appendChild(st);
+              }
+            }
+            if (!on) { clear(); return; }
+            clear(); apply();
+            // The window finishes resizing a moment after the switch, and the page may re-render, so keep it applied while it's small.
+            window.__launchPipTimer = setInterval(apply, 500);
+          };
+          report(); setInterval(report, 3000);
+        })();
+    """.trimIndent()
+
+    private fun onMediaState(playing: Boolean) {
+        if (!playing && resumeWanted && !inForeground) { mediaPlaying = false; return }
+        mediaPlaying = playing
+        updatePipParams()
+        if (!inForeground && !isInPictureInPictureMode) {
+            if (playing) startMediaService() else { stopMediaService(); pauseWebView() }
+        }
+    }
+
+    private fun pipSupported() = android.os.Build.VERSION.SDK_INT >= 26 && packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE)
+
+    private fun pipParams(): android.app.PictureInPictureParams {
+        val w = videoWidth.coerceAtLeast(1); val h = videoHeight.coerceAtLeast(1)
+        // Android only accepts ratios between 1:2.39 and 2.39:1.
+        val ratio = (w.toFloat() / h).coerceIn(1f / 2.39f, 2.39f)
+        val builder = android.app.PictureInPictureParams.Builder().setAspectRatio(android.util.Rational((ratio * 1000).toInt(), 1000))
+        if (android.os.Build.VERSION.SDK_INT >= 31) builder.setAutoEnterEnabled(videoPlaying)
+        return builder.build()
+    }
+
+    private fun updatePipParams() {
+        if (!pipSupported()) return
+        try { setPictureInPictureParams(pipParams()) } catch (_: Exception) {}
+    }
+
+    /** Shrinks the web app into a small floating window, like a mini player, while a video is playing. */
+    private fun enterPip() {
+        if (!pipSupported() || isInPictureInPictureMode) return
+        try { enterPictureInPictureMode(pipParams()) } catch (_: Exception) {}
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (videoPlaying && mediaPlaying && !isFinishing) enterPip()
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: android.content.res.Configuration) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        progressBar.visibility = if (isInPictureInPictureMode) View.GONE else progressBar.visibility
+        if (::webView.isInitialized) webView.evaluateJavascript("window.__launchPip && window.__launchPip($isInPictureInPictureMode)", null)
+        if (isInPictureInPictureMode) return
+        if (!lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)) {
+            // The mini window was closed: stop what was playing and leave.
+            if (::webView.isInitialized) webView.evaluateJavascript("document.querySelectorAll('video,audio').forEach(function(m){m.pause();})", null)
+            mediaPlaying = false
+            finish()
+        } else applyImmersion(customView != null)
+    }
+
+    private fun startMediaService() {
+        if (mediaServiceRunning) return
+        val open = android.app.PendingIntent.getActivity(
+            this, 7, launchIntent(this, intent.getStringExtra(EXTRA_WEB_APP_NAME).orEmpty(), intent.getStringExtra(EXTRA_WEB_APP_URL).orEmpty(), blockRedirects, intent.getStringExtra(EXTRA_VIEW_MODE) ?: "auto"),
+            android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        try {
+            androidx.core.content.ContextCompat.startForegroundService(
+                this, Intent(this, WebMediaService::class.java).putExtra(WebMediaService.EXTRA_TITLE, intent.getStringExtra(EXTRA_WEB_APP_NAME).orEmpty()).putExtra(WebMediaService.EXTRA_OPEN, open)
+            )
+            mediaServiceRunning = true
+        } catch (e: Exception) {
+            android.util.Log.w("WebMedia", "could not start media service", e)
+        }
+    }
+
+    private fun stopMediaService() {
+        if (!mediaServiceRunning) return
+        try { startService(Intent(this, WebMediaService::class.java).setAction(WebMediaService.ACTION_STOP)) } catch (_: Exception) {}
+        mediaServiceRunning = false
+    }
+
+    private fun pauseWebView() {
+        if (!::webView.isInitialized) return
+        webView.onPause()
+        webView.pauseTimers()
+    }
+
+    private fun controlMedia(command: String) {
+        when (command) {
+            "close" -> { runOnUiThread { resumeWanted = false; mediaPlaying = false; mediaServiceRunning = false; finish() } }
+            "toggle" -> runOnUiThread {
+                resumeWanted = false
+                webView.evaluateJavascript(
+                    "(function(){var m=[].slice.call(document.querySelectorAll('video,audio'));var playing=m.some(function(x){return !x.paused&&!x.ended});" +
+                        "m.forEach(function(x){ if(playing) x.pause(); else if(x.currentTime>0 && !x.ended) x.play(); });})();", null
+                )
+            }
+        }
+    }
+
+    /** The page draws edge to edge with the status bar hidden. Full screen (video) hides every system bar. */
+    private fun applyImmersion(full: Boolean) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if (full) controller.hide(WindowInsetsCompat.Type.systemBars()) else {
+            // The status bar stays hidden (swipe down from the top edge to peek at it); the navigation bar is kept.
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+            controller.show(WindowInsetsCompat.Type.navigationBars())
+        }
+        if (android.os.Build.VERSION.SDK_INT >= 28) {
+            window.attributes = window.attributes.also {
+                it.layoutInDisplayCutoutMode = android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) applyImmersion(customView != null)
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         val appName = intent.getStringExtra(EXTRA_WEB_APP_NAME).orEmpty()
@@ -90,6 +320,8 @@ class WebAppActivity : AppCompatActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
         setContentView(R.layout.activity_web_app)
+        window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(Color.BLACK))
+        applyImmersion(false)
 
         if (appName.isBlank() || url.isBlank()) {
             finish()
@@ -170,7 +402,20 @@ class WebAppActivity : AppCompatActivity() {
             allowContentAccess = false
             setSupportMultipleWindows(false)
             javaScriptCanOpenWindowsAutomatically = false
+            if (wantsDesktop(url)) {
+                // YouTube's phone site pauses when you leave; the desktop site keeps playing, so ask for that one.
+                userAgentString = DESKTOP_USER_AGENT
+                useWideViewPort = true
+                loadWithOverviewMode = true
+                setSupportZoom(true)
+                builtInZoomControls = true
+                displayZoomControls = false
+            }
         }
+
+        webView.addJavascriptInterface(MediaBridge(), "LaunchMedia")
+        webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, false)
+        WebMediaBridge.controller = ::controlMedia
 
         webView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
@@ -191,6 +436,9 @@ class WebAppActivity : AppCompatActivity() {
                     FrameLayout.LayoutParams.MATCH_PARENT
                 ))
                 webView.visibility = View.GONE
+                originalOrientation = requestedOrientation
+                requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                applyImmersion(true)
             }
 
             override fun onHideCustomView() {
@@ -225,8 +473,9 @@ class WebAppActivity : AppCompatActivity() {
 
         val root = findViewById<View>(R.id.web_app_root)
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-            val systemInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(0, systemInsets.top, 0, systemInsets.bottom)
+            // Nothing is padded at the top or sides, so the page fills the screen behind the status bar.
+            val bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            view.setPadding(0, 0, 0, if (customView != null) 0 else bottom)
             insets
         }
 
@@ -235,6 +484,7 @@ class WebAppActivity : AppCompatActivity() {
                 super.onPageFinished(view, url)
                 currentPageUrl = url ?: currentPageUrl
                 view?.evaluateJavascript(WebAppAdBlocker.cosmeticScriptFor(currentPageUrl), null)
+                view?.evaluateJavascript(mediaScript, null)
             }
 
             override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
@@ -342,6 +592,7 @@ class WebAppActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 currentPageUrl = url
                 view?.evaluateJavascript(WebAppAdBlocker.cosmeticScriptFor(url), null)
+                view?.evaluateJavascript(mediaScript, null)
                 addressView.text = url ?: intent.getStringExtra(EXTRA_WEB_APP_URL).orEmpty()
 
                 subResourceErrorCount = 0
@@ -377,7 +628,7 @@ class WebAppActivity : AppCompatActivity() {
         }
 
         currentPageUrl = url
-        webView.loadUrl(url)
+        webView.loadUrl(if (wantsDesktop(url) && isYouTube(url)) desktopYouTubeUrl(url) else url)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -398,14 +649,38 @@ class WebAppActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (::webView.isInitialized) {
-            webView.onPause()
-            webView.pauseTimers()
+        inForeground = false
+        if (!::webView.isInitialized) return
+        resumeWanted = mediaPlaying
+        resumeTries = 0
+        if (resumeWanted) { window.decorView.removeCallbacks(resumeLoop); window.decorView.postDelayed(resumeLoop, 700) }
+        // Keep running while a video or sound is playing so it carries on in the background.
+        if (isFinishing) { pauseWebView(); return }
+        if (isInPictureInPictureMode) return
+        if (videoPlaying && pipSupported()) {
+            // A video is playing: it is probably about to shrink into the mini window. If it doesn't, carry on in the background.
+            window.decorView.postDelayed({
+                if (!inForeground && !isInPictureInPictureMode && !isFinishing) { if (mediaPlaying) startMediaService() else pauseWebView() }
+            }, 400)
+            return
+        }
+        if (mediaPlaying) { startMediaService(); return }
+        // Not sure yet (the page may not have reported): ask it right now before pausing.
+        webView.evaluateJavascript(
+            "(function(){var p=false;document.querySelectorAll('video,audio').forEach(function(m){if(!m.paused&&!m.ended&&m.readyState>2)p=true;});return p;})()"
+        ) { result ->
+            if (!inForeground) {
+                if (result == "true") { mediaPlaying = true; startMediaService() } else pauseWebView()
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        inForeground = true
+        resumeWanted = false
+        window.decorView.removeCallbacks(resumeLoop)
+        stopMediaService()
         if (::webView.isInitialized) {
             webView.resumeTimers()
             webView.onResume()
@@ -414,7 +689,12 @@ class WebAppActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        if (::webView.isInitialized) {
+        // Android marks the page hidden when the screen goes away; wake it back up while something is playing.
+        if (::webView.isInitialized && mediaPlaying && !isFinishing) {
+            webView.onResume(); webView.resumeTimers()
+            window.decorView.postDelayed({ if (::webView.isInitialized && mediaPlaying && !inForeground) { webView.onResume(); webView.resumeTimers() } }, 500)
+        }
+        if (::webView.isInitialized && !mediaPlaying && !isInPictureInPictureMode) {
             webView.stopLoading()
         }
         if (isFinishing) {
@@ -423,6 +703,8 @@ class WebAppActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        stopMediaService()
+        if (WebMediaBridge.controller != null) WebMediaBridge.controller = null
         exitFullscreen()
 
         trustedDomains.clear()
@@ -441,7 +723,9 @@ class WebAppActivity : AppCompatActivity() {
         customViewCallback?.onCustomViewHidden()
         customViewCallback = null
         fullscreenContainer.visibility = View.GONE
-        webView.visibility = View.VISIBLE
+        if (::webView.isInitialized) webView.visibility = View.VISIBLE
+        requestedOrientation = originalOrientation
+        applyImmersion(false)
     }
 
     private fun extractDomain(url: String): String? {

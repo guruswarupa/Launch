@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -45,6 +46,14 @@ class PhotoViewerActivity : VaultBaseActivity() {
     private lateinit var loading: View
     private lateinit var errorText: TextView
     private lateinit var rotateAction: View
+    private var slideshow = false
+    private val editLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
+        val out = r.data?.getStringExtra(PhotoEditorActivity.EXTRA_RESULT_PATH)
+        if (r.resultCode == RESULT_OK && out != null) {
+            startActivity(Intent(this, PhotoViewerActivity::class.java).putExtra(EXTRA_PATH, out).putExtra(EXTRA_NAME, File(out).name))
+            finish()
+        }
+    }
 
     private var file: File? = null
     private var displayName: String = ""
@@ -84,13 +93,14 @@ class PhotoViewerActivity : VaultBaseActivity() {
         findViewById<ImageView>(R.id.photo_back).setOnClickListener { finish() }
         findViewById<View>(R.id.photo_action_share).setOnClickListener { share() }
         findViewById<View>(R.id.photo_action_info).setOnClickListener { showDetails() }
-        findViewById<View>(R.id.photo_action_open).setOnClickListener { openWith() }
-        rotateAction.setOnClickListener { rotate() }
+        findViewById<View>(R.id.photo_action_open).setOnClickListener { showMore() }
+        rotateAction.setOnClickListener { edit() }
 
         siblings = intent.getStringArrayExtra(EXTRA_SIBLINGS)
+        slideshow = intent.getBooleanExtra(EXTRA_SLIDESHOW, false)
         index = intent.getIntExtra(EXTRA_INDEX, 0)
         zoom.onSwipeHorizontal = { dir -> navigate(dir) }
-        zoom.onSingleTap = { toggleChrome() }
+        zoom.onSingleTap = { if (slideshow) stopSlideshow() else toggleChrome() }
         zoom.onDismissProgress = { progress ->
             root.background = ColorDrawable(Color.argb((255 * (1f - progress * 0.85f)).toInt(), 0, 0, 0))
             val chromeAlpha = 1f - progress * 2f
@@ -145,7 +155,8 @@ class PhotoViewerActivity : VaultBaseActivity() {
             .putExtra(EXTRA_PATH, list[next])
             .putExtra(EXTRA_NAME, File(list[next]).name)
             .putExtra(EXTRA_SIBLINGS, list)
-            .putExtra(EXTRA_INDEX, next))
+            .putExtra(EXTRA_INDEX, next)
+            .putExtra(EXTRA_SLIDESHOW, slideshow))
         finish()
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
@@ -155,6 +166,10 @@ class PhotoViewerActivity : VaultBaseActivity() {
         findViewById<TextView>(R.id.photo_title).text = displayName
         findViewById<TextView>(R.id.photo_subtitle).text = subtitleFor(target) + (siblings?.let { "  ·  ${index + 1}/${it.size}" } ?: "")
         loadImage(target)
+        if (slideshow) {
+            if (chromeVisible) toggleChrome()
+            zoom.postDelayed({ if (slideshow && !isFinishing) { if (index + 1 in (siblings?.indices ?: IntRange.EMPTY)) navigate(1) else stopSlideshow() } }, 3000)
+        }
     }
 
     private fun queryDisplayName(uri: android.net.Uri): String {
@@ -208,7 +223,6 @@ class PhotoViewerActivity : VaultBaseActivity() {
             sourceHeight = result.height
             animated = result.drawable is AnimatedImageDrawable
             bitmap = result.bitmap
-            rotateAction.visibility = if (animated) View.GONE else View.VISIBLE
             zoom.setImageDrawable(result.drawable)
             (result.drawable as? AnimatedImageDrawable)?.start()
         }
@@ -293,6 +307,86 @@ class PhotoViewerActivity : VaultBaseActivity() {
         bottomBar.isClickable = chromeVisible
     }
 
+    private fun edit() {
+        val target = file ?: return
+        if (animated) { Toast.makeText(this, R.string.media_cant_edit_animated, Toast.LENGTH_SHORT).show(); return }
+        editLauncher.launch(Intent(this, PhotoEditorActivity::class.java).putExtra(PhotoEditorActivity.EXTRA_PATH, target.absolutePath))
+    }
+
+    private fun hasLocation(target: File): Boolean = try { ExifInterface(target.absolutePath).getLatLong(FloatArray(2)) } catch (_: Exception) { false }
+
+    private fun showMore() {
+        val target = file ?: return
+        val sheet = FilesDialogs(this, FilesPalette(this))
+        val items = ArrayList<SheetItem>()
+        if (!animated) items.add(SheetItem(R.drawable.ic_media_rotate, getString(R.string.media_action_rotate)) { rotate() })
+        items.add(SheetItem(R.drawable.ic_image, getString(R.string.media_set_wallpaper)) { setWallpaper(target) })
+        if ((siblings?.size ?: 0) > 1) items.add(SheetItem(R.drawable.ic_media_play, getString(R.string.media_slideshow)) { startSlideshow() })
+        if (hasLocation(target)) items.add(SheetItem(R.drawable.ic_media_share, getString(R.string.media_share_no_location)) { shareWithoutLocation(target) })
+        items.add(SheetItem(R.drawable.ic_media_open, getString(R.string.media_action_open_with)) { openWith() })
+        items.add(SheetItem(R.drawable.ic_f_delete, getString(R.string.files_delete), danger = true) { confirmDelete(target) })
+        sheet.sheet(displayName, items)
+    }
+
+    private fun startSlideshow() {
+        slideshow = true
+        if (chromeVisible) toggleChrome()
+        zoom.postDelayed({ if (slideshow && !isFinishing) navigate(1) }, 1500)
+    }
+
+    private fun stopSlideshow() {
+        slideshow = false
+        if (!chromeVisible) toggleChrome()
+    }
+
+    private fun setWallpaper(target: File) {
+        lifecycleScope.launch {
+            val ok = withContext(Dispatchers.IO) {
+                try { target.inputStream().use { android.app.WallpaperManager.getInstance(this@PhotoViewerActivity).setStream(it) }; true } catch (_: Throwable) { false }
+            }
+            Toast.makeText(this@PhotoViewerActivity, if (ok) R.string.media_wallpaper_set else R.string.media_wallpaper_failed, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun shareWithoutLocation(target: File) {
+        lifecycleScope.launch {
+            val copy = withContext(Dispatchers.IO) {
+                try {
+                    val dir = File(cacheDir, "shared_clean").apply { mkdirs() }
+                    val out = File(dir, target.name)
+                    target.copyTo(out, overwrite = true)
+                    ExifInterface(out.absolutePath).apply {
+                        listOf(ExifInterface.TAG_GPS_LATITUDE, ExifInterface.TAG_GPS_LATITUDE_REF, ExifInterface.TAG_GPS_LONGITUDE, ExifInterface.TAG_GPS_LONGITUDE_REF,
+                            ExifInterface.TAG_GPS_ALTITUDE, ExifInterface.TAG_GPS_ALTITUDE_REF, ExifInterface.TAG_GPS_TIMESTAMP, ExifInterface.TAG_GPS_DATESTAMP, ExifInterface.TAG_GPS_PROCESSING_METHOD)
+                            .forEach { setAttribute(it, null) }
+                        saveAttributes()
+                    }
+                    out
+                } catch (_: Throwable) { null }
+            }
+            if (copy == null) { Toast.makeText(this@PhotoViewerActivity, R.string.toast_no_document_to_share, Toast.LENGTH_SHORT).show(); return@launch }
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = mimeOf(copy); putExtra(Intent.EXTRA_STREAM, uriFor(copy)); addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(intent, null))
+        }
+    }
+
+    private fun confirmDelete(target: File) {
+        FilesDialogs(this, FilesPalette(this)).confirm(displayName, getString(R.string.media_delete_message), getString(R.string.files_delete), true) {
+            val ok = FilesTrash.moveToTrash(android.os.Environment.getExternalStorageDirectory(), target)
+            if (!ok) { Toast.makeText(this, R.string.media_delete_failed, Toast.LENGTH_SHORT).show(); return@confirm }
+            android.media.MediaScannerConnection.scanFile(this, arrayOf(target.absolutePath), null, null)
+            val list = siblings
+            if (list != null && list.size > 1) {
+                val rest = list.filter { it != target.absolutePath }.toTypedArray()
+                val at = index.coerceAtMost(rest.size - 1)
+                startActivity(Intent(this, PhotoViewerActivity::class.java).putExtra(EXTRA_PATH, rest[at]).putExtra(EXTRA_NAME, File(rest[at]).name).putExtra(EXTRA_SIBLINGS, rest).putExtra(EXTRA_INDEX, at))
+            }
+            finish()
+        }
+    }
+
     private fun mimeOf(target: File): String =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(target.extension.lowercase()) ?: "image/*"
 
@@ -356,6 +450,8 @@ class PhotoViewerActivity : VaultBaseActivity() {
                 if (value != null && value > 0) parts.add("${Math.round(value)}mm")
             }
             if (parts.isNotEmpty()) rows.add("Exposure" to parts.joinToString("  ·  "))
+            val ll = FloatArray(2)
+            if (exif.getLatLong(ll)) rows.add("Location" to String.format(Locale.US, "%.5f, %.5f", ll[0], ll[1]))
         } catch (_: Exception) {
         }
 
@@ -385,6 +481,14 @@ class PhotoViewerActivity : VaultBaseActivity() {
                 setTextIsSelectable(true)
             })
         }
+        try {
+            val ll = FloatArray(2)
+            if (ExifInterface(target.absolutePath).getLatLong(ll)) container.addView(TextView(this).apply {
+                text = getString(R.string.media_open_map); setTextColor(Color.parseColor("#7FB2FF")); textSize = 15f
+                setTypeface(typeface, android.graphics.Typeface.BOLD); setPadding(0, dp(18), 0, 0)
+                setOnClickListener { try { startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("geo:${ll[0]},${ll[1]}?q=${ll[0]},${ll[1]}"))) } catch (_: Exception) {} }
+            })
+        } catch (_: Exception) {}
         val sheet = BottomSheetDialog(this)
         sheet.setContentView(container)
         sheet.show()
@@ -407,6 +511,7 @@ class PhotoViewerActivity : VaultBaseActivity() {
         const val EXTRA_DELETE = "photo_delete_on_exit"
         const val EXTRA_SIBLINGS = "photo_siblings"
         const val EXTRA_INDEX = "photo_index"
+        const val EXTRA_SLIDESHOW = "photo_slideshow"
         private const val MAX_DECODE_SIDE = 4096
     }
 }

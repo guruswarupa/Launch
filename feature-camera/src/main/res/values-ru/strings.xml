@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cam_save_failed">Не удалось сохранить фото</string>
+    <string name="cam_pro_focus">Фокус</string>
+    <string name="app_camera">Камера</string>
+    <string name="cam_mode_hdr">HDR</string>
+    <string name="cam_quality_max">Макс. качество</string>
+    <string name="cam_quality_fast">Быстро</string>
+    <string name="cam_cd_flip">Сменить камеру</string>
+    <string name="cam_locked">AE/AF зафиксированы</string>
+    <string name="cam_pro_wb">БС</string>
+    <string name="cam_mic_on">Микрофон вкл.</string>
+    <string name="cam_video">ВИДЕО</string>
+    <string name="cam_mode_night">НОЧЬ</string>
+    <string name="cam_cd_shutter">Кнопка спуска</string>
+    <string name="cam_mode_pro">PRO</string>
+    <string name="cam_photo">ФОТО</string>
+    <string name="cam_cd_flash">Вспышка</string>
+    <string name="cam_pro_shutter">Выдержка</string>
+    <string name="cam_mode_portrait">ПОРТРЕТ</string>
+    <string name="cam_cd_level">Уровень</string>
+    <string name="cam_timer_seconds">%1$d с</string>
+    <string name="cam_cd_back">Назад</string>
+    <string name="cam_permission">Нужно разрешение на использование камеры</string>
+    <string name="cam_stabilize">Стабилизация</string>
+    <string name="cam_pro_iso">ISO</string>
+    <string name="cam_cd_gallery">Открыть последний снимок</string>
+    <string name="cam_unavailable">Камера недоступна</string>
+    <string name="cam_mic_off">Без звука</string>
+    <string name="cam_record_failed">Не удалось записать видео</string>
+    <string name="cam_auto">Авто</string>
+    <string name="cam_wb_cloudy">Облачно</string>
+    <string name="cam_wb_tungsten">Лампа накаливания</string>
+    <string name="cam_cd_timer">Таймер</string>
+    <string name="cam_wb_fluorescent">Люминесцентная</string>
+    <string name="cam_wb_sunny">Солнце</string>
+    <string name="cam_cd_ratio">Формат кадра</string>
+    <string name="cam_cd_grid">Сетка</string>
+</resources>
